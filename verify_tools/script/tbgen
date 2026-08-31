@@ -1,0 +1,304 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Generate UVC / individual UVM template files from VERIFY_TOOL_PATH templates."""
+
+from __future__ import print_function
+
+import os
+import re
+import shutil
+import sys
+import time
+
+
+def die(msg):
+    sys.stderr.write(msg + "\n")
+    sys.exit(1)
+
+
+def prompt(msg):
+    sys.stdout.write(msg)
+    sys.stdout.flush()
+    return sys.stdin.readline().rstrip("\n")
+
+
+class TbGen(object):
+    def __init__(self):
+        tool_path = os.environ.get("VERIFY_TOOL_PATH")
+        if not tool_path:
+            die("[python] Environment variable VERIFY_TOOL_PATH is not set.")
+
+        template_dir = os.path.join(tool_path, "template")
+        src_tb_dir = os.path.join(template_dir, "tb")
+        src_tc_dir = os.path.join(template_dir, "tc")
+        src_spc_dir = os.path.join(template_dir, "special")
+        src_bch_dir = os.path.join(template_dir, "bench")
+
+        self.src_ref_abs = {
+            "_ref.sv": os.path.join(src_tb_dir, "ref.sv"),
+        }
+        self.src_tb_abs = {
+            "_agent.sv": os.path.join(src_tb_dir, "agent.sv"),
+            "_driver.sv": os.path.join(src_tb_dir, "driver.sv"),
+            "_monitor.sv": os.path.join(src_tb_dir, "monitor.sv"),
+            "_sequencer.sv": os.path.join(src_tb_dir, "sequencer.sv"),
+            "_seq_item.sv": os.path.join(src_tb_dir, "seq_item.sv"),
+            "_base_sequence.sv": os.path.join(src_tb_dir, "base_sequence.sv"),
+            "_if.sv": os.path.join(src_tb_dir, "if.sv"),
+            "_config.sv": os.path.join(src_tb_dir, "config.sv"),
+            "_sequence.sv": os.path.join(src_tb_dir, "sequence.sv"),
+            "_pkg.sv": os.path.join(src_tb_dir, "tb_pkg.sv"),
+        }
+        self.src_spc_abs = {
+            "_env_config.sv": os.path.join(src_spc_dir, "env_config.sv"),
+            "_case_config.sv": os.path.join(src_spc_dir, "case_config.sv"),
+            "_env_pkg.sv": os.path.join(src_spc_dir, "env_pkg.sv"),
+            "_environment.sv": os.path.join(src_spc_dir, "environment.sv"),
+            "_reset_if.sv": os.path.join(src_spc_dir, "reset_if.sv"),
+            "_reset_monitor.sv": os.path.join(src_spc_dir, "reset_monitor.sv"),
+            "_reset_sequence.sv": os.path.join(src_spc_dir, "reset_sequence.sv"),
+            "_scoreboard.sv": os.path.join(src_spc_dir, "scoreboard.sv"),
+            "_vsequencer.sv": os.path.join(src_spc_dir, "vsequencer.sv"),
+            "_base_vsequence.sv": os.path.join(src_spc_dir, "base_vsequence.sv"),
+            "_override_vsequence.sv": os.path.join(
+                src_spc_dir, "override_vsequence.sv"
+            ),
+            "_vsequence.sv": os.path.join(src_spc_dir, "vsequence.sv"),
+        }
+        self.src_tc_abs = {
+            "_base_test.sv": os.path.join(src_tc_dir, "base_test.sv"),
+            "_test.sv": os.path.join(src_tc_dir, "test.sv"),
+            "_tc_pkg.sv": os.path.join(src_tc_dir, "tc_pkg.sv"),
+        }
+        self.src_bch_abs = {
+            "_tb_top.sv": os.path.join(src_bch_dir, "tb_top.sv"),
+        }
+
+        self.comp_map = {
+            "0": ("_ref", "ref"),
+            "1": ("_agent", "tb"),
+            "2": ("_driver", "tb"),
+            "3": ("_monitor", "tb"),
+            "4": ("_sequencer", "tb"),
+            "5": ("_seq_item", "tb"),
+            "6": ("_base_sequence", "tb"),
+            "7": ("_if", "tb"),
+            "8": ("_config", "tb"),
+            "9": ("_sequence", "tb"),
+            "10": ("_pkg", "tb"),
+            "11": ("_env_config", "spc"),
+            "12": ("_environment", "spc"),
+            "13": ("_reset_if", "spc"),
+            "14": ("_reset_monitor", "spc"),
+            "15": ("_reset_sequence", "spc"),
+            "16": ("_scoreboard", "spc"),
+            "17": ("_vsequencer", "spc"),
+            "18": ("_base_vsequence", "spc"),
+            "19": ("_override_vsequence", "spc"),
+            "20": ("_vsequence", "spc"),
+            "21": ("_base_test", "tc"),
+            "22": ("_test", "tc"),
+            "23": ("_tc_pkg", "tc"),
+            "24": ("_tb_top", "bch"),
+            "25": ("_case_config", "spc"),
+            "26": ("_env_pkg", "spc"),
+        }
+
+    def mode_select(self):
+        print("1)Enter 1 to Create A UVC Enviroment")
+        print("2)Enter 2 to Generate Individual Template")
+        mode_sel = prompt("Select [1-2]:")
+
+        if mode_sel == "1":
+            self.generate_tb(mode_sel)
+        elif mode_sel == "2":
+            print("0)  Ref")
+            print("1)  Agent")
+            print("2)  Driver")
+            print("3)  Monitor")
+            print("4)  Sequencer")
+            print("5)  Sequence item")
+            print("6)  Base sequence")
+            print("7)  Interface")
+            print("8)  Agent config")
+            print("9)  Sequence extend from base_seq")
+            print("10) Tb package")
+            print("11) Environment config")
+            print("12) Environment class")
+            print("13) Reset interface")
+            print("14) Reset monitor")
+            print("15) Reset sequence")
+            print("16) Scoreboard")
+            print("17) Vsequencer")
+            print("18) Base_vsequence")
+            print("19) Override_vsequence")
+            print("20) Vsequence")
+            print("21) Base test")
+            print("22) Test")
+            print("23) Tc package")
+            print("24) Tb top ")
+            print("25) Case config")
+            print("26) Env pkg")
+            comp_sel = prompt("Select[0-26]:")
+            if comp_sel in self.comp_map:
+                suffix, _group = self.comp_map[comp_sel]
+                self.generate_tb(mode_sel, comp_sel, suffix)
+
+    def generate_tb(self, mode_sel, comp_sel=None, string=None):
+        mode_sel = int(mode_sel)
+
+        if mode_sel == 1:
+            uvc_name = prompt("Enter A UVC Name:\n")
+            user_name = prompt("Enter User Name:\n")
+
+            uvc_dir = "{}_uvc".format(uvc_name)
+            try:
+                os.mkdir(uvc_dir, 0o755)
+            except OSError as exc:
+                die(
+                    "[python]Cannot make '{}' directory:{}".format(
+                        uvc_dir, exc
+                    )
+                )
+            os.chdir(uvc_dir)
+
+            for suffix, src_abs in self.src_tb_abs.items():
+                dst_abs = "{}{}".format(uvc_name, suffix)
+                self.replace_pattern(src_abs, dst_abs, uvc_name, user_name)
+
+            seq_dir = os.path.join(os.getcwd(), "seq")
+            try:
+                os.mkdir(seq_dir, 0o755)
+            except OSError as exc:
+                die(
+                    "[python]Cannot make '{}' directory:{}".format(
+                        seq_dir, exc
+                    )
+                )
+            shutil.move("{}_base_sequence.sv".format(uvc_name), seq_dir + "/")
+            shutil.move("{}_sequence.sv".format(uvc_name), seq_dir + "/")
+
+        elif mode_sel == 2:
+            uvc_name = prompt("Enter A Class Name:\n")
+            user_name = prompt("Enter User Name:\n")
+            print("{},{}".format(comp_sel, string))
+
+            comp_sel = int(comp_sel)
+            if comp_sel == 0:
+                self._gen_from_map(
+                    self.src_ref_abs, string, uvc_name, user_name, "ref"
+                )
+            elif 1 <= comp_sel <= 10:
+                self._gen_from_map(
+                    self.src_tb_abs, string, uvc_name, user_name, "tb"
+                )
+            elif comp_sel in (11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 26):
+                self._gen_from_map(
+                    self.src_spc_abs, string, uvc_name, user_name, "spc"
+                )
+            elif comp_sel in (21, 22, 23):
+                self._gen_from_map(
+                    self.src_tc_abs, string, uvc_name, user_name, "tc"
+                )
+            elif comp_sel == 24:
+                self._gen_from_map(
+                    self.src_bch_abs, string, uvc_name, user_name, "bch"
+                )
+
+    def _gen_from_map(self, src_map, string, uvc_name, user_name, group):
+        for key, src_abs in src_map.items():
+            matched = False
+            if group == "ref":
+                matched = bool(
+                    re.search(
+                        r"(^{0}\.sv)|(^\.{0})".format(re.escape(string)),
+                        key,
+                        re.I,
+                    )
+                )
+            elif group == "tb":
+                matched = bool(
+                    re.search(
+                        r"(^{0}\.sv)|(^\.{0})".format(re.escape(string)),
+                        key,
+                        re.I,
+                    )
+                )
+            elif group == "spc":
+                matched = bool(
+                    re.search(
+                        r"^{}\.sv".format(re.escape(string)), key, re.I
+                    )
+                )
+            elif group == "tc":
+                matched = bool(
+                    re.search(
+                        r"{}((\.sv)|(\.pkg))?".format(re.escape(string)),
+                        key,
+                        re.I,
+                    )
+                )
+            elif group == "bch":
+                matched = bool(
+                    re.search(
+                        r"{}((\.sv)|(\.pkg)|(\.v))?".format(
+                            re.escape(string)
+                        ),
+                        key,
+                        re.I,
+                    )
+                )
+            if matched:
+                dst_abs = "{}{}".format(uvc_name, key)
+                self.replace_pattern(src_abs, dst_abs, uvc_name, user_name)
+
+    def replace_pattern(self, src_file, dst_file, uvc_name, user_name):
+        file_name = uvc_name.upper()
+        class_name = uvc_name
+
+        try:
+            src_fh = open(src_file, "r")
+        except IOError:
+            die('[python] Missing file: "{}" '.format(src_file))
+
+        try:
+            dst_fh = open(dst_file, "a")
+        except IOError:
+            die('[python] Missing file: "{}" '.format(dst_file))
+
+        for line in src_fh:
+            while True:
+                m = re.search(r"\$\((\w+)\)", line)
+                if not m:
+                    break
+                token = m.group(1)
+                if token == "CLASSNAME":
+                    repl = class_name
+                elif token == "FILENAME":
+                    repl = file_name
+                elif token == "USER":
+                    repl = user_name
+                elif token == "Date":
+                    st = time.localtime()
+                    repl = "{}-{}-{} {}:{}".format(
+                        st.tm_year,
+                        st.tm_mon,
+                        st.tm_mday,
+                        st.tm_hour,
+                        st.tm_min,
+                    )
+                else:
+                    break
+                line = line[: m.start()] + repl + line[m.end() :]
+            dst_fh.write(line)
+
+        src_fh.close()
+        dst_fh.close()
+
+
+def main():
+    TbGen().mode_select()
+
+
+if __name__ == "__main__":
+    main()

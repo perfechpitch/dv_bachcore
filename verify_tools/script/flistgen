@@ -1,0 +1,210 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Expand flist_*.cfg into a flattened absolute-path filelist."""
+
+from __future__ import print_function
+
+import os
+import re
+import sys
+
+
+VALID_EXT_RE = re.compile(
+    r"\.(edf|sv|v|svi|svp|vb|vh|svh|so|sim_CTL|sim_PHY|vp)\s*\Z"
+)
+
+
+def die(msg):
+    sys.stderr.write(msg + "\n")
+    sys.exit(1)
+
+
+def expand_env_vars(path):
+    """Expand $VAR and ${VAR} using the process environment."""
+
+    def _repl(match):
+        name = match.group(1)
+        if name.startswith("{") and name.endswith("}"):
+            name = name[1:-1]
+        return os.environ.get(name, match.group(0))
+
+    return re.sub(r"\$(\w+|\{(\w+)\})", _repl, path)
+
+
+class FlistGen(object):
+    def __init__(self):
+        self.all_flists = []
+        self.flist_temp = []
+        self.rsim_dir = os.getcwd()
+        self.cfg_dir = os.path.join(self.rsim_dir, "env_cfg")
+        self.flist_cfg_file_name = None
+        self.flist_output_file_name = None
+        self.flist_cfg_file_abs = None
+        self.flist_output_file_abs = None
+
+    def argv_process(self):
+        print("")
+        print("-------------------------------------------")
+        print("\tFlist config file info:")
+        print("-------------------------------------------")
+
+        for arg in sys.argv[1:]:
+            arg = arg.strip()
+            if arg:
+                self.flist_cfg_file_name = arg
+                print("Reading config file: {}".format(self.flist_cfg_file_name))
+
+        if not self.flist_cfg_file_name:
+            die("[python] Missing flist config file name argument.")
+
+        self.flist_cfg_file_abs = os.path.join(
+            self.cfg_dir, self.flist_cfg_file_name
+        )
+
+        if not os.path.exists(self.flist_cfg_file_abs):
+            die('[python] "{}" doesn\'t exist.'.format(self.flist_cfg_file_abs))
+
+        m = re.search(r"flist(\S+)\.cfg", self.flist_cfg_file_name)
+        if m:
+            self.flist_output_file_name = "flist{}.f".format(m.group(1))
+            self.flist_output_file_abs = os.path.join(
+                self.rsim_dir, self.flist_output_file_name
+            )
+            sys.stdout.write(
+                "Generate flist: {}".format(self.flist_output_file_name)
+            )
+        else:
+            m = re.search(r"Flist(\S+)\.cfg", self.flist_cfg_file_name)
+            if m:
+                self.flist_output_file_name = "Flist{}.f".format(m.group(1))
+                self.flist_output_file_abs = os.path.join(
+                    self.rsim_dir, self.flist_output_file_name
+                )
+                sys.stdout.write(
+                    "Generate flist: {}".format(self.flist_output_file_name)
+                )
+        print("")
+
+    def read_config(self):
+        try:
+            fh = open(self.flist_cfg_file_abs, "r")
+        except IOError:
+            die(
+                '[python]Missing configuration file: "{}" '.format(
+                    self.flist_cfg_file_abs
+                )
+            )
+
+        print("CURRENT_PATH : {}".format(self.rsim_dir))
+
+        for line in fh:
+            if re.match(r"^//.*$", line):
+                continue
+            if re.search(r"\S+", line):
+                m = re.match(r"\A\s*(-f\s*)?(\S*)", line)
+                if m:
+                    self.all_flists.append(m.group(2))
+                else:
+                    die("[python]flist config error")
+        print("")
+        fh.close()
+
+    def read_flist(self):
+        if os.path.exists(self.flist_output_file_abs):
+            os.remove(self.flist_output_file_abs)
+
+        os.chdir("./env_cfg")
+
+        for my_flist in self.all_flists:
+            expanded_flist = expand_env_vars(my_flist)
+            if not os.path.exists(expanded_flist):
+                die('[Error] "{}" doesn\'t exist.'.format(expanded_flist))
+            self.path_replace(expanded_flist)
+
+        with open(self.flist_output_file_abs, "a") as out_fh:
+            for item in self.flist_temp:
+                out_fh.write(item + "\n")
+
+    def path_replace(self, my_flist_path):
+        original_dir = os.getcwd()
+
+        try:
+            my_flist = open(my_flist_path, "r")
+        except IOError as exc:
+            die("[python] Cannot open {}:{}".format(my_flist_path, exc))
+
+        m = re.search(r"(\S+)/\S+$", my_flist_path)
+        if m:
+            os.chdir(m.group(1))
+        else:
+            print(my_flist_path)
+            die("[python] Cannot determine directory of flist path.")
+
+        for raw_line in my_flist:
+            line = expand_env_vars(raw_line)
+            line = re.sub(r"\s+\Z", "", line)
+            line = line.rstrip("\n")
+
+            # -v / -y / +incdir+
+            m = re.match(
+                r"\A\s*((?:-v\s*)|(?:-y\s*)|(?:\+incdir\+\s*))(\S*)", line
+            )
+            if m:
+                prefix, path = m.group(1), m.group(2)
+                if not os.path.exists(path):
+                    die("[Error] '{}' doesn't exist!\n".format(path))
+                file_path = prefix + os.path.realpath(path)
+                self.flist_temp.append(file_path)
+                continue
+
+            # set search_path
+            m = re.search(
+                r'\s*(set\s*search_path\s*"\s*\$search_path\s*)(\S*)("\S*\Z)',
+                line,
+            )
+            if m:
+                file_path = (
+                    m.group(1) + os.path.realpath(m.group(2)) + m.group(3)
+                )
+                self.flist_temp.append(file_path)
+                continue
+
+            # nested -f
+            m = re.match(r"\A\s*-f\s*(\S*)", line)
+            if m:
+                nested = m.group(1)
+                if not os.path.exists(nested):
+                    die("[Error] '{}' doesn't exist!\n".format(nested))
+                self.path_replace(nested)
+                continue
+
+            # empty / comment
+            if re.search(r"(\A\s*\Z)|(\A\s*//)", line):
+                continue
+
+            # source files with known extensions
+            if (not line.startswith("+")) and VALID_EXT_RE.search(line):
+                if not os.path.exists(line):
+                    print("[Error] '{}' doesn't exist!".format(line))
+                else:
+                    self.flist_temp.append(os.path.realpath(line))
+                continue
+
+            # user-defined macros / other lines
+            self.flist_temp.append(line)
+
+        os.chdir(original_dir)
+        my_flist.close()
+
+    def run(self):
+        self.argv_process()
+        self.read_config()
+        self.read_flist()
+
+
+def main():
+    FlistGen().run()
+
+
+if __name__ == "__main__":
+    main()

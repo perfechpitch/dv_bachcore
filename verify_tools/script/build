@@ -1,0 +1,324 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Generate IP/SOC project layout or a simulation verification environment."""
+
+from __future__ import print_function
+
+import os
+import re
+import shutil
+import sys
+import time
+
+
+# --------------------------
+# -------- folders ---------
+# --------------------------
+TEMPLATE_FLD = "template"
+CONFIG_FLD = "config"
+MAKE_FLD = "make"
+VERDI_FLD = "de"
+
+SIM_FLD = "rsim"
+TB_FLD = "uvm_tb"
+BENCH_FLD = "bench"
+DEFINE_FLD = "define"
+TC_FLD = "uvm_tc"
+
+ENV_CFG_FLD = "env_cfg"
+CASE_LST_FLD = "case_lst"
+
+# --------------------------
+# ------   files   ---------
+# --------------------------
+VERDI_NAME = "de"
+CASE_LST_NAME = "case.lst"
+XXX_LST_NAME = "xxx.lst"
+FLIST_CFG_NAME = "flist_rtl.cfg"
+RUN_CFG_NAME = "single.cfg"
+BATCH_CFG_NAME = "batch.cfg"
+RCHK_CFG_NAME = "recheck.cfg"
+
+
+def die(msg):
+    sys.stderr.write(msg + "\n")
+    sys.exit(1)
+
+
+def mkdir_or_die(path, mode=0o755):
+    try:
+        os.mkdir(path, mode)
+    except OSError as exc:
+        die("[python]Cannot make '{}' directory:{}".format(path, exc))
+
+
+def write_file(path, content=""):
+    with open(path, "w") as fh:
+        fh.write(content)
+
+
+def prompt(msg):
+    sys.stdout.write(msg)
+    sys.stdout.flush()
+    return sys.stdin.readline().rstrip("\n")
+
+
+def format_date():
+    st = time.localtime()
+    return "{}-{}-{} {}:{}".format(
+        st.tm_year, st.tm_mon, st.tm_mday, st.tm_hour, st.tm_min
+    )
+
+
+def replace_pattern(src_file, dst_file, user_name, created_on):
+    """Replace $(USER)/$(Date) placeholders, same style as tbgen."""
+    try:
+        src_fh = open(src_file, "r")
+    except IOError:
+        die('[python] Missing file: "{}" '.format(src_file))
+
+    try:
+        dst_fh = open(dst_file, "w")
+    except IOError:
+        die('[python] cannot open "{}" '.format(dst_file))
+
+    for line in src_fh:
+        while True:
+            m = re.search(r"\$\((\w+)\)", line)
+            if not m:
+                break
+            token = m.group(1)
+            if token == "USER":
+                repl = user_name
+            elif token == "Date":
+                repl = created_on
+            else:
+                break
+            line = line[: m.start()] + repl + line[m.end() :]
+        dst_fh.write(line)
+
+    src_fh.close()
+    dst_fh.close()
+
+
+def copy_reset_uvc(src_dir, dst_dir, user_name):
+    """Copy reset_uvc tree and fill Author / Created On from user input."""
+    created_on = format_date()
+    for dirpath, dirnames, filenames in os.walk(src_dir):
+        # skip editor/temp dirs and hidden files
+        dirnames[:] = [d for d in dirnames if not d.startswith(".")]
+        rel = os.path.relpath(dirpath, src_dir)
+        out_dir = dst_dir if rel == "." else os.path.join(dst_dir, rel)
+        if not os.path.isdir(out_dir):
+            mkdir_or_die(out_dir)
+        for fn in filenames:
+            if fn.startswith("."):
+                continue
+            src_file = os.path.join(dirpath, fn)
+            dst_file = os.path.join(out_dir, fn)
+            if fn.endswith(".sv"):
+                replace_pattern(src_file, dst_file, user_name, created_on)
+            else:
+                shutil.copy(src_file, dst_file)
+
+
+def mode_select():
+    print("1)Enter 1 to Generate An IP  Working Directory")
+    print("2)Enter 2 to Generate A  SOC Working Directory")
+    print("3)Enter 3 to Generate A  Simulation Enviroment")
+    print("4)Enter 4 to Generate A  Simulation Enviroment with reset_uvc")
+    mode_sel = prompt("Select [1-4]:")
+    if mode_sel in ("1", "2"):
+        build_proj_env(mode_sel)
+    else:
+        build_verify_env(mode_sel)
+
+
+def build_lib(lib_type):
+    mkdir_or_die(lib_type + "_lib")
+    os.chdir(lib_type + "_lib")
+
+    mkdir_or_die(lib_type + "_ram")
+    mkdir_or_die(lib_type + "_wrap")
+
+    fl_name = lib_type + "_lib.integrated.f"
+    ram_fl_name = lib_type + "_ram/" + lib_type + "_ram.local.f"
+    wrap_fl_name = lib_type + "_wrap/" + lib_type + "_wrap.local.f"
+
+    write_file(fl_name, "-f ./{}\n-f ./{}".format(ram_fl_name, wrap_fl_name))
+    write_file(ram_fl_name)
+    write_file(wrap_fl_name)
+
+    os.chdir("..")
+
+
+def build_proj_env(proj_type):
+    print("Please enter project name:")
+    proj_name = sys.stdin.readline().rstrip("\n")
+    _ = proj_name  # kept for parity with original interactive prompt
+
+    mkdir_or_die("trunk")
+    mkdir_or_die("branchs")
+    mkdir_or_die("tags")
+
+    os.chdir("trunk")
+    mkdir_or_die("design")
+    mkdir_or_die("verify")
+
+    os.chdir("design")
+    mkdir_or_die("lib")
+    mkdir_or_die("rtl")
+    mkdir_or_die("flist")
+
+    write_file("rtl/rtl.integrated.f")
+
+    os.chdir("flist")
+    mkdir_or_die("env_cfg")
+    fl_name = "env_cfg/flist_" + proj_name + "_top_rtl.cfg"
+    write_file(
+        fl_name,
+        "-f ../../rtl/rtl.integrated.f\n"
+        "-f ../../lib/asic_lib/asic_lib.integrated.f",
+    )
+
+    os.chdir("../lib")
+    for lib_type in ("asic", "fpga", "zebu"):
+        build_lib(lib_type)
+
+    os.chdir("../../verify")
+
+    if proj_type == "1":
+        mkdir_or_die("block")
+        mkdir_or_die("unit")
+        mkdir_or_die("multi_unit")
+        mkdir_or_die("core")
+        os.chdir("core")
+    else:
+        mkdir_or_die("IPs")
+        mkdir_or_die("subsystem")
+        mkdir_or_die("system")
+        os.chdir("system")
+
+
+def build_verify_env(env_type):
+    fe_flow_dir = os.environ.get("VERIFY_TOOL_PATH")
+    if not fe_flow_dir:
+        die("[python] Environment variable VERIFY_TOOL_PATH is not set.")
+
+    template_dir = os.path.join(fe_flow_dir, TEMPLATE_FLD)
+    src_cfg_dir = os.path.join(template_dir, CONFIG_FLD)
+    src_verdi_dir = os.path.join(template_dir, VERDI_FLD)
+
+    src_verdi_abs = os.path.join(src_verdi_dir, VERDI_NAME)
+    src_case_lst_abs = os.path.join(src_cfg_dir, CASE_LST_NAME)
+    src_batch_cfg_abs = os.path.join(src_cfg_dir, BATCH_CFG_NAME)
+    src_flist_cfg_abs = os.path.join(src_cfg_dir, FLIST_CFG_NAME)
+    src_rchk_cfg_abs = os.path.join(src_cfg_dir, RCHK_CFG_NAME)
+    src_run_cfg_abs = os.path.join(src_cfg_dir, RUN_CFG_NAME)
+
+    init_dir = os.getcwd()
+
+    print("Please enter directory name:")
+    proj_name = sys.stdin.readline().rstrip("\n")
+
+    user_name = None
+    if env_type == "4":
+        user_name = prompt("Enter User Name:\n")
+
+    mkdir_or_die(BENCH_FLD)
+    mkdir_or_die(SIM_FLD)
+    mkdir_or_die(TB_FLD)
+    mkdir_or_die(os.path.join(TB_FLD, "vseq"))
+    mkdir_or_die(os.path.join(TB_FLD, "enum"))
+    mkdir_or_die(os.path.join(TB_FLD, "scb"))
+    mkdir_or_die(os.path.join(TB_FLD, "ref"))
+    mkdir_or_die(os.path.join(TB_FLD, "mon"))
+    mkdir_or_die(TC_FLD)
+
+    os.chdir(BENCH_FLD)
+    mkdir_or_die(DEFINE_FLD)
+    os.chdir("..")
+
+    rsim_dir = os.path.join(init_dir, SIM_FLD)
+    bench_dir = os.path.join(init_dir, BENCH_FLD)
+    define_dir = os.path.join(bench_dir, DEFINE_FLD)
+    tb_dir = os.path.join(init_dir, TB_FLD)
+    tc_dir = os.path.join(init_dir, TC_FLD)
+    env_cfg_dir = os.path.join(rsim_dir, ENV_CFG_FLD)
+    case_lst_dir = os.path.join(rsim_dir, CASE_LST_FLD)
+
+    dst_verdi_abs = os.path.join(rsim_dir, VERDI_NAME)
+    dst_case_lst_abs = os.path.join(case_lst_dir, CASE_LST_NAME)
+    dst_batch_cfg_abs = os.path.join(env_cfg_dir, BATCH_CFG_NAME)
+    dst_flist_cfg_abs = os.path.join(env_cfg_dir, "flist_{}.cfg".format(proj_name))
+    dst_rchk_cfg_abs = os.path.join(env_cfg_dir, RCHK_CFG_NAME)
+    dst_run_cfg_abs = os.path.join(env_cfg_dir, RUN_CFG_NAME)
+
+    tb_lines = [
+        "+incdir+../uvm_tb/",
+        "+incdir+../uvm_tb/vseq/",
+        "+incdir+../uvm_tb/enum/",
+        "+incdir+../uvm_tb/scb/",
+        "+incdir+../uvm_tb/ref/",
+        "+incdir+../uvm_tb/mon/",
+        "//+incdir+../uvm_tb/xxx_uvc/",
+        "//+incdir+../uvm_tb/xxx_uvc/seq/",
+    ]
+    if env_type == "4":
+        tb_lines.append("+incdir+../uvm_tb/reset_uvc/")
+        tb_lines.append("+incdir+../uvm_tb/reset_uvc/seq/")
+    write_file(os.path.join(tb_dir, "uvm_tb.local.f"), "\n".join(tb_lines))
+
+    if env_type == "4":
+        src_reset = os.path.join(fe_flow_dir, "template", "tb", "reset_uvc")
+        copy_reset_uvc(src_reset, os.path.join(tb_dir, "reset_uvc"), user_name)
+
+    write_file(os.path.join(tc_dir, "uvm_tc.local.f"), "+incdir+../uvm_tc/")
+
+    write_file(
+        os.path.join(bench_dir, "bench.local.f"),
+        "../bench/{0}_wrapper.sv\n"
+        "../bench/{0}_tb_top.sv\n"
+        "//../bench/{0}_checker.sv".format(proj_name),
+    )
+
+    write_file(
+        os.path.join(bench_dir, proj_name + "_wrapper.sv"),
+        "module {0}_wrapper(\n"
+        "    reset_if    reset_if\n"
+        "   ,XXXX_if.DRV XXXX_if\n"
+        ");\n"
+        "    //assign u_DUT.xxx = XXXX_if.xxx;\n"
+        "endmodule".format(proj_name),
+    )
+
+    write_file(
+        os.path.join(define_dir, "define.local.f"),
+        "../define/{0}_path_define.sv\n"
+        "../define/{0}_ref_define.sv".format(proj_name),
+    )
+    write_file(
+        os.path.join(define_dir, proj_name + "_path_define.sv"),
+        "`define DUT_PATH {}_tb_top.u_DUT".format(proj_name),
+    )
+    write_file(os.path.join(define_dir, proj_name + "_ref_define.sv"))
+
+    os.chdir(rsim_dir)
+    mkdir_or_die("env_cfg")
+    mkdir_or_die("case_lst")
+    mkdir_or_die("rc")
+
+    shutil.copy(src_verdi_abs, dst_verdi_abs)
+    shutil.copy(src_case_lst_abs, dst_case_lst_abs)
+    shutil.copy(src_flist_cfg_abs, dst_flist_cfg_abs)
+    shutil.copy(src_batch_cfg_abs, dst_batch_cfg_abs)
+    shutil.copy(src_rchk_cfg_abs, dst_rchk_cfg_abs)
+    shutil.copy(src_run_cfg_abs, dst_run_cfg_abs)
+
+
+def main():
+    mode_select()
+
+
+if __name__ == "__main__":
+    main()

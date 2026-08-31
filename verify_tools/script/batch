@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Thin wrapper: invoke regression with cmd=<script name>."""
+
+from __future__ import print_function
+
+import os
+import sys
+
+
+def main():
+    name_only = os.path.basename(sys.argv[0])
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    regression = os.path.join(script_dir, "regression")
+    if not (os.path.isfile(regression) and os.access(regression, os.X_OK)):
+        regression = "regression"
+    cmd = [regression, "cmd={}".format(name_only)] + sys.argv[1:]
+    os.execvp(cmd[0], cmd)
+
+
+if __name__ == "__main__":
+    main()

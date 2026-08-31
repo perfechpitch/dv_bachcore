@@ -1,0 +1,42 @@
+################################################################
+#run_cmd: 
+#---------------------------------------------------------------
+#single case=xxx (seed=xxxx lst=x.lst+x.lst dpo=x cov=x log=x uvm=UVM_LOW/.. sim_only/compile_only/program_only/debug/glitch)
+#batch                     (lst=x.lst+x.lst dpo=x cov=x log=x uvm=UVM_LOW/..)
+#recheck                   (lst=x.lst+x.lst dpo=x cov=x log=x uvm=UVM_LOW/..)
+################################################################
+#  ARGS            | DEFAULT | LEVEL
+#——————————————————|—————————|——————————————————————————————————
+#  case_name       | null    | necessary 
+#  uvm_tc          | null    | necessary 
+#  base_case       | null    | optional  it will get uvm_tc,vcs_tb_defines,vcs_tb_args of base_case
+#  soft_name       | null    | necessary when run asm/c program,others optional ##ddr     #can be used to appoint test_file
+#  gcc_config      | null    | necessary when run asm/c program,others optional           #can be used to compile c/asm program in fixed mode 
+#  batch_times     | 1       | optional
+#  vcs_tb_defines  | null    | optional
+#  vcs_tb_args     | null    | optional,"+" split args
+#  cmp_full        | null    | optional,-sv_root $path/tensor_core -av_lib libC
+#  sim_full        | null    | optional,-sv_root $path/tensor_core -av_lib libC
+#  seed            | null    | optional
+#  performance_log | 0       | optional,if you want collect "PERFORMANCE_LOG....."
+################################################################
+#save in base.lst
+################################################
+#- case_name      = base_case_a
+#  uvm_tc         = test_dut       //case.lst can change it
+#  vcs_tb_defines = +user_defines  //case.lst can plus other args
+#  vcs_tb_args    = +user_args     //case.lst can plus other args
+#  gcc_config     = xxx            //case.lst can change it
+#  performance_log=1
+#save in base.lst
+################################################
+#save in xxx.lst
+################################################
+#- case_name      = xxxx
+#  base_case      = base_case_a #it will get uvm_tc,vcs_tb_defines,vcs_tb_args of base_case_a
+#  uvm_tc         = test_dut    #if write base_case,uvm_tc can not write
+#  soft_name      = xxx.S/.c
+#  gcc_config     = xxx
+#  batch_times    = xxx
+#  seed           = xxx
+################################################

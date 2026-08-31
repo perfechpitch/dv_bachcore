@@ -1,0 +1,1989 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Python port of verify_tools/script/regression."""
+
+from __future__ import print_function
+
+import fcntl
+import glob
+import os
+import re
+import shutil
+import subprocess
+import sys
+import time
+
+# ---------------------------------------------------------------------------
+# Global state (mirrors the original Perl script)
+# ---------------------------------------------------------------------------
+dir_define = {}
+caselist = {}
+caselist_src = {}
+cfg_info = {}
+input_info = {}
+list_name = {}
+batch_keys = []
+batch_log = {}
+input_case_type = []
+PASS = "pass"
+
+list_case_num = 0
+compile_result_dir = None
+soft_case_dir = None
+main_bin_save_path = None
+soft_case_name = None
+my_case_cnt = None
+cmd = ""
+case_name = None
+batch_start_time = None
+batch_end_time = None
+fail_case_sum = 0
+cmd_name = None
+
+list_cnt = 0
+case_sum = 0
+fail_cnt = 0
+err = 0
+pass_cnt = 0
+run_case_sum = 0
+comp_cnt = 1
+
+vmem_list_name = None
+run_name = "run"
+compile_list_abs = "tmp.log"
+base_list_name = "base.lst"
+case_list_name = "case.lst"
+cur_case_list_name = None
+cfg_name = None
+
+home_dir = None
+rsim_dir = os.getcwd()
+batch_sim_dir = os.path.join(rsim_dir, "sim_batch")
+cfg_dir = os.path.join(rsim_dir, "env_cfg")
+case_lst_dir = os.path.join(rsim_dir, "case_lst")
+sim_dir = None
+case_dir = None
+batch_simrpt_dir = None
+
+batch_log_abs = os.path.join(batch_sim_dir, "batch.log")
+src_case_list_abs = os.path.join(case_lst_dir, base_list_name)
+cfg_abs = os.path.join(cfg_dir, "single.cfg")
+performance_log_abs = os.path.join(rsim_dir, "performance.log")
+case_list_abs = None
+run_log_abs = None
+flist_abs = None
+sfh_abs = None
+log_abs = None
+
+regression_log_fh = None
+run_log_fh = None
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+def die(msg):
+    sys.stderr.write(msg + "\n")
+    sys.exit(1)
+
+
+def format_print(key, value):
+    print("%-16s | %s" % (key, value))
+
+
+def split_time():
+    st = time.localtime()
+    return (st.tm_sec, st.tm_min, st.tm_hour, st.tm_mday, st.tm_mon, st.tm_year)
+
+
+def _exists(d, key):
+    return key in d
+
+
+def _defined(d, key):
+    return key in d and d[key] is not None
+
+
+def _system(cmdline):
+    return subprocess.call(cmdline, shell=True)
+
+
+def _popen_lines(cmdline):
+    proc = subprocess.Popen(
+        cmdline, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    )
+    out, _ = proc.communicate()
+    if out is None:
+        return []
+    if isinstance(out, bytes):
+        out = out.decode("utf-8", "replace")
+    return out.splitlines(True)
+
+
+def _tool_cmd(name):
+    """Prefer sibling script in script_py, then PATH."""
+    local = os.path.join(SCRIPT_DIR, name)
+    if os.path.isfile(local) and os.access(local, os.X_OK):
+        return local
+    return name
+
+
+# ---------------------------------------------------------------------------
+# Entry
+# ---------------------------------------------------------------------------
+def main():
+    global cmd_name
+    argv_process()
+    if cmd_name == "check_lst":
+        read_all_list()
+    else:
+        read_config()
+        reload_config()
+        read_all_list()
+        reload_proc_num()
+        create_dir()
+        get_git_info()
+        sel_run_mode()
+
+
+def reload_proc_num():
+    global batch_simrpt_dir, log_abs, run_log_abs
+    if "PROC" in input_info:
+        cfg_info["PROC"] = input_info["PROC"]
+    if int(cfg_info["PROC"]) > run_case_sum:
+        cfg_info["PROC"] = run_case_sum
+        print("------------------------------------------------------------------------------")
+        print("Restore PROC :")
+        print("------------------------------------------------------------------------------")
+        format_print("PROC", run_case_sum)
+    print("------------------------------------------------------------------------------")
+
+    if int(cfg_info.get("SAVE_RPT", 0)) == 1:
+        st_sec, st_min, st_hour, st_day, st_mon, st_year = split_time()
+        batch_simrpt_dir = "%s/batch_rpt_%s_%s_%s_%s_%s" % (
+            rsim_dir, st_year, st_mon, st_day, st_hour, st_min
+        )
+        log_abs = "%s/%s.log" % (batch_simrpt_dir, cmd_name)
+        run_log_abs = "%s/run.log" % batch_simrpt_dir
+    else:
+        batch_simrpt_dir = os.path.join(sim_dir, "batch_rpt")
+        log_abs = "%s/%s.log" % (sim_dir, cmd_name)
+        run_log_abs = "%s/run.log" % sim_dir
+
+
+def create_dir():
+    gen_flist()
+    if cmd_name == "single":
+        create_single_dir()
+    else:
+        create_public_dir()
+
+
+def sel_run_mode():
+    if input_info.get("CHECK"):
+        if cmd_name == "batch":
+            for i in range(1, case_sum + 1):
+                tmp_name = "tmp0"
+                tmp_dir = os.path.join(sim_dir, tmp_name)
+                cur_case_name = caselist[i]
+                get_compile_path(tmp_dir, cur_case_name)
+                build_make_cmd(i, tmp_name, 1)
+        elif cmd_name == "recheck":
+            for key in batch_keys:
+                tmp_name = key
+                tmp_dir = os.path.join(sim_dir, tmp_name)
+                case_seed, cur_case_num, cur_case_name, cur_loop, cur_loop_times = (
+                    get_recheck_info(key)
+                )
+                get_compile_path(tmp_dir, cur_case_name)
+                build_make_cmd(cur_case_num, tmp_name, cur_loop)
+        else:
+            tmp_name = "sim_single"
+            tmp_dir = os.path.join(sim_dir, tmp_name)
+            cur_case_num = caselist["case_sum_%s" % case_name]
+            get_compile_path(tmp_dir, case_name)
+            build_make_cmd(cur_case_num, tmp_name, 1)
+    else:
+        os.chdir(sim_dir)
+        if cmd_name == "batch":
+            batch_process()
+        elif cmd_name == "recheck":
+            recheck_process()
+        else:
+            single_process()
+        gen_dpo_list()
+
+
+# ---------------------------------------------------------------------------
+# single
+# ---------------------------------------------------------------------------
+def single_process():
+    cur_case_num = caselist["case_sum_%s" % case_name]
+    info = (cur_case_num, 0, 1, 1)
+    if case_name not in caselist:
+        die(
+            "[python]case name[%s] do not exist.\nPlease check %s before rerun"
+            % (case_name, case_list_abs)
+        )
+    if "SYSC_FLAG" in cfg_info:
+        csrc = os.path.join(rsim_dir, "sim_single", "csrc")
+        if os.path.exists(csrc):
+            _system("rm -rf %s" % csrc)
+    sub_cmd_process(sim_dir, cur_case_num, 0, 1, info)
+
+
+def create_single_dir():
+    if not os.path.exists(sim_dir):
+        print("Create DIR %s.\n" % sim_dir)
+        try:
+            os.mkdir(sim_dir, 0o755)
+        except OSError as exc:
+            die("[python]Cannot make '%s' directiory\n:%s" % (sim_dir, exc))
+    link_file(sim_dir)
+
+
+def get_single_cmd():
+    if int(input_info.get("SIM_ONLY", 0)) == 1:
+        return "make sim "
+    if int(input_info.get("COMPILE_ONLY", 0)) == 1:
+        return "make compile "
+    return "make "
+
+
+# ---------------------------------------------------------------------------
+# batch
+# ---------------------------------------------------------------------------
+def batch_process():
+    create_batch_process()
+    summarize_report()
+    coverage_report()
+    summarize_report_to_screen()
+
+
+def gen_dpo_list():
+    if "DPO" in input_info and int(input_info["DPO"]) == 1:
+        input_info["lst"] = case_list_name
+        list_files = case_list_name.split("+")
+        learn_dpo = os.path.join(rsim_dir, "..", "rsim", "learn_dpo")
+        for lst in list_files:
+            out_case_list_abs = "./a"
+            in_abs = os.path.join(rsim_dir, "case_lst", lst)
+            dpo_abs = os.path.join(rsim_dir, "case_lst", "dpo_%s" % lst)
+            try:
+                in_fh = open(in_abs, "r")
+            except IOError:
+                die('[python]Missing file: "%s"' % in_abs)
+            try:
+                out_fh = open(out_case_list_abs, "w")
+            except IOError:
+                die('[python]Missing file: "%s"' % out_case_list_abs)
+            for line in in_fh:
+                line = line.rstrip("\n")
+                out_fh.write(line + "\n")
+                if not re.match(r"^\s*(#|//)", line):
+                    m = re.search(r"case_name\s*=\s*(\S+)", line)
+                    if m:
+                        out_fh.write(
+                            "  cmp_full       = -dpo_opts learn_dbdir=%s/%s\n"
+                            % (learn_dpo, m.group(1))
+                        )
+            in_fh.close()
+            out_fh.close()
+            _system("mv %s %s" % (out_case_list_abs, dpo_abs))
+
+
+def create_batch_process():
+    global regression_log_fh
+    print("-------------------------------------------")
+    print("\tRegression begin: PROC=%s" % cfg_info["PROC"])
+    print("-------------------------------------------")
+    try:
+        regression_log_fh = open(log_abs, "a")
+    except IOError as exc:
+        die("[python] cannot open %s\n:%s" % (log_abs, exc))
+
+    zombie = [0]
+    proc_num = 0
+
+    def _on_chld(signum, frame):
+        zombie[0] += 1
+
+    import signal
+
+    signal.signal(signal.SIGCHLD, _on_chld)
+
+    for i in range(int(cfg_info["PROC"])):
+        pid = os.fork()
+        proc_num += 1
+        if proc_num % 20 == 0:
+            time.sleep(1)
+        if pid == 0:
+            sub_batch_process("tmp%d" % i, case_sum)
+            os._exit(0)
+
+    while zombie[0] < int(cfg_info["PROC"]):
+        time.sleep(5)
+
+    while zombie[0] > 0:
+        try:
+            os.waitpid(-1, os.WNOHANG)
+        except OSError:
+            pass
+        zombie[0] -= 1
+
+
+def sub_batch_process(tmp_name, total_case_num):
+    tmp_dir = os.path.join(sim_dir, tmp_name)
+    try:
+        os.mkdir(tmp_dir, 0o755)
+    except OSError as exc:
+        die("[python]Cannot make '%s' directory\n:%s" % (tmp_dir, exc))
+    link_file(tmp_dir)
+    os.chdir(tmp_dir)
+
+    while True:
+        cur_case_num, cur_loop, loop_times = case_pointer(total_case_num)
+        if cur_case_num > total_case_num:
+            break
+        if loop_times > 0:
+            sub_process(tmp_dir, cur_case_num, tmp_name, cur_loop, loop_times)
+            log_collection(tmp_dir, cur_case_num, cur_loop, loop_times)
+
+
+def get_batch_cmd(cur_case_name, cur_tmp_name):
+    for_fast = 0
+    define_cmp = 0
+    new_define = None
+    key_def = "vcs_tb_defines_%s" % cur_case_name
+    if key_def in caselist:
+        new_define = caselist[key_def]
+        define_cmp = 1
+
+    if cur_tmp_name in dir_define:
+        if define_cmp:
+            if new_define == dir_define.get("vcs_tb_defines_%s" % cur_tmp_name):
+                for_fast = 1
+        else:
+            if dir_define.get("vcs_tb_defines_%s" % cur_tmp_name, None) == "":
+                for_fast = 1
+
+    if define_cmp:
+        dir_define["vcs_tb_defines_%s" % cur_tmp_name] = new_define
+    else:
+        dir_define["vcs_tb_defines_%s" % cur_tmp_name] = ""
+
+    if cur_tmp_name in dir_define:
+        dir_define[cur_tmp_name] += 1
+    else:
+        dir_define[cur_tmp_name] = 1
+
+    if for_fast and int(cfg_info.get("FAST", 0)) == 1:
+        return "make sim "
+    return "make "
+
+
+# ---------------------------------------------------------------------------
+# recheck
+# ---------------------------------------------------------------------------
+def recheck_process():
+    create_recheck_process()
+    summarize_report()
+    summarize_report_to_screen()
+
+
+def create_recheck_process():
+    global regression_log_fh
+    print("-------------------------------------------")
+    print("\tRegression begin:")
+    print("-------------------------------------------")
+    try:
+        regression_log_fh = open(log_abs, "a")
+    except IOError as exc:
+        die("[python] cannot open %s\n:%s" % (log_abs, exc))
+
+    zombies = [0]
+    num_proc = [0]
+    num_collect = 0
+
+    def _on_chld(signum, frame):
+        zombies[0] += 1
+        num_proc[0] -= 1
+
+    import signal
+
+    signal.signal(signal.SIGCHLD, _on_chld)
+
+    for key in batch_keys:
+        pid = os.fork()
+        if pid == 0:
+            sub_recheck_process(key)
+            os._exit(0)
+        num_proc[0] += 1
+        while num_proc[0] >= int(cfg_info["PROC"]):
+            time.sleep(5)
+        if zombies[0] > 0:
+            while True:
+                try:
+                    collect = os.waitpid(-1, os.WNOHANG)
+                except OSError:
+                    break
+                if collect[0] <= 0:
+                    break
+                num_collect += 1
+
+    while (fail_case_sum - num_collect) > 0:
+        try:
+            collect = os.waitpid(-1, os.WNOHANG)
+        except OSError:
+            time.sleep(0.1)
+            continue
+        if collect[0] > 0:
+            num_collect += 1
+        else:
+            time.sleep(0.1)
+
+
+def get_recheck_info(batch_key):
+    m = re.match(r"(\d+)_(\S+)_(\d+)_(\d+)", batch_key)
+    cur_case_num = int(m.group(1))
+    cur_case_name = m.group(2)
+    cur_loop = int(m.group(3))
+    cur_loop_times = int(m.group(4))
+    case_seed = batch_log[
+        "%s_%s_%s_%s" % (cur_case_num, cur_case_name, cur_loop, cur_loop_times)
+    ]
+    caselist["seed_%s" % cur_case_name] = case_seed
+    return case_seed, cur_case_num, cur_case_name, cur_loop, cur_loop_times
+
+
+def sub_recheck_process(batch_key):
+    tmp_name = batch_key
+    case_seed, cur_case_num, cur_case_name, cur_loop, cur_loop_times = get_recheck_info(
+        batch_key
+    )
+    tmp_dir = os.path.join(sim_dir, tmp_name)
+    try:
+        os.mkdir(tmp_dir, 0o755)
+    except OSError as exc:
+        die("[python]Cannot make '%s' directory\n:%s" % (tmp_dir, exc))
+    link_file(tmp_dir)
+    os.chdir(tmp_dir)
+    sub_process(tmp_dir, cur_case_num, tmp_name, cur_loop, cur_loop_times)
+
+
+def sub_process(tmp_dir, cur_case_num, tmp_name, cur_loop, cur_loop_times):
+    info = (cur_case_num, tmp_name, cur_loop, cur_loop_times)
+    st_time = print_time(info, "BEGIN")
+    make_cmd, case_seed, case_result = sub_cmd_process(
+        tmp_dir, cur_case_num, tmp_name, cur_loop, info
+    )
+    re_run_times, re_case_result = re_run_check(
+        make_cmd, case_seed, case_result, tmp_dir, info
+    )
+    end_time = print_time(info, "END")
+    print_result_to_file(
+        re_run_times, case_seed, re_case_result, st_time, end_time, info
+    )
+
+
+def sub_cmd_process(tmp_dir, cur_case_num, tmp_name, cur_loop, info):
+    cur_case_name = caselist[cur_case_num]
+    make_cmd = None
+    case_seed = -1
+    case_result = get_compile_path(tmp_dir, cur_case_name)
+    if int(input_info.get("PROGRAM_ONLY", 0)) == 0:
+        if re.search(r"\bpass\S*", str(case_result)):
+            make_cmd = build_make_cmd(cur_case_num, tmp_name, cur_loop)
+            case_seed, case_result = exe_and_check(
+                make_cmd, -1, "fail", tmp_dir, info
+            )
+    return make_cmd, case_seed, case_result
+
+
+def read_bacth_log():
+    global batch_keys, fail_case_sum, run_case_sum
+    print("-------------------------------------------")
+    print("\tThe batch fail case :")
+    print("-------------------------------------------")
+    try:
+        fh = open(batch_log_abs, "r")
+    except IOError:
+        die('[python]Missing file: "%s"' % batch_log_abs)
+
+    for line in fh:
+        m = re.search(r"(\S+)\s+(\S+)\S*\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)", line)
+        if m:
+            case, cur_case_name_raw, seed, rslt = m.group(2), m.group(3), m.group(4), m.group(6)
+            if re.search(r"\bfail\S*", rslt):
+                num_m = re.search(r"^case([0-9]+)", case)
+                num = num_m.group(1)
+                name_m = re.search(r"\[(\S+)\]\((\d+)/(\d+)", cur_case_name_raw)
+                cur_case_name = name_m.group(1)
+                loop = name_m.group(2)
+                loop_times = name_m.group(3)
+                seed_m = re.search(r"seed=(\d+)", seed)
+                seed = seed_m.group(1)
+                print(
+                    "case%s_%s(%s/%s): %s :%s"
+                    % (num, cur_case_name, loop, loop_times, seed, rslt)
+                )
+                batch_log["%s_%s_%s_%s" % (num, cur_case_name, loop, loop_times)] = seed
+    fh.close()
+    batch_keys = sorted(batch_log.keys())
+    fail_case_sum = len(batch_keys)
+    run_case_sum = fail_case_sum
+    print("Fail case sum: %s " % fail_case_sum)
+    print("")
+
+
+# ---------------------------------------------------------------------------
+# public helpers
+# ---------------------------------------------------------------------------
+def create_public_dir():
+    print("Create and clean :")
+    print("------------------------------------------------------------------------------")
+    _system("rm -rf %s" % sim_dir)
+    try:
+        os.mkdir(sim_dir, 0o755)
+    except OSError as exc:
+        die("[python]Cannot make '%s' directiory\n:%s" % (sim_dir, exc))
+
+    if cmd_name == "batch":
+        print("Clean LOG %s." % sfh_abs)
+        for path in glob.glob(sfh_abs):
+            try:
+                os.unlink(path)
+            except OSError:
+                pass
+        print("Create batch_simrpt DIR %s." % batch_simrpt_dir)
+        try:
+            os.mkdir(batch_simrpt_dir, 0o755)
+        except OSError as exc:
+            die(
+                "[python]Cannot make '%s' directiory\n:%s"
+                % (batch_simrpt_dir, exc)
+            )
+
+
+def read_all_list():
+    global run_case_sum, cur_case_list_name, case_list_abs, list_case_num, list_cnt
+    read_base_list()
+    list_files = case_list_name.split("+")
+    for list_file in list_files:
+        cur_case_list_name = list_file
+        case_list_abs = os.path.join(case_lst_dir, cur_case_list_name)
+        list_case_num = 0
+        list_cnt += 1
+        read_list()
+        list_name[list_cnt] = cur_case_list_name
+        list_name["num_%s" % list_cnt] = list_case_num
+    if cmd_name == "single":
+        run_case_sum = 1
+    if cmd_name == "recheck":
+        read_bacth_log()
+
+
+def get_git_info():
+    global run_log_fh
+    try:
+        run_log_fh = open(run_log_abs, "w")
+    except IOError as exc:
+        die("[python] cannot open %s\n:%s" % (run_log_abs, exc))
+    run_log_fh.write("----------------------------------------------------------\n")
+    run_log_fh.write("proc_num     : %s\n" % cfg_info["PROC"])
+    run_log_fh.write("----------------------------------------------------------\n")
+    run_log_fh.write("cmd          : %s\n" % cmd)
+    run_log_fh.write("----------------------------------------------------------\n")
+    run_log_fh.write("case_sum     : %s\n" % case_sum)
+    run_log_fh.write("run_case_sum : %s\n" % run_case_sum)
+    run_log_fh.write("----------------------------------------------------------\n")
+    os.chdir(rsim_dir)
+    print_git_info("git_verify")
+    design_path = os.environ.get("DESIGN_PATH", "")
+    if design_path:
+        os.chdir(design_path)
+        print_git_info("git_soc_rtl")
+        xxx = os.path.join(design_path, "rtl", "xxx")
+        if os.path.isdir(xxx):
+            os.chdir(xxx)
+            print_git_info("git_xxx_rtl")
+    run_log_fh.write("----------------------------------------------------------\n")
+
+
+def print_git_info(info):
+    _system("git log -1 > %s/a" % sim_dir)
+    try:
+        fh = open("%s/a" % sim_dir, "r")
+    except IOError as exc:
+        die("[python] cannot open git log %s/a\n:%s" % (sim_dir, exc))
+    for line in fh:
+        m = re.search(r".*commit\s+(\S+)", line)
+        if m:
+            run_log_fh.write("%-12s : %s\n" % (info, m.group(1)))
+            break
+    fh.close()
+    _system("rm -rf %s/a" % sim_dir)
+
+
+def argv_process():
+    global cmd_name, sim_dir, sfh_abs, cfg_name, cmd, case_name, case_list_name
+    global input_case_type
+    print("------------------------------------------------------------------------------")
+    print("The input parameters are:")
+    print("------------------------------------------------------------------------------")
+
+    cfg_info["PERFORMANCE_LOG"] = 0
+    cfg_info["PROFILE"] = 0
+    cfg_info["SAVE_RPT"] = 0
+    cfg_info["FAST"] = 1
+    input_info["CHECK"] = 0
+    input_info["GLITCH"] = 0
+    input_info["DEBUG"] = 0
+    input_info["COMPILE_ONLY"] = 0
+    input_info["SIM_ONLY"] = 0
+    input_info["PROGRAM_ONLY"] = 0
+
+    args = list(sys.argv[1:])
+    while args:
+        arg = args.pop(0)
+        m = re.match(r"^(cmd)\s*=\s*(\S+)", arg)
+        if m:
+            cmd_name = m.group(2)
+            sim_dir = os.path.join(rsim_dir, "sim_%s" % m.group(2))
+            sfh_abs = os.path.join(sim_dir, "sfh")
+            cfg_name = "%s.cfg" % cmd_name
+            cmd = m.group(2)
+            format_print(m.group(1), m.group(2))
+        else:
+            cmd = cmd + " " + arg
+
+        m = re.match(r"^(case_type)\s*=\s*(\S+)", arg)
+        if m:
+            format_print(m.group(1), m.group(2))
+            input_case_type = m.group(2).split("+")
+
+        m = re.match(r"^(times)\s*=\s*(\d+)", arg)
+        if m:
+            input_info["BATCH_TIMES"] = int(m.group(2))
+            format_print(m.group(1), m.group(2))
+
+        m = re.match(r"^(profile)\s*=\s*(\d+)", arg)
+        if m:
+            input_info["PROFILE"] = int(m.group(2))
+            format_print(m.group(1), m.group(2))
+
+        m = re.match(r"^(proc)\s*=\s*(\d+)", arg)
+        if m:
+            input_info["PROC"] = int(m.group(2))
+            format_print(m.group(1), m.group(2))
+
+        m = re.match(r"^(cov)\s*=\s*(\d+)", arg)
+        if m:
+            input_info["COV"] = int(m.group(2))
+            format_print(m.group(1), m.group(2))
+
+        m = re.match(r"^(log)\s*=\s*(\d+)", arg)
+        if m:
+            input_info["VCS_LOG"] = int(m.group(2))
+            format_print(m.group(1), m.group(2))
+
+        m = re.match(r"^(uvm)\s*=\s*(\S+)", arg)
+        if m:
+            input_info["UVM_VERBOSITY"] = m.group(2)
+            format_print(m.group(1), m.group(2))
+
+        m = re.match(r"^(case)\s*=\s*(\S+)", arg)
+        if m:
+            case_name = m.group(2)
+            format_print(m.group(1), m.group(2))
+
+        m = re.match(r"^(seed)\s*=\s*(\d+)", arg)
+        if m:
+            input_info["SEED"] = int(m.group(2))
+            format_print(m.group(1), m.group(2))
+
+        m = re.match(r"^(lst)\s*=\s*(\S+)", arg)
+        if m:
+            case_list_name = m.group(2)
+            format_print(m.group(1), m.group(2))
+
+        m = re.match(r"^(multi_drv)\s*", arg)
+        if m:
+            input_info["MULTI_DRV"] = 1
+            format_print(m.group(1), "on")
+
+        m = re.match(r"^(check)\s*", arg)
+        if m:
+            input_info["CHECK"] = 1
+            format_print(m.group(1), "on")
+
+        m = re.match(r"^(program_only)\s*", arg)
+        if m:
+            input_info["PROGRAM_ONLY"] = 1
+            format_print(m.group(1), "on")
+
+        m = re.match(r"^(sim_only)\s*", arg)
+        if m:
+            input_info["SIM_ONLY"] = 1
+            format_print(m.group(1), "on")
+
+        m = re.match(r"^(compile_only)\s*", arg)
+        if m:
+            input_info["COMPILE_ONLY"] = 1
+            format_print(m.group(1), "on")
+
+        m = re.match(r"^(dpo)\s*=\s*(\S+)", arg)
+        if m:
+            input_info["DPO"] = m.group(2)
+            format_print(m.group(1), m.group(2))
+
+        m = re.match(r"^(debug)\s*", arg)
+        if m:
+            input_info["DEBUG"] = 1
+            format_print(m.group(1), "on")
+
+        m = re.match(r"^(glitch)\s*", arg)
+        if m:
+            input_info["GLITCH"] = 1
+            format_print(m.group(1), "on")
+
+    print("------------------------------------------------------------------------------")
+
+
+def reload_config():
+    global cfg_abs
+    print("CURRENT_PATH: %s" % rsim_dir)
+    print("------------------------------------------------------------------------------")
+    if cmd_name != "single":
+        cfg_abs = os.path.join(cfg_dir, cfg_name)
+        if os.path.exists(cfg_abs):
+            read_config()
+
+
+def read_config():
+    global batch_start_time, case_dir, cfg_abs
+    batch_start_time = time.time()
+
+    try:
+        fh = open(cfg_abs, "r")
+    except IOError:
+        die('[python]Missing file: "%s"' % cfg_abs)
+
+    print("The configs are:")
+    print("------------------------------------------------------------------------------")
+
+    if cmd_name == "single":
+        cfg_info["PROC"] = 1
+    else:
+        cfg_info["PROC"] = 5
+        cfg_info["RE_RUN_TIMES"] = 1
+
+    if cmd_name == "batch":
+        cfg_info["COV"] = 1
+        cfg_info["VCS_LOG"] = 0
+        cfg_info["WAVE"] = 0
+        cfg_info["UVM_VERBOSITY"] = "UVM_NONE"
+    else:
+        cfg_info["COV"] = 0
+        cfg_info["VCS_LOG"] = 1
+        cfg_info["WAVE"] = 1
+        cfg_info["UVM_VERBOSITY"] = "UVM_LOW"
+
+    for line in fh:
+        m = re.match(r"^(\w+\S+)\s*=\s*(\S+.*)", line)
+        if m:
+            key = m.group(1)
+            value = m.group(2).rstrip("\n")
+            format_print(key, value)
+            cfg_info[key] = value
+    fh.close()
+
+    if "TEST_DIR" in cfg_info:
+        cfg_info["VMEM_DIR"] = os.path.join(rsim_dir, cfg_info["TEST_DIR"], "vmem")
+        case_dir = os.path.join(rsim_dir, cfg_info["TEST_DIR"])
+    cfg_info["GCC_DIR"] = os.environ.get("RISCV_TESTS_HOME")
+    print("------------------------------------------------------------------------------")
+
+
+def read_base_list():
+    if not os.path.exists(src_case_list_abs):
+        return
+    try:
+        fh = open(src_case_list_abs, "r")
+    except IOError:
+        return
+
+    print("The src caselists are:")
+    print("------------------------------------------------------------------------------", end="")
+    base_case_sum = 0
+    cur_case_name = None
+    match_name = None
+    for line in fh:
+        if re.match(r"^\s*#", line) or re.match(r"^\s*//", line):
+            continue
+        m = re.search(r"case_name\s*=\s*(\S+)", line)
+        if m:
+            base_case_sum += 1
+            cur_case_name = m.group(1)
+            caselist_src[base_case_sum] = cur_case_name
+            caselist_src[cur_case_name] = cur_case_name
+            caselist_src["case_sum_%s" % cur_case_name] = base_case_sum
+            caselist_src["addr_mode_%s" % cur_case_name] = 1
+            print("\ncase_num=%s case_name=%s" % (base_case_sum, cur_case_name), end="")
+        else:
+            m = re.match(r"^\s*(\w+\S+)\s*=\s*(\S+)(.*)", line)
+            if m:
+                match_name = m.group(1)
+                if match_name in ("sim_full", "cmp_full"):
+                    caselist_src["%s_%s" % (match_name, cur_case_name)] = (
+                        m.group(2) + m.group(3)
+                    )
+                    print(" %s=%s%s" % (match_name, m.group(2), m.group(3)), end="")
+                else:
+                    caselist_src["%s_%s" % (match_name, cur_case_name)] = m.group(2)
+                    print(" %s=%s" % (match_name, m.group(2)), end="")
+            else:
+                m = re.match(r"^\s*(\w+\S+)\s*=", line)
+                if m:
+                    print(" %s=" % m.group(1), end="")
+                    match_name = m.group(1)
+                else:
+                    m = re.search(r"(\S+)", line)
+                    if m:
+                        print("%s" % m.group(1), end="")
+                        key = "%s_%s" % (match_name, cur_case_name)
+                        caselist_src[key] = caselist_src.get(key, "") + m.group(1)
+    print("\n------------------------------------------------------------------------------")
+    print("")
+    fh.close()
+
+
+def read_list():
+    global case_sum, list_case_num, run_case_sum
+    print("------------------------------------------------------------------------------")
+    print("The caselists are:%s" % cur_case_list_name)
+    print("------------------------------------------------------------------------------", end="")
+
+    match_name = None
+    cur_case_name = None
+
+    try:
+        fh = open(case_list_abs, "r")
+    except IOError:
+        die('[python]Missing file: "%s"' % case_list_abs)
+
+    for line in fh:
+        if re.match(r"^\s*#", line) or re.match(r"^\s*//", line):
+            continue
+
+        if re.search(r"soft_name\s*=\s*(\S+)", line):
+            caselist["random_mode_%s" % cur_case_name] = 0
+
+        m = re.search(r"case_name\s*=\s*(\S+)", line)
+        if m:
+            mask_case_when_fix_case_type()
+            case_sum += 1
+            list_case_num += 1
+            cur_case_name = m.group(1)
+
+            if cur_case_name in caselist:
+                die(
+                    "[python]case_name[%s] is not alone.\nPlease check %s  and change one case_name before rerun"
+                    % (cur_case_name, case_list_abs)
+                )
+
+            if "BATCH_TIMES" in input_info:
+                caselist["batch_times_%s" % cur_case_name] = input_info["BATCH_TIMES"]
+            else:
+                caselist["batch_times_%s" % cur_case_name] = 1
+            run_case_sum = run_case_sum + caselist["batch_times_%s" % cur_case_name]
+            caselist["random_mode_%s" % cur_case_name] = 1
+            list_name["case_sum_%s%s" % (list_cnt, list_case_num)] = case_sum
+            caselist[case_sum] = cur_case_name
+            caselist["case_sum_%s" % cur_case_name] = case_sum
+            caselist[cur_case_name] = case_sum
+            caselist["addr_mode_%s" % cur_case_name] = 1
+            if "BOOT_FILE" in cfg_info:
+                caselist["boot_file_%s" % cur_case_name] = cfg_info["BOOT_FILE"]
+            if "GCC_CONFIG" in cfg_info:
+                caselist["gcc_config_%s" % cur_case_name] = cfg_info["GCC_CONFIG"]
+            print("\ncase_num=%s case_name=%s" % (case_sum, cur_case_name), end="")
+        else:
+            m = re.match(r"^\s*(\w+\S+)\s*=\s*(\S+)(.*)", line)
+            if m:
+                match_name = m.group(1)
+                if match_name in ("sim_full", "cmp_full"):
+                    caselist["%s_%s" % (match_name, cur_case_name)] = (
+                        m.group(2) + m.group(3)
+                    )
+                    print(" %s=%s%s" % (match_name, m.group(2), m.group(3)), end="")
+                else:
+                    if match_name in ("vcs_tb_args", "vcs_tb_defines"):
+                        key = "%s_%s" % (match_name, cur_case_name)
+                        caselist[key] = caselist.get(key, "") + m.group(2)
+                    else:
+                        caselist["%s_%s" % (match_name, cur_case_name)] = m.group(2)
+                    print(
+                        " %s=%s"
+                        % (
+                            match_name,
+                            caselist["%s_%s" % (match_name, cur_case_name)],
+                        ),
+                        end="",
+                    )
+
+                if match_name == "base_case":
+                    for base in m.group(2).split("+"):
+                        if base in caselist_src:
+                            for field in (
+                                "uvm_tc",
+                                "vcs_tb_args",
+                                "vcs_tb_defines",
+                                "gcc_config",
+                                "boot_file",
+                                "performance_log",
+                            ):
+                                src_key = "%s_%s" % (field, base)
+                                if src_key in caselist_src:
+                                    dst_key = "%s_%s" % (field, cur_case_name)
+                                    if field in ("vcs_tb_args", "vcs_tb_defines"):
+                                        caselist[dst_key] = (
+                                            caselist.get(dst_key, "")
+                                            + caselist_src[src_key]
+                                        )
+                                    else:
+                                        caselist[dst_key] = caselist_src[src_key]
+                        else:
+                            die(
+                                "[python]base case name: %s doesn't exist in %s"
+                                % (base, base_list_name)
+                            )
+            else:
+                m = re.match(r"^\s*(\w+\S+)\s*=", line)
+                if m:
+                    print(" %s=" % m.group(1), end="")
+                    match_name = m.group(1)
+                else:
+                    m = re.search(r"(\S+)", line)
+                    if m:
+                        print("%s" % m.group(1), end="")
+                        key = "%s_%s" % (match_name, cur_case_name)
+                        caselist[key] = caselist.get(key, "") + m.group(1)
+
+        m = re.search(r"\s*batch_times\s*=\s*(\d+)", line)
+        if m:
+            bt = int(m.group(1))
+            if "BATCH_TIMES" in input_info:
+                if bt == 0:
+                    run_case_sum = run_case_sum - input_info["BATCH_TIMES"]
+                else:
+                    caselist["batch_times_%s" % cur_case_name] = input_info[
+                        "BATCH_TIMES"
+                    ]
+            else:
+                run_case_sum = run_case_sum + bt - 1
+
+    print("")
+    mask_case_when_fix_case_type()
+    fh.close()
+
+
+def mask_case_when_fix_case_type():
+    global run_case_sum
+    if case_sum > 0 and len(input_case_type) > 0:
+        cur_case_name = caselist[case_sum]
+        if caselist["batch_times_%s" % cur_case_name] > 0:
+            mask = 1
+            type_key = "case_type_%s" % cur_case_name
+            if type_key in caselist:
+                case_types = caselist[type_key].split("+")
+                for case_type in input_case_type:
+                    for ct in case_types:
+                        if ct == case_type:
+                            mask = 0
+                            break
+                    if mask == 0:
+                        break
+            if mask:
+                run_case_sum = (
+                    run_case_sum - caselist["batch_times_%s" % cur_case_name]
+                )
+                caselist["batch_times_%s" % cur_case_name] = 0
+
+
+def gen_flist():
+    global flist_abs
+    flist_cfg_name = None
+    os.chdir(rsim_dir)
+    m = re.search(r"flist(\S*)\.f", str(cfg_info.get("FLIST", "")))
+    if m:
+        flist_cfg_name = "flist%s.cfg" % m.group(1)
+        print("The flist info is:")
+        print("------------------------------------------------------------------------------")
+        format_print("flist_cfg", flist_cfg_name)
+        print("------------------------------------------------------------------------------")
+    _system("%s %s" % (_tool_cmd("flistgen"), flist_cfg_name or ""))
+    flist_abs = os.path.join(rsim_dir, cfg_info["FLIST"])
+
+
+def link_file(link_dir):
+    os.chdir(link_dir)
+    if os.path.exists("log"):
+        _system("rm -rf log")
+    os.mkdir("log")
+
+    os.chdir(sim_dir)
+    _system(
+        "rm -rf %s/%s %s/Makefile %s/de %s/rc"
+        % (link_dir, cfg_info["FLIST"], link_dir, link_dir, link_dir)
+    )
+    try:
+        os.symlink(flist_abs, os.path.join(link_dir, cfg_info["FLIST"]))
+    except OSError as exc:
+        die(
+            "[python]can't link %s to %s/%s\n:%s"
+            % (flist_abs, link_dir, cfg_info["FLIST"], exc)
+        )
+    makefile = os.path.join(
+        os.environ["VERIFY_TOOL_PATH"], "template", "make", "Makefile"
+    )
+    try:
+        os.symlink(makefile, os.path.join(link_dir, "Makefile"))
+    except OSError as exc:
+        die(
+            "[python]can't link %s to %s/Makefile\n:%s"
+            % (makefile, link_dir, exc)
+        )
+    try:
+        os.symlink(os.path.join(rsim_dir, "de"), os.path.join(link_dir, "de"))
+    except OSError:
+        pass
+    try:
+        os.symlink(os.path.join(rsim_dir, "rc"), os.path.join(link_dir, "rc"))
+    except OSError:
+        pass
+    if os.path.exists(os.path.join(rsim_dir, "link_files")):
+        try:
+            os.symlink(
+                os.path.join(rsim_dir, "link_files"),
+                os.path.join(link_dir, "link_files"),
+            )
+        except OSError:
+            pass
+    if "LINK_FILES" in cfg_info:
+        if re.search(r".*\+.*", cfg_info["LINK_FILES"]):
+            die("[python]can't use + split LINK_FILES")
+        for my_link_file in cfg_info["LINK_FILES"].split(" "):
+            if not my_link_file:
+                continue
+            _system("rm -rf %s/%s" % (link_dir, my_link_file))
+            try:
+                os.symlink(
+                    os.path.join(rsim_dir, my_link_file),
+                    os.path.join(link_dir, my_link_file),
+                )
+            except OSError as exc:
+                die(
+                    "[python]can't link %s/%s to %s/%s\n:%s"
+                    % (rsim_dir, my_link_file, link_dir, my_link_file, exc)
+                )
+    if "VMEM_DIR" in cfg_info:
+        cfg_info["VMEM_DIR"] = os.path.join(rsim_dir, cfg_info["TEST_DIR"], "vmem")
+        _system("rm -rf %s/vmem" % link_dir)
+        try:
+            os.symlink(cfg_info["VMEM_DIR"], os.path.join(link_dir, "vmem"))
+        except OSError as exc:
+            die(
+                "[python]can't link %s to %s/vmem\n:%s"
+                % (cfg_info["VMEM_DIR"], link_dir, exc)
+            )
+
+
+def print_result_to_file(
+    input_re_run_times, case_seed, case_result, st_time, end_time, info
+):
+    cur_case_num, tmp_name, cur_loop, loop_times = info
+    delta_time = int(end_time - st_time)
+    minutes = int(delta_time / 60)
+    sec = delta_time % 60
+    re_run_times = int(cfg_info["RE_RUN_TIMES"]) - int(input_re_run_times)
+    line = "Tsim=%dm.%ds%-0s case%d [%s](%d/%d) seed=%-10d re_run_times=%d/%d: %s" % (
+        minutes,
+        sec,
+        "",
+        cur_case_num,
+        caselist[cur_case_num],
+        cur_loop,
+        loop_times,
+        int(case_seed),
+        re_run_times,
+        int(cfg_info["RE_RUN_TIMES"]),
+        case_result,
+    )
+    # Match original printf layout more closely
+    regression_log_fh.write(
+        "%-15s case%-0d [%-s](%0d/%0d) seed=%-10d re_run_times=%0d/%0d: %-0s"
+        % (
+            "Tsim=%dm.%ds" % (minutes, sec),
+            cur_case_num,
+            caselist[cur_case_num],
+            cur_loop,
+            loop_times,
+            int(case_seed),
+            re_run_times,
+            int(cfg_info["RE_RUN_TIMES"]),
+            case_result,
+        )
+    )
+    if minutes > 30:
+        regression_log_fh.write(" [Warning: runtime_too_long]\n")
+    else:
+        regression_log_fh.write("\n")
+    regression_log_fh.flush()
+
+
+def log_collection(tmp_dir, cur_case_num, cur_loop, loop_times):
+    cname = caselist[cur_case_num]
+    tag = "case%s_%s_%s_%s" % (cur_case_num, cname, cur_loop, loop_times)
+    if int(cfg_info.get("SAVE_RPT", 0)) == 1:
+        if os.path.exists(os.path.join(tmp_dir, "log")):
+            _system(
+                "cp -rf %s/log %s/%s_log" % (tmp_dir, batch_simrpt_dir, tag)
+            )
+    if os.path.exists(os.path.join(tmp_dir, "0")):
+        os.rename(
+            os.path.join(tmp_dir, "0"),
+            os.path.join(batch_simrpt_dir, "%s.sim.log" % tag),
+        )
+    if os.path.exists(os.path.join(tmp_dir, "compile.log")):
+        _system("cp -rf %s/log %s/%s_log" % (tmp_dir, batch_simrpt_dir, tag))
+        os.rename(
+            os.path.join(tmp_dir, "compile.log"),
+            os.path.join(batch_simrpt_dir, "%s.compile.log" % tag),
+        )
+    if os.path.exists(os.path.join(tmp_dir, "sim.log")):
+        os.rename(
+            os.path.join(tmp_dir, "sim.log"),
+            os.path.join(batch_simrpt_dir, "%s.sim.log" % tag),
+        )
+
+
+def re_run_check(make_cmd, case_seed, case_result, tmp_dir, info):
+    re_run_times = int(cfg_info["RE_RUN_TIMES"])
+    if re.search(r"\bCrash", str(case_result)):
+        if re_run_times > 0:
+            re_time = int(cfg_info["RE_RUN_TIMES"]) - re_run_times + 1
+            print_time(info, "RE-RUN(%s)" % re_time)
+            case_seed, case_result = exe_and_check(
+                make_cmd, case_seed, "fail", tmp_dir, info
+            )
+            re_run_times -= 1
+            # Preserve original recursive call shape
+            nested = re_run_check(make_cmd, case_seed, case_result, tmp_dir, info)
+            if isinstance(nested, tuple):
+                return nested
+            return nested
+        return case_result
+    return re_run_times, case_result
+
+
+def exe_and_check(make_cmd, case_seed, case_result, tmp_dir, info):
+    cur_case_num, tmp_name, cur_loop, loop_times = info
+    cur_case_name = caselist[cur_case_num]
+    flag = 0
+
+    if "performance_log_%s" % cur_case_name in caselist:
+        performance_log = caselist["performance_log_%s" % cur_case_name]
+    else:
+        performance_log = cfg_info["PERFORMANCE_LOG"]
+    performance_log = int(performance_log)
+
+    os.chdir(tmp_dir)
+    try:
+        run_fh = open(os.path.join(tmp_dir, "run"), "w")
+    except IOError as exc:
+        die("[python] cannot open %s/run\n:%s" % (tmp_dir, exc))
+    run_fh.write("%s" % make_cmd)
+    run_fh.close()
+
+    if cmd_name != "single":
+        vcs_result = _popen_lines(make_cmd)
+        for line in vcs_result:
+            m = re.match(r"^UVM_ERROR\s+.*(\d+):\s+[^0-9]+.*", line, re.I)
+            if m:
+                case_result = "fail(UVM_ERROR)"
+                break
+            m = re.match(r"^UVM_ERROR\s+.*:\s+(\d+)", line, re.I)
+            if m and int(m.group(1)) > 0:
+                case_result = "fail(UVM_ERROR)"
+                break
+            m = re.match(r"^UVM_FATAL\s+:\s+(\d+)", line, re.I)
+            if m and int(m.group(1)) > 0:
+                case_result = "fail(UVM_FATAL)"
+                break
+            if re.match(r"^Error", line):
+                case_result = "fail(VCS Error)"
+                break
+            if re.search(r"\bOffending", line):
+                case_result = "fail(Assert Error)"
+                break
+            if re.search(r"\bTiming violation", line):
+                case_result = "fail(Timing Violation)"
+                break
+            if re.search(r"\bTEST FAIL", line, re.I):
+                case_result = "fail(Test Fail)"
+                break
+            if re.search(r"\bDEAD", line):
+                case_result = "fail(Test Deadlock)"
+                break
+            if re.search(r"\bTEST PASS", line, re.I):
+                case_result = "pass"
+                break
+            if re.search(r"\bTEST_PASS", line, re.I):
+                case_result = "pass"
+                break
+            if re.search(r"\bStack trace", line, re.I):
+                case_result = "fail(VCS Crash)"
+                break
+            m = re.search(r"seed used:\s+(\d+)", line, re.I)
+            if m:
+                case_seed = int(m.group(1))
+            if re.search(r"PERFORMANCE_LOG.*", line):
+                if performance_log == 1:
+                    pfh = open(performance_log_abs, "a")
+                    pfh.write(line.rstrip("\n"))
+                    pfh.close()
+                    flag = 1
+    else:
+        _system(make_cmd)
+        if performance_log == 1:
+            try:
+                sim_fh = open(os.path.join(sim_dir, "sim.log"), "r")
+            except IOError as exc:
+                die("[python] cannot open %s/sim.log\n:%s" % (sim_dir, exc))
+            for line in sim_fh:
+                m = re.search(r"seed used:\s+(\d+)", line, re.I)
+                if m:
+                    case_seed = int(m.group(1))
+                if re.search(r"PERFORMANCE_LOG.*", line):
+                    pfh = open(performance_log_abs, "a")
+                    pfh.write(line.rstrip("\n"))
+                    pfh.close()
+                    flag = 1
+                    break
+            sim_fh.close()
+
+    if "SEED" in input_info:
+        case_seed = input_info["SEED"]
+    elif "seed_%s" % cur_case_name in caselist:
+        case_seed = caselist["seed_%s" % cur_case_name]
+
+    if performance_log == 1 and flag == 1:
+        st_sec, st_min, st_hour, st_day, st_mon, st_year = split_time()
+        pfh = open(performance_log_abs, "a")
+        pfh.write(
+            " %-60s %s %s\n"
+            % (
+                "case_name[%s]" % cur_case_name,
+                "seed[%s]" % case_seed,
+                "%s-%s-%s-%s-%s-%s"
+                % (st_year, st_mon, st_day, st_hour, st_min, st_sec),
+            )
+        )
+        pfh.close()
+
+    if "DPO" in input_info and int(input_info["DPO"]) == 1:
+        _system("dporg merge -d dpo_dbdir")
+        learn_dpo = os.path.join(rsim_dir, "..", "rsim", "learn_dpo")
+        if not os.path.exists(learn_dpo):
+            try:
+                os.mkdir(learn_dpo, 0o755)
+            except OSError as exc:
+                die("[python]Cannot make '%s' directiory\n:%s" % (learn_dpo, exc))
+        target = os.path.join(learn_dpo, cur_case_name)
+        if os.path.exists(target):
+            _system("rm -rf %s" % target)
+        _system("mv dpo_dbdir %s" % target)
+
+    return case_seed, case_result
+
+
+def print_time(info, flag):
+    cur_case_num, tmp_name, cur_loop, loop_times = info
+    st_sec, st_min, st_hour, st_day, st_mon, st_year = split_time()
+    now = time.time()
+    msg = (
+        "case%d [%s](%d/%d) in '%s' %s at (%d-%d-%d %d:%d:%d) \n"
+        % (
+            cur_case_num,
+            caselist[cur_case_num],
+            cur_loop,
+            loop_times,
+            tmp_name,
+            flag,
+            st_year,
+            st_mon,
+            st_day,
+            st_hour,
+            st_min,
+            st_sec,
+        )
+    )
+    sys.stdout.write(msg)
+    if run_log_fh is not None:
+        run_log_fh.write(msg)
+        run_log_fh.flush()
+    return now
+
+
+def case_pointer(total_case_num):
+    fh = open(sfh_abs, "a+")
+    try:
+        fcntl.flock(fh.fileno(), fcntl.LOCK_EX)
+    except IOError as exc:
+        die("can't lock SFH\n:%s" % exc)
+    fh.seek(0)
+    lines = fh.readlines()
+    last_line = lines[-1] if lines else None
+
+    if last_line is not None:
+        parts = last_line.strip().split(" ")
+        cur_case_num = int(parts[0])
+        cur_loop = int(parts[1])
+        loop_times = int(parts[2])
+        if cur_loop >= loop_times:
+            cur_loop = 1
+            cur_case_num += 1
+        else:
+            cur_loop += 1
+    else:
+        cur_case_num = 1
+        cur_loop = 1
+        loop_times = None
+
+    if cur_case_num <= total_case_num:
+        cur_case_name = caselist[cur_case_num]
+        loop_times = caselist["batch_times_%s" % cur_case_name]
+        fh.write("%s %s %s\n" % (cur_case_num, cur_loop, loop_times))
+        fh.flush()
+
+    fh.close()
+    return cur_case_num, cur_loop, loop_times
+
+
+def build_make_cmd(cur_case_num, cur_tmp_name, cur_loop):
+    cur_case_name = caselist[cur_case_num]
+    st_sec, st_min, st_hour, st_day, st_mon, st_year = split_time()
+
+    if cmd_name == "batch":
+        cmd_line = get_batch_cmd(cur_case_name, cur_tmp_name)
+    elif cmd_name == "recheck":
+        cmd_line = "make "
+    else:
+        cmd_line = get_single_cmd()
+
+    if "DPO" in input_info:
+        cmd_line += "DPO_MODE=%s " % input_info["DPO"]
+
+    cmd_line += "SIM_TESTNAME=%s " % caselist.get(
+        "uvm_tc_%s" % cur_case_name, ""
+    )
+
+    if not input_info.get("CHECK"):
+        cmd_line += "COV_DB_NAME=%s_%s_%s_%s_%s_%s_%s_%s " % (
+            cur_case_name,
+            cur_loop,
+            st_year,
+            st_mon,
+            st_day,
+            st_hour,
+            st_min,
+            st_sec,
+        )
+
+    for key in ("CPP_FLAG", "SYSC_FLAG", "GCC_FLAG", "C_STD_NUM"):
+        if key in cfg_info:
+            cmd_line += "%s=%s " % (key, cfg_info[key])
+
+    if "C_PROG_DIR" in cfg_info:
+        parts = []
+        for v in cfg_info["C_PROG_DIR"].split("+"):
+            if re.search(r"\S+", v):
+                parts.append(v)
+        cmd_line += 'C_PROG_DIR="%s" ' % " ".join(parts)
+
+    if "C_LIB_DIR" in cfg_info:
+        parts = []
+        for v in cfg_info["C_LIB_DIR"].split("+"):
+            if re.search(r"\S+", v):
+                parts.append('-LDFLAGS "-L%s"' % v)
+        cmd_line += 'C_LIB_DIR="%s" ' % " ".join(parts)
+
+    if "C_HEAD_DIR" in cfg_info:
+        parts = []
+        for v in cfg_info["C_HEAD_DIR"].split("+"):
+            if re.search(r"\S+", v):
+                parts.append('-CFLAGS "-I%s"' % v)
+        cmd_line += 'C_HEAD_DIR="%s" ' % " ".join(parts)
+
+    for key in ("FLOAT_GCC_FLAG", "JTAG_GCC_FLAG", "XPROP_FLAG"):
+        if key in cfg_info:
+            cmd_line += "%s=%s " % (key, cfg_info[key])
+
+    if "VCS_TB_DEFINES" in cfg_info:
+        cmd_line += "VCS_TB_DEFINES=+define%s " % cfg_info["VCS_TB_DEFINES"]
+    if "vcs_tb_defines_%s" % cur_case_name in caselist:
+        cmd_line += "VCS_TB_DEFINES+=+define%s " % caselist[
+            "vcs_tb_defines_%s" % cur_case_name
+        ]
+
+    if "VCS_TB_ARGS" in cfg_info:
+        for v in cfg_info["VCS_TB_ARGS"].split("+"):
+            if re.search(r"\w+", v):
+                cmd_line += "VCS_TB_ARGS+=+%s " % v
+
+    if "vcs_tb_args_%s" % cur_case_name in caselist:
+        for v in caselist["vcs_tb_args_%s" % cur_case_name].split("+"):
+            if re.search(r"\w+", v):
+                cmd_line += "VCS_TB_ARGS+=+%s " % v
+
+    if "SIM_FULL" in cfg_info:
+        cmd_line += 'SIM_FULL="%s" ' % cfg_info["SIM_FULL"]
+    if "sim_full_%s" % cur_case_name in caselist:
+        cmd_line += 'SIM_FULL+="%s" ' % caselist["sim_full_%s" % cur_case_name]
+    if "CMP_FULL" in cfg_info:
+        cmd_line += 'CMP_FULL="%s" ' % cfg_info["CMP_FULL"]
+    if "cmp_full_%s" % cur_case_name in caselist:
+        cmd_line += 'CMP_FULL+="%s" ' % caselist["cmp_full_%s" % cur_case_name]
+    if "INITREG" in cfg_info:
+        cmd_line += 'CMP_FULL+="+vcs+initreg+random" '
+        cmd_line += 'SIM_FULL+="+vcs+initreg+%s" ' % cfg_info["INITREG"]
+    if "INITMEM" in cfg_info:
+        cmd_line += 'CMP_FULL+="+vcs+initmem+random" '
+        cmd_line += 'SIM_FULL+="+vcs+initmem+%s" ' % cfg_info["INITMEM"]
+
+    if "SEED" in input_info:
+        cmd_line += "SEED=%s " % input_info["SEED"]
+    elif "seed_%s" % cur_case_name in caselist:
+        cmd_line += "SEED=%s " % caselist["seed_%s" % cur_case_name]
+
+    if cmd_name == "single":
+        cmd_line += "DEBUG=%s " % input_info["DEBUG"]
+        cmd_line += "GLITCH=%s " % input_info["GLITCH"]
+        if "PROFILE" in input_info:
+            cmd_line += "PROFILE=%s " % input_info["PROFILE"]
+        else:
+            cmd_line += "PROFILE=%s " % cfg_info["PROFILE"]
+        if "MULTI_DRV" in input_info:
+            cmd_line += "MULTI_DRV=%s " % input_info["MULTI_DRV"]
+        if "PARALLEL_NUM" in cfg_info:
+            cmd_line += "PARALLEL_NUM=%s " % cfg_info["PARALLEL_NUM"]
+
+    cmd_line += "FLIST=%s " % cfg_info["FLIST"]
+    for arg in cfg_info["TB_TOP"].split():
+        cmd_line += "TB_TOP+=%s " % arg
+
+    if "TIMESCALE" in cfg_info:
+        cmd_line += "VCS_TIMESCALE=%s " % cfg_info["TIMESCALE"]
+    if "UVM_ARGS" in cfg_info:
+        cmd_line += "UVM_ARGS=%s " % cfg_info["UVM_ARGS"]
+
+    if "VCS_LOG" in input_info:
+        cmd_line += "VCS_LOG=%s " % input_info["VCS_LOG"]
+    elif "VCS_LOG" in cfg_info:
+        cmd_line += "VCS_LOG=%s " % cfg_info["VCS_LOG"]
+    else:
+        cmd_line += "VCS_LOG=0 "
+
+    if "timing_mode_%s" % cur_case_name in caselist:
+        cmd_line += "TIMING_MODE=%s " % caselist["timing_mode_%s" % cur_case_name]
+    elif "TIMING_MODE" in cfg_info:
+        cmd_line += "TIMING_MODE=%s " % cfg_info["TIMING_MODE"]
+
+    if "COV" in input_info:
+        cmd_line += "COV=%s " % input_info["COV"]
+        my_cov = int(input_info["COV"])
+    else:
+        cmd_line += "COV=%s " % cfg_info["COV"]
+        my_cov = int(cfg_info["COV"])
+    if my_cov:
+        if "MASK_COV_NAME" in cfg_info:
+            cmd_line += "MASK_COV=1 "
+            cmd_line += "MASK_COV_NAME=%s " % cfg_info["MASK_COV_NAME"]
+
+    cmd_line += "WAVE=%s " % cfg_info["WAVE"]
+    if "UVM_VERBOSITY" in input_info:
+        cmd_line += "SIM_VERBOSITY=%s " % input_info["UVM_VERBOSITY"]
+    else:
+        cmd_line += "SIM_VERBOSITY=%s " % cfg_info["UVM_VERBOSITY"]
+
+    if input_info.get("CHECK"):
+        if run_log_fh is not None:
+            run_log_fh.write("%s\n" % cmd_line)
+            run_log_fh.flush()
+
+    return cmd_line
+
+
+def get_boot_file(cur_tmp_dir, cur_case_name):
+    fail = 0
+    key = "boot_file_%s" % cur_case_name
+    if key in caselist:
+        m = re.search(r"\S*\.(\S+)", caselist[key])
+        if m:
+            file_format = m.group(1)
+            _system(
+                "find %s/easyboot -name %s | awk -F '/[^/]*.$' '{ print $1 }' | uniq > %s"
+                % (
+                    cfg_info["INITIAL_FILE_DIR"],
+                    caselist[key],
+                    compile_list_abs,
+                )
+            )
+            try:
+                fh = open(compile_list_abs, "r")
+            except IOError:
+                if cmd_name == "single":
+                    die('[python]Missing file: "%s"' % compile_list_abs)
+                return 1
+            file_num = 0
+            save_path = None
+            for line in fh:
+                if file_num > 0:
+                    if cmd_name == "single":
+                        die(
+                            "[python]boot_file name[%s] is not alone.\nPlease check %s"
+                            % (caselist[key], compile_list_abs)
+                        )
+                    fail = 1
+                save_path = line.rstrip("\n")
+                file_num += 1
+            fh.close()
+            try:
+                open("%s/%s" % (save_path, caselist[key]), "r").close()
+                _system(
+                    "cp %s/%s %s/boot.%s"
+                    % (save_path, caselist[key], cur_tmp_dir, file_format)
+                )
+            except (IOError, TypeError):
+                if cmd_name == "single":
+                    die(
+                        "[python]ERROR:no such %s/%s!!!!!!!!!!!"
+                        % (save_path, caselist[key])
+                    )
+                fail = 1
+    return fail
+
+
+def get_system_file(cur_tmp_dir, cur_case_name):
+    fail = 0
+    key = "system_file_%s" % cur_case_name
+    if key in caselist:
+        m = re.search(r"\S*\.(\S+)", caselist[key])
+        if m:
+            file_format = m.group(1)
+            _system(
+                "find %s/sram -name %s | awk -F '/[^/]*.$' '{ print $1 }' | uniq > %s"
+                % (
+                    cfg_info["INITIAL_FILE_DIR"],
+                    caselist[key],
+                    compile_list_abs,
+                )
+            )
+            try:
+                fh = open(compile_list_abs, "r")
+            except IOError:
+                if cmd_name == "single":
+                    die('[python]Missing file: "%s"' % compile_list_abs)
+                return 1
+            file_num = 0
+            save_path = None
+            for line in fh:
+                if file_num > 0:
+                    if cmd_name == "single":
+                        die(
+                            "[python]system_file name[%s] is not alone.\nPlease check %s"
+                            % (caselist[key], compile_list_abs)
+                        )
+                    fail = 1
+                save_path = line.rstrip("\n")
+                file_num += 1
+            fh.close()
+            try:
+                open("%s/%s" % (save_path, caselist[key]), "r").close()
+                print("get %s" % caselist[key])
+                _system(
+                    "cp %s/%s %s/system.%s"
+                    % (save_path, caselist[key], cur_tmp_dir, file_format)
+                )
+            except (IOError, TypeError):
+                if cmd_name == "single":
+                    die(
+                        "[python]ERROR:no such %s/%s!!!!!!!!!!!"
+                        % (save_path, caselist[key])
+                    )
+                fail = 1
+    return fail
+
+
+def get_main_file(cur_tmp_dir, cur_case_name):
+    fail = 0
+    soft = caselist["soft_name_%s" % cur_case_name]
+    _system(
+        "find %s -name %s | awk -F '/[^/]*.$' '{ print $1 }' | uniq > %s"
+        % (cfg_info["VMEM_DIR"], soft, compile_list_abs)
+    )
+    try:
+        fh = open(compile_list_abs, "r")
+    except IOError:
+        if cmd_name == "single":
+            die('[python]Missing file: "%s"' % compile_list_abs)
+        return 1
+    file_num = 0
+    save_path = None
+    for line in fh:
+        if file_num > 0:
+            if cmd_name == "single":
+                die(
+                    "[python]soft_name[%s] is not alone.\nPlease check %s"
+                    % (soft, compile_list_abs)
+                )
+            fail = 1
+        save_path = line.rstrip("\n")
+        file_num += 1
+    fh.close()
+    try:
+        open("%s/%s" % (save_path, soft), "r").close()
+        print("get %s" % soft)
+        _system("cp %s/%s %s/main.bin" % (save_path, soft, cur_tmp_dir))
+    except (IOError, TypeError):
+        if cmd_name == "single":
+            die(
+                "[python]ERROR:no such %s/%s!!!!!!!!!!!" % (save_path, soft)
+            )
+        fail = 1
+    return fail
+
+
+def risc_soft_compile(cur_tmp_dir, cur_case_name):
+    fail = 0
+    soft = caselist["soft_name_%s" % cur_case_name]
+    _system("find %s -name %s > %s" % (case_dir, soft, compile_list_abs))
+    if not os.path.exists(compile_list_abs):
+        if cmd_name == "single":
+            die("[python]Missing file: %s" % compile_list_abs)
+        return 1
+    if os.path.getsize(compile_list_abs) == 0:
+        if cmd_name == "single":
+            die("[python]ERROR: NO SUCH CASE: %s" % soft)
+        return 1
+    compile_cnt = 0
+    fh = open(compile_list_abs, "r")
+    for line in fh:
+        compile_cnt += 1
+        if compile_cnt > 1:
+            if cmd_name == "single":
+                die(
+                    "[python]soft program name[%s] is not alone.\nPlease check %s and change one program_name before rerun"
+                    % (soft, compile_list_abs)
+                )
+            fail = 1
+        fail = build_risc_make_compile(line.rstrip("\n"), cur_tmp_dir, cur_case_name)
+    fh.close()
+    _system("rm %s" % compile_list_abs)
+    return fail
+
+
+def gen_risc_compile_cmd(save_path, cur_tmp_dir, cur_case_name):
+    global soft_case_name, soft_case_dir
+    soft = caselist["soft_name_%s" % cur_case_name]
+    m = re.match(r"(\S*)\.\S+", soft)
+    if m:
+        soft_case_name = m.group(1)
+    cmd_line = None
+    vmem_name = None
+    m = re.match(r"(.*)/(\w+)\.\S+\s*$", save_path)
+    if m:
+        soft_case_dir = m.group(1)
+        dir_name = None
+        dm = re.search(r"stest/(\w+)", soft_case_dir)
+        if dm:
+            dir_name = dm.group(1)
+        gcc_dir = str(cfg_info.get("GCC_DIR", ""))
+        addr_mode = caselist["addr_mode_%s" % cur_case_name]
+        if re.search(r".*xxx.*", gcc_dir):
+            if addr_mode == 1:
+                cmd_line = (
+                    "RISCV_PREFIX=riscv64-linux- make -C target_files -f %s/%s/stest/Makefile "
+                    "src_dir=%s/%s/stest home_dir=%s XLEN=64 %s-p-%s.vmem >> 1"
+                    % (
+                        rsim_dir,
+                        cfg_info["TEST_DIR"],
+                        rsim_dir,
+                        cfg_info["TEST_DIR"],
+                        gcc_dir,
+                        dir_name,
+                        soft_case_name,
+                    )
+                )
+            else:
+                cmd_line = (
+                    "RISCV_PREFIX=riscv64-linux- make -C target_files -f %s/%s/stest/Makefile "
+                    "src_dir=%s/%s/stest home_dir=%s XLEN=64 %s-v-%s.vmem >> 1"
+                    % (
+                        rsim_dir,
+                        cfg_info["TEST_DIR"],
+                        rsim_dir,
+                        cfg_info["TEST_DIR"],
+                        gcc_dir,
+                        dir_name,
+                        soft_case_name,
+                    )
+                )
+        else:
+            if addr_mode == 1:
+                cmd_line = (
+                    "make -C target_files -f %s/Makefile stest tests=%s-p-%s "
+                    "target_dir=%s/%s >> 1"
+                    % (
+                        gcc_dir,
+                        dir_name,
+                        soft_case_name,
+                        rsim_dir,
+                        cfg_info["TEST_DIR"],
+                    )
+                )
+            else:
+                cmd_line = (
+                    "make -C target_files -f %s/Makefile stest tests=%s-v-%s "
+                    "target_dir=%s/%s >> 1"
+                    % (
+                        gcc_dir,
+                        dir_name,
+                        soft_case_name,
+                        rsim_dir,
+                        cfg_info["TEST_DIR"],
+                    )
+                )
+        if addr_mode == 1:
+            vmem_name = "%s-p-%s.vmem" % (dir_name, soft_case_name)
+        else:
+            vmem_name = "%s-v-%s.vmem" % (dir_name, soft_case_name)
+
+    if input_info.get("CHECK") and run_log_fh is not None:
+        run_log_fh.write("%s\n" % cmd_line)
+        run_log_fh.flush()
+    return vmem_name, cmd_line
+
+
+def build_risc_make_compile(save_path, cur_tmp_dir, cur_case_name):
+    vmem_name, cmd_line = gen_risc_compile_cmd(save_path, cur_tmp_dir, cur_case_name)
+    fail = 0
+    if not input_info.get("CHECK"):
+        _system("rm -rf target_files")
+        try:
+            os.mkdir("target_files", 0o755)
+        except OSError:
+            pass
+        if not os.path.exists("target_files"):
+            if cmd_name == "single":
+                die("[python]Cannot make 'target_files' directiory")
+            fail = 1
+        gcc_dir = str(cfg_info.get("GCC_DIR", ""))
+        if not re.search(r".*xxx.*", gcc_dir):
+            _system(
+                "make -C target_files -f %s/Makefile %s >> 1"
+                % (gcc_dir, caselist["gcc_config_%s" % cur_case_name])
+            )
+        _system(cmd_line)
+        try:
+            open("target_files/stest/%s" % vmem_name, "r").close()
+        except IOError:
+            if cmd_name == "single":
+                die(
+                    "[python]ERROR: %s/%s compile fail !!!!!!!!!!!"
+                    % (soft_case_dir, caselist["soft_name_%s" % cur_case_name])
+                )
+            fail = 1
+        if not fail:
+            _system(
+                "cp ./target_files/stest/%s %s/test.vmem"
+                % (vmem_name, cur_tmp_dir)
+            )
+    return fail
+
+
+def get_compile_path(cur_tmp_dir, cur_case_name):
+    case_result = PASS
+    if str(caselist.get("random_mode_%s" % cur_case_name, 1)).find("0") >= 0:
+        if int(input_info.get("COMPILE_ONLY", 0)) == 0:
+            os.chdir(cur_tmp_dir)
+            fail = get_boot_file(cur_tmp_dir, cur_case_name)
+            if fail:
+                case_result = "fail(Miss boot file)"
+            else:
+                fail = get_system_file(cur_tmp_dir, cur_case_name)
+                if fail:
+                    case_result = "fail(Miss system file)"
+                else:
+                    soft = caselist["soft_name_%s" % cur_case_name]
+                    if re.search(r"\w+\.vmem", soft):
+                        tmp_log = os.path.join(cur_tmp_dir, "tmp.log")
+                        _system(
+                            "find %s  -name %s > %s"
+                            % (cfg_info["VMEM_DIR"], soft, tmp_log)
+                        )
+                        try:
+                            fh = open(tmp_log, "r")
+                        except IOError:
+                            if cmd_name == "single":
+                                die('[python]Missing file: "%s"' % tmp_log)
+                            return "fail(Miss file)"
+                        file_num = 0
+                        save_path = None
+                        for line in fh:
+                            if file_num > 0:
+                                if cmd_name == "single":
+                                    die(
+                                        "[python]soft_name[%s] is not alone.\nPlease check %s"
+                                        % (soft, tmp_log)
+                                    )
+                                case_result = "fail(%s is not alone)" % soft
+                            save_path = line.rstrip("\n")
+                            file_num += 1
+                        fh.close()
+                        if save_path and os.path.exists(save_path):
+                            _system(
+                                "cp %s %s/test.vmem" % (save_path, cur_tmp_dir)
+                            )
+                        else:
+                            if cmd_name == "single":
+                                die("[python]:can not find %s" % soft)
+                            case_result = "fail(Miss soft file)"
+                    elif re.search(r"\w+\.bin", soft):
+                        fail = get_main_file(cur_tmp_dir, cur_case_name)
+                        if fail:
+                            case_result = "fail(Miss soft file)"
+                    elif re.search(r"\w+\.\S+", soft):
+                        fail = risc_soft_compile(cur_tmp_dir, cur_case_name)
+                        if fail:
+                            case_result = "fail(program compile err)"
+    return case_result
+
+
+def summarize_report():
+    global fail_cnt, pass_cnt, err, regression_log_fh, run_log_fh
+    if regression_log_fh is not None:
+        regression_log_fh.close()
+        regression_log_fh = None
+    if run_log_fh is not None:
+        run_log_fh.close()
+        run_log_fh = None
+
+    try:
+        fh = open(log_abs, "r")
+    except IOError as exc:
+        die("[python] cannot open %s\n:%s" % (log_abs, exc))
+
+    result_list = {}
+    for line in fh:
+        m = re.search(r".*case(\d+)\s\[(\S+)\]\((\d+).(\d+)", line)
+        if m:
+            result_list["%s%s%s%s" % (m.group(1), m.group(2), m.group(3), m.group(4))] = (
+                line
+            )
+        else:
+            die("[python] cannot match case info in 'batch.log'")
+        m = re.search(r":\s(\S+)", line)
+        if m:
+            if re.search(r"\bfail\S*", m.group(1)):
+                fail_cnt += 1
+            elif m.group(1) == "pass":
+                pass_cnt += 1
+            else:
+                die("[python] cannot match pass/fail string in 'batch.log'")
+    fh.close()
+
+    keys = sorted(result_list.keys())
+    t = time_elapse()
+    try:
+        out = open(log_abs, "w")
+    except IOError as exc:
+        die("[python] cannot open %s\n:%s" % (log_abs, exc))
+    for k in keys:
+        out.write(result_list[k])
+
+    err = run_case_sum - pass_cnt - fail_cnt
+    out.write("\n-------------------------------------------\n")
+    out.write("\t\tSUMMURIZE REPORT\n")
+    out.write("-------------------------------------------\n")
+    out.write(
+        "Total : %s\nPass  : %s\nFail  : %s\nUnRun: %s\n"
+        % (run_case_sum, pass_cnt, fail_cnt, err)
+    )
+    out.write("Time elapse: %s:%s:%s\n" % (t[0], t[1], t[2]))
+    out.write("-------------------------------------------\n")
+    out.write("cmd: %s\n" % cmd)
+    out.write("-------------------------------------------\n")
+    print("-------------------------------------------")
+    print("\tRegression end!!!")
+    print("-------------------------------------------")
+    out.close()
+
+
+def summarize_report_to_screen():
+    t = time_elapse()
+    print("\n-------------------------------------------")
+    print("\t\tSUMMURIZE REPORT")
+    print("-------------------------------------------")
+    print(
+        "Total : %s\nPass  : %s\nFail  : %s\nUnRun: %s"
+        % (run_case_sum, pass_cnt, fail_cnt, err)
+    )
+    print("Time elapse: %s:%s:%s" % (t[0], t[1], t[2]))
+    print("-------------------------------------------")
+    print("CMD   : %s" % cmd)
+    print("-------------------------------------------")
+
+
+def time_elapse():
+    global batch_end_time
+    batch_end_time = time.time()
+    delta_time = int(batch_end_time - batch_start_time)
+    minutes = int(delta_time / 60)
+    sec = delta_time % 60
+    hor = int(minutes / 60)
+    minutes = minutes % 60
+    return (hor, minutes, sec)
+
+
+def coverage_report():
+    if "COV" in cfg_info and int(cfg_info["COV"]) == 1:
+        os.chdir(sim_dir)
+        print("-------------------------------------------")
+        print("\tCoverage report generate:")
+        print("-------------------------------------------")
+        vdb_dir_collection = ""
+        for dir_num in range(int(cfg_info["PROC"]) - 1, -1, -1):
+            tmp_name = "tmp%d" % dir_num
+            tmp_dir = os.path.join(sim_dir, tmp_name)
+            if os.path.exists(tmp_dir):
+                vdb_dir_collection += "%s/simv.vdb " % tmp_dir
+            else:
+                die("[python]Missing dir %s" % tmp_dir)
+        if vdb_dir_collection:
+            print(vdb_dir_collection)
+            print("")
+            if "MAP" in cfg_info:
+                _system(
+                    "urg -full64 -dir %s -dbname batch_cov.vdb -format text "
+                    "-report batch_cov_report.txt -map %s"
+                    % (vdb_dir_collection, cfg_info["MAP"])
+                )
+            else:
+                _system(
+                    "urg -full64 -dir %s -dbname batch_cov.vdb -format text "
+                    "-report batch_cov_report.txt" % vdb_dir_collection
+                )
+
+
+if __name__ == "__main__":
+    main()
