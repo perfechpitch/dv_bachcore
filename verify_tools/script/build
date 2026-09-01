@@ -7,6 +7,7 @@ from __future__ import print_function
 import os
 import re
 import shutil
+import subprocess
 import sys
 import time
 
@@ -99,6 +100,36 @@ def replace_pattern(src_file, dst_file, user_name, created_on):
 
     src_fh.close()
     dst_fh.close()
+
+
+def run_tbgen_sim_env(fe_flow_dir, class_name, user_name, tb_dir, tc_dir, bench_dir):
+    """Invoke tbgen batch mode to generate sim env UVM templates."""
+    tbgen_script = os.path.join(fe_flow_dir, "script", "tbgen")
+    if not os.path.isfile(tbgen_script):
+        die('[python] Missing tbgen script: "{}"'.format(tbgen_script))
+
+    cmd = [
+        sys.executable,
+        tbgen_script,
+        "--batch",
+        "-n",
+        class_name,
+        "-u",
+        user_name,
+        "--tb-dir",
+        tb_dir,
+        "--tc-dir",
+        tc_dir,
+        "--bench-dir",
+        bench_dir,
+    ]
+    print("[build] Running tbgen batch mode ...")
+    try:
+        ret = subprocess.call(cmd)
+    except OSError as exc:
+        die("[python] Failed to run tbgen: {}".format(exc))
+    if ret != 0:
+        die("[python] tbgen exited with status {}".format(ret))
 
 
 def copy_reset_uvc(src_dir, dst_dir, user_name):
@@ -221,9 +252,7 @@ def build_verify_env(env_type):
     print("Please enter directory name:")
     proj_name = sys.stdin.readline().rstrip("\n")
 
-    user_name = None
-    if env_type == "4":
-        user_name = prompt("Enter User Name:\n")
+    user_name = prompt("Enter User Name:\n")
 
     mkdir_or_die(BENCH_FLD)
     mkdir_or_die(SIM_FLD)
@@ -314,6 +343,15 @@ def build_verify_env(env_type):
     shutil.copy(src_batch_cfg_abs, dst_batch_cfg_abs)
     shutil.copy(src_rchk_cfg_abs, dst_rchk_cfg_abs)
     shutil.copy(src_run_cfg_abs, dst_run_cfg_abs)
+
+    run_tbgen_sim_env(
+        fe_flow_dir,
+        proj_name,
+        user_name,
+        tb_dir,
+        tc_dir,
+        bench_dir,
+    )
 
 
 def main():

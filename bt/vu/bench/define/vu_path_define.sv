@@ -1,0 +1,1 @@
+`define DUT_PATH vu_tb_top.u_DUT

@@ -1,0 +1,1 @@
++incdir+../uvm_tc/

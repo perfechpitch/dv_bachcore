@@ -1,0 +1,10 @@
++incdir+../uvm_tb/
++incdir+../uvm_tb/vseq/
++incdir+../uvm_tb/enum/
++incdir+../uvm_tb/scb/
++incdir+../uvm_tb/ref/
++incdir+../uvm_tb/mon/
+//+incdir+../uvm_tb/xxx_uvc/
+//+incdir+../uvm_tb/xxx_uvc/seq/
++incdir+../uvm_tb/reset_uvc/
++incdir+../uvm_tb/reset_uvc/seq/

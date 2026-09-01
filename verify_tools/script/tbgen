@@ -4,6 +4,7 @@
 
 from __future__ import print_function
 
+import argparse
 import os
 import re
 import shutil
@@ -20,6 +21,22 @@ def prompt(msg):
     sys.stdout.write(msg)
     sys.stdout.flush()
     return sys.stdin.readline().rstrip("\n")
+
+
+# Preset component aliases for simulation environment batch generation.
+SIM_ENV_ALIASES = {
+    "ref": "ref",
+    "case_cfg": "case_cfg",
+    "case_config": "case_cfg",
+    "vsqr": "vsqr",
+    "vsequencer": "vsqr",
+    "env": "env",
+    "environment": "env",
+    "vseq": "vseq",
+    "env_pkg": "env_pkg",
+    "tc_pkg": "tc_pkg",
+    "tb_top": "tb_top",
+}
 
 
 class TbGen(object):
@@ -59,7 +76,7 @@ class TbGen(object):
             "_reset_sequence.sv": os.path.join(src_spc_dir, "reset_sequence.sv"),
             "_scoreboard.sv": os.path.join(src_spc_dir, "scoreboard.sv"),
             "_vsequencer.sv": os.path.join(src_spc_dir, "vsequencer.sv"),
-            "_base_vsequence.sv": os.path.join(src_spc_dir, "base_vsequence.sv"),
+            "_base_vsequence.sv": os.path.join(src_spc_dir, "base_sequence.sv"),
             "_override_vsequence.sv": os.path.join(
                 src_spc_dir, "override_vsequence.sv"
             ),
@@ -104,10 +121,22 @@ class TbGen(object):
             "26": ("_env_pkg", "spc"),
         }
 
+        self.sim_env_default_components = [
+            "ref",
+            "case_cfg",
+            "vsqr",
+            "env",
+            "vseq",
+            "env_pkg",
+            "tc_pkg",
+            "tb_top",
+        ]
+
     def mode_select(self):
         print("1)Enter 1 to Create A UVC Enviroment")
         print("2)Enter 2 to Generate Individual Template")
-        mode_sel = prompt("Select [1-2]:")
+        print("3)Enter 3 to Generate Simulation Env Templates (batch)")
+        mode_sel = prompt("Select [1-3]:")
 
         if mode_sel == "1":
             self.generate_tb(mode_sel)
@@ -143,6 +172,15 @@ class TbGen(object):
             if comp_sel in self.comp_map:
                 suffix, _group = self.comp_map[comp_sel]
                 self.generate_tb(mode_sel, comp_sel, suffix)
+        elif mode_sel == "3":
+            class_name = prompt("Enter A Class Name:\n")
+            user_name = prompt("Enter User Name:\n")
+            tb_dir = prompt("Enter TB directory [uvm_tb]:\n") or "uvm_tb"
+            tc_dir = prompt("Enter TC directory [uvm_tc]:\n") or "uvm_tc"
+            bench_dir = prompt("Enter Bench directory [bench]:\n") or "bench"
+            self.generate_sim_env(
+                class_name, user_name, tb_dir, tc_dir, bench_dir=bench_dir
+            )
 
     def generate_tb(self, mode_sel, comp_sel=None, string=None):
         mode_sel = int(mode_sel)
@@ -205,6 +243,145 @@ class TbGen(object):
                     self.src_bch_abs, string, uvc_name, user_name, "bch"
                 )
 
+    def _normalize_components(self, components):
+        if not components:
+            return list(self.sim_env_default_components)
+
+        normalized = []
+        for item in components:
+            alias = SIM_ENV_ALIASES.get(item.strip().lower())
+            if not alias:
+                die(
+                    "[python] Unknown component '{}'. "
+                    "Valid: {}".format(
+                        item,
+                        ", ".join(sorted(set(SIM_ENV_ALIASES.values()))),
+                    )
+                )
+            if alias not in normalized:
+                normalized.append(alias)
+        return normalized
+
+    def _ensure_dir(self, path):
+        if not os.path.isdir(path):
+            try:
+                os.makedirs(path)
+            except OSError as exc:
+                die(
+                    "[python]Cannot make '{}' directory:{}".format(
+                        path, exc
+                    )
+                )
+
+    def generate_sim_env(
+        self,
+        class_name,
+        user_name,
+        tb_dir="uvm_tb",
+        tc_dir="uvm_tc",
+        bench_dir="bench",
+        components=None,
+    ):
+        """Batch-generate simulation env templates into build layout."""
+        selected = self._normalize_components(components)
+        generated = []
+
+        file_plan = []
+        if "ref" in selected:
+            file_plan.append(
+                (
+                    self.src_ref_abs["_ref.sv"],
+                    os.path.join(tb_dir, "ref", "{}_ref.sv".format(class_name)),
+                )
+            )
+        if "case_cfg" in selected:
+            file_plan.append(
+                (
+                    self.src_spc_abs["_case_config.sv"],
+                    os.path.join(tb_dir, "{}_case_config.sv".format(class_name)),
+                )
+            )
+        if "vsqr" in selected:
+            file_plan.append(
+                (
+                    self.src_spc_abs["_vsequencer.sv"],
+                    os.path.join(tb_dir, "{}_vsequencer.sv".format(class_name)),
+                )
+            )
+        if "env" in selected:
+            file_plan.append(
+                (
+                    self.src_spc_abs["_environment.sv"],
+                    os.path.join(tb_dir, "{}_environment.sv".format(class_name)),
+                )
+            )
+        if "vseq" in selected:
+            file_plan.extend(
+                [
+                    (
+                        self.src_spc_abs["_base_vsequence.sv"],
+                        os.path.join(
+                            tb_dir,
+                            "vseq",
+                            "{}_base_vsequence.sv".format(class_name),
+                        ),
+                    ),
+                    (
+                        self.src_spc_abs["_vsequence.sv"],
+                        os.path.join(
+                            tb_dir,
+                            "vseq",
+                            "{}_vsequence.sv".format(class_name),
+                        ),
+                    ),
+                ]
+            )
+        if "env_pkg" in selected:
+            file_plan.append(
+                (
+                    self.src_spc_abs["_env_pkg.sv"],
+                    os.path.join(tb_dir, "{}_env_pkg.sv".format(class_name)),
+                )
+            )
+        if "tc_pkg" in selected:
+            file_plan.extend(
+                [
+                    (
+                        self.src_tc_abs["_base_test.sv"],
+                        os.path.join(tc_dir, "{}_base_test.sv".format(class_name)),
+                    ),
+                    (
+                        self.src_tc_abs["_test.sv"],
+                        os.path.join(tc_dir, "{}_test.sv".format(class_name)),
+                    ),
+                    (
+                        self.src_tc_abs["_tc_pkg.sv"],
+                        os.path.join(tc_dir, "{}_tc_pkg.sv".format(class_name)),
+                    ),
+                ]
+            )
+        if "tb_top" in selected:
+            file_plan.append(
+                (
+                    self.src_bch_abs["_tb_top.sv"],
+                    os.path.join(bench_dir, "{}_tb_top.sv".format(class_name)),
+                )
+            )
+
+        for src_abs, dst_abs in file_plan:
+            self._ensure_dir(os.path.dirname(os.path.abspath(dst_abs)))
+            self.replace_pattern(src_abs, dst_abs, class_name, user_name)
+            generated.append(dst_abs)
+
+        print(
+            "[tbgen] Generated {} file(s) for '{}':".format(
+                len(generated), class_name
+            )
+        )
+        for path in generated:
+            print("  {}".format(path))
+        return generated
+
     def _gen_from_map(self, src_map, string, uvc_name, user_name, group):
         for key, src_abs in src_map.items():
             matched = False
@@ -262,7 +439,7 @@ class TbGen(object):
             die('[python] Missing file: "{}" '.format(src_file))
 
         try:
-            dst_fh = open(dst_file, "a")
+            dst_fh = open(dst_file, "w")
         except IOError:
             die('[python] Missing file: "{}" '.format(dst_file))
 
@@ -296,8 +473,79 @@ class TbGen(object):
         dst_fh.close()
 
 
+def parse_args(argv):
+    parser = argparse.ArgumentParser(
+        description="Generate UVM template files from VERIFY_TOOL_PATH templates."
+    )
+    parser.add_argument(
+        "--batch",
+        action="store_true",
+        help="Non-interactive batch mode (sim env preset by default).",
+    )
+    parser.add_argument(
+        "-n",
+        "--name",
+        dest="class_name",
+        help="Class / project name (required in batch mode).",
+    )
+    parser.add_argument(
+        "-u",
+        "--user",
+        dest="user_name",
+        help="Author name (required in batch mode).",
+    )
+    parser.add_argument(
+        "--tb-dir",
+        default="uvm_tb",
+        help="Target uvm_tb directory for batch mode [default: uvm_tb].",
+    )
+    parser.add_argument(
+        "--tc-dir",
+        default="uvm_tc",
+        help="Target uvm_tc directory for batch mode [default: uvm_tc].",
+    )
+    parser.add_argument(
+        "--bench-dir",
+        default="bench",
+        help="Target bench directory for batch mode [default: bench].",
+    )
+    parser.add_argument(
+        "-c",
+        "--components",
+        help=(
+            "Comma-separated components for batch mode: "
+            "ref,case_cfg,vsqr,env,vseq,env_pkg,tc_pkg,tb_top. "
+            "Default: all of the above."
+        ),
+    )
+    return parser.parse_args(argv)
+
+
 def main():
-    TbGen().mode_select()
+    args = parse_args(sys.argv[1:])
+    gen = TbGen()
+
+    if args.batch:
+        if not args.class_name or not args.user_name:
+            die("[python] Batch mode requires --name and --user.")
+        components = None
+        if args.components:
+            components = [c.strip() for c in args.components.split(",") if c.strip()]
+        gen.generate_sim_env(
+            args.class_name,
+            args.user_name,
+            tb_dir=args.tb_dir,
+            tc_dir=args.tc_dir,
+            bench_dir=args.bench_dir,
+            components=components,
+        )
+    elif len(sys.argv) > 1:
+        die(
+            "[python] Unknown arguments. Use --batch for non-interactive mode "
+            "or run without arguments for interactive mode."
+        )
+    else:
+        gen.mode_select()
 
 
 if __name__ == "__main__":
