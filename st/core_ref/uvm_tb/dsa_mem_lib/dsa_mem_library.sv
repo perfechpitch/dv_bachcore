@@ -6,6 +6,7 @@ class dsa_mem_library extends uvm_object;
     scale_mem #(MATRIX_SCALE_MEM_SIZE_KB, MATRIX_SCALE_MEM_BASE) matrix_scale;
 
     bit log_en;
+    int dsa_type;
 
     `uvm_object_utils(dsa_mem_library)
 
@@ -17,7 +18,12 @@ class dsa_mem_library extends uvm_object;
         matrix = new("matrix_mem", log_en);
         core_scale = new("core_scale_mem", log_en);
         matrix_scale = new("matrix_scale_mem", log_en);
+        dsa_type = 0;
     endfunction : new
+
+    function void set_type(int t);
+        dsa_type = t;
+    endfunction : set_type
 
     function void set_log(integer log_fd);
         core.set_log(log_fd);

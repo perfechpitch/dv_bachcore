@@ -11,3 +11,9 @@
 
 `M_RO_UPDATE_CSR_DECLARE(mcycle,   "riscv_mcycle",         "mcycle",         'hb00, RO, 32'h00000000, 32'hffffffff);
 `M_RO_UPDATE_CSR_DECLARE(minstret, "riscv_minstret",       "minstret",       'hb02, RO, 32'h00000000, 32'hffffffff);
+
+`M_RO_UPDATE_CSR_DECLARE(stream_id, "riscv_stream_id",     "stream_id",      'hfc0, RO, 32'h00000000, 32'h0000000f);
+`M_RO_UPDATE_CSR_DECLARE(task_id,   "riscv_task_id",       "task_id",        'hfc1, RO, 32'h00000000, 32'h0000003f);
+`M_EASY_CSR_DECLARE(user_id,        "riscv_user_id",       "user_id",        'h7c0, WR, 32'h00000000, 32'h0000ffff);
+`M_EASY_CSR_DECLARE(path_id,        "riscv_path_id",       "path_id",        'h7c1, WR, 32'h00000000, 32'h0000003f);
+`M_EASY_CSR_DECLARE(vc_id,          "riscv_vc_id",         "vc_id",          'h7c2, WR, 32'h00000000, 32'h00000003);

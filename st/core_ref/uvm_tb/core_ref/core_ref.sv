@@ -61,6 +61,7 @@ class core_reference extends uvm_component;
 
     extern virtual task reset_phase(uvm_phase phase);
     extern virtual function void set_core_id(int unsigned core_id);
+    extern virtual function void set_task_info(task_info_s task_info);
     extern virtual function void open_log();
     extern virtual function void ref_reset();
     extern virtual function void write_retire_in(inst_retire_structure retire_s);
@@ -69,6 +70,33 @@ class core_reference extends uvm_component;
     extern virtual function void do_retire_inst();
 
 endclass : core_reference
+
+function void core_reference::set_task_info(task_info_s task_info);
+    string dsa_name;
+
+    core_state.pc = task_info.start_pc;
+    csr_lib.stream_id.set_val(task_info.stream_id);
+    csr_lib.task_id.set_val(task_info.task_id);
+    csr_lib.user_id.set_val(task_info.user_id);
+    csr_lib.path_id.set_val(task_info.path_id);
+    csr_lib.vc_id.set_val(task_info.vc_id);
+    dsa_mmio_lib.set_type(task_info.dsa_type);
+    dsa_mem_lib.set_type(task_info.dsa_type);
+
+    case(task_info.dsa_type)
+        DSA_MMIO_VU:  dsa_name = "VU";
+        DSA_MMIO_MU:  dsa_name = "MU";
+        DSA_MMIO_DTE: dsa_name = "DTE";
+        default:      dsa_name = "UNKNOWN";
+    endcase
+
+    if(log_en && inst_exe_log)
+        $fwrite(inst_exe_log,
+            "[TASK_INFO] start_pc=%08h dsa=%s stream_id=%0d task_id=%0d user_id=%0d path_id=%0d vc_id=%0d\n",
+            task_info.start_pc, dsa_name, task_info.stream_id,
+            task_info.task_id, task_info.user_id, task_info.path_id,
+            task_info.vc_id);
+endfunction : set_task_info
 
 function void core_reference::set_core_id(int unsigned core_id);
     if(core_id_valid) begin
@@ -107,6 +135,7 @@ function void core_reference::open_log();
 
     inst_lib.inst_exe_log = inst_exe_log;
     vu_inst_lib.set_log(inst_exe_log);
+    dsa_mmio_lib.open_req_log();
 endfunction : open_log
 
 task core_reference::reset_phase(uvm_phase phase);

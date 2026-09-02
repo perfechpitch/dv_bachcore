@@ -20,6 +20,7 @@ package core_ref_pkg;
     // import  xxxx_pkg::*;
 
 `include "uvm_macros.svh"
+`include "core_ref_define.svh"
 `include "core_ref_config.sv"
 `include "core_ref.sv"
 // `include "core_ref_bk.sv"

@@ -13,9 +13,15 @@ class custom_inst_dsar extends riscv_inst;
     function void inst_exe(`INST_EXE_PARAS);
         bit [31:0] rs1_val;
         bit [31:0] rdata;
+        dsa_req_s req;
 
         rs1_val = `GPR(inst[19:15]);
         rdata = dsa_mmio_lib.read(rs1_val);
+        req = '{1'b0, rs1_val, 32'h0,
+            csr_lib.stream_id.val[3:0], csr_lib.task_id.val[5:0],
+            csr_lib.user_id.val[15:0], csr_lib.path_id.val[5:0],
+            csr_lib.vc_id.val[1:0]};
+        dsa_mmio_lib.trace_req(req);
 
         `GPR(inst[11:7]) = rdata;
 
@@ -48,10 +54,16 @@ class custom_inst_dsari extends riscv_inst;
         bit [15:0] imm;
         bit [31:0] addr;
         bit [31:0] rdata;
+        dsa_req_s req;
 
         imm = inst[30:15];
         addr = {16'b0, imm};
         rdata = dsa_mmio_lib.read(addr);
+        req = '{1'b0, addr, 32'h0,
+            csr_lib.stream_id.val[3:0], csr_lib.task_id.val[5:0],
+            csr_lib.user_id.val[15:0], csr_lib.path_id.val[5:0],
+            csr_lib.vc_id.val[1:0]};
+        dsa_mmio_lib.trace_req(req);
 
         `GPR(inst[11:7]) = rdata;
 

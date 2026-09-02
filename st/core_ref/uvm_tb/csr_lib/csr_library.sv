@@ -14,6 +14,11 @@ class csr_library extends uvm_object;
     `CSR_DECLARATION(  misa)
     `CSR_DECLARATION(  mcycle)
     `CSR_DECLARATION(  minstret)
+    `CSR_DECLARATION(  stream_id)
+    `CSR_DECLARATION(  task_id)
+    `CSR_DECLARATION(  user_id)
+    `CSR_DECLARATION(  path_id)
+    `CSR_DECLARATION(  vc_id)
 
     riscv_csr csr_queue[$];
     int csr_q_size;
@@ -36,6 +41,11 @@ class csr_library extends uvm_object;
         misa          = new();
         mcycle        = new();
         minstret      = new();
+        stream_id     = new();
+        task_id       = new();
+        user_id       = new();
+        path_id       = new();
+        vc_id         = new();
 
         csr_lib_log = 0;
     endfunction : new
@@ -62,6 +72,11 @@ class csr_library extends uvm_object;
         csr_queue.push_back(misa);
         csr_queue.push_back(mcycle);
         csr_queue.push_back(minstret);
+        csr_queue.push_back(stream_id);
+        csr_queue.push_back(task_id);
+        csr_queue.push_back(user_id);
+        csr_queue.push_back(path_id);
+        csr_queue.push_back(vc_id);
 
         csr_q_size = csr_queue.size();
 
@@ -82,6 +97,11 @@ class csr_library extends uvm_object;
         misa.reset_csr();
         mcycle.reset_csr();
         minstret.reset_csr();
+        stream_id.reset_csr();
+        task_id.reset_csr();
+        user_id.reset_csr();
+        path_id.reset_csr();
+        vc_id.reset_csr();
     endfunction : reset_csr
 
     function string csr_access(
