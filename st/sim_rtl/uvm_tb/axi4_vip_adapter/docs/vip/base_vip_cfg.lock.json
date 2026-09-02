@@ -1,0 +1,392 @@
+{
+  "version": 1, 
+  "sheet": "BASE_VIP_CFG", 
+  "fingerprint": "03f009dc0fb780250e6d2d91cba715e6bc288baedbbe9044ca2a9ae916b98c05", 
+  "rows": [
+    {
+      "section": "axi", 
+      "key": "protocol", 
+      "value": "AXI4", 
+      "type": "string", 
+      "description": "AXI protocol version. This environment supports AXI4."
+    }, 
+    {
+      "section": "axi", 
+      "key": "vip_path", 
+      "value": "tb/axi4", 
+      "type": "string", 
+      "description": "Compatible AXI VIP adapter source directory. Relative to project root; blank DUT value uses the base default."
+    }, 
+    {
+      "section": "axi", 
+      "key": "addr_width", 
+      "value": "32", 
+      "type": "int", 
+      "description": "Address channel width in bits."
+    }, 
+    {
+      "section": "axi", 
+      "key": "data_width", 
+      "value": "32", 
+      "type": "int", 
+      "description": "Read/write data width in bits; must be a multiple of 8."
+    }, 
+    {
+      "section": "axi", 
+      "key": "id_width", 
+      "value": "4", 
+      "type": "int", 
+      "description": "Transaction ID width in bits."
+    }, 
+    {
+      "section": "axi", 
+      "key": "len_width", 
+      "value": "8", 
+      "type": "int", 
+      "description": "Burst length field width in bits."
+    }, 
+    {
+      "section": "axi", 
+      "key": "size_width", 
+      "value": "3", 
+      "type": "int", 
+      "description": "Burst size field width in bits."
+    }, 
+    {
+      "section": "axi", 
+      "key": "burst_width", 
+      "value": "2", 
+      "type": "int", 
+      "description": "Burst type field width in bits."
+    }, 
+    {
+      "section": "axi", 
+      "key": "lock_width", 
+      "value": "1", 
+      "type": "int", 
+      "description": "Lock field width in bits."
+    }, 
+    {
+      "section": "axi", 
+      "key": "cache_width", 
+      "value": "4", 
+      "type": "int", 
+      "description": "Cache attribute field width in bits."
+    }, 
+    {
+      "section": "axi", 
+      "key": "prot_width", 
+      "value": "3", 
+      "type": "int", 
+      "description": "Protection attribute field width in bits."
+    }, 
+    {
+      "section": "axi", 
+      "key": "qos_width", 
+      "value": "4", 
+      "type": "int", 
+      "description": "QoS field width in bits."
+    }, 
+    {
+      "section": "axi", 
+      "key": "region_width", 
+      "value": "4", 
+      "type": "int", 
+      "description": "Region field width in bits."
+    }, 
+    {
+      "section": "axi", 
+      "key": "resp_width", 
+      "value": "2", 
+      "type": "int", 
+      "description": "Read/write response field width in bits."
+    }, 
+    {
+      "section": "axi", 
+      "key": "awuser_width", 
+      "value": "0", 
+      "type": "int", 
+      "description": "AWUSER width; 0 disables this user signal."
+    }, 
+    {
+      "section": "axi", 
+      "key": "aruser_width", 
+      "value": "0", 
+      "type": "int", 
+      "description": "ARUSER width; 0 disables this user signal."
+    }, 
+    {
+      "section": "axi", 
+      "key": "wuser_width", 
+      "value": "0", 
+      "type": "int", 
+      "description": "WUSER width; 0 disables this user signal."
+    }, 
+    {
+      "section": "axi", 
+      "key": "ruser_width", 
+      "value": "0", 
+      "type": "int", 
+      "description": "RUSER width; 0 disables this user signal."
+    }, 
+    {
+      "section": "axi", 
+      "key": "buser_width", 
+      "value": "0", 
+      "type": "int", 
+      "description": "BUSER width; 0 disables this user signal."
+    }, 
+    {
+      "section": "axi", 
+      "key": "default_id", 
+      "value": "0", 
+      "type": "int", 
+      "description": "Default transaction ID."
+    }, 
+    {
+      "section": "axi", 
+      "key": "default_strb", 
+      "value": "auto", 
+      "type": "string", 
+      "description": "Default write strobe; auto enables every byte lane."
+    }, 
+    {
+      "section": "axi", 
+      "key": "default_burst_type", 
+      "value": "INCR", 
+      "type": "string", 
+      "description": "Default burst type: FIXED, INCR, or WRAP."
+    }, 
+    {
+      "section": "axi", 
+      "key": "default_burst_len", 
+      "value": "1", 
+      "type": "int", 
+      "description": "Default number of beats per burst."
+    }, 
+    {
+      "section": "axi", 
+      "key": "default_lock", 
+      "value": "0", 
+      "type": "int", 
+      "description": "Default lock field value."
+    }, 
+    {
+      "section": "axi", 
+      "key": "default_cache", 
+      "value": "0x2", 
+      "type": "string", 
+      "description": "Default cache attribute value."
+    }, 
+    {
+      "section": "axi", 
+      "key": "default_prot", 
+      "value": "0x0", 
+      "type": "string", 
+      "description": "Default protection attribute value."
+    }, 
+    {
+      "section": "axi", 
+      "key": "default_qos", 
+      "value": "0x0", 
+      "type": "string", 
+      "description": "Default QoS value."
+    }, 
+    {
+      "section": "axi", 
+      "key": "default_region", 
+      "value": "0x0", 
+      "type": "string", 
+      "description": "Default region value."
+    }, 
+    {
+      "section": "axi", 
+      "key": "default_awuser", 
+      "value": "0x0", 
+      "type": "string", 
+      "description": "Default AWUSER value."
+    }, 
+    {
+      "section": "axi", 
+      "key": "default_aruser", 
+      "value": "0x0", 
+      "type": "string", 
+      "description": "Default ARUSER value."
+    }, 
+    {
+      "section": "axi", 
+      "key": "default_wuser", 
+      "value": "0x0", 
+      "type": "string", 
+      "description": "Default WUSER value."
+    }, 
+    {
+      "section": "axi", 
+      "key": "max_burst_len", 
+      "value": "1", 
+      "type": "int", 
+      "description": "Maximum supported burst length."
+    }, 
+    {
+      "section": "axi", 
+      "key": "max_outstanding_reads", 
+      "value": "1", 
+      "type": "int", 
+      "description": "Maximum simultaneous outstanding reads."
+    }, 
+    {
+      "section": "axi", 
+      "key": "max_outstanding_writes", 
+      "value": "1", 
+      "type": "int", 
+      "description": "Maximum simultaneous outstanding writes."
+    }, 
+    {
+      "section": "axi", 
+      "key": "read_timeout_cycles", 
+      "value": "1000", 
+      "type": "int", 
+      "description": "Read transaction timeout in clock cycles."
+    }, 
+    {
+      "section": "axi", 
+      "key": "write_timeout_cycles", 
+      "value": "1000", 
+      "type": "int", 
+      "description": "Write transaction timeout in clock cycles."
+    }, 
+    {
+      "section": "axi", 
+      "key": "ready_timeout_cycles", 
+      "value": "1000", 
+      "type": "int", 
+      "description": "READY/VALID handshake timeout in clock cycles."
+    }, 
+    {
+      "section": "support", 
+      "key": "exclusive_access", 
+      "value": "false", 
+      "type": "bool", 
+      "description": "Enable exclusive access capability."
+    }, 
+    {
+      "section": "support", 
+      "key": "locked_access", 
+      "value": "false", 
+      "type": "bool", 
+      "description": "Enable locked access capability."
+    }, 
+    {
+      "section": "support", 
+      "key": "narrow_burst", 
+      "value": "true", 
+      "type": "bool", 
+      "description": "Enable transfers narrower than the data bus."
+    }, 
+    {
+      "section": "support", 
+      "key": "unaligned_access", 
+      "value": "false", 
+      "type": "bool", 
+      "description": "Enable unaligned address transfers."
+    }, 
+    {
+      "section": "support", 
+      "key": "fixed_burst", 
+      "value": "true", 
+      "type": "bool", 
+      "description": "Enable FIXED burst transactions."
+    }, 
+    {
+      "section": "support", 
+      "key": "incrementing_burst", 
+      "value": "true", 
+      "type": "bool", 
+      "description": "Enable INCR burst transactions."
+    }, 
+    {
+      "section": "support", 
+      "key": "wrapping_burst", 
+      "value": "false", 
+      "type": "bool", 
+      "description": "Enable WRAP burst transactions."
+    }, 
+    {
+      "section": "support", 
+      "key": "byte_strobe", 
+      "value": "true", 
+      "type": "bool", 
+      "description": "Enable byte-lane write strobes."
+    }, 
+    {
+      "section": "checker", 
+      "key": "enable_protocol_checks", 
+      "value": "true", 
+      "type": "bool", 
+      "description": "Enable AXI protocol rule checks."
+    }, 
+    {
+      "section": "checker", 
+      "key": "enable_x_checks", 
+      "value": "true", 
+      "type": "bool", 
+      "description": "Enable X/Z value checks."
+    }, 
+    {
+      "section": "checker", 
+      "key": "enable_alignment_checks", 
+      "value": "true", 
+      "type": "bool", 
+      "description": "Enable address alignment checks."
+    }, 
+    {
+      "section": "checker", 
+      "key": "enable_strobe_checks", 
+      "value": "true", 
+      "type": "bool", 
+      "description": "Enable write-strobe legality checks."
+    }, 
+    {
+      "section": "checker", 
+      "key": "enable_response_checks", 
+      "value": "true", 
+      "type": "bool", 
+      "description": "Enable read/write response checks."
+    }, 
+    {
+      "section": "checker", 
+      "key": "enable_timeout_checks", 
+      "value": "true", 
+      "type": "bool", 
+      "description": "Enable transaction timeout checks."
+    }, 
+    {
+      "section": "coverage", 
+      "key": "enable_coverage", 
+      "value": "false", 
+      "type": "bool", 
+      "description": "Master switch for VIP functional coverage."
+    }, 
+    {
+      "section": "coverage", 
+      "key": "enable_transaction_coverage", 
+      "value": "false", 
+      "type": "bool", 
+      "description": "Enable transaction-level coverage."
+    }, 
+    {
+      "section": "coverage", 
+      "key": "enable_protocol_coverage", 
+      "value": "false", 
+      "type": "bool", 
+      "description": "Enable AXI protocol coverage."
+    }, 
+    {
+      "section": "coverage", 
+      "key": "enable_error_coverage", 
+      "value": "false", 
+      "type": "bool", 
+      "description": "Enable error-response coverage."
+    }
+  ]
+}

@@ -51,3 +51,19 @@ Thumbs.db
 *.tmp
 *.bak
 *.orig
+
+
+# ==============================================================================
+# Imported UVM component generated files
+# ==============================================================================
+
+# Local simulation/build output and historical installation snapshots.
+st/sim_rtl/uvm_tb/axi4_vip_adapter/work/
+st/sim_rtl/uvm_tb/axi4_vip_adapter/backup/
+st/sim_rtl/uvm_tb/memory_backdoor/work/
+
+# Transfer/editor artifacts that are not part of either component.
+._*
+.~lock.*#
+st/sim_rtl/uvm_tb/axi4_vip_adapter/1
+st/sim_rtl/uvm_tb/memory_backdoor/1
