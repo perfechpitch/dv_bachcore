@@ -3,7 +3,7 @@
 
 //`include "$(CLASSNAME)_enum_pkg.sv"
 //`include "xxx_pkg.sv"
-//`include "$(CLASSNAME)_ref_pkg.sv"
+`include "$(CLASSNAME)_ref_pkg.sv"
 //`include "$(CLASSNAME)_mon_pkg.sv"
 //`include "$(CLASSNAME)_scb_pkg.sv"
 //`include "reset_pkg.sv"
@@ -13,7 +13,7 @@ package $(CLASSNAME)_env_pkg;
     import  uvm_pkg::*;
     //import  $(CLASSNAME)_enum_pkg::*;
     //import  xxx_pkg::*;
-    //import  $(CLASSNAME)_ref_pkg::*;
+    import  $(CLASSNAME)_ref_pkg::*;
     //import  $(CLASSNAME)_scb_pkg::*;
     //import  reset_pkg::*;
     

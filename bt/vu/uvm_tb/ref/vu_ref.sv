@@ -36,6 +36,8 @@ class vu_reference extends uvm_component;
     // Transfer package
     //protected vu_seq_item  vu_q[$];
     //protected vu_seq_item  vu_tr;
+
+    my_block    regs;
     
     //function covergroup :(eg:outstanding/out-of-order)
     covergroup cov_trans;

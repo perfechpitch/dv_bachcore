@@ -1,4 +1,6 @@
 +incdir+../uvm_tb/
++incdir+../../../verify_tools/vip/register/
++incdir+../vu_reg_creater/
 +incdir+../uvm_tb/vseq/
 +incdir+../uvm_tb/enum/
 +incdir+../uvm_tb/scb/

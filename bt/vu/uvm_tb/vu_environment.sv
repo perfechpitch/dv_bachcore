@@ -9,30 +9,20 @@
 `ifndef VU_ENVIROMENT_SV
 `define VU_ENVIROMENT_SV
 class vu_environment extends uvm_env;
-    //
-    // Control properties
-    //
-    vu_case_config        vu_case_cfg;
+    vu_case_config      vu_case_cfg;
 
-    int                             config_log;
+    int                 config_log;
 
-    //
-    // UVC components of the environment
-    //
-    // reset_agent                 reset_agt;
+    vu_reg_creater      vu_reg;
+    reset_agent         reset_agt;
     // xxx_agent                   xxx_agt;
 
-    //
-    // System components like: system_monitor,virtual sequencer,
-    // scoreboard.
-    //
     // vu_monitor                  vu_mon;
     // vu_vsequencer               vu_vsqr;
 
     // vu_scoreboard               vu_scb;
-    // vu_reference                vu_ref;
+    vu_reference                vu_ref;
 
-    // Provide implementations of virtual methods such as get_type_name and create
     `uvm_component_utils_begin(vu_environment)
       `uvm_field_object(vu_case_cfg, UVM_DEFAULT)
     `uvm_component_utils_end
@@ -48,8 +38,9 @@ class vu_environment extends uvm_env;
         if(!uvm_config_db#(vu_case_config)::get(this, "", "vu_case_cfg", vu_case_cfg))
            `uvm_fatal("NOCFG",{"vu_case_cfg must be set for: ",get_full_name(),".vu_case_cfg"});
 
-        //reset_agt         = reset_agent::type_id::create("reset_agt", this);
-        //uvm_config_db#(reset_config)::set(this,"*","reset_cfg",vu_case_cfg.reset_cfg);
+        vu_reg          = vu_reg_creater::type_id::create("vu_reg_creater", this);
+        reset_agt       = reset_agent::type_id::create("reset_agt", this);
+        uvm_config_db#(reset_config)::set(this,"*","reset_cfg",vu_case_cfg.reset_cfg);
 
         //xxx_agt           = xxx_agent::type_id::create("xxx_agt", this);
         //uvm_config_db#(xxx_config)::set(this,"*","xxx_cfg",vu_case_cfg.xxx_cfg);
@@ -59,7 +50,7 @@ class vu_environment extends uvm_env;
 
         //vu_vsqr = vu_vsequencer::type_id::create("vu_vsqr",this);
         //vu_scb  = vu_scoreboard::type_id::create("vu_scb",this);
-        //vu_ref  = vu_reference::type_id::create("vu_ref",this);
+        vu_ref  = vu_reference::type_id::create("vu_ref",this);
 
         
         //usage 1
@@ -82,10 +73,6 @@ class vu_environment extends uvm_env;
     endfunction : build_phase
 
     function void connect_phase(uvm_phase phase);
-        //
-        // System connection.
-        // Connect agent analysis port to system monitor or scoreboard
-        // 
         // xxx_agt.xxx_mon.xxx_ap.connect(vu_ref.xxx_imp);
         // vr_agt[0].vr_mon.vr_ap.connect(vu_ref.vr_imp);
         // vr_agt[1].vr_mon.vr_ap.connect(vu_ref.vr_imp);
@@ -102,6 +89,7 @@ class vu_environment extends uvm_env;
         // vu_vsqr.xxx_sqr        = xxx_agt.xxx_sqr;
         // vu_vsqr.vr_sqr[0]      = vr_agt[0].vr_sqr;
         // vu_vsqr.vr_sqr[1]      = vr_agt[1].vr_sqr;
+        vu_ref.regs = vu_reg.m_my_block;
     endfunction : connect_phase
 
     function void start_of_simulation_phase(uvm_phase phase);

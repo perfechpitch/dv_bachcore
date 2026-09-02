@@ -36,6 +36,7 @@ SIM_ENV_ALIASES = {
     "env_pkg": "env_pkg",
     "tc_pkg": "tc_pkg",
     "tb_top": "tb_top",
+    "ref_pkg": "ref_pkg",
 }
 
 
@@ -53,6 +54,7 @@ class TbGen(object):
 
         self.src_ref_abs = {
             "_ref.sv": os.path.join(src_tb_dir, "ref.sv"),
+            "_ref_pkg.sv": os.path.join(src_tb_dir, "ref_pkg.sv"),
         }
         self.src_tb_abs = {
             "_agent.sv": os.path.join(src_tb_dir, "agent.sv"),
@@ -119,10 +121,12 @@ class TbGen(object):
             "24": ("_tb_top", "bch"),
             "25": ("_case_config", "spc"),
             "26": ("_env_pkg", "spc"),
+            "27": ("_ref_pkg", "ref"),
         }
 
         self.sim_env_default_components = [
             "ref",
+            "ref_pkg",
             "case_cfg",
             "vsqr",
             "env",
@@ -168,7 +172,8 @@ class TbGen(object):
             print("24) Tb top ")
             print("25) Case config")
             print("26) Env pkg")
-            comp_sel = prompt("Select[0-26]:")
+            print("27) Ref pkg")
+            comp_sel = prompt("Select[0-27]:")
             if comp_sel in self.comp_map:
                 suffix, _group = self.comp_map[comp_sel]
                 self.generate_tb(mode_sel, comp_sel, suffix)
@@ -222,7 +227,7 @@ class TbGen(object):
             print("{},{}".format(comp_sel, string))
 
             comp_sel = int(comp_sel)
-            if comp_sel == 0:
+            if comp_sel in (0, 27):
                 self._gen_from_map(
                     self.src_ref_abs, string, uvc_name, user_name, "ref"
                 )
@@ -292,6 +297,15 @@ class TbGen(object):
                 (
                     self.src_ref_abs["_ref.sv"],
                     os.path.join(tb_dir, "ref", "{}_ref.sv".format(class_name)),
+                )
+            )
+        if "ref_pkg" in selected:
+            file_plan.append(
+                (
+                    self.src_ref_abs["_ref_pkg.sv"],
+                    os.path.join(
+                        tb_dir, "ref", "{}_ref_pkg.sv".format(class_name)
+                    ),
                 )
             )
         if "case_cfg" in selected:
@@ -514,7 +528,7 @@ def parse_args(argv):
         "--components",
         help=(
             "Comma-separated components for batch mode: "
-            "ref,case_cfg,vsqr,env,vseq,env_pkg,tc_pkg,tb_top. "
+            "ref,case_cfg,vsqr,env,vseq,env_pkg,tc_pkg,tb_top,ref_pkg. "
             "Default: all of the above."
         ),
     )
