@@ -6,6 +6,7 @@ package core_ref_pkg;
     import inst_lib_pkg::*;
     import csr_lib_pkg::*;
     import mem_lib_pkg::*;
+    import dsa_mem_lib_pkg::*;
     import vu_inst_lib_pkg::*;
     import mu_inst_lib_pkg::*;
     import dte_inst_lib_pkg::*;

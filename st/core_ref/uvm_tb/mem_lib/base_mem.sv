@@ -58,6 +58,53 @@ class base_mem #(int MEM_SIZE_KB=4, bit [31:0] BASE_ADDR=32'h0) extends uvm_obje
         mem_data[offset+3] = data[31:24];
     endfunction : init_data
 
+    // Byte-addressable access for architectural transactions wider than a word.
+    function void read_block(
+        bit [31:0] addr,
+        int unsigned byte_num,
+        ref bit [7:0] data[]
+    );
+        int unsigned offset;
+
+        offset = addr - BASE_ADDR;
+        if(offset + byte_num > MEM_SIZE_BYTE) begin
+            data = new[0];
+            `uvm_error(get_type_name(), $sformatf(
+                "Block read out of range: addr=0x%08h bytes=%0d", addr, byte_num))
+            return;
+        end
+
+        data = new[byte_num];
+        foreach(data[i])
+            data[i] = mem_data[offset+i];
+
+        if(log_en && mem_log)
+            $fdisplay(mem_log,
+                "[MEM][%s]READ_BLOCK  addr=0x%08h bytes=%0d",
+                get_name(), addr, byte_num);
+    endfunction : read_block
+
+    function void write_block(bit [31:0] addr, bit [7:0] data[]);
+        int unsigned offset;
+
+        offset = addr - BASE_ADDR;
+        if(offset + data.size() > MEM_SIZE_BYTE) begin
+            `uvm_error(get_type_name(), $sformatf(
+                "Block write out of range: addr=0x%08h bytes=%0d",
+                addr, data.size()))
+            return;
+        end
+
+        foreach(data[i])
+            mem_data[offset+i] = data[i];
+
+        if(log_en && mem_log)
+            $fdisplay(mem_log,
+                "[MEM][%s]WRITE_BLOCK addr=0x%08h bytes=%0d",
+                get_name(), addr, data.size());
+    endfunction : write_block
+
+
     local function int unsigned get_byte_num(bit [1:0] size);
         case(size)
             2'd0: return 1;

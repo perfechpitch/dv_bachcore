@@ -12,6 +12,7 @@ class core_reference extends uvm_component;
     inst_library inst_lib;
     csr_library csr_lib;
     mem_library mem_lib;
+    dsa_mem_library dsa_mem_lib;
     dsa_mmio_library dsa_mmio_lib;
     vu_inst_library vu_inst_lib;
 
@@ -40,6 +41,7 @@ class core_reference extends uvm_component;
         inst_lib = new();
         csr_lib = new();
         mem_lib = new("mem_lib", log_en);
+        dsa_mem_lib = new("dsa_mem_lib", log_en);
         dsa_mmio_lib = new();
         vu_inst_lib = new();
 
@@ -117,6 +119,7 @@ task core_reference::reset_phase(uvm_phase phase);
 
     csr_lib.set_log(inst_exe_log);
     mem_lib.set_log(inst_exe_log);
+    dsa_mem_lib.set_log(inst_exe_log);
     dsa_mmio_lib.set_log(inst_exe_log);
 
     mem_lib.mem_lib_init();
