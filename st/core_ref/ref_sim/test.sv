@@ -18,6 +18,7 @@
 `include "public_typedef_pkg.sv"
 `include "csr_lib_pkg.sv"
 `include "mem_lib_pkg.sv"
+`include "dsa_mem_lib_pkg.sv"
 `include "dsa_mmio_lib_pkg.sv"
 `include "vu_inst_lib_pkg.sv"
 `include "mu_inst_lib_pkg.sv"
@@ -29,6 +30,7 @@ import uvm_pkg::*;
 import public_typedef_pkg::*;
 import csr_lib_pkg::*;
 import mem_lib_pkg::*;
+import dsa_mem_lib_pkg::*;
 import dsa_mmio_lib_pkg::*;
 //import vu_inst_lib_pkg::*;
 import inst_lib_pkg::*;
@@ -170,6 +172,8 @@ class test extends uvm_test;
                 core_ref.mem_lib.dtcm.init_data(addr, data);
             else if(addr inside {[SM_BASE_ADDR:SM_END_ADDR]})
                 sm.init_data(addr, data);
+            else if(core_ref.dsa_mem_lib.is_dsa_addr(addr))
+                ; // DSA regions are initialized by dsa_mem_library.
             else
                 `uvm_error(get_type_name(), $sformatf(
                     "Memory init address out of range: addr=0x%08h data=0x%08h",
@@ -182,8 +186,33 @@ class test extends uvm_test;
     endtask : load_mem_file
 
     task init_ref_memory();
-        foreach(mem_init_files[i])
+        bit [31:0] matrix_data;
+
+        foreach(mem_init_files[i]) begin
             load_mem_file(mem_init_files[i]);
+            core_ref.dsa_mem_lib.init({"src_file/", mem_init_files[i]});
+        end
+
+        matrix_data = core_ref.dsa_mem_lib.matrix.read_mem(
+            2'd2, MATRIX_MEM_BASE, 1'b0);
+        if(matrix_data == 32'h33333333)
+            $display("[DSA_MEM_INIT] MATRIX addr=%08h data=%08h PASS",
+                MATRIX_MEM_BASE, matrix_data);
+        else
+            `uvm_error(get_type_name(), $sformatf(
+                "[DSA_MEM_INIT] MATRIX addr=%08h data=%08h expected=33333333 FAIL",
+                MATRIX_MEM_BASE, matrix_data))
+
+        core_ref.dsa_mem_lib.core_scale.mem_data[0] = 8'ha5;
+        core_ref.dsa_mem_lib.matrix_scale.mem_data[0] = 8'h5a;
+        core_ref.dsa_mem_lib.core_scale.mem_data[0] = 8'h3c;
+        if(core_ref.dsa_mem_lib.matrix_scale.mem_data[0] == 8'h5a)
+            $display("[DSA_MEM_INIT] SCALE_STORAGE_INDEPENDENCE PASS");
+        else
+            `uvm_error(get_type_name(),
+                "[DSA_MEM_INIT] SCALE_STORAGE_INDEPENDENCE FAIL")
+
+        $display("[DSA_MEM_INIT] CORE/CORE_SCALE/MATRIX_SCALE readback skipped: global base address is TODO");
     endtask : init_ref_memory
 
     // Direct-test-only instruction peek.

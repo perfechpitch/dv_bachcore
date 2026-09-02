@@ -7,6 +7,7 @@
 +incdir+../uvm_tb/dte_inst_lib/
 +incdir+../uvm_tb/mu_inst_lib/
 +incdir+../uvm_tb/mem_lib/
++incdir+../uvm_tb/dsa_mem_lib/
 +incdir+../uvm_tb/public_typedef_pkg/
 +incdir+../uvm_tb/core_ref/
 ../uvm_tb/vu_inst_lib/dpi/vu_math.c
