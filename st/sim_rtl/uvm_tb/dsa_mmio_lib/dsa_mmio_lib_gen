@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+
+python3 "$SCRIPT_DIR/tools/gen_dsa_mmio.py" \
+    "$SCRIPT_DIR/mmio_desc/vu_mmio.json"
+
+python3 "$SCRIPT_DIR/tools/gen_dsa_mmio.py" \
+    "$SCRIPT_DIR/mmio_desc/mu_mmio.json"
+
+python3 "$SCRIPT_DIR/tools/gen_dsa_mmio.py" \
+    "$SCRIPT_DIR/mmio_desc/dte_mmio.json"

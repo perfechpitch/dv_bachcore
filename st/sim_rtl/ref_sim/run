@@ -1,0 +1,10 @@
+vcs -sverilog -full64 \
+    -ntb_opts uvm-1.2 \
+    -top test_top \
+    -f tb.f \
+    -o ./simv \
+    -timescale=1ps/1ps \
+    +define+BYPASS_DUT \
+    -l com.log
+
+./simv +UVM_TESTNAME=test +UVM_VERBOSITY=UVM_MEDIUM +dump +ntb_random_seed_automatic +UVM_NO_RELNOTES -l sim.log

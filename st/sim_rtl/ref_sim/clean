@@ -1,0 +1,3 @@
+rm simv* csrc vc_* *.log -rf
+rm log -rf
+rm ucli.key -rf

@@ -1,0 +1,233 @@
+{
+  "dsa": "vu",
+  "exec_config": {
+    "index_register": "MACRO_INST_TRIGGER",
+    "index_field": "CONFIG_IDX",
+    "mask_register": "MACRO_INST_TRIGGER",
+    "mask_field": "STATIC_DYNAMIC_MASK"
+  },
+  "state_arrays": [
+    {
+      "name": "VRF",
+      "count": 512,
+      "width": 1024,
+      "reset": 0
+    },
+    {
+      "name": "MRF",
+      "count": 512,
+      "width": 64,
+      "reset": 0
+    },
+    {
+      "name": "SRF",
+      "count": 64,
+      "width": 32,
+      "reset": 0
+    }
+  ],
+  "internal_states": [
+    {
+      "name": "LU_BYPASS",
+      "width": 1024,
+      "reset": 0
+    },
+    {
+      "name": "VALU0_BYPASS",
+      "width": 1024,
+      "reset": 0
+    },
+    {
+      "name": "VALU1_BYPASS",
+      "width": 1024,
+      "reset": 0
+    },
+    {
+      "name": "VALU2_BYPASS",
+      "width": 1024,
+      "reset": 0
+    },
+    {
+      "name": "VSFU0_BYPASS",
+      "width": 1024,
+      "reset": 0
+    },
+    {
+      "name": "VSFU1_BYPASS",
+      "width": 1024,
+      "reset": 0
+    }
+  ],
+  "custom_windows": [
+    {
+      "name": "REG_FILE_DATA",
+      "addr": "0x00002004"
+    }
+  ],
+  "registers": [
+    {
+      "name": "MACRO_INST_TRIGGER",
+      "addr": "0x00000000",
+      "reset": "0x00000000",
+      "trigger": true,
+      "fields": [
+        {"name": "STATIC_DYNAMIC_MASK", "msb": 7, "lsb": 0, "access": "RW"},
+        {"name": "CONFIG_IDX", "msb": 10, "lsb": 8, "access": "RW"},
+        {"name": "EVENT_EN", "msb": 16, "lsb": 16, "access": "RW"},
+        {"name": "STREAM_ID_OVERRIDE", "msb": 17, "lsb": 17, "access": "RW"},
+        {"name": "STREAM_ID", "msb": 21, "lsb": 18, "access": "RW"},
+        {"name": "MACRO_INST_FENCE", "msb": 24, "lsb": 24, "access": "RW"},
+        {"name": "DATA_BROADCAST", "msb": 25, "lsb": 25, "access": "RW"}
+      ]
+    },
+    {
+      "name": "TYPE_VL",
+      "addr": "0x00000004",
+      "reset": "0x00000000",
+      "fields": [
+        {"name": "VL", "msb": 15, "lsb": 0, "access": "RW"},
+        {"name": "DATA_TYPE", "msb": 16, "lsb": 16, "access": "RW"},
+        {"name": "ROUND_MODE", "msb": 19, "lsb": 17, "access": "RW"}
+      ]
+    },
+    {
+      "name": "VRF_RD_INDEX",
+      "addr": "0x00000010",
+      "reset": "0x00000000",
+      "fields": [
+        {"name": "VRF_RD_P0_IDX", "msb": 15, "lsb": 0, "access": "RW"},
+        {"name": "VRF_RD_P1_IDX", "msb": 31, "lsb": 16, "access": "RW"}
+      ]
+    },
+    {
+      "name": "VRF_WT_INDEX",
+      "addr": "0x00000014",
+      "reset": "0x00000000",
+      "fields": [
+        {"name": "VRF_WT_P0_IDX", "msb": 15, "lsb": 0, "access": "RW"},
+        {"name": "VRF_WT_P1_IDX", "msb": 31, "lsb": 16, "access": "RW"}
+      ]
+    },
+    {
+      "name": "VALU0_OP",
+      "addr": "0x00001008",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {"name": "OPCODE", "msb": 7, "lsb": 0, "access": "RW"},
+        {"name": "SRC1_SEL", "msb": 15, "lsb": 8, "access": "RW"},
+        {"name": "SRC2_SEL", "msb": 23, "lsb": 16, "access": "RW"},
+        {"name": "SRC3_SEL", "msb": 31, "lsb": 24, "access": "RW"}
+      ]
+    },
+    {
+      "name": "VALU1_OP",
+      "addr": "0x0000100C",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {"name": "OPCODE", "msb": 7, "lsb": 0, "access": "RW"},
+        {"name": "SRC1_SEL", "msb": 15, "lsb": 8, "access": "RW"},
+        {"name": "SRC2_SEL", "msb": 23, "lsb": 16, "access": "RW"},
+        {"name": "SRC3_SEL", "msb": 31, "lsb": 24, "access": "RW"}
+      ]
+    },
+    {
+      "name": "VALU2_OP",
+      "addr": "0x00001010",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {"name": "OPCODE", "msb": 7, "lsb": 0, "access": "RW"},
+        {"name": "SRC1_SEL", "msb": 15, "lsb": 8, "access": "RW"},
+        {"name": "SRC2_SEL", "msb": 23, "lsb": 16, "access": "RW"},
+        {"name": "SRC3_SEL", "msb": 31, "lsb": 24, "access": "RW"}
+      ]
+    },
+    {
+      "name": "PRF_OP",
+      "addr": "0x0000102C",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {"name": "VRF_WT_P0_SRC", "msb": 7, "lsb": 0, "access": "RW"},
+        {"name": "VRF_WT_P1_SRC", "msb": 15, "lsb": 8, "access": "RW"},
+        {"name": "MRF_WT_SRC", "msb": 23, "lsb": 16, "access": "RW"},
+        {"name": "SRF_WT_EN", "msb": 31, "lsb": 24, "access": "RW"}
+      ]
+    },
+    {
+      "name": "STATIC_TYPE_VL",
+      "addr": "0x00001030",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {"name": "VL", "msb": 15, "lsb": 0, "access": "RW"},
+        {"name": "DATA_TYPE", "msb": 16, "lsb": 16, "access": "RW"},
+        {"name": "ROUND_MODE", "msb": 19, "lsb": 17, "access": "RW"}
+      ]
+    },
+    {
+      "name": "STATIC_VRF_RD_INDEX",
+      "addr": "0x0000103C",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {"name": "VRF_RD_P0_IDX", "msb": 15, "lsb": 0, "access": "RW"},
+        {"name": "VRF_RD_P1_IDX", "msb": 31, "lsb": 16, "access": "RW"}
+      ]
+    },
+    {
+      "name": "STATIC_VRF_WT_INDEX",
+      "addr": "0x00001040",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {"name": "VRF_WT_P0_IDX", "msb": 15, "lsb": 0, "access": "RW"},
+        {"name": "VRF_WT_P1_IDX", "msb": 31, "lsb": 16, "access": "RW"}
+      ]
+    },
+    {
+      "name": "REG_FILE_ADDR",
+      "addr": "0x00002000",
+      "reset": "0x00000000",
+      "fields": [
+        {"name": "RF_ADDR", "msb": 15, "lsb": 0, "access": "RW"},
+        {"name": "RF_SEL", "msb": 17, "lsb": 16, "access": "RW"}
+      ]
+    }
+  ],
+  "param_groups": [
+    {
+      "name": "TYPE_VL",
+      "mask_bit": 0,
+      "dynamic": "TYPE_VL",
+      "static": "STATIC_TYPE_VL"
+    },
+    {
+      "name": "VRF_RD_INDEX",
+      "mask_bit": 3,
+      "dynamic": "VRF_RD_INDEX",
+      "static": "STATIC_VRF_RD_INDEX"
+    },
+    {
+      "name": "VRF_WT_INDEX",
+      "mask_bit": 4,
+      "dynamic": "VRF_WT_INDEX",
+      "static": "STATIC_VRF_WT_INDEX"
+    }
+  ],
+  "static_params": [
+    {"name": "VALU0_OP", "register": "VALU0_OP"},
+    {"name": "VALU1_OP", "register": "VALU1_OP"},
+    {"name": "VALU2_OP", "register": "VALU2_OP"},
+    {"name": "PRF_OP", "register": "PRF_OP"}
+  ]
+}
