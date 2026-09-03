@@ -49,6 +49,9 @@ typedef struct {
     field_attr_e  attr;
 } field_info_s;
 
+typedef class my_reg;
+typedef class my_field;
+
 class my_block extends uvm_component;
     `uvm_component_utils(my_block)
     
@@ -56,7 +59,11 @@ class my_block extends uvm_component;
     int             map[int];
     int             name_map[string];
     int             size_q[$];
+    // Canonical field keys use "<register>.<field>" so fields with the same
+    // name in different registers cannot overwrite each other.
     field_info_s    field_map[string];
+    string          field_alias_map[string];
+    bit             ambiguous_field_name[string];
     
     reg_history_s   history[$];
 
@@ -86,7 +93,8 @@ class my_block extends uvm_component;
 
         map[addr]      = id;
         name_map[name] = addr;
-        regs.push_back(new(name)); 
+        regs.push_back(null);
+        regs[id] = new(name, this);
     
         regs[id].addr         = addr;
         regs[id].name         = name;
@@ -99,40 +107,85 @@ class my_block extends uvm_component;
     endfunction
 
     function void create_field(int addr, string name, int start_bit, int end_bit, field_attr_e field_attr);
+        int id;
+        int current_num;
+        string field_key;
+        field_info_s info;
+
         if (map.exists(addr)) begin
-            int id = map[addr];
-            int current_num = regs[id].field.size(); 
+            id = map[addr];
+            current_num = regs[id].field.size();
+            field_key = {regs[id].name, ".", name};
             regs[id].add_field(current_num, name, start_bit, end_bit, field_attr);
-            begin
-                field_info_s info;
-                info.reg_id    = id; 
-                info.field_idx = current_num;
-                info.attr      = field_attr;
-                field_map[name] = info; 
+
+            info.reg_id    = id;
+            info.field_idx = current_num;
+            info.attr      = field_attr;
+            field_map[field_key] = info;
+
+            // Keep the legacy bare-name lookup only while it is unambiguous.
+            if (!field_alias_map.exists(name) && !ambiguous_field_name.exists(name)) begin
+                field_alias_map[name] = field_key;
+            end else if (field_alias_map.exists(name) && field_alias_map[name] != field_key) begin
+                field_alias_map.delete(name);
+                ambiguous_field_name[name] = 1'b1;
             end
         end else begin
             `uvm_error("ADD_FIELD_ADDR_ERR", $sformatf("Register address ['h%0h] does not exist for field '%s'!", addr, name))
         end
     endfunction
 
+    // 将外部字段引用解析为唯一的 "<寄存器名>.<字段名>" 规范键和字段位置。
+    // 限定名可直接解析；为了兼容旧接口，裸字段名仅在全局唯一时允许使用。
+    // 字段名存在歧义或不存在时，通过 error_id 报错并返回 0，调用者必须终止
+    // 当前读、写或 link 操作。成功时，field_key 返回规范键，field_info 返回
+    // 对应的 reg_id 和 field_idx。
+    function bit resolve_field_ref(string field_ref,
+                                   string error_id,
+                                   string usage,
+                                   output string field_key,
+                                   output field_info_s field_info);
+        if (field_map.exists(field_ref)) begin
+            field_key = field_ref;
+            field_info = field_map[field_key];
+            return 1;
+        end
+
+        if (field_alias_map.exists(field_ref)) begin
+            field_key = field_alias_map[field_ref];
+            field_info = field_map[field_key];
+            return 1;
+        end
+
+        if (ambiguous_field_name.exists(field_ref)) begin
+            `uvm_error(error_id, $sformatf("%s field reference '%s' is ambiguous; use '<register>.%s'.", usage, field_ref, field_ref))
+        end else begin
+            `uvm_error(error_id, $sformatf("%s field '%s' does not exist!", usage, field_ref))
+        end
+        return 0;
+    endfunction
+
     function void add_link_field(string name, string link_name, int trigger_data, int link_data); 
         link_info_s info;
-        if (!field_map.exists(name)) begin
-            `uvm_error("ADD_LINK_TRIGGER_ERR", $sformatf("Trigger field '%s' does not exist!", name))
+        field_info_s trigger_field_info;
+        field_info_s target_field_info;
+        string trigger_field_key;
+        string target_field_key;
+
+        if (!resolve_field_ref(name, "ADD_LINK_TRIGGER_ERR", "Trigger",
+                               trigger_field_key, trigger_field_info)) begin
             return;
         end
-        if (!field_map.exists(link_name)) begin
-            `uvm_error("ADD_LINK_TARGET_ERR", $sformatf("Link field '%s' does not exist!", link_name))
+        if (!resolve_field_ref(link_name, "ADD_LINK_TARGET_ERR", "Target",
+                               target_field_key, target_field_info)) begin
             return;
         end
-        int reg_id         = field_map[name].reg_id;
-        int field_idx      = field_map[name].field_idx;
-        info.field_idx     = field_idx;
-        info.trigger_fname = name;
-        info.link_fname    = link_name;
+        info.field_idx     = trigger_field_info.field_idx;
+        info.trigger_fname = trigger_field_key;
+        info.link_fname    = target_field_key;
         info.trigger_data  = trigger_data;
         info.link_data     = link_data;
-        regs[reg_id].link_field.push_back(info);
+        regs[trigger_field_info.reg_id].link_field.push_back(info);
     endfunction
     
     function void write_link_field(int addr, int wdata);
@@ -149,7 +202,7 @@ class my_block extends uvm_component;
 
     function void rst_reg();
         for(int i=0; i<regs.size(); i++) begin
-            if(regs.exists(i)) begin
+            if(regs[i] != null) begin
                 regs[i].rst_reg();
             end else begin
                 //`uvm_error("",$sformatf("\nreg[%0p] is null",addr_e));
@@ -197,15 +250,19 @@ class my_block extends uvm_component;
     endfunction
 
     // 硬件读 指定域段 
-    function int hw_read_field(string fname);
-        if (field_map.exists(fname)) begin
-            int id  = field_map[fname].reg_id; 
-            int idx = field_map[fname].field_idx; 
-            return regs[id].hw_read(idx);  // 干净的 O(1) 调用
-        end else begin
-            `uvm_error("HW_READ_FIELD_NOT_FOUND", $sformatf("Field '%s' not mapped!", fname))
+    function int hw_read_field(string field_ref);
+        int id;
+        int idx;
+        string field_key;
+        field_info_s field_info;
+
+        if (!resolve_field_ref(field_ref, "HW_READ_FIELD_NOT_FOUND", "Hardware read",
+                               field_key, field_info)) begin
             return 0;
         end
+        id = field_info.reg_id;
+        idx = field_info.field_idx;
+        return regs[id].hw_read(idx);  // 干净的 O(1) 调用
     endfunction
 
     // 硬件写整个reg
@@ -219,25 +276,32 @@ class my_block extends uvm_component;
     endfunction
 
     // 硬件写 指定域段 
-    function void hw_write_field(string fname, int data);
-        if (field_map.exists(fname)) begin
-            int id  = field_map[fname].reg_id; 
-            int idx = field_map[fname].field_idx; 
-            regs[id].hw_write(idx, data);
-        end else begin
-            `uvm_error("HW_WRITE_FIELD_NOT_FOUND", $sformatf("Field '%s' not mapped!", fname))
+    function void hw_write_field(string field_ref, int data);
+        int id;
+        int idx;
+        string field_key;
+        field_info_s field_info;
+
+        if (!resolve_field_ref(field_ref, "HW_WRITE_FIELD_NOT_FOUND", "Hardware write",
+                               field_key, field_info)) begin
+            return;
         end
+        id = field_info.reg_id;
+        idx = field_info.field_idx;
+        regs[id].hw_write(idx, data);
     endfunction
 
     //后门读
     function int backdoor_read_reg(string name);
         int rdata = 0;
+        int addr;
+        int id;
         if (!name_map.exists(name)) begin
             `uvm_error("BD_READ_REG_NOT_FOUND", $sformatf("Register '%s' not mapped for backdoor read!", name))
             return 0;
         end
-        int addr = name_map[name];
-        int id = map[addr];
+        addr = name_map[name];
+        id = map[addr];
         rdata = regs[id].backdoor_read();
         record_history(regs[id].get_name(), addr, "BACKDOOR_READ", rdata);
         return rdata;
@@ -245,12 +309,14 @@ class my_block extends uvm_component;
     
     //后门写
     function void backdoor_write_reg(string name, int data);
+        int addr;
+        int id;
         if (!name_map.exists(name)) begin
             `uvm_error("BD_WRITE_REG_NOT_FOUND", $sformatf("Register '%s' not mapped for backdoor write!", name))
             return;
         end
-        int addr = name_map[name];
-        int id = map[addr];
+        addr = name_map[name];
+        id = map[addr];
         regs[id].backdoor_write(data);
         record_history(regs[id].get_name(), addr, "BACKDOOR_WRITE", data);
     endfunction
@@ -378,7 +444,8 @@ class my_reg extends uvm_component;
     endfunction
     
     function add_field(int num,string name,int start_bit,int end_bit,field_attr_e field_attr);
-        field[num] = new();
+        if (num == field.size()) field.push_back(null);
+        field[num] = new(name, this);
         field[num].add_field(name,start_bit,end_bit,field_attr);
     endfunction
 

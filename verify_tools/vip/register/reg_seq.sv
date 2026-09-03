@@ -23,10 +23,29 @@ virtual class base_sequence extends uvm_sequence #(bus_trans);
     endfunction
 
     // 升级后的集成读 Task：跑总线波形 + 抓取实际值 + 联动模型获取期望值 + 前门自动比对
-    task reg_read(int addr, output int rdata);
+    task reg_read(string reg_name, output int rdata);
+        int addr;
         int exp_data; // 新增局部变量，用于存放账本预测的期望值
-        
-        bus_trans req = bus_trans::type_id::create("req");
+        bus_trans req;
+
+        rdata = 0;
+
+        // 在发送总线事务前完成寄存器名称与访问权限检查
+        if (rm_block == null) begin
+            `uvm_error("RM_BLOCK_NULL", "rm_block handle is null, cannot resolve register name.")
+            return;
+        end
+        if (!rm_block.name_map.exists(reg_name)) begin
+            `uvm_error("REG_NAME_NOT_FOUND", $sformatf("Register '%s' does not exist in this block!", reg_name))
+            return;
+        end
+        if (rm_block.predict_read_exception(reg_name)) begin
+            `uvm_error("REG_READ_NOT_ALLOWED", $sformatf("Register '%s' does not allow read access.", reg_name))
+            return;
+        end
+
+        addr = rm_block.name_map[reg_name];
+        req = bus_trans::type_id::create("req");
         req.addr     = addr;
         req.is_write = 0; // 读操作
         
@@ -38,24 +57,38 @@ virtual class base_sequence extends uvm_sequence #(bus_trans);
         rdata = req.data;
         
         // 3. 联动寄存器模型
-        if (rm_block != null) begin
-            // 关键修正：read_reg 现在只传地址。它会返回当前期望值，并自动在后台处理读清零(RCLR)等软件副作用
-            exp_data = rm_block.read_reg(addr);
-            
-            // 4. 在 Sequence 内部直接完成【前门总线数据】的自动比对
-            if (rdata !== exp_data) begin
-                `uvm_error("BUS_READ_MISMATCH", $sformatf("=== FRONTDOOR MISMATCH ===\nAddress: 'h%0h\n[Bus Actual Data]: 'h%0h\n[Model Exp Data ]: 'h%0h", addr, rdata, exp_data))
-            end else begin
-                `uvm_info("BUS_READ_PASS", $sformatf("Frontdoor Read Pass. Addr: 'h%0h | Data: 'h%0h", addr, rdata), UVM_HIGH)
-            end
+        // 关键修正：read_reg 现在只传地址。它会返回当前期望值，并自动在后台处理读清零(RC)等软件副作用
+        exp_data = rm_block.read_reg(addr);
+
+        // 4. 在 Sequence 内部直接完成【前门总线数据】的自动比对
+        if (rdata !== exp_data) begin
+            `uvm_error("BUS_READ_MISMATCH", $sformatf("=== FRONTDOOR MISMATCH ===\nRegister: %s\nAddress: 'h%0h\n[Bus Actual Data]: 'h%0h\n[Model Exp Data ]: 'h%0h", reg_name, addr, rdata, exp_data))
         end else begin
-            `uvm_warning("RM_BLOCK_NULL", "rm_block handle is null, skip frontdoor auto-check.")
+            `uvm_info("BUS_READ_PASS", $sformatf("Frontdoor Read Pass. Reg: %s | Addr: 'h%0h | Data: 'h%0h", reg_name, addr, rdata), UVM_HIGH)
         end
     endtask
 
     // 集成写 Task
-    task reg_write(int addr, int wdata);
-        bus_trans req = bus_trans::type_id::create("req");
+    task reg_write(string reg_name, int wdata);
+        int addr;
+        bus_trans req;
+
+        // 在发送总线事务前完成寄存器名称与访问权限检查
+        if (rm_block == null) begin
+            `uvm_error("RM_BLOCK_NULL", "rm_block handle is null, cannot resolve register name.")
+            return;
+        end
+        if (!rm_block.name_map.exists(reg_name)) begin
+            `uvm_error("REG_NAME_NOT_FOUND", $sformatf("Register '%s' does not exist in this block!", reg_name))
+            return;
+        end
+        if (rm_block.predict_write_exception(reg_name)) begin
+            `uvm_error("REG_WRITE_NOT_ALLOWED", $sformatf("Register '%s' does not allow write access.", reg_name))
+            return;
+        end
+
+        addr = rm_block.name_map[reg_name];
+        req = bus_trans::type_id::create("req");
         req.addr     = addr;
         req.data     = wdata;
         req.is_write = 1; // 写操作
@@ -65,8 +98,6 @@ virtual class base_sequence extends uvm_sequence #(bus_trans);
         finish_item(req);
         
         // 2. 硬件写完后，同步更新软件模型中的镜像值
-        if (rm_block != null) begin
-            rm_block.write_reg(addr, wdata);
-        end
+        rm_block.write_reg(addr, wdata);
     endtask
 endclass
