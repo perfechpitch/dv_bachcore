@@ -1,0 +1,59 @@
+name: Build and Test
+
+on: [push, pull_request, workflow_dispatch]
+
+env:
+  SPIKE_COMMIT: 20feb9c2bf2a7deab964d8190b0cbd4b4131bec3
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        VLEN: [256, 128, 64]
+        XLEN: [64, 32]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - uses: actions/setup-go@v4
+        with:
+          go-version: "1.25.1"
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y device-tree-compiler
+
+      - name: Cache Spike
+        id: cache-spike
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/riscv
+          key: ${{ runner.os }}-spike-${{ env.SPIKE_COMMIT }}
+
+      - name: Install Toolchain
+        if: steps.cache-spike.outputs.cache-hit != 'true'
+        run: |
+          wget -O- -q https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2025.07.16/riscv64-elf-ubuntu-22.04-gcc-nightly-2025.07.16-nightly.tar.xz | tar -xJf -
+
+      - name: Build Spike
+        if: steps.cache-spike.outputs.cache-hit != 'true'
+        run: |
+          git clone https://github.com/riscv-software-src/riscv-isa-sim.git
+          cd riscv-isa-sim
+          git reset --hard ${{ env.SPIKE_COMMIT }}
+          mkdir build
+          cd build
+          ../configure --prefix=${{ github.workspace }}/riscv
+          make -j$(nproc)
+          sudo make install
+
+      - name: Build and Test
+        run: |
+          export PATH="${{ github.workspace }}/riscv/bin:$PATH"
+          export RISCV="${{ github.workspace }}/riscv"
+          make generate-stage1 --environment-overrides VLEN=${{ matrix.VLEN }} XLEN=${{ matrix.XLEN }}
+          make all -j$(nproc) --environment-overrides VLEN=${{ matrix.VLEN }} XLEN=${{ matrix.XLEN }}

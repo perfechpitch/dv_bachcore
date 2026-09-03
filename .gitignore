@@ -51,3 +51,13 @@ Thumbs.db
 *.tmp
 *.bak
 *.orig
+
+
+# ==============================================================================
+# Third-party CMake build artifacts
+# ==============================================================================
+
+verify_tools/vip/formal/softvector/softfloat/build/
+verify_tools/vip/vector_generator/Miners/softvector/softfloat/build/
+verify_tools/vip/formal/softvector/softfloat/install/
+verify_tools/vip/vector_generator/Miners/softvector/softfloat/install/
