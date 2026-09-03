@@ -137,11 +137,21 @@ def main():
     else:
         read_config()
         reload_config()
+        run_pre_sim()
         read_all_list()
         reload_proc_num()
         create_dir()
         get_git_info()
         sel_run_mode()
+
+
+def run_pre_sim():
+    pre_sim_cmd = cfg_info.get("PRE_SIM_CMD")
+    if not pre_sim_cmd:
+        return
+    print("Run pre-sim generation: %s" % pre_sim_cmd)
+    if subprocess.call(pre_sim_cmd, shell=True, cwd=rsim_dir) != 0:
+        die("[python]Pre-sim generation failed")
 
 
 def reload_proc_num():

@@ -1,0 +1,16 @@
+{
+  "scenes": [
+    {
+      "scene_id": 1,
+      "scene_name": "VU\u5355\u4efb\u52a1\u57fa\u672c\u6267\u884c",
+      "modes": ["RV_BYPASS", "TS_BYPASS"],
+      "task_chain": {
+        "self_start": false,
+        "task_num": 1,
+        "tasks": [
+          {"task_id": 1, "task_name": "vu_basic", "task_type": "normal", "execute_unit": "vu", "execution_mode": "rvcore_dsa"}
+        ]
+      }
+    }
+  ]
+}

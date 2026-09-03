@@ -51,3 +51,12 @@ Thumbs.db
 *.tmp
 *.bak
 *.orig
+
+# ==============================================================================
+# Pre-sim and agent-sim generated outputs
+# ==============================================================================
+
+/st/pre_sim/output/
+/st/sim_rtl/agent_sim/ts/rsim/case_lst/case.lst
+**/rsim/flist_*.f
+**/rsim/uvm_home/
