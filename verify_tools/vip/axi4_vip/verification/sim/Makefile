@@ -2,10 +2,10 @@ SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
 SIM_DIR   := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
-DV_ROOT   := $(abspath $(SIM_DIR)/..)
-REPO_ROOT := $(abspath $(SIM_DIR)/../..)
-AXI4_VIP_ROOT ?= $(if $(wildcard $(REPO_ROOT)/axi4_vip),$(REPO_ROOT)/axi4_vip,$(REPO_ROOT)/axi_vip)
-OUT_DIR   ?= $(DV_ROOT)/out
+VERIFICATION_ROOT := $(abspath $(SIM_DIR)/..)
+AXI4_VIP_ROOT     := $(abspath $(VERIFICATION_ROOT)/..)
+MEM_MODEL_ROOT    := $(abspath $(AXI4_VIP_ROOT)/../mem_model)
+OUT_DIR   ?= $(VERIFICATION_ROOT)/out
 BUILD_DIR := $(OUT_DIR)/build
 FILELIST  := $(SIM_DIR)/tb.f
 TOP       := tb
@@ -32,8 +32,9 @@ help:
 	@echo "Optional: WAVES=fsdb RUN_ARGS='+MW_0_WRITE_BURST_COUNT=32'"
 
 build:
-	@env VIP_SELFMADE_ROOT='$(REPO_ROOT)' AXI4_VIP_ROOT='$(AXI4_VIP_ROOT)' \
-		FILELIST='$(FILELIST)' \
+	@env AXI4_VIP_ROOT='$(AXI4_VIP_ROOT)' \
+		MEM_MODEL_ROOT='$(MEM_MODEL_ROOT)' \
+		VERIFICATION_ROOT='$(VERIFICATION_ROOT)' FILELIST='$(FILELIST)' \
 		VCS_TOP='$(TOP)' BUILD_DIR='$(BUILD_DIR)' WAVES='$(WAVES)' \
 		bash '$(SIM_DIR)/compile_vcs.sh'
 

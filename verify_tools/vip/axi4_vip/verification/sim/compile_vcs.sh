@@ -5,8 +5,9 @@ set -euo pipefail
 export LC_ALL=C
 export LANG=C
 
-: "${VIP_SELFMADE_ROOT:?VIP_SELFMADE_ROOT is required}"
 : "${AXI4_VIP_ROOT:?AXI4_VIP_ROOT is required}"
+: "${MEM_MODEL_ROOT:?MEM_MODEL_ROOT is required}"
+: "${VERIFICATION_ROOT:?VERIFICATION_ROOT is required}"
 : "${FILELIST:?FILELIST is required}"
 : "${VCS_TOP:?VCS_TOP is required}"
 : "${BUILD_DIR:?BUILD_DIR is required}"
@@ -33,6 +34,14 @@ if [[ ! -f "${FILELIST}" ]]; then
 fi
 if [[ ! -d "${AXI4_VIP_ROOT}" ]]; then
     echo "[error] AXI4 VIP source directory not found: ${AXI4_VIP_ROOT}" >&2
+    exit 2
+fi
+if [[ ! -d "${MEM_MODEL_ROOT}" ]]; then
+    echo "[error] Memory Model source directory not found: ${MEM_MODEL_ROOT}" >&2
+    exit 2
+fi
+if [[ ! -d "${VERIFICATION_ROOT}" ]]; then
+    echo "[error] Verification directory not found: ${VERIFICATION_ROOT}" >&2
     exit 2
 fi
 
