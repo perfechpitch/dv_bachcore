@@ -1,0 +1,35 @@
+ - case_name      = normal_rand_test
+    uvm_tc         = rand_inst_test
+  
+  - case_name      = all_rand_test
+    uvm_tc         = rand_flush_except_inst_test
+  
+  - case_name      = safe_inst_test
+    uvm_tc         = safe_inst_test
+  
+  - case_name      = branch_inst_test
+    uvm_tc         = branch_inst_test
+  
+  - case_name      = vector_rand_traversal_test
+    uvm_tc         = vector_rand_traversal_test
+  
+  - case_name      = vector_specified_traversal_test
+    uvm_tc         = vector_specified_traversal_test
+  
+  - case_name      = asm_gen_test
+    uvm_tc         = asm_gen_test
+    vcs_tb_args    = +sim_mode=SPIKE_SIM
+  
+  - case_name      = except_handle_program_gen_test
+    uvm_tc         = except_handle_program_gen_test
+    vcs_tb_args    = +start_pc=0
+  
+  - case_name      = ls_inst_test
+    uvm_tc         = ls_inst_test
+  
+  - case_name      = ls_inst_base_confirm_test
+    uvm_tc         = ls_inst_base_confirm_test
+  
+  - case_name      = seq_debug_test
+    uvm_tc         = seq_debug_test
+    vcs_tb_args    = +test_mode=INT_TEST+program_mode=M_MODE+debug_seq_name=branch_inst_seq

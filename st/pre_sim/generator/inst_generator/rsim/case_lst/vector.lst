@@ -1,0 +1,24 @@
+ 17 
+ 18 #---------------------rand inst
+ 19 - case_name      = normal_rand_test
+ 20   uvm_tc         = rand_inst_test
+ 21   batch_times    = 10
+ 22 
+ 23 - case_name      = all_rand_test
+ 24   uvm_tc         = rand_flush_except_inst_test
+ 25   vcs_tb_args    = +test_mode=INT_TEST
+ 26 #---------------------safe inst
+ 27 
+ 28 - case_name      = safe_inst_test
+ 29   base_case      = safe_inst_test
+ 30   vcs_tb_args    = +test_mode=INT_TEST
+ 31 
+ 32 #---------------------branch inst
+ 33 - case_name      = branch_inst_test
+ 34   base_case      = branch_inst_test
+ 35   vcs_tb_args    = +test_mode=INT_TEST
+ 36 
+ 37 #---------------------ls inst
+ 38 - case_name      = ls_inst_test
+ 39   base_case      = ls_inst_test
+ 40   vcs_tb_args    = +test_mode=INT_TEST
