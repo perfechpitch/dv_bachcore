@@ -189,6 +189,49 @@ class vu_mmio_set extends uvm_object;
         return srf[entry_idx % 64];
     endfunction
 
+    function void write_srf_entry(
+        int unsigned entry_idx,
+        bit [31:0] data
+    );
+        srf[entry_idx % 64] = data;
+    endfunction
+
+    function bit [63:0] read_mrf_entry(int unsigned entry_idx);
+        return mrf[entry_idx % 512];
+    endfunction
+
+    function void write_mrf_entry(
+        int unsigned entry_idx,
+        bit [63:0] data
+    );
+        mrf[entry_idx % 512] = data;
+    endfunction
+
+    function bit read_mrf_bit(
+        int unsigned start_idx,
+        int unsigned elem_idx
+    );
+        int unsigned entry_idx;
+        int unsigned bit_idx;
+
+        entry_idx = (start_idx + elem_idx / 64) % 512;
+        bit_idx = elem_idx % 64;
+        return mrf[entry_idx][bit_idx];
+    endfunction
+
+    function void write_mrf_bit(
+        int unsigned start_idx,
+        int unsigned elem_idx,
+        bit value
+    );
+        int unsigned entry_idx;
+        int unsigned bit_idx;
+
+        entry_idx = (start_idx + elem_idx / 64) % 512;
+        bit_idx = elem_idx % 64;
+        mrf[entry_idx][bit_idx] = value;
+    endfunction
+
     function bit [1023:0] get_lu_bypass();
         return lu_bypass;
     endfunction

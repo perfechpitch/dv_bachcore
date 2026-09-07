@@ -35,9 +35,42 @@
     end
 
 `define VU_VV_ARITH_DISPATCH \
-    `VU_VV_ARITH_INST(VADD_VV, `VU_OPCODE_VADD_VV, vu_fp32_add)
+    `VU_VV_ARITH_INST(VADD_VV, `VU_OPCODE_VADD_VV, vu_fp32_add) \
+    `VU_VV_ARITH_INST(VMIN_VV, `VU_OPCODE_VMIN_VV, vu_fp32_min)
 
 class vu_vv_inst;
+
+    static function automatic int unsigned elems_per_entry(input bit data_type);
+        return data_type ? `VU_BF16_ELEMS_PER_ENTRY :
+                           `VU_FP32_ELEMS_PER_ENTRY;
+    endfunction : elems_per_entry
+
+    static function automatic bit [31:0] get_elem(
+        input vu_vec_chunk_t data,
+        input bit data_type,
+        input int unsigned elem
+    );
+        bit [31:0] value;
+
+        value = '0;
+        if(data_type)
+            value[15:0] = data[elem*16 +: 16];
+        else
+            value = data[elem*32 +: 32];
+        return value;
+    endfunction : get_elem
+
+    static function automatic void set_elem(
+        ref vu_vec_chunk_t data,
+        input bit data_type,
+        input int unsigned elem,
+        input bit [31:0] value
+    );
+        if(data_type)
+            data[elem*16 +: 16] = value[15:0];
+        else
+            data[elem*32 +: 32] = value;
+    endfunction : set_elem
 
     static function automatic bit [8:0] wrap_vrf_index(
         input bit [15:0] start_idx,

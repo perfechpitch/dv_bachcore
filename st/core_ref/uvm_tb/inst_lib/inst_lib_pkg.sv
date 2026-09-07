@@ -35,6 +35,7 @@ package inst_lib_pkg;
 
 `include "inst_set/custom/dsaw.sv"
 `include "inst_set/custom/dsar.sv"
+`include "inst_set/custom/other_custom.sv"
 
 
 `include "inst_library.sv"

@@ -237,7 +237,7 @@ function void core_reference::do_retire_inst();
         // finishes updating the VU MMIO state.
         if(core_state.except == NONE_EXCEPT &&
            dsa_mmio_lib.dsa_type == DSA_MMIO_VU)
-            vu_inst_lib.do_trigger(dsa_mmio_lib.vu_mmio);
+            vu_inst_lib.do_trigger(dsa_mmio_lib.vu_mmio, dsa_mem_lib);
 
         gpr_s.reg_data[0] = '0;
     end
