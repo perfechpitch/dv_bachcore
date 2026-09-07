@@ -29,10 +29,8 @@ class custom_inst_dsar extends riscv_inst;
 
         if(log_en)
             $fwrite(inst_exe_log,
-                "dsar  x%0d=%08h, dsa_io[%08h], x%0d=%08h\n",
-                inst[11:7], rdata,
-                rs1_val,
-                inst[19:15], rs1_val);
+                "dsar  rd=x%0d, rs1=x%0d\n",
+                inst[11:7], inst[19:15]);
     endfunction : inst_exe
 
 endclass : custom_inst_dsar
@@ -71,8 +69,8 @@ class custom_inst_dsari extends riscv_inst;
 
         if(log_en)
             $fwrite(inst_exe_log,
-                "dsari x%0d=%08h, dsa_io[%08h], imm=%04h\n",
-                inst[11:7], rdata, addr, imm);
+                "dsari rd=x%0d\n",
+                inst[11:7]);
     endfunction : inst_exe
 
 endclass : custom_inst_dsari

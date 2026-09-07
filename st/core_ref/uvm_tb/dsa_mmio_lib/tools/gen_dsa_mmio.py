@@ -458,6 +458,76 @@ def emit_read(registers):
     return out
 
 
+def semantic_fields(reg):
+    return [
+        field for field in reg["fields"]
+        if not field["name"].lower().startswith("reserved")
+    ]
+
+
+def emit_semantic_helper(dsa, registers, custom_windows,
+                         helper_name, direction):
+    out = [
+        "function string %s(bit [31:0] addr, bit [31:0] data);" % helper_name
+    ]
+
+    for reg in registers:
+        out.append("    if(%s) begin" % reg_match(reg))
+        args = ["addr", "data"]
+        fields = semantic_fields(reg)
+
+        if reg["count"] > 1:
+            out.append("        int unsigned reg_idx;")
+            out.append("        reg_idx = (addr - %s_BASE_ADDR) / %s_STRIDE;" %
+                       (reg["name"], reg["name"]))
+            fmt = "%s.%s[%%0d][0x%%08h] %s 0x%%08h" % (
+                dsa.upper(), reg["name"], direction)
+            args.insert(0, "reg_idx")
+        else:
+            fmt = "%s.%s[0x%%08h] %s 0x%%08h" % (
+                dsa.upper(), reg["name"], direction)
+
+        if fields:
+            fmt += " {"
+            for idx, field in enumerate(fields):
+                if idx:
+                    fmt += ", "
+                fmt += "%s=%%0d" % field["name"]
+                if field["msb"] == field["lsb"]:
+                    args.append("data[%d]" % field["lsb"])
+                else:
+                    args.append("data[%d:%d]" %
+                                (field["msb"], field["lsb"]))
+            fmt += "}"
+
+        out.append("        return $sformatf(\"%s\", %s);" %
+                   (fmt, ", ".join(args)))
+        out.append("    end")
+
+    for window in custom_windows:
+        out.append("    if(addr == %s_BASE_ADDR) begin" % window["name"])
+        out.append(
+            "        return $sformatf(\"%s.%s[0x%%08h] %s 0x%%08h\", addr, data);" %
+            (dsa.upper(), window["name"], direction)
+        )
+        out.append("    end")
+
+    fallback = "[%s_MMIO] %s addr=0x%%08h data=0x%%08h" % (
+        dsa.upper(), "W" if direction == "<=" else "R")
+    out.append("    return $sformatf(\"%s\", addr, data);" % fallback)
+    out.append("endfunction : %s" % helper_name)
+    return out
+
+
+def emit_semantic(dsa, registers, custom_windows):
+    out = emit_semantic_helper(
+        dsa, registers, custom_windows, "get_write_desc", "<=")
+    out.append("")
+    out += emit_semantic_helper(
+        dsa, registers, custom_windows, "get_read_desc", "=>")
+    return out
+
+
 def emit_resolve(param_groups, static_params, exec_config):
     if exec_config is None:
         return []
@@ -559,6 +629,7 @@ def main():
             param_groups, static_params, exec_config),
         "write": emit_write(registers),
         "read": emit_read(registers),
+        "semantic": emit_semantic(dsa, registers, custom_windows),
         "resolve": emit_resolve(param_groups, static_params, exec_config)
     }
 

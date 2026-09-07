@@ -5,6 +5,7 @@ class mu_mmio_set extends uvm_object;
     protected int log_fd = 0;
 
     `include "generated/mu_mmio_decl_auto.svh"
+    `include "generated/mu_mmio_semantic_auto.svh"
 
     function new(string name = "mu_mmio_set");
         super.new(name);
@@ -28,12 +29,6 @@ class mu_mmio_set extends uvm_object;
 
         mmio_hit = 1'b0;
 
-        mmio_log($sformatf(
-            "[MU_MMIO] W addr=0x%08h data=0x%08h\n",
-            addr,
-            data
-        ));
-
         `include "generated/mu_mmio_write_auto.svh"
 
         if(!mmio_hit)
@@ -42,6 +37,9 @@ class mu_mmio_set extends uvm_object;
                 addr,
                 data
             ))
+
+        if(mmio_hit)
+            mmio_log({get_write_desc(addr, data), "\n"});
     endfunction : write
 
     function bit [31:0] read(bit [31:0] addr);
@@ -59,11 +57,8 @@ class mu_mmio_set extends uvm_object;
                 addr
             ))
 
-        mmio_log($sformatf(
-            "[MU_MMIO] R addr=0x%08h data=0x%08h\n",
-            addr,
-            data
-        ));
+        if(mmio_hit)
+            mmio_log({get_read_desc(addr, data), "\n"});
 
         return data;
     endfunction : read

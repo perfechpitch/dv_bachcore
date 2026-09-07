@@ -5,6 +5,7 @@ class vu_mmio_set extends uvm_object;
     protected int log_fd = 0;
 
     `include "generated/vu_mmio_decl_auto.svh"
+    `include "generated/vu_mmio_semantic_auto.svh"
 
     function new(string name = "vu_mmio_set");
         super.new(name);
@@ -54,12 +55,6 @@ class vu_mmio_set extends uvm_object;
         mmio_hit = 1'b0;
         inst_trigger = 1'b0;
 
-        mmio_log($sformatf(
-            "[VU_MMIO] W addr=0x%08h data=0x%08h\n",
-            addr,
-            data
-        ));
-
         if(addr == REG_FILE_DATA_BASE_ADDR) begin
             reg_file_data_write(data);
 
@@ -74,6 +69,9 @@ class vu_mmio_set extends uvm_object;
                 addr,
                 data
             ))
+
+        if(mmio_hit)
+            mmio_log({get_write_desc(addr, data), "\n"});
 
         if(inst_trigger) begin
             resolve_exec_param();
@@ -101,11 +99,8 @@ class vu_mmio_set extends uvm_object;
                 addr
             ))
 
-        mmio_log($sformatf(
-            "[VU_MMIO] R addr=0x%08h data=0x%08h\n",
-            addr,
-            data
-        ));
+        if(mmio_hit)
+            mmio_log({get_read_desc(addr, data), "\n"});
 
         return data;
     endfunction

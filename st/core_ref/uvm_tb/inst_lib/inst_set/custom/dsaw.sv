@@ -28,10 +28,8 @@ class custom_inst_dsaw extends riscv_inst;
         `PC_ADD
         if(log_en)
             $fwrite(inst_exe_log,
-                "dsaw  dsa_io[%08h]=%08h, x%0d=%08h, x%0d=%08h\n",
-                rs1_val, rs2_val,
-                inst[19:15], rs1_val,
-                inst[24:20], rs2_val);
+                "dsaw  rs1=x%0d, rs2=x%0d\n",
+                inst[19:15], inst[24:20]);
     endfunction : inst_exe
 
 endclass : custom_inst_dsaw
@@ -66,9 +64,8 @@ class custom_inst_dsawi extends riscv_inst;
 
         if(log_en)
             $fwrite(inst_exe_log,
-                "dsawi dsa_io[%08h]=%08h, x%0d=%08h, imm=%04h\n",
-                rs1_val, {16'b0, imm},
-                inst[19:15], rs1_val, imm);
+                "dsawi rs1=x%0d\n",
+                inst[19:15]);
     endfunction : inst_exe
 
 endclass : custom_inst_dsawi
