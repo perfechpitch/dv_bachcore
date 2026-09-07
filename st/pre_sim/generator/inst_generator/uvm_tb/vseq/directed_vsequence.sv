@@ -13,14 +13,12 @@ class directed_vsequence extends inst_gen_base_vsequence;
     virtual task body();
         task_info_config task_info;
         string           seq_name;
-        int              seq_num;
 
         if(!$value$plusargs("directed_seq_name=%s", seq_name))
             `uvm_fatal("DIRECTED_VSEQ", "need +directed_seq_name=<scenario>")
         scenario = dir_seq.get(seq_name);
 
         task_info = p_sequencer.inst_gen_case_cfg.task_info;
-        seq_num   = p_sequencer.inst_gen_case_cfg.seq_num;
 
         for(int t=0; t<task_info.task_num; t++)begin
             if(!p_sequencer.inst_gen.fetch_space_avail())begin
@@ -30,13 +28,11 @@ class directed_vsequence extends inst_gen_base_vsequence;
             end
             p_sequencer.inst_gen.switch_task(t);
             task_info.record_start(t, p_sequencer.inst_gen.inst_addr);
-            for(int i=0; i<seq_num; i++)begin
-                if(!p_sequencer.inst_gen.fetch_space_avail())
-                    break;
-                scenario.seq_gen(p_sequencer.inst_gen,
-                                 p_sequencer.inst_seq_gen,
-                                 p_sequencer.inst_seq_type_gen);
-            end
+            if(!p_sequencer.inst_gen.fetch_space_avail())
+                break;
+            scenario.seq_gen(p_sequencer.inst_gen,
+                             p_sequencer.inst_seq_gen,
+                             p_sequencer.inst_seq_type_gen);
             task_info.record_end(t, p_sequencer.inst_gen.inst_addr);
         end
         task_info.finish_log();
