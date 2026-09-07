@@ -1,0 +1,5 @@
+ #---------------------directed scenario
+ - case_name      = xx_directed_test
+   uvm_tc         = directed_inst_test
+   vcs_tb_args    = +directed_seq_name=xx
+   batch_times    = 1

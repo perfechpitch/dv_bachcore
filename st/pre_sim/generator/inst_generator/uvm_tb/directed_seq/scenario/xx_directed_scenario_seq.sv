@@ -1,5 +1,8 @@
 // demo：定向场景只改本文件 + scenario_list.svh 的一行 include。
 // 跑法：vseq 用 directed_vsequence，+directed_seq_name=xx
+// vsqr.inst_gen
+// vsqr.inst_seq_gen
+// vsqr.inst_seq_type_gen
 class xx_directed_scenario_seq extends directed_scenario_seq;
     `uvm_object_utils(xx_directed_scenario_seq)
 
