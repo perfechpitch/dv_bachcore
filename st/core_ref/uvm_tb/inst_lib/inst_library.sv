@@ -100,6 +100,9 @@ class inst_library extends uvm_object;
     `CUSTOM_INST_DECLARATION(dsawi)
     `CUSTOM_INST_DECLARATION(dsar)
     `CUSTOM_INST_DECLARATION(dsari)
+    `CUSTOM_INST_DECLARATION(task_done)
+    `CUSTOM_INST_DECLARATION(flag_check)
+    `CUSTOM_INST_DECLARATION(loop)
 
     `uvm_object_utils(inst_library)
 

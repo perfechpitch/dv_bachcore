@@ -33,6 +33,11 @@ class dsa_mem_library extends uvm_object;
     endfunction : set_log
 
     function bit [31:0] core_local_to_global(bit [31:0] local_addr);
+        // Until the system-level CM base is defined, VU LD_ADDR/ST_ADDR are
+        // modeled as offsets in the local Core Memory address space.
+        if($isunknown(CORE_MEM_BASE))
+            return local_addr;
+
         return CORE_MEM_BASE + local_addr;
     endfunction : core_local_to_global
 

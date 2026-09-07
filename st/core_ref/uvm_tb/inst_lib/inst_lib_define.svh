@@ -104,7 +104,10 @@ typedef enum {ALU, LSU, BEU, MDU, ROB}  exe_unit_e;
     `CUSTOM_INST_CREATE(dsaw, "dsaw")  \
     `CUSTOM_INST_CREATE(dsawi, "dsawi")  \
     `CUSTOM_INST_CREATE(dsar, "dsar")  \
-    `CUSTOM_INST_CREATE(dsari, "dsari")
+    `CUSTOM_INST_CREATE(dsari, "dsari")  \
+    `CUSTOM_INST_CREATE(task_done, "task_done")  \
+    `CUSTOM_INST_CREATE(flag_check, "flag_check")  \
+    `CUSTOM_INST_CREATE(loop, "loop")
 
 `define RV32I_INST_REF_CREATE \
     `INST_CREATE(fence, "fence") \

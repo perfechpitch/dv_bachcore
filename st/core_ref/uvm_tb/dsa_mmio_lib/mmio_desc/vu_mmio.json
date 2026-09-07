@@ -71,13 +71,48 @@
       "reset": "0x00000000",
       "trigger": true,
       "fields": [
-        {"name": "STATIC_DYNAMIC_MASK", "msb": 7, "lsb": 0, "access": "RW"},
-        {"name": "CONFIG_IDX", "msb": 10, "lsb": 8, "access": "RW"},
-        {"name": "EVENT_EN", "msb": 16, "lsb": 16, "access": "RW"},
-        {"name": "STREAM_ID_OVERRIDE", "msb": 17, "lsb": 17, "access": "RW"},
-        {"name": "STREAM_ID", "msb": 21, "lsb": 18, "access": "RW"},
-        {"name": "MACRO_INST_FENCE", "msb": 24, "lsb": 24, "access": "RW"},
-        {"name": "DATA_BROADCAST", "msb": 25, "lsb": 25, "access": "RW"}
+        {
+          "name": "STATIC_DYNAMIC_MASK",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "CONFIG_IDX",
+          "msb": 10,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "EVENT_EN",
+          "msb": 16,
+          "lsb": 16,
+          "access": "RW"
+        },
+        {
+          "name": "STREAM_ID_OVERRIDE",
+          "msb": 17,
+          "lsb": 17,
+          "access": "RW"
+        },
+        {
+          "name": "STREAM_ID",
+          "msb": 21,
+          "lsb": 18,
+          "access": "RW"
+        },
+        {
+          "name": "MACRO_INST_FENCE",
+          "msb": 24,
+          "lsb": 24,
+          "access": "RW"
+        },
+        {
+          "name": "DATA_BROADCAST",
+          "msb": 25,
+          "lsb": 25,
+          "access": "RW"
+        }
       ]
     },
     {
@@ -85,9 +120,50 @@
       "addr": "0x00000004",
       "reset": "0x00000000",
       "fields": [
-        {"name": "VL", "msb": 15, "lsb": 0, "access": "RW"},
-        {"name": "DATA_TYPE", "msb": 16, "lsb": 16, "access": "RW"},
-        {"name": "ROUND_MODE", "msb": 19, "lsb": 17, "access": "RW"}
+        {
+          "name": "VL",
+          "msb": 15,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "DATA_TYPE",
+          "msb": 16,
+          "lsb": 16,
+          "access": "RW"
+        },
+        {
+          "name": "ROUND_MODE",
+          "msb": 19,
+          "lsb": 17,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "LD_ADDR",
+      "addr": "0x00000008",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "CM_ADDR",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "ST_ADDR",
+      "addr": "0x0000000C",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "CM_ADDR",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
       ]
     },
     {
@@ -95,8 +171,18 @@
       "addr": "0x00000010",
       "reset": "0x00000000",
       "fields": [
-        {"name": "VRF_RD_P0_IDX", "msb": 15, "lsb": 0, "access": "RW"},
-        {"name": "VRF_RD_P1_IDX", "msb": 31, "lsb": 16, "access": "RW"}
+        {
+          "name": "VRF_RD_P0_IDX",
+          "msb": 15,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "VRF_RD_P1_IDX",
+          "msb": 31,
+          "lsb": 16,
+          "access": "RW"
+        }
       ]
     },
     {
@@ -104,8 +190,216 @@
       "addr": "0x00000014",
       "reset": "0x00000000",
       "fields": [
-        {"name": "VRF_WT_P0_IDX", "msb": 15, "lsb": 0, "access": "RW"},
-        {"name": "VRF_WT_P1_IDX", "msb": 31, "lsb": 16, "access": "RW"}
+        {
+          "name": "VRF_WT_P0_IDX",
+          "msb": 15,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "VRF_WT_P1_IDX",
+          "msb": 31,
+          "lsb": 16,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "MRF_RD_INDEX",
+      "addr": "0x00000018",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "MRF_RD_P0_IDX",
+          "msb": 15,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "MRF_RD_P1_IDX",
+          "msb": 31,
+          "lsb": 16,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "MRF_WT_INDEX",
+      "addr": "0x0000001C",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "MRF_WT_IDX",
+          "msb": 15,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "SRF_RD_INDEX_0",
+      "addr": "0x00000020",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "SRF_RD_P0_IDX",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_RD_P1_IDX",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_RD_P2_IDX",
+          "msb": 23,
+          "lsb": 16,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_RD_P3_IDX",
+          "msb": 31,
+          "lsb": 24,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "SRF_RD_INDEX_1",
+      "addr": "0x00000024",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "SRF_RD_P4_IDX",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_RD_P5_IDX",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_RD_P6_IDX",
+          "msb": 23,
+          "lsb": 16,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_RD_P7_IDX",
+          "msb": 31,
+          "lsb": 24,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "SRF_WT_INDEX_0",
+      "addr": "0x00000028",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "SRF_WT_P0_IDX",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_WT_P1_IDX",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_WT_P2_IDX",
+          "msb": 23,
+          "lsb": 16,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_WT_P3_IDX",
+          "msb": 31,
+          "lsb": 24,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "SRF_WT_INDEX_1",
+      "addr": "0x0000002C",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "SRF_WT_P4_IDX",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_WT_P5_IDX",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "LU_OP",
+      "addr": "0x00001000",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {
+          "name": "OPCODE",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "STRIDE_RUN",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "STRIDE_SKIP",
+          "msb": 23,
+          "lsb": 16,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "SU_OP",
+      "addr": "0x00001004",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {
+          "name": "OPCODE",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "SRC_SEL",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "MXFP8_SCALE_ROUND",
+          "msb": 16,
+          "lsb": 16,
+          "access": "RW"
+        }
       ]
     },
     {
@@ -115,10 +409,30 @@
       "count": 8,
       "stride": "0x100",
       "fields": [
-        {"name": "OPCODE", "msb": 7, "lsb": 0, "access": "RW"},
-        {"name": "SRC1_SEL", "msb": 15, "lsb": 8, "access": "RW"},
-        {"name": "SRC2_SEL", "msb": 23, "lsb": 16, "access": "RW"},
-        {"name": "SRC3_SEL", "msb": 31, "lsb": 24, "access": "RW"}
+        {
+          "name": "OPCODE",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "SRC1_SEL",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "SRC2_SEL",
+          "msb": 23,
+          "lsb": 16,
+          "access": "RW"
+        },
+        {
+          "name": "SRC3_SEL",
+          "msb": 31,
+          "lsb": 24,
+          "access": "RW"
+        }
       ]
     },
     {
@@ -128,10 +442,30 @@
       "count": 8,
       "stride": "0x100",
       "fields": [
-        {"name": "OPCODE", "msb": 7, "lsb": 0, "access": "RW"},
-        {"name": "SRC1_SEL", "msb": 15, "lsb": 8, "access": "RW"},
-        {"name": "SRC2_SEL", "msb": 23, "lsb": 16, "access": "RW"},
-        {"name": "SRC3_SEL", "msb": 31, "lsb": 24, "access": "RW"}
+        {
+          "name": "OPCODE",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "SRC1_SEL",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "SRC2_SEL",
+          "msb": 23,
+          "lsb": 16,
+          "access": "RW"
+        },
+        {
+          "name": "SRC3_SEL",
+          "msb": 31,
+          "lsb": 24,
+          "access": "RW"
+        }
       ]
     },
     {
@@ -141,10 +475,210 @@
       "count": 8,
       "stride": "0x100",
       "fields": [
-        {"name": "OPCODE", "msb": 7, "lsb": 0, "access": "RW"},
-        {"name": "SRC1_SEL", "msb": 15, "lsb": 8, "access": "RW"},
-        {"name": "SRC2_SEL", "msb": 23, "lsb": 16, "access": "RW"},
-        {"name": "SRC3_SEL", "msb": 31, "lsb": 24, "access": "RW"}
+        {
+          "name": "OPCODE",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "SRC1_SEL",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "SRC2_SEL",
+          "msb": 23,
+          "lsb": 16,
+          "access": "RW"
+        },
+        {
+          "name": "SRC3_SEL",
+          "msb": 31,
+          "lsb": 24,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VSFU_OP",
+      "addr": "0x00001014",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {
+          "name": "VSFU0_OPCODE",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "VSFU0_SRC1_SEL",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "VSFU1_OPCODE",
+          "msb": 23,
+          "lsb": 16,
+          "access": "RW"
+        },
+        {
+          "name": "VSFU1_SRC1_SEL",
+          "msb": 31,
+          "lsb": 24,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "MEXE_OP",
+      "addr": "0x00001018",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {
+          "name": "OPCODE",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "SRC1_SEL",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "SRC2_SEL",
+          "msb": 23,
+          "lsb": 16,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "SEXE0_OP",
+      "addr": "0x0000101C",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {
+          "name": "OPCODE",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "SRC1_SEL",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "SRC2_SEL",
+          "msb": 23,
+          "lsb": 16,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "SEXE1_OP",
+      "addr": "0x00001020",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {
+          "name": "OPCODE",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "SRC1_SEL",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "SRC2_SEL",
+          "msb": 23,
+          "lsb": 16,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "SEXE2_OP",
+      "addr": "0x00001024",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {
+          "name": "OPCODE",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "SRC1_SEL",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "SRC2_SEL",
+          "msb": 23,
+          "lsb": 16,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "MASK_OP",
+      "addr": "0x00001028",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {
+          "name": "VALU0_MASK_SEL",
+          "msb": 1,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "VALU1_MASK_SEL",
+          "msb": 3,
+          "lsb": 2,
+          "access": "RW"
+        },
+        {
+          "name": "VALU2_MASK_SEL",
+          "msb": 5,
+          "lsb": 4,
+          "access": "RW"
+        },
+        {
+          "name": "VSFU0_MASK_SEL",
+          "msb": 7,
+          "lsb": 6,
+          "access": "RW"
+        },
+        {
+          "name": "VSFU1_MASK_SEL",
+          "msb": 9,
+          "lsb": 8,
+          "access": "RW"
+        }
       ]
     },
     {
@@ -154,10 +688,30 @@
       "count": 8,
       "stride": "0x100",
       "fields": [
-        {"name": "VRF_WT_P0_SRC", "msb": 7, "lsb": 0, "access": "RW"},
-        {"name": "VRF_WT_P1_SRC", "msb": 15, "lsb": 8, "access": "RW"},
-        {"name": "MRF_WT_SRC", "msb": 23, "lsb": 16, "access": "RW"},
-        {"name": "SRF_WT_EN", "msb": 31, "lsb": 24, "access": "RW"}
+        {
+          "name": "VRF_WT_P0_SRC",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "VRF_WT_P1_SRC",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "MRF_WT_SRC",
+          "msb": 23,
+          "lsb": 16,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_WT_EN",
+          "msb": 31,
+          "lsb": 24,
+          "access": "RW"
+        }
       ]
     },
     {
@@ -167,9 +721,54 @@
       "count": 8,
       "stride": "0x100",
       "fields": [
-        {"name": "VL", "msb": 15, "lsb": 0, "access": "RW"},
-        {"name": "DATA_TYPE", "msb": 16, "lsb": 16, "access": "RW"},
-        {"name": "ROUND_MODE", "msb": 19, "lsb": 17, "access": "RW"}
+        {
+          "name": "VL",
+          "msb": 15,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "DATA_TYPE",
+          "msb": 16,
+          "lsb": 16,
+          "access": "RW"
+        },
+        {
+          "name": "ROUND_MODE",
+          "msb": 19,
+          "lsb": 17,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "STATIC_LD_ADDR",
+      "addr": "0x00001034",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {
+          "name": "CM_ADDR",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "STATIC_ST_ADDR",
+      "addr": "0x00001038",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {
+          "name": "CM_ADDR",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
       ]
     },
     {
@@ -179,8 +778,18 @@
       "count": 8,
       "stride": "0x100",
       "fields": [
-        {"name": "VRF_RD_P0_IDX", "msb": 15, "lsb": 0, "access": "RW"},
-        {"name": "VRF_RD_P1_IDX", "msb": 31, "lsb": 16, "access": "RW"}
+        {
+          "name": "VRF_RD_P0_IDX",
+          "msb": 15,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "VRF_RD_P1_IDX",
+          "msb": 31,
+          "lsb": 16,
+          "access": "RW"
+        }
       ]
     },
     {
@@ -190,8 +799,174 @@
       "count": 8,
       "stride": "0x100",
       "fields": [
-        {"name": "VRF_WT_P0_IDX", "msb": 15, "lsb": 0, "access": "RW"},
-        {"name": "VRF_WT_P1_IDX", "msb": 31, "lsb": 16, "access": "RW"}
+        {
+          "name": "VRF_WT_P0_IDX",
+          "msb": 15,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "VRF_WT_P1_IDX",
+          "msb": 31,
+          "lsb": 16,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "STATIC_MRF_RD_INDEX",
+      "addr": "0x00001044",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {
+          "name": "MRF_RD_P0_IDX",
+          "msb": 15,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "MRF_RD_P1_IDX",
+          "msb": 31,
+          "lsb": 16,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "STATIC_MRF_WT_INDEX",
+      "addr": "0x00001048",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {
+          "name": "MRF_WT_IDX",
+          "msb": 15,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "STATIC_SRF_RD_INDEX_0",
+      "addr": "0x0000104C",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {
+          "name": "SRF_RD_P0_IDX",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_RD_P1_IDX",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_RD_P2_IDX",
+          "msb": 23,
+          "lsb": 16,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_RD_P3_IDX",
+          "msb": 31,
+          "lsb": 24,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "STATIC_SRF_RD_INDEX_1",
+      "addr": "0x00001050",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {
+          "name": "SRF_RD_P4_IDX",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_RD_P5_IDX",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_RD_P6_IDX",
+          "msb": 23,
+          "lsb": 16,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_RD_P7_IDX",
+          "msb": 31,
+          "lsb": 24,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "STATIC_SRF_WT_INDEX_0",
+      "addr": "0x00001054",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {
+          "name": "SRF_WT_P0_IDX",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_WT_P1_IDX",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_WT_P2_IDX",
+          "msb": 23,
+          "lsb": 16,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_WT_P3_IDX",
+          "msb": 31,
+          "lsb": 24,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "STATIC_SRF_WT_INDEX_1",
+      "addr": "0x00001058",
+      "reset": "0x00000000",
+      "count": 8,
+      "stride": "0x100",
+      "fields": [
+        {
+          "name": "SRF_WT_P4_IDX",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_WT_P5_IDX",
+          "msb": 15,
+          "lsb": 8,
+          "access": "RW"
+        }
       ]
     },
     {
@@ -199,8 +974,973 @@
       "addr": "0x00002000",
       "reset": "0x00000000",
       "fields": [
-        {"name": "RF_ADDR", "msb": 15, "lsb": 0, "access": "RW"},
-        {"name": "RF_SEL", "msb": 17, "lsb": 16, "access": "RW"}
+        {
+          "name": "RF_ADDR",
+          "msb": 15,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "RF_SEL",
+          "msb": 17,
+          "lsb": 16,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "MACRO_INST_LEFT",
+      "addr": "0x00003000",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "MACRO_INST_LEFT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "STATUS",
+      "addr": "0x00003004",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "BUSY",
+          "msb": 0,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "ISQ_FULL",
+          "msb": 1,
+          "lsb": 1,
+          "access": "RW"
+        },
+        {
+          "name": "ISQ_EMPTY",
+          "msb": 2,
+          "lsb": 2,
+          "access": "RW"
+        },
+        {
+          "name": "ERROR_FLAG",
+          "msb": 3,
+          "lsb": 3,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "ERROR_CODE",
+      "addr": "0x00003008",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "REG_ADDR_ERROR",
+          "msb": 0,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "CFG_ERROR",
+          "msb": 2,
+          "lsb": 2,
+          "access": "RW"
+        },
+        {
+          "name": "RF_IDX_ERROR",
+          "msb": 3,
+          "lsb": 3,
+          "access": "RW"
+        },
+        {
+          "name": "CM_ADDR_ERROR",
+          "msb": 4,
+          "lsb": 4,
+          "access": "RW"
+        },
+        {
+          "name": "CM_RESP_ERROR",
+          "msb": 5,
+          "lsb": 5,
+          "access": "RW"
+        },
+        {
+          "name": "DATA_CVT_ERROR",
+          "msb": 6,
+          "lsb": 6,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "ERROR_INFO",
+      "addr": "0x0000300C",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "STATIC_DYNAMIC_MASK",
+          "msb": 7,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "CONFIG_IDX",
+          "msb": 10,
+          "lsb": 8,
+          "access": "RW"
+        },
+        {
+          "name": "ERR_UNIT",
+          "msb": 15,
+          "lsb": 12,
+          "access": "RW"
+        },
+        {
+          "name": "FIRST_ERR",
+          "msb": 18,
+          "lsb": 16,
+          "access": "RW"
+        },
+        {
+          "name": "VALID",
+          "msb": 19,
+          "lsb": 19,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "SNAPSHOT_ADDR",
+      "addr": "0x00003010",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "SNAP_IDX",
+          "msb": 3,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "SNAP_SEL",
+          "msb": 11,
+          "lsb": 4,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "SNAPSHOT_DATA",
+      "addr": "0x00003014",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "SNAP_DATA",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "PROFILE_CTRL",
+      "addr": "0x00004000",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "RUN",
+          "msb": 0,
+          "lsb": 0,
+          "access": "RW"
+        },
+        {
+          "name": "CLEAR",
+          "msb": 1,
+          "lsb": 1,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "PROF_RUN_CYCLE_LO",
+      "addr": "0x00004008",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "PROF_RUN_CYCLE_HI",
+      "addr": "0x0000400C",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "TOTAL_BUSY_CYCLE_LO",
+      "addr": "0x00004010",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "TOTAL_BUSY_CYCLE_HI",
+      "addr": "0x00004014",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "CFG_WR_NUM_LO",
+      "addr": "0x00004018",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "CFG_WR_NUM_HI",
+      "addr": "0x0000401C",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "CFG_WR_STALL_CYCLE_LO",
+      "addr": "0x00004020",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "CFG_WR_STALL_CYCLE_HI",
+      "addr": "0x00004024",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "MACRO_INST_TOTAL_NUM_LO",
+      "addr": "0x00004028",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "MACRO_INST_TOTAL_NUM_HI",
+      "addr": "0x0000402C",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "MACRO_INST_RETIRE_NUM_LO",
+      "addr": "0x00004030",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "MACRO_INST_RETIRE_NUM_HI",
+      "addr": "0x00004034",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "ISQ_FULL_CYCLE_LO",
+      "addr": "0x00004038",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "ISQ_FULL_CYCLE_HI",
+      "addr": "0x0000403C",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "ISSUE_STALL_FENCE_CYCLE_LO",
+      "addr": "0x00004040",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "ISSUE_STALL_FENCE_CYCLE_HI",
+      "addr": "0x00004044",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "ISSUE_STALL_BCAST_CYCLE_LO",
+      "addr": "0x00004048",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "ISSUE_STALL_BCAST_CYCLE_HI",
+      "addr": "0x0000404C",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "ISSUE_STALL_DEP_CYCLE_LO",
+      "addr": "0x00004050",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "ISSUE_STALL_DEP_CYCLE_HI",
+      "addr": "0x00004054",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "ISSUE_STALL_EU_CYCLE_LO",
+      "addr": "0x00004058",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "ISSUE_STALL_EU_CYCLE_HI",
+      "addr": "0x0000405C",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "ISSUE_STARVE_CYCLE_LO",
+      "addr": "0x00004060",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "ISSUE_STARVE_CYCLE_HI",
+      "addr": "0x00004064",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "LU_BUSY_CYCLE_LO",
+      "addr": "0x00004068",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "LU_BUSY_CYCLE_HI",
+      "addr": "0x0000406C",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "CM_LD_REQ_NUM_LO",
+      "addr": "0x00004070",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "CM_LD_REQ_NUM_HI",
+      "addr": "0x00004074",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "CM_LD_STALL_CYCLE_LO",
+      "addr": "0x00004078",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "CM_LD_STALL_CYCLE_HI",
+      "addr": "0x0000407C",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "SU_BUSY_CYCLE_LO",
+      "addr": "0x00004080",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "SU_BUSY_CYCLE_HI",
+      "addr": "0x00004084",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "CM_ST_REQ_NUM_LO",
+      "addr": "0x00004088",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "CM_ST_REQ_NUM_HI",
+      "addr": "0x0000408C",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "CM_ST_STALL_CYCLE_LO",
+      "addr": "0x00004090",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "CM_ST_STALL_CYCLE_HI",
+      "addr": "0x00004094",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VALU0_BUSY_CYCLE_LO",
+      "addr": "0x00004098",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VALU0_BUSY_CYCLE_HI",
+      "addr": "0x0000409C",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VALU1_BUSY_CYCLE_LO",
+      "addr": "0x000040A0",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VALU1_BUSY_CYCLE_HI",
+      "addr": "0x000040A4",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VALU2_BUSY_CYCLE_LO",
+      "addr": "0x000040A8",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VALU2_BUSY_CYCLE_HI",
+      "addr": "0x000040AC",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VSFU0_BUSY_CYCLE_LO",
+      "addr": "0x000040B0",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VSFU0_BUSY_CYCLE_HI",
+      "addr": "0x000040B4",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VSFU1_BUSY_CYCLE_LO",
+      "addr": "0x000040B8",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VSFU1_BUSY_CYCLE_HI",
+      "addr": "0x000040BC",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "MEXE_BUSY_CYCLE_LO",
+      "addr": "0x000040C0",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "MEXE_BUSY_CYCLE_HI",
+      "addr": "0x000040C4",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "SEXE_BUSY_CYCLE_LO",
+      "addr": "0x000040C8",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "SEXE_BUSY_CYCLE_HI",
+      "addr": "0x000040CC",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VRF_RD_P0_BUSY_CYCLE_LO",
+      "addr": "0x000040D0",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VRF_RD_P0_BUSY_CYCLE_HI",
+      "addr": "0x000040D4",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VRF_RD_P1_BUSY_CYCLE_LO",
+      "addr": "0x000040D8",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VRF_RD_P1_BUSY_CYCLE_HI",
+      "addr": "0x000040DC",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VRF_WT_P0_BUSY_CYCLE_LO",
+      "addr": "0x000040E0",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VRF_WT_P0_BUSY_CYCLE_HI",
+      "addr": "0x000040E4",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VRF_WT_P1_BUSY_CYCLE_LO",
+      "addr": "0x000040E8",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "VRF_WT_P1_BUSY_CYCLE_HI",
+      "addr": "0x000040EC",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "MRF_WT_BUSY_CYCLE_LO",
+      "addr": "0x000040F0",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "name": "MRF_WT_BUSY_CYCLE_HI",
+      "addr": "0x000040F4",
+      "reset": "0x00000000",
+      "fields": [
+        {
+          "name": "COUNT",
+          "msb": 31,
+          "lsb": 0,
+          "access": "RW"
+        }
       ]
     }
   ],
@@ -210,6 +1950,18 @@
       "mask_bit": 0,
       "dynamic": "TYPE_VL",
       "static": "STATIC_TYPE_VL"
+    },
+    {
+      "name": "LD_ADDR",
+      "mask_bit": 1,
+      "dynamic": "LD_ADDR",
+      "static": "STATIC_LD_ADDR"
+    },
+    {
+      "name": "ST_ADDR",
+      "mask_bit": 2,
+      "dynamic": "ST_ADDR",
+      "static": "STATIC_ST_ADDR"
     },
     {
       "name": "VRF_RD_INDEX",
@@ -222,12 +1974,92 @@
       "mask_bit": 4,
       "dynamic": "VRF_WT_INDEX",
       "static": "STATIC_VRF_WT_INDEX"
+    },
+    {
+      "name": "MRF_RD_INDEX",
+      "mask_bit": 5,
+      "dynamic": "MRF_RD_INDEX",
+      "static": "STATIC_MRF_RD_INDEX"
+    },
+    {
+      "name": "MRF_WT_INDEX",
+      "mask_bit": 5,
+      "dynamic": "MRF_WT_INDEX",
+      "static": "STATIC_MRF_WT_INDEX"
+    },
+    {
+      "name": "SRF_RD_INDEX_0",
+      "mask_bit": 6,
+      "dynamic": "SRF_RD_INDEX_0",
+      "static": "STATIC_SRF_RD_INDEX_0"
+    },
+    {
+      "name": "SRF_RD_INDEX_1",
+      "mask_bit": 6,
+      "dynamic": "SRF_RD_INDEX_1",
+      "static": "STATIC_SRF_RD_INDEX_1"
+    },
+    {
+      "name": "SRF_WT_INDEX_0",
+      "mask_bit": 6,
+      "dynamic": "SRF_WT_INDEX_0",
+      "static": "STATIC_SRF_WT_INDEX_0"
+    },
+    {
+      "name": "SRF_WT_INDEX_1",
+      "mask_bit": 6,
+      "dynamic": "SRF_WT_INDEX_1",
+      "static": "STATIC_SRF_WT_INDEX_1"
     }
   ],
   "static_params": [
-    {"name": "VALU0_OP", "register": "VALU0_OP"},
-    {"name": "VALU1_OP", "register": "VALU1_OP"},
-    {"name": "VALU2_OP", "register": "VALU2_OP"},
-    {"name": "PRF_OP", "register": "PRF_OP"}
+    {
+      "name": "LU_OP",
+      "register": "LU_OP"
+    },
+    {
+      "name": "SU_OP",
+      "register": "SU_OP"
+    },
+    {
+      "name": "VALU0_OP",
+      "register": "VALU0_OP"
+    },
+    {
+      "name": "VALU1_OP",
+      "register": "VALU1_OP"
+    },
+    {
+      "name": "VALU2_OP",
+      "register": "VALU2_OP"
+    },
+    {
+      "name": "VSFU_OP",
+      "register": "VSFU_OP"
+    },
+    {
+      "name": "MEXE_OP",
+      "register": "MEXE_OP"
+    },
+    {
+      "name": "SEXE0_OP",
+      "register": "SEXE0_OP"
+    },
+    {
+      "name": "SEXE1_OP",
+      "register": "SEXE1_OP"
+    },
+    {
+      "name": "SEXE2_OP",
+      "register": "SEXE2_OP"
+    },
+    {
+      "name": "MASK_OP",
+      "register": "MASK_OP"
+    },
+    {
+      "name": "PRF_OP",
+      "register": "PRF_OP"
+    }
   ]
 }
