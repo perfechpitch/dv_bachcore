@@ -14,9 +14,11 @@ class foo_directed_scenario_seq extends directed_scenario_seq;
         super.new(name);
     endfunction : new
 
-    virtual function void seq_gen(inst_gen_vsequencer vsqr);
+    virtual function void seq_gen(inst_generator          inst_gen,
+                                  inst_seq_generator      inst_seq_gen,
+                                  inst_seq_type_generator inst_seq_type_gen);
         // 调用已有 inst / API / complex / helper
-        // 例：void'(vsqr.inst_seq_gen.ls_inst_seq.seq_gen());
+        // 例：void'(inst_seq_gen.ls_inst_seq.seq_gen());
     endfunction
 endclass
 
@@ -26,7 +28,7 @@ endclass
 2. 在 `scenario_list.svh` 追加：
 
 ```systemverilog
-`include "directed_seq/scenario/mu/foo_directed_scenario_seq.sv"
+`include "mu/foo_directed_scenario_seq.sv"
 ```
 3.在directed.lst中新增case：
 

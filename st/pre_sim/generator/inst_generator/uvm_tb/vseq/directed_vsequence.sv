@@ -33,7 +33,9 @@ class directed_vsequence extends inst_gen_base_vsequence;
             for(int i=0; i<seq_num; i++)begin
                 if(!p_sequencer.inst_gen.fetch_space_avail())
                     break;
-                scenario.seq_gen(p_sequencer);
+                scenario.seq_gen(p_sequencer.inst_gen,
+                                 p_sequencer.inst_seq_gen,
+                                 p_sequencer.inst_seq_type_gen);
             end
             task_info.record_end(t, p_sequencer.inst_gen.inst_addr);
         end

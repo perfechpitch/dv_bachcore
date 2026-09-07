@@ -1,8 +1,6 @@
 // demo：定向场景只改本文件 + scenario_list.svh 的一行 include。
 // 跑法：vseq 用 directed_vsequence，+directed_seq_name=xx
-// vsqr.inst_gen
-// vsqr.inst_seq_gen
-// vsqr.inst_seq_type_gen
+// 可用入口：inst_gen、inst_seq_gen、inst_seq_type_gen。
 class xx_directed_scenario_seq extends directed_scenario_seq;
     `uvm_object_utils(xx_directed_scenario_seq)
 
@@ -11,9 +9,11 @@ class xx_directed_scenario_seq extends directed_scenario_seq;
     endfunction : new
 
     // 场景配方：调用已有下层 seq，不要在这里直接 get_rand_inst / 指令宏。
-    virtual function void seq_gen(inst_gen_vsequencer vsqr);
-        $fwrite(vsqr.inst_gen.gen_file, ("// === directed scenario: xx ===\n"));
-        void'(vsqr.inst_seq_gen.safe_inst_seq.seq_gen());
+    virtual function void seq_gen(inst_generator          inst_gen,
+                                  inst_seq_generator      inst_seq_gen,
+                                  inst_seq_type_generator inst_seq_type_gen);
+        $fwrite(inst_gen.gen_file, ("// === directed scenario: xx ===\n"));
+        void'(inst_seq_gen.safe_inst_seq.seq_gen());
     endfunction
 endclass
 

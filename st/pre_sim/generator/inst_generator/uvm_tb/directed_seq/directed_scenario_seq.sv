@@ -6,6 +6,8 @@ class directed_scenario_seq extends uvm_object;
         super.new(name);
     endfunction : new
 
-    virtual function void seq_gen(inst_gen_vsequencer vsqr);
+    virtual function void seq_gen(inst_generator          inst_gen,
+                                  inst_seq_generator      inst_seq_gen,
+                                  inst_seq_type_generator inst_seq_type_gen);
     endfunction
 endclass
