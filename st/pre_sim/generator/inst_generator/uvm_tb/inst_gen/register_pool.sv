@@ -90,6 +90,10 @@ class register_pool extends uvm_object;
     bit [4:0] branch_regs[$];
     //for ls base
     bit [4:0] base_regs[$];
+    // RVC stack-relative load/store always uses x2.  Keep its initialized
+    // address metadata separate from the ordinary randomized base pool.
+    addr_structure_s sp_base_addr_info;
+    bit              sp_base_valid;
     //for vector ls imm
     bit [4:0] imm_regs[$];
     bit [4:0] vector_imm_regs[$];
@@ -114,6 +118,7 @@ class register_pool extends uvm_object;
     // new - constructor
  function new (string name = "register_pool");
       super.new(name);
+      sp_base_valid = 1'b0;
       gpr_gen = new();
       fpr_gen = new();
       vpr_gen = new();
@@ -200,9 +205,47 @@ function branch_reg_free();
     function bit[4:0] base_reg_get(bit [4:0] base_num, addr_structure_s base_addr_q[$]);
         bit[4:0] tmp;
         int i=0;
+        int c_base_index;
         //clean old base_info
         base_reg_free();
         vector_imm_reg_free();
+        sp_base_valid = 1'b0;
+        // RV32 C.JAL writes x1 implicitly. Keep the link register out of the
+        // ordinary LS base pool so taking C.JAL cannot invalidate LS metadata.
+        if((RVC inside inst_gen_cfg.support_inst_set) && inst_gen_cfg.xlen == 32) begin
+            foreach(regs[j]) begin
+                if(regs[j] == 5'd1) begin
+                    regs.delete(j);
+                    break;
+                end
+            end
+        end
+        // x2 is maintained as the RVC stack base and must not be selected as
+        // an ordinary destination register after LS base initialization.
+        if(RVC inside inst_gen_cfg.support_inst_set) begin
+            foreach(regs[j]) begin
+                if(regs[j] == 5'd2) begin
+                    regs.delete(j);
+                    break;
+                end
+            end
+        end
+        // When RVC is enabled, reserve one initialized LS base encodable by
+        // C.LW/C.SW. If the randomized pool lacks x8..x15, inject x8 only
+        // into this per-test pool before it is initialized by the LS sequence.
+        if(RVC inside inst_gen_cfg.support_inst_set) begin
+            c_base_index = -1;
+            foreach(regs[j])
+                if((regs[j] inside {[5'd8:5'd15]}) && c_base_index == -1)
+                    c_base_index = j;
+            if(c_base_index == -1)
+                regs.push_front(5'd8);
+            else begin
+                tmp = regs[c_base_index];
+                regs.delete(c_base_index);
+                regs.push_front(tmp);
+            end
+        end
         imm_reg_free();
         //there are 3 ~31 regs in regs[]
         //reg 0 can not be base is because store is disabled in 0x0~0xfff
@@ -365,7 +408,64 @@ function vector_imm_reg_free();
         return val;
     endfunction
 
+    function bit is_ls_base_reg(bit[4:0] reg_num);
+        if(sp_base_valid && reg_num == 5'd2)
+            return 1'b1;
+        foreach(base_regs[i])
+            if(base_regs[i] == reg_num)
+                return 1'b1;
+        return 1'b0;
+    endfunction
+
+    function void set_ls_sp_base(addr_structure_s ls_s);
+        sp_base_addr_info = ls_s;
+        sp_base_valid = 1'b1;
+    endfunction
+
+    function void clear_ls_sp_base();
+        sp_base_valid = 1'b0;
+    endfunction
+
+    function bit[4:0] get_ls_sp_base(ref addr_structure_s ls_s);
+        if(!sp_base_valid) begin
+            `uvm_error(`gfn, "C.LWSP/C.SWSP needs an initialized x2 LS base")
+            ls_s = '0;
+        end
+        else
+            ls_s = sp_base_addr_info;
+        return 5'd2;
+    endfunction
+
     //get_reserved_reg - gpr, used for except handle temp reg
+
+    // C.LW/C.SW encode rs1' as x8..x15. Select only an already initialized
+    // LS base from that register subset, preserving the normal address metadata.
+    function bit[4:0] get_ls_c_base_reg(ref addr_structure_s ls_s);
+        bit[4:0] val;
+        int find_index_q[$];
+        int rand_index_id;
+        foreach(base_reg_gen.base_addr_info[i]) begin
+            if ((base_regs[i] inside {[5'd8:5'd15]}) &&
+                ((ls_s.addr_type == LOAD_VALID &&
+                  (base_reg_gen.base_addr_info[i].addr_type == LOAD_VALID ||
+                   base_reg_gen.base_addr_info[i].addr_type == LS_VALID  ||
+                   base_reg_gen.base_addr_info[i].addr_type == AMO_VALID)) ||
+                 (ls_s.addr_type == LS_VALID &&
+                  (base_reg_gen.base_addr_info[i].addr_type == LS_VALID ||
+                   base_reg_gen.base_addr_info[i].addr_type == AMO_VALID))))
+                find_index_q.push_back(i);
+        end
+        if(find_index_q.size() == 0) begin
+            `uvm_error(`gfn, "C.LW/C.SW needs an x8..x15 LS base register")
+            val = '0;
+        end
+        else begin
+            rand_index_id = find_index_q[$urandom_range(find_index_q.size()-1)];
+            val = base_regs[rand_index_id];
+            ls_s = base_reg_gen.base_addr_info[rand_index_id];
+        end
+        return val;
+    endfunction
 
   function bit[4:0] get_reserved_gpr();
         bit[4:0] val;
@@ -400,10 +500,8 @@ function vector_imm_reg_free();
         //foreach(gpr_gen.regs[i])
         //    $display("11 gpr[%0d] = %0d",i,gpr_gen.regs[i]);
         if(get_rd)begin
-		$display("gpr regs size = %0d", gpr_gen.regs.size());
-		$display("gpr disable_regs size = %0d", gpr_gen.disable_regs.size());
-		   $display("gpr regs = %p", gpr_gen.regs);
-		       $display("gpr disable_regs = %p", gpr_gen.disable_regs);
+            if(gpr_gen.disable_regs.size() >= gpr_gen.regs.size())
+                gpr_gen.free_reg();
             `RANDOMIZE_CHECK(gpr_gen,"ERROR: gpr reg gen error!!")
             val = gpr_gen.rand_reg;
         end
@@ -413,6 +511,8 @@ function vector_imm_reg_free();
                 val = get_base_reg();
             end
             else begin
+                if(gpr_gen.disable_regs.size() >= gpr_gen.regs.size())
+                    gpr_gen.free_reg();
                 `RANDOMIZE_CHECK(gpr_gen,"ERROR: gpr reg gen error!!")
                 val = gpr_gen.rand_reg;
             end

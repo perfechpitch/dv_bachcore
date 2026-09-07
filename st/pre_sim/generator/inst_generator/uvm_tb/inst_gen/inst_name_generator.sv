@@ -59,7 +59,9 @@ typedef enum {SAFE_INT_CAL,SAFE_FLOAT_CAL,SAFE_VECTOR_INT,SAFE_VECTOR_FLOAT,SAFE
         SRLIW,SRAIW,ADDW,SUBW,SLLW,SRLW,SRAW,LUI,
         AUIPC,
         MUL,MULH,MULHSU,MULHU,DIV,DIVU,REM,REMU,MULW,
-        DIVW,DIVUW,REMW,REMUW
+        DIVW,DIVUW,REMW,REMUW,
+        C_ADDI4SPN,C_ADDI16SP,C_NOP,C_ADDI,C_LI,C_LUI,
+        C_SLLI,C_SRLI,C_SRAI,C_ANDI,C_SUB,C_XOR,C_OR,C_AND,C_MV,C_ADD
         };
         (safe_inst_type == SAFE_INT_LS)-> inst_name inside{
         INVALID_PREF_I,INVALID_PREF_R,INVALID_PREF_W,//pref no sync except
@@ -83,19 +85,35 @@ typedef enum {SAFE_INT_CAL,SAFE_FLOAT_CAL,SAFE_VECTOR_INT,SAFE_VECTOR_FLOAT,SAFE
     }
 endclass
 class branch_inst_generator extends inst_name_generator;
-    //branch_seq_config       branch_seq_cfg;
     bit branch_is_jump;
+    bit signed [31:0] branch_delta;
     `uvm_object_utils_begin(branch_inst_generator)
-        `uvm_field_enum(inst_e,inst_name,               UVM_DEFAULT)
+        `uvm_field_enum(inst_e,inst_name, UVM_DEFAULT)
+        `uvm_field_int(branch_is_jump, UVM_DEFAULT)
+        `uvm_field_int(branch_delta, UVM_DEFAULT)
     `uvm_object_utils_end
-    // new - constructor
     function new (string name = "branch_inst_generator");
       super.new(name);
     endfunction : new
     constraint branch_inst_name_c{
-        (branch_is_jump == 0) -> inst_name inside{BEQ,BNE,BLT,BGE,BLTU,BGEU};
-        (branch_is_jump == 1) -> inst_name inside{JAL};
-        //jalr is special inst. use special reg with special inst seq
+        (branch_is_jump == 0 && (RVC inside inst_gen_cfg.support_inst_set) &&
+         branch_delta[0] == 0 && branch_delta >= -256 && branch_delta <= 254)
+            -> inst_name inside{BEQ,BNE,BLT,BGE,BLTU,BGEU,C_BEQZ,C_BNEZ};
+        (branch_is_jump == 0 && (!(RVC inside inst_gen_cfg.support_inst_set) ||
+         branch_delta[0] != 0 || branch_delta < -256 || branch_delta > 254))
+            -> inst_name inside{BEQ,BNE,BLT,BGE,BLTU,BGEU};
+        (branch_is_jump == 1 && (RVC inside inst_gen_cfg.support_inst_set) &&
+         inst_gen_cfg.xlen == 32 && branch_delta[0] == 0 &&
+         branch_delta >= -2048 && branch_delta <= 2046)
+            -> inst_name inside{JAL,C_J,C_JAL};
+        (branch_is_jump == 1 && (RVC inside inst_gen_cfg.support_inst_set) &&
+         inst_gen_cfg.xlen == 64 && branch_delta[0] == 0 &&
+         branch_delta >= -2048 && branch_delta <= 2046)
+            -> inst_name inside{JAL,C_J};
+        (branch_is_jump == 1 && (!(RVC inside inst_gen_cfg.support_inst_set) ||
+         branch_delta[0] != 0 || branch_delta < -2048 || branch_delta > 2046))
+            -> inst_name inside{JAL};
+        // JALR remains in its dedicated register-indirect sequence.
     }
 endclass
 class ls_inst_generator extends inst_name_generator;
@@ -131,17 +149,20 @@ typedef enum {LS_LOAD,LS_STORE,LS_AMO,LS_PREF,LS_FENCE,
     }
  constraint ls_inst_name_c{
         (ls_inst_type == LS_PREF) -> inst_name inside{PREF_I,PREF_R,PREF_W,INVALID_PREF_I,INVALID_PREF_R,INVALID_PREF_W};
-        (ls_inst_type == LS_LOAD) -> inst_name inside{LB,LH,LW,LD,LBU,LHU,LWU};
-        (ls_inst_type == LS_STORE) -> inst_name inside{SB,SH,SW,SD};
+        (ls_inst_type == LS_LOAD) -> inst_name inside{LB,LH,LW,LD,LBU,LHU,LWU,C_LW,C_LWSP};
+        (ls_inst_type == LS_STORE) -> inst_name inside{SB,SH,SW,SD,C_SW,C_SWSP};
         (ls_inst_type == LS_FP_LOAD ) -> inst_name inside{FLW,FLD};
         (ls_inst_type == LS_FP_STORE) -> inst_name inside{FSW,FSD};
-        (ls_inst_type == LS_AMO) -> inst_name inside{LR_W,LR_D,SC_W,SC_D,
+        (ls_inst_type == LS_AMO && inst_gen_cfg.xlen == 32) -> inst_name inside{LR_W,SC_W,
+                                                     AMOSWAP_W,AMOADD_W,AMOXOR_W,
+                                                     AMOOR_W,AMOAND_W,AMOMIN_W,
+                                                     AMOMAX_W,AMOMINU_W,AMOMAXU_W};
+        (ls_inst_type == LS_AMO && inst_gen_cfg.xlen == 64) -> inst_name inside{LR_W,LR_D,SC_W,SC_D,
                                                      AMOSWAP_W,AMOADD_W,AMOXOR_W,
                                                      AMOOR_W,AMOAND_W,AMOMIN_W,
                                                      AMOMAX_W,AMOMINU_W,AMOMAXU_W,
                                                      AMOSWAP_D,AMOADD_D,AMOXOR_D,
-                                                     AMOOR_D,AMOAND_D,
-                                                     AMOMIN_D,AMOMAX_D,
+                                                     AMOOR_D,AMOAND_D,AMOMIN_D,AMOMAX_D,
                                                      AMOMINU_D,AMOMAXU_D};
         (ls_inst_type == LS_FENCE) -> inst_name inside{FENCE};
         }
@@ -215,7 +236,10 @@ class except_inst_generator extends inst_name_generator;
         };
     }
     constraint inst_name_c{
-        except_inst_type == EBREAK_INST -> inst_name == EBREAK;
+        except_inst_type == EBREAK_INST && (RVC inside inst_gen_cfg.support_inst_set)
+            -> inst_name inside{EBREAK,C_EBREAK};
+        except_inst_type == EBREAK_INST && !(RVC inside inst_gen_cfg.support_inst_set)
+            -> inst_name == EBREAK;
         except_inst_type == ECALL_INST -> inst_name == ECALL;
         except_inst_type == DRET_INST -> inst_name == DRET;
         except_inst_type == BRANCH_MISALIGN -> inst_name inside{MISALIGN_BEQ,MISALIGN_BNE,MISALIGN_BGE,MISALIGN_BLT,MISALIGN_BLTU,MISALIGN_BGEU};

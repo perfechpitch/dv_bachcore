@@ -9,8 +9,9 @@ class lrsc_seq extends base_inst_sequence;
 
     virtual function void sub_seq_gen(inst_generator inst_gen);
         bit lrsc_w;
+        // RV32 supports only the word-sized LR/SC pair; RV64 keeps W/D selection.
         lrsc_w = $random();
-        if(lrsc_w)begin
+        if((inst_gen.inst_gen_cfg.xlen == 32) || lrsc_w) begin
             inst_gen.get_specified_rand_inst(LR_W);
             inst_gen.get_specified_rand_inst(SC_W);
         end

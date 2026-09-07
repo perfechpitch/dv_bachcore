@@ -23,6 +23,8 @@ class ls_base_config_sequence extends uvm_object;
         addr_structure_s    ls_s[$];
         ls_addr_s           ls_a[$];
         int unsigned        align;
+        ls_addr_s           sp_a;
+        addr_structure_s    sp_s;
 
         inst_gen.ls_addr_gen.reset_bases();
         for(int i=0; i<ls_base_info.base_num; i++)begin
@@ -37,6 +39,18 @@ class ls_base_config_sequence extends uvm_object;
         ls_base_info.base_num = inst_gen.reg_pool.base_reg_get(ls_base_info.base_num,ls_s);
         for(int i=0; i<ls_base_info.base_num; i++)
             inst_gen.ls_addr_gen.bind_base(ls_a[i]);
+        if(RVC inside inst_gen.reg_pool.inst_gen_cfg.support_inst_set) begin
+            sp_a = inst_gen.ls_addr_gen.get_ls_addr(LS_VALID, 4, 4);
+            sp_s.addr_type = LS_VALID;
+            sp_s.mode      = ls_seq_cfg.ls_mode;
+            sp_s.vaddr     = sp_a.base_val;
+            sp_s.paddr     = sp_a.base_val[39:0];
+            inst_gen.ls_addr_gen.bind_base(sp_a);
+            inst_gen.reg_pool.set_ls_sp_base(sp_s);
+        end
+        else
+            inst_gen.reg_pool.clear_ls_sp_base();
+
         $fwrite(inst_gen.gen_file,("//--- get %0d ls base reg   :\n"),ls_base_info.base_num);
         for(int i=0; i<ls_base_info.base_num;i++)begin
             $fwrite(inst_gen.gen_file,("//[gpr : x%0d]\tls base ea=%0h base_val=%0h imm=%0h mem=%0s win=[%0h,%0h)\n"),
@@ -44,6 +58,14 @@ class ls_base_config_sequence extends uvm_object;
                     ls_a[i].mem_type.name(), ls_a[i].win_lo, ls_a[i].win_hi);
         end
 
+        // Write x2 before gen_ls_base_cfg_seq(): that routine may insert SAFE
+        // instructions, including C.ADDI4SPN/C.ADDI16SP, while configuring bases.
+        if(RVC inside inst_gen.reg_pool.inst_gen_cfg.support_inst_set) begin
+            $fwrite(inst_gen.gen_file,
+                    ("//--- write RVC stack base x2 = %0h win=[%0h,%0h)\n"),
+                    sp_a.base_val, sp_a.win_lo, sp_a.win_hi);
+            li_seq.seq_gen(inst_gen, sp_a.base_val, 5'd2);
+        end
         gen_ls_base_cfg_seq(inst_gen, ls_a);
     endfunction
 

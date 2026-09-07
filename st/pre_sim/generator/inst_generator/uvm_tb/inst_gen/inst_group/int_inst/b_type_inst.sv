@@ -16,10 +16,17 @@ class b_type_inst extends base_inst;
     endfunction 
     function bit [31:0] override_rand_inst(ref ops_gen_config ops_gen_cfg,ref bit[31:0] imm);
         bit[31:0] rand_ops;
-        `RANDOMIZE_CHECK_WITH_C(ops_gen_cfg,rand_imm == imm;,"Error: branch override inst ops gen error")
+        bit[11:0] branch_imm_bits;
+        // Keep operand randomization, but encode the measured byte distance.
+        // The old rand_imm==imm constraint assumed every instruction was 4 B.
+        ops_gen_cfg_rand(ops_gen_cfg);
         rand_ops = rand_ops_gen(ops_gen_cfg);
+        branch_imm_bits = imm >> 1;
+        {rand_ops[31],rand_ops[30:25],rand_ops[11:8],rand_ops[7]} =
+            {branch_imm_bits[11],branch_imm_bits[9:4],
+             branch_imm_bits[3:0],branch_imm_bits[10]};
         inst = const_ops_mask & const_ops_val | ~const_ops_mask & rand_ops;
-        asm_print(); 
+        asm_print();
         return inst;
     endfunction 
 endclass 

@@ -23,6 +23,8 @@ class inst_generator extends uvm_component;
     addr_space_generator    addr_space_gen;
     ls_addr_generator       ls_addr_gen;
     bit[63:0]           task_start_pc;
+    bit[63:0]           inst_pc_history[$];
+    int unsigned         task_inst_history_start;
 
     ri_inst_generator   ri_inst_gen;
     int queue_size;
@@ -31,6 +33,33 @@ class inst_generator extends uvm_component;
     bit[63:0] inst_addr;
     bit[39:0] inst_paddr;
 
+ `INST_GEN_DECLARATION(c_addi4spn_gen)
+ `INST_GEN_DECLARATION(c_lw_gen)
+ `INST_GEN_DECLARATION(c_sw_gen)
+ `INST_GEN_DECLARATION(c_nop_gen)
+ `INST_GEN_DECLARATION(c_addi_gen)
+ `INST_GEN_DECLARATION(c_jal_gen)
+ `INST_GEN_DECLARATION(c_li_gen)
+ `INST_GEN_DECLARATION(c_addi16sp_gen)
+ `INST_GEN_DECLARATION(c_lui_gen)
+ `INST_GEN_DECLARATION(c_srli_gen)
+ `INST_GEN_DECLARATION(c_srai_gen)
+ `INST_GEN_DECLARATION(c_andi_gen)
+ `INST_GEN_DECLARATION(c_sub_gen)
+ `INST_GEN_DECLARATION(c_xor_gen)
+ `INST_GEN_DECLARATION(c_or_gen)
+ `INST_GEN_DECLARATION(c_and_gen)
+ `INST_GEN_DECLARATION(c_j_gen)
+ `INST_GEN_DECLARATION(c_beqz_gen)
+ `INST_GEN_DECLARATION(c_bnez_gen)
+ `INST_GEN_DECLARATION(c_slli_gen)
+ `INST_GEN_DECLARATION(c_lwsp_gen)
+ `INST_GEN_DECLARATION(c_jr_gen)
+ `INST_GEN_DECLARATION(c_mv_gen)
+ `INST_GEN_DECLARATION(c_ebreak_gen)
+ `INST_GEN_DECLARATION(c_jalr_gen)
+ `INST_GEN_DECLARATION(c_add_gen)
+ `INST_GEN_DECLARATION(c_swsp_gen)
  `INST_GEN_DECLARATION(addi_gen)
     `INST_GEN_DECLARATION(slti_gen)
     `INST_GEN_DECLARATION(sltiu_gen)
@@ -302,6 +331,51 @@ class inst_generator extends uvm_component;
         return (inst_addr + 'h8 <= `ITCM_SIZE);
     endfunction
 
+    function bit fetch_space_avail_for(int unsigned inst_bytes);
+        if(inst_addr > `ITCM_SIZE) return 1'b1;
+        return (inst_addr + inst_bytes + 'h4 <= `ITCM_SIZE);
+    endfunction
+
+    // test.vmem stores 32-bit words at word addresses.  RVC instructions are
+    // halfword-addressed, so update the corresponding halfword then emit the
+    // complete word.  Re-emitting a word is intentional when its other
+    // halfword is generated later; the memory loader keeps the last value.
+    function void vmem_write_word(bit [39:0] byte_addr);
+        bit [39:0] word_idx;
+        word_idx = byte_addr >> 2;
+        if(!mem_file.exists(word_idx))
+            mem_file[word_idx] = '0;
+        if(inst_gen_cfg.vmem_file_gen)
+            $fwrite(inst_gen_cfg.vmem_file, "@%0h\n%8h\n",
+                    word_idx, mem_file[word_idx]);
+    endfunction
+
+    function void vmem_write_halfword(bit [39:0] byte_addr, bit [15:0] data);
+        bit [39:0] word_idx;
+        word_idx = byte_addr >> 2;
+        if(!mem_file.exists(word_idx))
+            mem_file[word_idx] = '0;
+        if(byte_addr[1])
+            mem_file[word_idx][31:16] = data;
+        else
+            mem_file[word_idx][15:0] = data;
+    endfunction
+
+    function void vmem_write_inst(bit [31:0] data, int unsigned inst_bytes);
+        bit [39:0] first_word_idx;
+        bit [39:0] second_word_idx;
+        first_word_idx  = inst_paddr >> 2;
+        second_word_idx = (inst_paddr + 2) >> 2;
+
+        vmem_write_halfword(inst_paddr, data[15:0]);
+        if(inst_bytes == 4)
+            vmem_write_halfword(inst_paddr + 2, data[31:16]);
+
+        vmem_write_word(inst_paddr);
+        if((inst_bytes == 4) && (second_word_idx != first_word_idx))
+            vmem_write_word(inst_paddr + 2);
+    endfunction
+
     //------------------------------------------------------------------
     // truncate_fetch_space
     //   ITCM 写不下「当前指令 + quit」时调用：丢掉当前指令，在当前位置
@@ -313,9 +387,7 @@ class inst_generator extends uvm_component;
         $fwrite(inst_gen_cfg.gen_file,
                 ("/*PC: %16h -> %10h*/ // Warning --- ITCM 4KB full, truncate with pass_quit\n"),
                 inst_addr, inst_paddr);
-        if(inst_gen_cfg.vmem_file_gen)
-            $fwrite(inst_gen_cfg.vmem_file,"%8h\n",pass_quit_inst);
-        mem_file[inst_paddr/'h4] = pass_quit_inst;
+        vmem_write_inst(pass_quit_inst, 4);
         inst_addr  = inst_addr + 'h4;
         inst_paddr = inst_paddr + 'h4;
         inst_cnt   = 'h0;
@@ -332,17 +404,22 @@ class inst_generator extends uvm_component;
             inst_cnt   = `ITCM_SIZE / 'h4;
         end
         task_start_pc = inst_addr;
+        task_inst_history_start = inst_pc_history.size();
         // Mark every task boundary in vmem using word address (start_pc / 4).
         $fwrite(vmem_file,("@%0h\n"), inst_paddr >> 'h2);
         $fwrite(gen_file,("//========== TASK[%0d] start PC=%16h itcm_left=%0hB ==========\n"),
                 task_id, task_start_pc,
                 (inst_addr < `ITCM_SIZE) ? (`ITCM_SIZE - inst_addr) : 'h0);
     endfunction
+    // Choose only a real instruction boundary.  Mixed 16/32-bit streams
+    // cannot derive a valid PC from instruction_count * 4.
     function bit[63:0] rand_pc_in_current_task();
-        int unsigned n;
-        if(inst_addr <= task_start_pc) return task_start_pc;
-        n = (inst_addr - task_start_pc) / 4;
-        return task_start_pc + $urandom_range(n - 1) * 4;
+        int unsigned index;
+        if(inst_pc_history.size() <= task_inst_history_start)
+            return task_start_pc;
+        index = $urandom_range(inst_pc_history.size() - 1,
+                               task_inst_history_start);
+        return inst_pc_history[index];
     endfunction
     function void get_specified_rand_inst(inst_e inst_name);
         bit find_inst;
@@ -500,6 +577,12 @@ class inst_generator extends uvm_component;
     endfunction
 function void inst_queue_gen();
 //    `INT_INST_CREATE    
+    if(RVC inside inst_gen_cfg.support_inst_set)begin
+        case(inst_gen_cfg.xlen)
+            32: begin `RV32C_INST_CREATE end
+            64: begin `RV64C_INST_CREATE end
+        endcase
+    end
     if(RV64CBO inside inst_gen_cfg.support_inst_set)begin
         `RV64CBO_INST_CREATE
     end
@@ -560,10 +643,11 @@ function void inst_addr_print();
 endfunction
 function void inst_print();
     addr_type_e temp_addr_type;
-    addr_structure_s        fetch_s;
+    addr_structure_s fetch_s;
+    int unsigned inst_bytes;
 
-    // ITCM 已满：不写当前指令，改为 truncate 出 pass_quit
-    if(!fetch_space_avail())begin
+    inst_bytes = (inst[1:0] == 2'b11) ? 4 : 2;
+    if(!fetch_space_avail_for(inst_bytes))begin
         truncate_fetch_space();
         return;
     end
@@ -572,18 +656,14 @@ function void inst_print();
         $display(" inst_cnt = %0h,inst=%0h",inst_cnt,inst);
     end
 
-//    $fwrite(inst_gen_cfg.gen_file,"/* 0x%8h:*/\t",inst_cnt);
-//    inst_cnt = inst_cnt + 1;
-    if(inst_gen_cfg.vmem_file_gen) $fwrite(inst_gen_cfg.vmem_file,"%8h\n",inst);
-    mem_file[inst_paddr/'h4] = inst;
-//    $display("aa mem_file[%0h]=%0h",inst_paddr,mem_file[inst_paddr/4]);
+    inst_pc_history.push_back(inst_addr);
+    vmem_write_inst(inst, inst_bytes);
     reg_pool.free_reg();
 
-    inst_addr = inst_addr + 'h4;//if RV64C support TODO
-    inst_paddr = inst_paddr + 'h4;//if RV64C support TODO
+    inst_addr  = inst_addr  + inst_bytes;
+    inst_paddr = inst_paddr + inst_bytes;
     inst_cnt = inst_cnt - 1;
 
-    // 写完后只剩 quit 槽位，补一条 pass_quit 收尾
     if(!fetch_space_avail())
         truncate_fetch_space();
 

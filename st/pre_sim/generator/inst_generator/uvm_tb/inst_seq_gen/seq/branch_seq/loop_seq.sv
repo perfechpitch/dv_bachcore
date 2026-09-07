@@ -75,6 +75,8 @@ class loop_sequence extends base_inst_sequence;
         bit [31:0] ops[$];
         int inst_num[$];
         int li_seq_inst_num[$];
+        bit [63:0] loop_target_pc[$];
+        bit [31:0] branch_delta;
         int N;
 
  //reg_pool.gpr_full_valid=1'b1;
@@ -113,6 +115,7 @@ class loop_sequence extends base_inst_sequence;
             end
             $fwrite(inst_gen.gen_file,("//---------------li branch reg end\n"));
             $fwrite(inst_gen.gen_file,("loop_seq%0d_loop%0d:\n"),seq_num,i);
+            loop_target_pc[i] = inst_gen.inst_addr;
             gen_rand_inst(inst_gen,loop_seq_info.target_inst_num[i],loop_seq_info.ls_inst_dist,loop_seq_info.safe_inst_dist,loop_seq_info.flush_inst_dist,loop_seq_info.except_inst_dist,'d0,loop_seq_info.wfi_inst_dist);
 
             ops[i][24:20] = i_reg_num[i];
@@ -125,7 +128,12 @@ class loop_sequence extends base_inst_sequence;
             if(i!==(N-1))inst_num[i] = /*li_seq_inst_num[i] +*/ loop_seq_info.target_inst_num[i] + inst_num[i+1] +li_seq_inst_num[i+1]+2;
             else inst_num[i] = loop_seq_info.target_inst_num[i] + 1;
             `addi(i_reg_num[i],i_reg_num[i],loop_stride[i]);
-            {ops[i][7],ops[i][30:25],ops[i][11:8]} = ('h1000-inst_num[i]*'h4) >> 1;
+            // B-type immediate is relative to this branch PC.  Measure the
+            // actual target PC instead of reconstructing it from inst_count.
+            branch_delta = loop_target_pc[i] - inst_gen.inst_addr;
+            {ops[i][7],ops[i][30:25],ops[i][11:8]} =
+                {branch_delta[12],branch_delta[10:5],
+                 branch_delta[4:1],branch_delta[11]};
             inst_gen.get_rand_branch_inst(ops[i]);
             //$display("target_inst_num[%0d] = %0d, inst_num=%0d,imm=%0h",i,loop_seq_info.target_inst_num[i],inst_num[i],'h1000-inst_num[i]*'h4);
         end

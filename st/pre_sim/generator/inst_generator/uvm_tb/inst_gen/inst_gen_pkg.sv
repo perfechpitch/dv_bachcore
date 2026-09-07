@@ -45,6 +45,7 @@ package inst_gen_pkg;
 `include "inst_group/store_inst.sv"
 `include "inst_group/amo_inst.sv"
 `include "ri_inst_generator.sv"
+`include "inst_group/c_inst.sv"
 
 `include "inst_group/float_inst/float_inst.sv"
 

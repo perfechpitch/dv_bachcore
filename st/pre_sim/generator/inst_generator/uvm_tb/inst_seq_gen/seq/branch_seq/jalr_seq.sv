@@ -17,6 +17,8 @@ class jalr_sequence extends uvm_object;
         bit[63:0]           fetch_addr;
         bit [4:0]           target_reg;
         bit [4:0]           temp_reg;
+        bit                 use_c_jalr;
+        bit                 use_c_jalr_link;
 
         target_reg = inst_gen.reg_pool.get_nonezero_gpr(1);
         temp_reg = inst_gen.reg_pool.get_nonezero_gpr(1);
@@ -34,6 +36,16 @@ class jalr_sequence extends uvm_object;
 
         branch_seq_info.inst_seq_cfg = branch_seq_cfg;
         branch_seq_info.randomize();
+        use_c_jalr = (fetch_addr_type == FETCH_VALID) &&
+                     (RVC inside inst_gen.reg_pool.inst_gen_cfg.support_inst_set) &&
+                     $urandom_range(1);
+        use_c_jalr_link = $urandom_range(1);
+        if(use_c_jalr) begin
+            // C.JR/C.JALR have no immediate. Load the exact target PC into
+            // rs1 and keep target generation adjacent to the indirect jump.
+            branch_seq_info.target_gen_type = ALU_TARGET;
+            branch_seq_info.jalr_imm = '0;
+        end
         if(fetch_addr_type == FETCH_VALID && branch_seq_info.target_gen_type == LOAD_TARGET)
             branch_seq_info.target_gen_type = ALU_TARGET;
          
@@ -72,7 +84,14 @@ class jalr_sequence extends uvm_object;
         endcase
 
 
-        `jalr(temp_reg,target_reg,branch_seq_info.jalr_imm);   //temp_reg = pc+4, next pc = target_reg + $signextend(jalr.imm);
+        if(use_c_jalr) begin
+            if(use_c_jalr_link)
+                inst_gen.get_specified_inst(C_JALR, target_reg, '0, '0, '0);
+            else
+                inst_gen.get_specified_inst(C_JR, target_reg, '0, '0, '0);
+        end
+        else
+            `jalr(temp_reg,target_reg,branch_seq_info.jalr_imm);
         if(fetch_addr_type == FETCH_INVALID)
             inst_gen.addr_space_gen.fetch_invalid_vaddrs.push_back(inst_gen.inst_addr);
         // FETCH_VALID: keep sequential fetch layout; do not relocate inst_addr.

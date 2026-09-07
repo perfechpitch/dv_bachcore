@@ -22,7 +22,6 @@ class task_info_config extends uvm_object;
             $fclose(log_file);
         log_file = $fopen("./log/task_info.log", "w");
         $fwrite(log_file, ("# task_info.log  task_num=%0d  fetch_start=0\n"), task_num);
-        $fwrite(log_file, ("# task_id  start_pc      end_pc        inst_num\n"));
     endfunction
 
     function void record_start(int task_id, bit[63:0] pc);
@@ -30,8 +29,10 @@ class task_info_config extends uvm_object;
             start_pc[task_id] = pc;
         else
             start_pc.push_back(pc);
-        if(log_file)
-            $fwrite(log_file, ("# switch task_id=%0d start_pc=0x%016h\n"), task_id, pc);
+        if(log_file) begin
+            $fwrite(log_file, ("------------task_id : %0d----------\n"), task_id);
+            $fwrite(log_file, ("task_id: %0d\nstart_pc: 0x%016h\n"), task_id, pc);
+        end
         `uvm_info("TASK_INFO", $sformatf("task_id=%0d start_pc=0x%016h", task_id, pc), UVM_LOW)
     endfunction
 
@@ -41,8 +42,7 @@ class task_info_config extends uvm_object;
         sp = (task_id < start_pc.size()) ? start_pc[task_id] : 0;
         n  = (end_pc >= sp) ? ((end_pc - sp) / 4) : 0;
         if(log_file)
-            $fwrite(log_file, ("  %0d        0x%016h  0x%016h  %0d\n"),
-                    task_id, sp, end_pc, n);
+            $fwrite(log_file, ("inst_num: %0d\nend_pc: 0x%016h\n\n"), n, end_pc);
         `uvm_info("TASK_INFO", $sformatf("task_id=%0d start_pc=0x%016h end_pc=0x%016h inst_num=%0d", task_id, sp, end_pc, n), UVM_LOW)
     endfunction
 

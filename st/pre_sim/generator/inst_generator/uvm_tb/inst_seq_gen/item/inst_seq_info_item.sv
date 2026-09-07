@@ -12,14 +12,14 @@ typedef enum {MIN,LOW,HIGH,MAX}seq_length_type_e;
       super.new(name);
     endfunction : new
 
-//    constraint seq_length_type_c{
-//        seq_length_type dist{
-//        MIN :=  inst_seq_cfg.seq_length_dist[0],
-//        LOW :=  inst_seq_cfg.seq_length_dist[1],
-//        HIGH:=  inst_seq_cfg.seq_length_dist[2],
-//        MAX :=  inst_seq_cfg.seq_length_dist[3]
-//        };
-//    }
+    constraint seq_length_type_c{
+        seq_length_type dist{
+        MIN :=  inst_seq_cfg.seq_length_dist[0],
+        LOW :=  inst_seq_cfg.seq_length_dist[1],
+        HIGH:=  inst_seq_cfg.seq_length_dist[2],
+        MAX :=  inst_seq_cfg.seq_length_dist[3]
+        };
+    }
 
     constraint seq_length_c{
         (seq_length_type == MIN)    -> seq_length == 'd1;

@@ -21,12 +21,16 @@ class jal_gen extends base_inst;
         return val; 
     endfunction
     function bit [31:0] override_rand_inst(ref ops_gen_config ops_gen_cfg,ref bit[31:0] imm);
-        bit[31:0] rand_ops; 
-        `RANDOMIZE_CHECK_WITH_C(ops_gen_cfg,rand_imm == imm;,"Error: jal inst ops gen error")
-        rand_ops = rand_ops_gen(ops_gen_cfg); 
+        bit[31:0] rand_ops;
+        bit[20:0] jump_imm_bits;
+        ops_gen_cfg_rand(ops_gen_cfg);
+        rand_ops = rand_ops_gen(ops_gen_cfg);
+        jump_imm_bits = imm;
+        {rand_ops[31],rand_ops[30:21],rand_ops[20],rand_ops[19:12]} =
+            {jump_imm_bits[20],jump_imm_bits[10:1],
+             jump_imm_bits[11],jump_imm_bits[19:12]};
         inst = const_ops_mask & const_ops_val | ~const_ops_mask & rand_ops;
-     //   $display("inst = %0h",inst);
-        asm_print(); 
+        asm_print();
         return inst;
     endfunction 
     function void asm_print(); 

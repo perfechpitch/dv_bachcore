@@ -8,7 +8,7 @@ package cpu_set_pkg;
     RV64A,
     RV64F,
     RV64D,
-    RV64C,
+    RVC, RV64C,
     RV64V,
     RV64ZICSR,
     RV64ZIFENCEI,
@@ -29,6 +29,6 @@ package cpu_set_pkg;
   } csr_set_e;
 endpackage
 
-`define SUPPORT_INST_SET '{RVI, RVM, RVA}
+`define SUPPORT_INST_SET '{RVI, RVM, RVA, RVC}
 `define SUPPORT_PRV_MODE '{M_MODE}
 `define SUPPORT_CSR_SET CSR_NONE

@@ -111,6 +111,12 @@ typedef enum{DWORD_INSIDE,CACHELINE_INSIDE,CACHELINE_BEYOND}target_inst_num_type
         (target_inst_num_type == CACHELINE_INSIDE)  ->target_inst_num inside{[2:16]};
         (target_inst_num_type == CACHELINE_BEYOND)  ->target_inst_num inside{[16:50]};
     }
+    constraint branch_is_jump_c{
+        branch_is_jump dist{
+            1 := inst_seq_cfg.branch_is_jump_dist,
+            0 := 100 - inst_seq_cfg.branch_is_jump_dist
+        };
+    }
     constraint inst_dist_c{
         safe_inst_dist inside{[0:100]};
         if(inst_seq_cfg.ls_inst_disable){ls_inst_dist == 'd0;}
@@ -136,6 +142,8 @@ typedef enum{DWORD_INSIDE,CACHELINE_INSIDE,CACHELINE_BEYOND}target_inst_num_type
         };
     }
     function void post_randomize();
-        imm = target_inst_num * 4;
+        // The final branch immediate is measured from real instruction PCs by
+        // the sequence because instruction count no longer implies byte count.
+        imm = '0;
     endfunction
 endclass

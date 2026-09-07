@@ -233,7 +233,62 @@ class ls_addr_generator extends uvm_object;
         return simm[11:0];
     endfunction
 
+    // C.LW/C.SW use the CL/CS unsigned word offset encoding:
+    // uimm[6:2], hence only 0..124 bytes and 4-byte alignment.
+    // Keep the selected EA inside the same bound LS window as normal loads/stores.
+    function bit[6:0] get_ls_c_word_imm(addr_structure_s ls_s);
+        ls_addr_s b;
+        bit[63:0] ea, ea_max;
+        int unsigned span;
+        bit[6:0] imm;
+        b = find_bound(ls_s.vaddr);
+        ea_max = b.base_val + 'h7c;
+        if(ea_max > (b.win_hi - 4))
+            ea_max = b.win_hi - 4;
+        if(ea_max < b.base_val)
+            ea = b.base_val;
+        else begin
+            span = (ea_max - b.base_val) / 4;
+            ea = b.base_val + $urandom_range(span) * 4;
+        end
+        imm = ea - b.base_val;
+        return imm;
+    endfunction
+
     //------------------------------------------------------------------
+    // C.LWSP/C.SWSP use an unsigned word offset in [0, 252].
+    function bit[7:0] get_ls_c_sp_word_imm(addr_structure_s ls_s);
+        ls_addr_s b;
+        bit[63:0] ea, ea_max;
+        int unsigned span;
+        bit[7:0] imm;
+        b = find_bound(ls_s.vaddr);
+        ea_max = b.base_val + 'hfc;
+        if(ea_max > (b.win_hi - 4))
+            ea_max = b.win_hi - 4;
+        if(ea_max < b.base_val)
+            ea = b.base_val;
+        else begin
+            span = (ea_max - b.base_val) / 4;
+            ea = b.base_val + $urandom_range(span) * 4;
+        end
+        imm = ea - b.base_val;
+        return imm;
+    endfunction
+
+    // Validate the unsigned, word-aligned compressed LS offset including
+    // the complete four-byte access at the end of the selected LS window.
+    function bit ls_c_word_imm_fix(bit[31:0] ls_imm,
+                                   int unsigned max_imm,
+                                   ref addr_structure_s ls_s);
+        ls_addr_s b;
+        bit[63:0] ea;
+        b = find_bound(ls_s.vaddr);
+        ea = b.base_val + ls_imm;
+        return (ls_imm <= max_imm) && (ls_imm[1:0] == 0) &&
+               (ea >= b.win_lo) && (ea + 4 <= b.win_hi);
+    endfunction
+
     // ls_imm_fix
     //   调用方指定了 imm（如 linear stride），检查
     //     ea = base_val + sext(imm12)  是否落在绑定窗口内。
@@ -247,5 +302,46 @@ class ls_addr_generator extends uvm_object;
         imm12 = ls_imm[11:0];
         ea    = b.base_val + imm12;
         return (ea >= b.win_lo) && (ea < b.win_hi);
+    endfunction
+
+    // C.ADDI16SP changes the fixed x2 base by a non-zero multiple of 16.
+    // Choose only architectural immediates that keep x2 inside its bound LS
+    // window, then move the bound-base metadata with the architectural state.
+    function bit signed [9:0] get_c_addi16sp_imm(ref addr_structure_s sp_s);
+        ls_addr_s      b;
+        int signed     legal_imm[$];
+        int signed     selected_imm;
+        longint signed next_base;
+        bit             found;
+
+        b = find_bound(sp_s.vaddr);
+        for(int signed imm = -512; imm <= 496; imm += 16) begin
+            if(imm != 0) begin
+                next_base = $signed(b.base_val) + imm;
+                if((next_base >= $signed(b.win_lo)) &&
+                   (next_base + 4 <= $signed(b.win_hi)))
+                    legal_imm.push_back(imm);
+            end
+        end
+        if(legal_imm.size() == 0) begin
+            `uvm_error(`gfn, "C.ADDI16SP has no legal non-zero immediate in the SP LS window")
+            selected_imm = 16;
+        end
+        else
+            selected_imm = legal_imm[$urandom_range(legal_imm.size()-1)];
+
+        next_base = $signed(b.base_val) + selected_imm;
+        found = 1'b0;
+        foreach(bound_base[i]) begin
+            if(!found && bound_base[i].base_val == sp_s.vaddr) begin
+                bound_base[i].base_val = next_base;
+                found = 1'b1;
+            end
+        end
+        if(!found)
+            `uvm_error(`gfn, "C.ADDI16SP could not update the bound SP base")
+        sp_s.vaddr = next_base;
+        sp_s.paddr = next_base[39:0];
+        return selected_imm[9:0];
     endfunction
 endclass
