@@ -57,9 +57,7 @@ Thumbs.db
 # ==============================================================================
 
 verify_tools/vip/formal/softvector/softfloat/build/
-verify_tools/vip/vector_generator/Miners/softvector/softfloat/build/
 verify_tools/vip/formal/softvector/softfloat/install/
-verify_tools/vip/vector_generator/Miners/softvector/softfloat/install/
 
 # ==============================================================================
 # Pre-sim and agent-sim generated outputs
