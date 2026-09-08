@@ -2,11 +2,14 @@
 +incdir+inst_gen
 +incdir+inst_seq_type_gen
 +incdir+inst_seq_gen
-+incdir+directed_seq
++incdir+scenario_seq
++incdir+registry
 +incdir+../scenario
 ../bench/define/cpu_set_pkg.sv
 inst_gen/inst_gen_pkg.sv
 inst_seq_type_gen/inst_seq_type_pkg.sv
 inst_seq_gen/inst_seq_pkg.sv
-directed_seq/directed_seq_pkg.sv
+scenario_seq/scenario_seq_pkg.sv
+registry/directed_registry_pkg.sv
+registry/random_registry_pkg.sv
 inst_gen_env_pkg.sv

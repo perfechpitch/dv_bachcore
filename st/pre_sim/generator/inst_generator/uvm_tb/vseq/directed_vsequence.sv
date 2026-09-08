@@ -1,40 +1,22 @@
 // 定向 program：按 +directed_seq_name= 从仓库取场景再发。不改 seq_debug_vsequence。
-class directed_vsequence extends inst_gen_base_vsequence;
-    directed_seq            dir_seq;
-    directed_scenario_seq   scenario;
+class directed_vsequence extends scenario_base_vsequence;
+    directed_scenario_registry registry;
     `uvm_object_utils(directed_vsequence)
-    `uvm_declare_p_sequencer(inst_gen_vsequencer)
 
     function new(string name = "directed_vsequence");
         super.new(name);
-        dir_seq = new();
+        registry = new();
     endfunction
 
-    virtual task body();
-        task_info_config task_info;
-        string           seq_name;
+    virtual function bit get_scenario_name(output string seq_name);
+        return $value$plusargs("directed_seq_name=%s", seq_name);
+    endfunction
 
-        if(!$value$plusargs("directed_seq_name=%s", seq_name))
-            `uvm_fatal("DIRECTED_VSEQ", "need +directed_seq_name=<scenario>")
-        scenario = dir_seq.get(seq_name);
+    virtual function string scenario_arg_help();
+        return "+directed_seq_name=<scenario>";
+    endfunction
 
-        task_info = p_sequencer.inst_gen_case_cfg.task_info;
-
-        for(int t=0; t<task_info.task_num; t++)begin
-            if(!p_sequencer.inst_gen.fetch_space_avail())begin
-                $fwrite(p_sequencer.inst_gen.gen_file,
-                        ("// ITCM 4KB full, skip remaining tasks from task_id=%0d\n"), t);
-                break;
-            end
-            p_sequencer.inst_gen.switch_task(t);
-            task_info.record_start(t, p_sequencer.inst_gen.inst_addr);
-            if(!p_sequencer.inst_gen.fetch_space_avail())
-                break;
-            scenario.seq_gen(p_sequencer.inst_gen,
-                             p_sequencer.inst_seq_gen,
-                             p_sequencer.inst_seq_type_gen);
-            task_info.record_end(t, p_sequencer.inst_gen.inst_addr);
-        end
-        task_info.finish_log();
-    endtask
+    virtual function scenario_base_seq create_scenario(string seq_name);
+        return registry.get(seq_name);
+    endfunction
 endclass : directed_vsequence

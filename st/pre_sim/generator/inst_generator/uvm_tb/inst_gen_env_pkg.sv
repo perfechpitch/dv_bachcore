@@ -4,7 +4,9 @@ package inst_gen_env_pkg;
     import  inst_seq_type_pkg::*;
     import  inst_gen_pkg::*;
     import  inst_seq_pkg::*;
-    import  directed_seq_pkg::*;
+    import  scenario_seq_pkg::*;
+    import  directed_registry_pkg::*;
+    import  random_registry_pkg::*;
 
 `include "uvm_macros.svh"
 
@@ -17,5 +19,7 @@ package inst_gen_env_pkg;
 `include "vseq/asm_gen_vsequence.sv"
 `include "vseq/seq_debug_vsequence.sv"
 `include "vseq/c_inst_vsequence.sv"
+`include "vseq/scenario_base_vsequence.sv"
 `include "vseq/directed_vsequence.sv"
+`include "vseq/random_scenario_vsequence.sv"
 endpackage : inst_gen_env_pkg
