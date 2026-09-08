@@ -1,0 +1,10 @@
+# Generated SoftFloat files; preserve platform Makefiles and platform.h.
+/Minres/softvector/softfloat/build/CMakeFiles/
+/Minres/softvector/softfloat/build/CMakeCache.txt
+/Minres/softvector/softfloat/build/Makefile
+/Minres/softvector/softfloat/build/cmake_install.cmake
+/Minres/softvector/softfloat/build/install_manifest.txt
+/Minres/softvector/softfloat/build/**/*.a
+/Minres/softvector/softfloat/build/**/*.o
+/Minres/softvector/softfloat/build/**/*.o.d
+/Minres/softvector/softfloat/install/
