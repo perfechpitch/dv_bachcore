@@ -15,3 +15,9 @@
    uvm_tc         = directed_inst_test
    vcs_tb_args    = +directed_seq_name=dsa_dsaw+support_custom+xlen=32+dsa_addr_reg=5+dsa_data_reg=6+dsa_addr=8+dsa_data=12345678
    batch_times    = 1
+
+ #---------------------DSAWI register setup and immediate DSA register write
+ - case_name      = dsa_dsawi_directed_test
+   uvm_tc         = directed_inst_test
+   vcs_tb_args    = +directed_seq_name=dsa_dsawi+support_custom+xlen=32+dsa_addr_reg=5+dsa_addr=8+dsa_imm=abcd
+   batch_times    = 1

@@ -6,3 +6,4 @@
 `include "xx_directed_scenario_seq.sv"
 `include "other/c_addi16sp_repeat_directed_scenario_seq.sv"
 `include "other/dsa_dsaw_directed_scenario_seq.sv"
+`include "other/dsa_dsawi_directed_scenario_seq.sv"
