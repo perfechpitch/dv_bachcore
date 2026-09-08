@@ -89,6 +89,10 @@ class inst_gen_case_config extends uvm_object;
         if(inst_gen_cfg.xlen != 32 && inst_gen_cfg.xlen != 64) begin
             `uvm_fatal("XLEN", $sformatf("Unsupported xlen=%0d; only 32 or 64 are legal", inst_gen_cfg.xlen))
         end
+        if($test$plusargs("support_custom") && !(CUSTOM inside support_inst_set)) begin
+            support_inst_set = new[support_inst_set.size()+1](support_inst_set);
+            support_inst_set[support_inst_set.size()-1] = CUSTOM;
+        end
         if($value$plusargs("seq_num=%d",seq_num))begin
         end
         if($value$plusargs("test_mode=%s",test_mode_string))begin

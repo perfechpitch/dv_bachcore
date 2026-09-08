@@ -34,6 +34,7 @@ package inst_gen_pkg;
 `include "register_pool.sv"
 
 `include "inst_group/base_inst.sv"
+`include "inst_group/dsa_custom_inst.sv"
 `include "inst_group/int_inst/b_type_inst.sv"
 `include "inst_group/int_inst/jump_inst.sv"
 `include "inst_group/int_inst/n_type_inst.sv"

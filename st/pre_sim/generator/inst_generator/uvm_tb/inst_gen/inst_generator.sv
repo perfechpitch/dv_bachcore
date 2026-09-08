@@ -60,6 +60,8 @@ class inst_generator extends uvm_component;
  `INST_GEN_DECLARATION(c_jalr_gen)
  `INST_GEN_DECLARATION(c_add_gen)
  `INST_GEN_DECLARATION(c_swsp_gen)
+ `INST_GEN_DECLARATION(dsaw_gen)
+ `INST_GEN_DECLARATION(dsawi_gen)
  `INST_GEN_DECLARATION(addi_gen)
     `INST_GEN_DECLARATION(slti_gen)
     `INST_GEN_DECLARATION(sltiu_gen)
@@ -552,6 +554,8 @@ class inst_generator extends uvm_component;
                 U_TYPE  : ops = {imm[19:0],rd,7'b0};
                 B_TYPE  : ops = {imm[11],imm[9:4],rs2,rs1,3'b0,imm[3:0],imm[10],7'b0};
                 J_TYPE  : ops = {imm[20],imm[10:1],imm[11],imm[19:12],rd,7'b0};
+                DSAW_TYPE  : ops = {7'b0,rs2,rs1,3'b0,5'b0,7'b0};
+                DSAWI_TYPE : ops = {1'b0,imm[15:5],rs1,3'b0,imm[4:0],7'b0};
             endcase
                 inst = inst_gen_queue[i].get_specified_inst(ops);
                 find_inst = 1'b1;

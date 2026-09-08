@@ -4,3 +4,5 @@
 //`include "dte/xx_directed_scenario_seq.sv"
 //`include "workload/xx_directed_scenario_seq.sv"
 `include "xx_directed_scenario_seq.sv"
+`include "other/c_addi16sp_repeat_directed_scenario_seq.sv"
+`include "other/dsa_dsaw_directed_scenario_seq.sv"

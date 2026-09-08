@@ -10,6 +10,7 @@ package tc_pkg;
 `include "branch_inst_test.sv"
 `include "ls_inst_test.sv"
 `include "rand_flush_except_test.sv"
+`include "c_inst_test.sv"
 `include "directed_inst_test.sv"
 
 endpackage : tc_pkg

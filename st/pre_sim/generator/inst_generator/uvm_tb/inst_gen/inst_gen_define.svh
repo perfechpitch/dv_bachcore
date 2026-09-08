@@ -110,7 +110,11 @@
     `INST_GEN_CREATE(pref_i_gen )\
     `INST_GEN_CREATE(pref_r_gen )\
     `INST_GEN_CREATE(pref_w_gen )
-`define CUSTOM_INST_CREATE
+`define DSA_CUSTOM_INST_CREATE \
+    `INST_GEN_CREATE(dsaw_gen )\
+    `INST_GEN_CREATE(dsawi_gen)
+`define CUSTOM_INST_CREATE \
+    `DSA_CUSTOM_INST_CREATE
 // XLEN-filtered subsets. Legacy RV64 aggregate macros remain unchanged.
 `define I_COMMON_ALU_CREATE \
  `INST_GEN_CREATE(addi_gen) `INST_GEN_CREATE(slti_gen) `INST_GEN_CREATE(sltiu_gen) `INST_GEN_CREATE(xori_gen) `INST_GEN_CREATE(ori_gen) `INST_GEN_CREATE(andi_gen) `INST_GEN_CREATE(slli_gen) `INST_GEN_CREATE(srli_gen) `INST_GEN_CREATE(srai_gen) `INST_GEN_CREATE(add_gen) `INST_GEN_CREATE(sub_gen) `INST_GEN_CREATE(sll_gen) `INST_GEN_CREATE(slt_gen) `INST_GEN_CREATE(sltu_gen) `INST_GEN_CREATE(xor_gen) `INST_GEN_CREATE(srl_gen) `INST_GEN_CREATE(sra_gen) `INST_GEN_CREATE(or_gen) `INST_GEN_CREATE(and_gen)

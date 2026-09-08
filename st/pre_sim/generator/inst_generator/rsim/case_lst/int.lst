@@ -15,6 +15,12 @@
    vcs_tb_args    = +test_mode=INT_TEST
    batch_times    = 10
  
+ #---------------------compressed inst
+ - case_name      = c_inst_test
+   uvm_tc         = c_inst_test
+   vcs_tb_args    = +test_mode=INT_TEST+xlen=32
+   batch_times    = 10
+
  #---------------------branch inst
  - case_name      = branch_inst_test
    base_case      = branch_inst_test

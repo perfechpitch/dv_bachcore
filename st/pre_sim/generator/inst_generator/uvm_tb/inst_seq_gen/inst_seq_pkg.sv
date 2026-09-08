@@ -53,6 +53,7 @@ package inst_seq_pkg;
 `include "./seq/except_inst_seq.sv"
 `include "./seq/flush_inst_seq.sv"
 `include "./seq/safe_inst_seq.sv"
+`include "./seq/c_inst_seq.sv"
 `include "./seq/wfi_inst_seq.sv"
 
 `include "./seq/asm_seq/base_asm_seq.sv"
