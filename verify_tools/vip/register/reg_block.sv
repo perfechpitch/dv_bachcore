@@ -135,6 +135,24 @@ class my_block extends uvm_component;
         end
     endfunction
 
+    function int get_addr(string name);
+        if (!name_map.exists(name)) begin
+            `uvm_error("GET_ADDR_NOT_FOUND", $sformatf("Register '%s' does not exist in this block!", name))
+            return 0;
+        end
+        return name_map[name];
+    endfunction
+
+    function int sel_addr();
+        int id;
+        if (regs.size() == 0) begin
+            `uvm_error("SEL_ADDR_EMPTY", "No registers exist in this block!")
+            return 0;
+        end
+        id = $urandom_range(regs.size() - 1, 0);
+        return regs[id].addr;
+    endfunction
+
     // 将外部字段引用解析为唯一的 "<寄存器名>.<字段名>" 规范键和字段位置。
     // 限定名可直接解析；为了兼容旧接口，裸字段名仅在全局唯一时允许使用。
     // 字段名存在歧义或不存在时，通过 error_id 报错并返回 0，调用者必须终止
