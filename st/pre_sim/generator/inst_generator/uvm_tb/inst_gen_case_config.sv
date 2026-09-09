@@ -225,11 +225,18 @@ class inst_gen_case_config extends uvm_object;
         csr_cfg.int_ack_disable = int_ack_disable;
         begin
             int unsigned tn;
-            if($value$plusargs("task_num=%d",tn))
+            if($value$plusargs("task_num=%d",tn)) begin
+                if(!(tn inside {[1:8]}))
+                    `uvm_fatal("TASK_INFO", $sformatf("+task_num=%0d is illegal; valid range is [1:8]", tn))
                 task_info.task_num = tn;
-            else
+            end
+            else begin
                 assert(task_info.randomize(task_num));
-            task_info.init();
+            end
+            // Scenario flows own the global task map and task_info.log.
+            if(!$test$plusargs("directed_seq_name") &&
+               !$test$plusargs("random_scenario_name"))
+                task_info.init();
         end
     endfunction
 endclass

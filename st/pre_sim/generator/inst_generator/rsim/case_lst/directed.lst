@@ -1,23 +1,5 @@
- #---------------------directed scenario
- - case_name      = xx_directed_test
+ #---------------------multi-core directed scenario
+ - case_name      = multicore_directed_test
    uvm_tc         = directed_inst_test
-   vcs_tb_args    = +directed_seq_name=xx
-   batch_times    = 1
-
- #---------------------consecutive C.ADDI16SP
- - case_name      = c_addi16sp_directed_test
-   uvm_tc         = directed_inst_test
-   vcs_tb_args    = +directed_seq_name=c_addi16sp_repeat+c_addi16sp_num=16+xlen=32
-   batch_times    = 1
-
- #---------------------DSAW register setup and DSA register write
- - case_name      = dsa_dsaw_directed_test
-   uvm_tc         = directed_inst_test
-   vcs_tb_args    = +directed_seq_name=dsa_dsaw+support_custom+xlen=32+dsa_addr_reg=5+dsa_data_reg=6+dsa_addr=8+dsa_data=12345678
-   batch_times    = 1
-
- #---------------------DSAWI register setup and immediate DSA register write
- - case_name      = dsa_dsawi_directed_test
-   uvm_tc         = directed_inst_test
-   vcs_tb_args    = +directed_seq_name=dsa_dsawi+support_custom+xlen=32+dsa_addr_reg=5+dsa_addr=8+dsa_imm=abcd
+   vcs_tb_args    = +directed_seq_name=multicore_directed+xlen=32
    batch_times    = 1

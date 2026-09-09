@@ -1,4 +1,4 @@
-package directed_seq_pkg;
+package scenario_seq_pkg;
     import uvm_pkg::*;
     import cpu_set_pkg::*;
     import inst_gen_pkg::*;
@@ -7,8 +7,6 @@ package directed_seq_pkg;
 
 `include "uvm_macros.svh"
 
-`include "directed_scenario_seq.sv"
-`include "directed_seq.sv"
-`include "scenario_list.svh"
+`include "scenario_base_seq.sv"
 
-endpackage : directed_seq_pkg
+endpackage : scenario_seq_pkg

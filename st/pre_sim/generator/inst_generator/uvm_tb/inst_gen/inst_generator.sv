@@ -25,6 +25,7 @@ class inst_generator extends uvm_component;
     bit[63:0]           task_start_pc;
     bit[63:0]           inst_pc_history[$];
     int unsigned         task_inst_history_start;
+    bit                  core_stream_initialized;
 
     ri_inst_generator   ri_inst_gen;
     int queue_size;
@@ -310,6 +311,7 @@ class inst_generator extends uvm_component;
         ls_addr_gen = new();
 
         inst_cnt = 0;
+        core_stream_initialized = 1'b0;
     endfunction : new
 
     task pre_main_phase(uvm_phase phase);
@@ -395,15 +397,41 @@ class inst_generator extends uvm_component;
         inst_cnt   = 'h0;
     endfunction
 
-    function void switch_task(int task_id);
+    function void begin_core_stream(int new_gen_file,
+                                    int new_vmem_file,
+                                    tcm_hart_e core);
+        gen_file                = new_gen_file;
+        vmem_file               = new_vmem_file;
+        inst_gen_cfg.gen_file   = new_gen_file;
+        inst_gen_cfg.vmem_file  = new_vmem_file;
+        ri_inst_gen.gen_file    = new_gen_file;
+        mem_file.delete();
+        inst_pc_history.delete();
+        task_start_pc           = '0;
+        task_inst_history_start = 0;
+        inst_addr               = '0;
+        inst_paddr              = '0;
+        inst_cnt                = `ITCM_SIZE / 'h4;
+        core_stream_initialized = 1'b1;
+        ls_addr_gen.hart        = core;
+    endfunction
+
+    function void switch_task(int       task_id,
+                              bit       use_configured_start_pc = 1'b0,
+                              bit[63:0] configured_start_pc     = '0);
         if(gen_file == 0)begin
             gen_file  = inst_gen_cfg.gen_file;
             vmem_file = inst_gen_cfg.vmem_file;
         end
-        if(task_id == 'h0)begin
-            inst_addr  = 'h0;
-            inst_paddr = 'h0;
-            inst_cnt   = `ITCM_SIZE / 'h4;
+        if(!core_stream_initialized) begin
+            inst_addr               = '0;
+            inst_paddr              = '0;
+            inst_cnt                = `ITCM_SIZE / 'h4;
+            core_stream_initialized = 1'b1;
+        end
+        if(use_configured_start_pc) begin
+            inst_addr  = configured_start_pc;
+            inst_paddr = configured_start_pc[39:0];
         end
         task_start_pc = inst_addr;
         task_inst_history_start = inst_pc_history.size();

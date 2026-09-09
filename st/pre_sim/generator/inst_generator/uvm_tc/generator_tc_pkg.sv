@@ -12,5 +12,6 @@ package tc_pkg;
 `include "rand_flush_except_test.sv"
 `include "c_inst_test.sv"
 `include "directed_inst_test.sv"
+`include "random_scenario_test.sv"
 
 endpackage : tc_pkg

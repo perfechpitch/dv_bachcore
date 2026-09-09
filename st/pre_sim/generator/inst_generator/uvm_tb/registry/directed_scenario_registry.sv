@@ -1,10 +1,10 @@
 // 定向场景仓库。按 name 取出；登记由各 scenario 文件自己 add，本文件不再列场景。
-class directed_seq extends uvm_object;
+class directed_scenario_registry extends uvm_object;
     static uvm_object_wrapper pool[string];
 
-    `uvm_object_utils(directed_seq)
+    `uvm_object_utils(directed_scenario_registry)
 
-    function new (string name = "directed_seq");
+    function new(string name = "directed_scenario_registry");
         super.new(name);
     endfunction : new
 
@@ -28,23 +28,21 @@ class directed_seq extends uvm_object;
         return s;
     endfunction
 
-    function directed_scenario_seq get(string seq_name);
-        uvm_object            obj;
-        directed_scenario_seq seq;
+    function scenario_base_seq get(string seq_name);
+        uvm_object       obj;
+        scenario_base_seq scenario;
         if(!pool.exists(seq_name))begin
             `uvm_fatal("DIRECTED_SEQ",
                 $sformatf("unknown directed_seq_name=%s  registered=[%s]", seq_name, name_list()))
         end
         obj = pool[seq_name].create_object(seq_name);
-        if(obj == null || !$cast(seq, obj))begin
+        if(obj == null || !$cast(scenario, obj))begin
             `uvm_fatal("DIRECTED_SEQ",
                 $sformatf("create/cast failed directed_seq_name=%s", seq_name))
         end
-        return seq;
+        return scenario;
     endfunction
 endclass
 
-// 放在 xxx_directed_seq 的 endclass 之后，只改那个 scenario 文件：
-//   `DIRECTED_SCENARIO_REGISTER(jalr_directed_seq, "jalr_seq")
 `define DIRECTED_SCENARIO_REGISTER(TYPE, NAME) \
-    static bit TYPE``_directed_reg = directed_seq::add(NAME, TYPE::get_type());
+    static bit TYPE``_directed_reg = directed_scenario_registry::add(NAME, TYPE::get_type());
