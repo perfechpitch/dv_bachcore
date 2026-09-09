@@ -6,7 +6,6 @@
 // Update Count         :
 // Description          :
 // ============================================================================
-
 `ifndef RESET_SEQ_ITEM_SV
 `define RESET_SEQ_ITEM_SV
 
@@ -25,7 +24,6 @@ class reset_seq_item extends uvm_sequence_item;
         `uvm_field_int        (next_reset_delay,             UVM_DEFAULT | UVM_DEC)
     `uvm_object_utils_end
     
-    // new - constructor
     function new (string name = "reset_seq_item");
       super.new(name);
     endfunction : new

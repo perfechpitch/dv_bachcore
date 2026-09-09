@@ -6,11 +6,6 @@
 // Update Count         :
 // Description          :
 // ============================================================================
-//
-// If this is a upper level package, it should include the packages which
-// construct this package as a UVC.
-//
-// For example:
 `include "vu_env_pkg.sv"
 package vu_tc_pkg;
     import  uvm_pkg::*;

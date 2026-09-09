@@ -8,7 +8,6 @@
 // ============================================================================
 `ifndef RESET_CONFIG_SV
 `define RESET_CONFIG_SV
-//typedef enum {RESET_ONCE,RESET_RANDOM}reset_type_e;
 class reset_config extends uvm_object;
     uvm_active_passive_enum is_active = UVM_ACTIVE;
 
@@ -17,7 +16,6 @@ class reset_config extends uvm_object;
     bit checks_enable   = 1;
     bit coverage_enable = 1;
 
-    //rand reset_type_e reset_type;
     reset_type_e      reset_type = RESET_ONCE;
 
     rand int unsigned delay_dist[];

@@ -1,0 +1,3357 @@
+// ============================================================================
+// Filename             : vu_inst_seq_item.sv
+// Author               : kippy
+// Created On           : 2026-6-24 15:46
+// Last Modified        :
+// Update Count         :
+// Description          :
+// Source               : vu_dsa.xlsx (auto-generated)
+// Generator            : gen_inst_gen.py
+// DO NOT EDIT          : re-run the generator after register-table updates.
+// ============================================================================
+`ifndef VU_INST_SEQ_ITEM_SV
+`define VU_INST_SEQ_ITEM_SV
+class vu_inst_seq_item extends uvm_sequence_item;
+    // 寄存器位域 + pack；fix 位域约束见下方
+    //----- 动态参数寄存器 : macro_inst_trigger -----
+    rand logic [7:0]              macro_inst_trigger_static_dynamic_mask;
+    rand logic [10:8]             macro_inst_trigger_config_idx;
+    rand logic [16:16]            macro_inst_trigger_event_en;
+    rand logic [17:17]            macro_inst_trigger_stream_id_override;
+    rand logic [21:18]            macro_inst_trigger_stream_id;
+    rand logic [24:24]            macro_inst_trigger_macro_inst_fence;
+    rand logic [25:25]            macro_inst_trigger_data_broadcast;
+
+    //----- TYPE_VL -----
+    rand logic [15:0]             type_vl_vl;
+    rand logic [16:16]            type_vl_data_type;
+    rand logic [19:17]            type_vl_round_mode;
+
+    //----- LD_addr -----
+    rand logic [31:0]             ld_addr_cm_addr;
+
+    //----- ST_addr -----
+    rand logic [31:0]             st_addr_cm_addr;
+
+    //----- VRF_rd_index -----
+    rand logic [15:0]             vrf_rd_index_vrf_rd_p0_idx;
+    rand logic [31:16]            vrf_rd_index_vrf_rd_p1_idx;
+
+    //----- VRF_wt_index -----
+    rand logic [15:0]             vrf_wt_index_vrf_wt_p0_idx;
+    rand logic [31:16]            vrf_wt_index_vrf_wt_p1_idx;
+
+    //----- MRF_rd_index -----
+    rand logic [15:0]             mrf_rd_index_mrf_rd_p0_idx;
+    rand logic [31:16]            mrf_rd_index_mrf_rd_p1_idx;
+
+    //----- MRF_wt_index -----
+    rand logic [15:0]             mrf_wt_index_mrf_wt_idx;
+
+    //----- SRF_rd_index_0 -----
+    rand logic [7:0]              srf_rd_index_0_srf_rd_p0_idx;
+    rand logic [15:8]             srf_rd_index_0_srf_rd_p1_idx;
+    rand logic [23:16]            srf_rd_index_0_srf_rd_p2_idx;
+    rand logic [31:24]            srf_rd_index_0_srf_rd_p3_idx;
+
+    //----- SRF_rd_index_1 -----
+    rand logic [7:0]              srf_rd_index_1_srf_rd_p4_idx;
+    rand logic [15:8]             srf_rd_index_1_srf_rd_p5_idx;
+    rand logic [23:16]            srf_rd_index_1_srf_rd_p6_idx;
+    rand logic [31:24]            srf_rd_index_1_srf_rd_p7_idx;
+
+    //----- SRF_wt_index_0 -----
+    rand logic [7:0]              srf_wt_index_0_srf_wt_p0_idx;
+    rand logic [15:8]             srf_wt_index_0_srf_wt_p1_idx;
+    rand logic [23:16]            srf_wt_index_0_srf_wt_p2_idx;
+    rand logic [31:24]            srf_wt_index_0_srf_wt_p3_idx;
+
+    //----- SRF_wt_index_1 -----
+    rand logic [7:0]              srf_wt_index_1_srf_wt_p4_idx;
+    rand logic [15:8]             srf_wt_index_1_srf_wt_p5_idx;
+
+    //----- 静态配置寄存器组 : LU_op -----
+    rand logic [7:0]              lu_op_opcode;
+    rand logic [15:8]             lu_op_stride_run;
+    rand logic [23:16]            lu_op_stride_skip;
+
+    //----- SU_op -----
+    rand logic [7:0]              su_op_opcode;
+    rand logic [15:8]             su_op_src_sel;
+    rand logic [16:16]            su_op_mxfp8_scale_round;
+
+    //----- VALU0_op -----
+    rand logic [7:0]              valu0_op_opcode;
+    rand logic [15:8]             valu0_op_src1_sel;
+    rand logic [23:16]            valu0_op_src2_sel;
+    rand logic [31:24]            valu0_op_src3_sel;
+
+    //----- VALU1_op -----
+    rand logic [7:0]              valu1_op_opcode;
+    rand logic [15:8]             valu1_op_src1_sel;
+    rand logic [23:16]            valu1_op_src2_sel;
+    rand logic [31:24]            valu1_op_src3_sel;
+
+    //----- VALU2_op -----
+    rand logic [7:0]              valu2_op_opcode;
+    rand logic [15:8]             valu2_op_src1_sel;
+    rand logic [23:16]            valu2_op_src2_sel;
+    rand logic [31:24]            valu2_op_src3_sel;
+
+    //----- VSFU_op -----
+    rand logic [7:0]              vsfu_op_vsfu0_opcode;
+    rand logic [15:8]             vsfu_op_vsfu0_src1_sel;
+    rand logic [23:16]            vsfu_op_vsfu1_opcode;
+    rand logic [31:24]            vsfu_op_vsfu1_src1_sel;
+
+    //----- MEXE_op -----
+    rand logic [7:0]              mexe_op_opcode;
+    rand logic [15:8]             mexe_op_src1_sel;
+    rand logic [23:16]            mexe_op_src2_sel;
+
+    //----- SEXE0_op -----
+    rand logic [7:0]              sexe0_op_opcode;
+    rand logic [15:8]             sexe0_op_src1_sel;
+    rand logic [23:16]            sexe0_op_src2_sel;
+
+    //----- SEXE1_op -----
+    rand logic [7:0]              sexe1_op_opcode;
+    rand logic [15:8]             sexe1_op_src1_sel;
+    rand logic [23:16]            sexe1_op_src2_sel;
+
+    //----- SEXE2_op -----
+    rand logic [7:0]              sexe2_op_opcode;
+    rand logic [15:8]             sexe2_op_src1_sel;
+    rand logic [23:16]            sexe2_op_src2_sel;
+
+    //----- mask_op -----
+    rand logic [7:0]              mask_op_valu0_mask_sel;
+    rand logic [15:8]             mask_op_valu1_mask_sel;
+    rand logic [23:16]            mask_op_valu2_mask_sel;
+
+    //----- PRF_op -----
+    rand logic [7:0]              prf_op_vrf_wt_p0_src;
+    rand logic [15:8]             prf_op_vrf_wt_p1_src;
+    rand logic [23:16]            prf_op_mrf_wt_src;
+    rand logic [31:24]            prf_op_srf_wt_en;
+
+    //----- static_TYPE_VL -----
+    rand logic [15:0]             static_type_vl_vl;
+    rand logic [16:16]            static_type_vl_data_type;
+    rand logic [19:17]            static_type_vl_round_mode;
+
+    //----- static_LD_addr -----
+    rand logic [31:0]             static_ld_addr_cm_addr;
+
+    //----- static_ST_addr -----
+    rand logic [31:0]             static_st_addr_cm_addr;
+
+    //----- static_VRF_rd_index -----
+    rand logic [15:0]             static_vrf_rd_index_vrf_rd_p0_idx;
+    rand logic [31:16]            static_vrf_rd_index_vrf_rd_p1_idx;
+
+    //----- static_VRF_wt_index -----
+    rand logic [15:0]             static_vrf_wt_index_vrf_wt_p0_idx;
+    rand logic [31:16]            static_vrf_wt_index_vrf_wt_p1_idx;
+
+    //----- static_MRF_rd_index -----
+    rand logic [15:0]             static_mrf_rd_index_mrf_rd_p0_idx;
+    rand logic [31:16]            static_mrf_rd_index_mrf_rd_p1_idx;
+
+    //----- static_MRF_wt_index -----
+    rand logic [15:0]             static_mrf_wt_index_mrf_wt_idx;
+
+    //----- static_SRF_rd_index_0 -----
+    rand logic [7:0]              static_srf_rd_index_0_srf_rd_p0_idx;
+    rand logic [15:8]             static_srf_rd_index_0_srf_rd_p1_idx;
+    rand logic [23:16]            static_srf_rd_index_0_srf_rd_p2_idx;
+    rand logic [31:24]            static_srf_rd_index_0_srf_rd_p3_idx;
+
+    //----- static_SRF_rd_index_1 -----
+    rand logic [7:0]              static_srf_rd_index_1_srf_rd_p4_idx;
+    rand logic [15:8]             static_srf_rd_index_1_srf_rd_p5_idx;
+    rand logic [23:16]            static_srf_rd_index_1_srf_rd_p6_idx;
+    rand logic [31:24]            static_srf_rd_index_1_srf_rd_p7_idx;
+
+    //----- static_SRF_wt_index_0 -----
+    rand logic [7:0]              static_srf_wt_index_0_srf_wt_p0_idx;
+    rand logic [15:8]             static_srf_wt_index_0_srf_wt_p1_idx;
+    rand logic [23:16]            static_srf_wt_index_0_srf_wt_p2_idx;
+    rand logic [31:24]            static_srf_wt_index_0_srf_wt_p3_idx;
+
+    //----- static_SRF_wt_index_1 -----
+    rand logic [7:0]              static_srf_wt_index_1_srf_wt_p4_idx;
+    rand logic [15:8]             static_srf_wt_index_1_srf_wt_p5_idx;
+
+
+    inst_gen_config     inst_gen_cfg;
+
+    `uvm_object_utils_begin(vu_inst_seq_item)
+        `uvm_field_int          (macro_inst_trigger_static_dynamic_mask, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (macro_inst_trigger_config_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (macro_inst_trigger_event_en, UVM_DEFAULT)
+        `uvm_field_int          (macro_inst_trigger_stream_id_override, UVM_DEFAULT)
+        `uvm_field_int          (macro_inst_trigger_stream_id, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (macro_inst_trigger_macro_inst_fence, UVM_DEFAULT)
+        `uvm_field_int          (macro_inst_trigger_data_broadcast, UVM_DEFAULT)
+        `uvm_field_int          (type_vl_vl, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (type_vl_data_type, UVM_DEFAULT)
+        `uvm_field_int          (type_vl_round_mode, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (ld_addr_cm_addr, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (st_addr_cm_addr, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (vrf_rd_index_vrf_rd_p0_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (vrf_rd_index_vrf_rd_p1_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (vrf_wt_index_vrf_wt_p0_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (vrf_wt_index_vrf_wt_p1_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (mrf_rd_index_mrf_rd_p0_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (mrf_rd_index_mrf_rd_p1_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (mrf_wt_index_mrf_wt_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (srf_rd_index_0_srf_rd_p0_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (srf_rd_index_0_srf_rd_p1_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (srf_rd_index_0_srf_rd_p2_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (srf_rd_index_0_srf_rd_p3_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (srf_rd_index_1_srf_rd_p4_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (srf_rd_index_1_srf_rd_p5_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (srf_rd_index_1_srf_rd_p6_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (srf_rd_index_1_srf_rd_p7_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (srf_wt_index_0_srf_wt_p0_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (srf_wt_index_0_srf_wt_p1_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (srf_wt_index_0_srf_wt_p2_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (srf_wt_index_0_srf_wt_p3_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (srf_wt_index_1_srf_wt_p4_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (srf_wt_index_1_srf_wt_p5_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (lu_op_opcode, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (lu_op_stride_run, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (lu_op_stride_skip, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (su_op_opcode, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (su_op_src_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (su_op_mxfp8_scale_round, UVM_DEFAULT)
+        `uvm_field_int          (valu0_op_opcode, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (valu0_op_src1_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (valu0_op_src2_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (valu0_op_src3_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (valu1_op_opcode, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (valu1_op_src1_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (valu1_op_src2_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (valu1_op_src3_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (valu2_op_opcode, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (valu2_op_src1_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (valu2_op_src2_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (valu2_op_src3_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (vsfu_op_vsfu0_opcode, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (vsfu_op_vsfu0_src1_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (vsfu_op_vsfu1_opcode, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (vsfu_op_vsfu1_src1_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (mexe_op_opcode, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (mexe_op_src1_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (mexe_op_src2_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (sexe0_op_opcode, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (sexe0_op_src1_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (sexe0_op_src2_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (sexe1_op_opcode, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (sexe1_op_src1_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (sexe1_op_src2_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (sexe2_op_opcode, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (sexe2_op_src1_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (sexe2_op_src2_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (mask_op_valu0_mask_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (mask_op_valu1_mask_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (mask_op_valu2_mask_sel, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (prf_op_vrf_wt_p0_src, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (prf_op_vrf_wt_p1_src, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (prf_op_mrf_wt_src, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (prf_op_srf_wt_en, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_type_vl_vl, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_type_vl_data_type, UVM_DEFAULT)
+        `uvm_field_int          (static_type_vl_round_mode, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_ld_addr_cm_addr, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_st_addr_cm_addr, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_vrf_rd_index_vrf_rd_p0_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_vrf_rd_index_vrf_rd_p1_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_vrf_wt_index_vrf_wt_p0_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_vrf_wt_index_vrf_wt_p1_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_mrf_rd_index_mrf_rd_p0_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_mrf_rd_index_mrf_rd_p1_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_mrf_wt_index_mrf_wt_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_srf_rd_index_0_srf_rd_p0_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_srf_rd_index_0_srf_rd_p1_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_srf_rd_index_0_srf_rd_p2_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_srf_rd_index_0_srf_rd_p3_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_srf_rd_index_1_srf_rd_p4_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_srf_rd_index_1_srf_rd_p5_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_srf_rd_index_1_srf_rd_p6_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_srf_rd_index_1_srf_rd_p7_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_srf_wt_index_0_srf_wt_p0_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_srf_wt_index_0_srf_wt_p1_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_srf_wt_index_0_srf_wt_p2_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_srf_wt_index_0_srf_wt_p3_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_srf_wt_index_1_srf_wt_p4_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (static_srf_wt_index_1_srf_wt_p5_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_object       (inst_gen_cfg,        UVM_DEFAULT)
+    `uvm_object_utils_end
+
+    function new (string name = "vu_inst_seq_item");
+        super.new(name);
+    endfunction : new
+
+    //----- 位域 fix 约束（inst_gen_cfg 固定值） -----
+    constraint lu_op_stride_run_c {
+        if (inst_gen_cfg.fix_lu_op_stride_run_en) {
+            lu_op_stride_run == inst_gen_cfg.lu_op_stride_run;
+        }
+    }
+
+    constraint lu_op_stride_skip_c {
+        if (inst_gen_cfg.fix_lu_op_stride_skip_en) {
+            lu_op_stride_skip == inst_gen_cfg.lu_op_stride_skip;
+        }
+    }
+
+    constraint macro_inst_trigger_config_idx_c {
+        if (inst_gen_cfg.fix_macro_inst_trigger_config_idx_en) {
+            macro_inst_trigger_config_idx == inst_gen_cfg.macro_inst_trigger_config_idx;
+        }
+    }
+
+    constraint macro_inst_trigger_data_broadcast_c {
+        if (inst_gen_cfg.fix_macro_inst_trigger_data_broadcast_en) {
+            macro_inst_trigger_data_broadcast == inst_gen_cfg.macro_inst_trigger_data_broadcast;
+        }
+    }
+
+    constraint macro_inst_trigger_event_en_c {
+        if (inst_gen_cfg.fix_macro_inst_trigger_event_en_en) {
+            macro_inst_trigger_event_en == inst_gen_cfg.macro_inst_trigger_event_en;
+        }
+    }
+
+    constraint macro_inst_trigger_macro_inst_fence_c {
+        if (inst_gen_cfg.fix_macro_inst_trigger_macro_inst_fence_en) {
+            macro_inst_trigger_macro_inst_fence == inst_gen_cfg.macro_inst_trigger_macro_inst_fence;
+        }
+    }
+
+    constraint macro_inst_trigger_static_dynamic_mask_c {
+        if (inst_gen_cfg.fix_macro_inst_trigger_static_dynamic_mask_en) {
+            macro_inst_trigger_static_dynamic_mask == inst_gen_cfg.macro_inst_trigger_static_dynamic_mask;
+        }
+    }
+
+    constraint macro_inst_trigger_stream_id_c {
+        if (inst_gen_cfg.fix_macro_inst_trigger_stream_id_en) {
+            macro_inst_trigger_stream_id == inst_gen_cfg.macro_inst_trigger_stream_id;
+        }
+    }
+
+    constraint macro_inst_trigger_stream_id_override_c {
+        if (inst_gen_cfg.fix_macro_inst_trigger_stream_id_override_en) {
+            macro_inst_trigger_stream_id_override == inst_gen_cfg.macro_inst_trigger_stream_id_override;
+        }
+    }
+
+    constraint static_ld_addr_cm_addr_c {
+        if (inst_gen_cfg.fix_static_ld_addr_cm_addr_en) {
+            static_ld_addr_cm_addr == inst_gen_cfg.static_ld_addr_cm_addr;
+        }
+    }
+
+    constraint static_mrf_rd_index_mrf_rd_p0_idx_c {
+        if (inst_gen_cfg.fix_static_mrf_rd_index_mrf_rd_p0_idx_en) {
+            static_mrf_rd_index_mrf_rd_p0_idx == inst_gen_cfg.static_mrf_rd_index_mrf_rd_p0_idx;
+        }
+    }
+
+    constraint static_mrf_rd_index_mrf_rd_p1_idx_c {
+        if (inst_gen_cfg.fix_static_mrf_rd_index_mrf_rd_p1_idx_en) {
+            static_mrf_rd_index_mrf_rd_p1_idx == inst_gen_cfg.static_mrf_rd_index_mrf_rd_p1_idx;
+        }
+    }
+
+    constraint static_mrf_wt_index_mrf_wt_idx_c {
+        if (inst_gen_cfg.fix_static_mrf_wt_index_mrf_wt_idx_en) {
+            static_mrf_wt_index_mrf_wt_idx == inst_gen_cfg.static_mrf_wt_index_mrf_wt_idx;
+        }
+    }
+
+    constraint static_srf_rd_index_0_srf_rd_p0_idx_c {
+        if (inst_gen_cfg.fix_static_srf_rd_index_0_srf_rd_p0_idx_en) {
+            static_srf_rd_index_0_srf_rd_p0_idx == inst_gen_cfg.static_srf_rd_index_0_srf_rd_p0_idx;
+        }
+    }
+
+    constraint static_srf_rd_index_0_srf_rd_p1_idx_c {
+        if (inst_gen_cfg.fix_static_srf_rd_index_0_srf_rd_p1_idx_en) {
+            static_srf_rd_index_0_srf_rd_p1_idx == inst_gen_cfg.static_srf_rd_index_0_srf_rd_p1_idx;
+        }
+    }
+
+    constraint static_srf_rd_index_0_srf_rd_p2_idx_c {
+        if (inst_gen_cfg.fix_static_srf_rd_index_0_srf_rd_p2_idx_en) {
+            static_srf_rd_index_0_srf_rd_p2_idx == inst_gen_cfg.static_srf_rd_index_0_srf_rd_p2_idx;
+        }
+    }
+
+    constraint static_srf_rd_index_0_srf_rd_p3_idx_c {
+        if (inst_gen_cfg.fix_static_srf_rd_index_0_srf_rd_p3_idx_en) {
+            static_srf_rd_index_0_srf_rd_p3_idx == inst_gen_cfg.static_srf_rd_index_0_srf_rd_p3_idx;
+        }
+    }
+
+    constraint static_srf_rd_index_1_srf_rd_p4_idx_c {
+        if (inst_gen_cfg.fix_static_srf_rd_index_1_srf_rd_p4_idx_en) {
+            static_srf_rd_index_1_srf_rd_p4_idx == inst_gen_cfg.static_srf_rd_index_1_srf_rd_p4_idx;
+        }
+    }
+
+    constraint static_srf_rd_index_1_srf_rd_p5_idx_c {
+        if (inst_gen_cfg.fix_static_srf_rd_index_1_srf_rd_p5_idx_en) {
+            static_srf_rd_index_1_srf_rd_p5_idx == inst_gen_cfg.static_srf_rd_index_1_srf_rd_p5_idx;
+        }
+    }
+
+    constraint static_srf_rd_index_1_srf_rd_p6_idx_c {
+        if (inst_gen_cfg.fix_static_srf_rd_index_1_srf_rd_p6_idx_en) {
+            static_srf_rd_index_1_srf_rd_p6_idx == inst_gen_cfg.static_srf_rd_index_1_srf_rd_p6_idx;
+        }
+    }
+
+    constraint static_srf_rd_index_1_srf_rd_p7_idx_c {
+        if (inst_gen_cfg.fix_static_srf_rd_index_1_srf_rd_p7_idx_en) {
+            static_srf_rd_index_1_srf_rd_p7_idx == inst_gen_cfg.static_srf_rd_index_1_srf_rd_p7_idx;
+        }
+    }
+
+    constraint static_srf_wt_index_0_srf_wt_p0_idx_c {
+        if (inst_gen_cfg.fix_static_srf_wt_index_0_srf_wt_p0_idx_en) {
+            static_srf_wt_index_0_srf_wt_p0_idx == inst_gen_cfg.static_srf_wt_index_0_srf_wt_p0_idx;
+        }
+    }
+
+    constraint static_srf_wt_index_0_srf_wt_p1_idx_c {
+        if (inst_gen_cfg.fix_static_srf_wt_index_0_srf_wt_p1_idx_en) {
+            static_srf_wt_index_0_srf_wt_p1_idx == inst_gen_cfg.static_srf_wt_index_0_srf_wt_p1_idx;
+        }
+    }
+
+    constraint static_srf_wt_index_0_srf_wt_p2_idx_c {
+        if (inst_gen_cfg.fix_static_srf_wt_index_0_srf_wt_p2_idx_en) {
+            static_srf_wt_index_0_srf_wt_p2_idx == inst_gen_cfg.static_srf_wt_index_0_srf_wt_p2_idx;
+        }
+    }
+
+    constraint static_srf_wt_index_0_srf_wt_p3_idx_c {
+        if (inst_gen_cfg.fix_static_srf_wt_index_0_srf_wt_p3_idx_en) {
+            static_srf_wt_index_0_srf_wt_p3_idx == inst_gen_cfg.static_srf_wt_index_0_srf_wt_p3_idx;
+        }
+    }
+
+    constraint static_srf_wt_index_1_srf_wt_p4_idx_c {
+        if (inst_gen_cfg.fix_static_srf_wt_index_1_srf_wt_p4_idx_en) {
+            static_srf_wt_index_1_srf_wt_p4_idx == inst_gen_cfg.static_srf_wt_index_1_srf_wt_p4_idx;
+        }
+    }
+
+    constraint static_srf_wt_index_1_srf_wt_p5_idx_c {
+        if (inst_gen_cfg.fix_static_srf_wt_index_1_srf_wt_p5_idx_en) {
+            static_srf_wt_index_1_srf_wt_p5_idx == inst_gen_cfg.static_srf_wt_index_1_srf_wt_p5_idx;
+        }
+    }
+
+    constraint static_st_addr_cm_addr_c {
+        if (inst_gen_cfg.fix_static_st_addr_cm_addr_en) {
+            static_st_addr_cm_addr == inst_gen_cfg.static_st_addr_cm_addr;
+        }
+    }
+
+    constraint static_type_vl_round_mode_c {
+        if (inst_gen_cfg.fix_static_type_vl_round_mode_en) {
+            static_type_vl_round_mode == inst_gen_cfg.static_type_vl_round_mode;
+        }
+    }
+
+    constraint static_type_vl_vl_c {
+        if (inst_gen_cfg.fix_static_type_vl_vl_en) {
+            static_type_vl_vl == inst_gen_cfg.static_type_vl_vl;
+        }
+    }
+
+    constraint static_vrf_rd_index_vrf_rd_p0_idx_c {
+        if (inst_gen_cfg.fix_static_vrf_rd_index_vrf_rd_p0_idx_en) {
+            static_vrf_rd_index_vrf_rd_p0_idx == inst_gen_cfg.static_vrf_rd_index_vrf_rd_p0_idx;
+        }
+    }
+
+    constraint static_vrf_rd_index_vrf_rd_p1_idx_c {
+        if (inst_gen_cfg.fix_static_vrf_rd_index_vrf_rd_p1_idx_en) {
+            static_vrf_rd_index_vrf_rd_p1_idx == inst_gen_cfg.static_vrf_rd_index_vrf_rd_p1_idx;
+        }
+    }
+
+    constraint static_vrf_wt_index_vrf_wt_p0_idx_c {
+        if (inst_gen_cfg.fix_static_vrf_wt_index_vrf_wt_p0_idx_en) {
+            static_vrf_wt_index_vrf_wt_p0_idx == inst_gen_cfg.static_vrf_wt_index_vrf_wt_p0_idx;
+        }
+    }
+
+    constraint static_vrf_wt_index_vrf_wt_p1_idx_c {
+        if (inst_gen_cfg.fix_static_vrf_wt_index_vrf_wt_p1_idx_en) {
+            static_vrf_wt_index_vrf_wt_p1_idx == inst_gen_cfg.static_vrf_wt_index_vrf_wt_p1_idx;
+        }
+    }
+
+    constraint su_op_mxfp8_scale_round_c {
+        if (inst_gen_cfg.fix_su_op_mxfp8_scale_round_en) {
+            su_op_mxfp8_scale_round == inst_gen_cfg.su_op_mxfp8_scale_round;
+        }
+    }
+
+    function automatic logic [31:0] pack_macro_inst_trigger_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = macro_inst_trigger_static_dynamic_mask;
+        word[10:8] = macro_inst_trigger_config_idx;
+        word[16] = macro_inst_trigger_event_en;
+        word[17] = macro_inst_trigger_stream_id_override;
+        word[21:18] = macro_inst_trigger_stream_id;
+        word[24] = macro_inst_trigger_macro_inst_fence;
+        word[25] = macro_inst_trigger_data_broadcast;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_type_vl_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[15:0] = type_vl_vl;
+        word[16] = type_vl_data_type;
+        word[19:17] = type_vl_round_mode;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_ld_addr_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[31:0] = ld_addr_cm_addr;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_st_addr_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[31:0] = st_addr_cm_addr;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_vrf_rd_index_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[15:0] = vrf_rd_index_vrf_rd_p0_idx;
+        word[31:16] = vrf_rd_index_vrf_rd_p1_idx;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_vrf_wt_index_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[15:0] = vrf_wt_index_vrf_wt_p0_idx;
+        word[31:16] = vrf_wt_index_vrf_wt_p1_idx;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_mrf_rd_index_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[15:0] = mrf_rd_index_mrf_rd_p0_idx;
+        word[31:16] = mrf_rd_index_mrf_rd_p1_idx;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_mrf_wt_index_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[15:0] = mrf_wt_index_mrf_wt_idx;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_srf_rd_index_0_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = srf_rd_index_0_srf_rd_p0_idx;
+        word[15:8] = srf_rd_index_0_srf_rd_p1_idx;
+        word[23:16] = srf_rd_index_0_srf_rd_p2_idx;
+        word[31:24] = srf_rd_index_0_srf_rd_p3_idx;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_srf_rd_index_1_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = srf_rd_index_1_srf_rd_p4_idx;
+        word[15:8] = srf_rd_index_1_srf_rd_p5_idx;
+        word[23:16] = srf_rd_index_1_srf_rd_p6_idx;
+        word[31:24] = srf_rd_index_1_srf_rd_p7_idx;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_srf_wt_index_0_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = srf_wt_index_0_srf_wt_p0_idx;
+        word[15:8] = srf_wt_index_0_srf_wt_p1_idx;
+        word[23:16] = srf_wt_index_0_srf_wt_p2_idx;
+        word[31:24] = srf_wt_index_0_srf_wt_p3_idx;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_srf_wt_index_1_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = srf_wt_index_1_srf_wt_p4_idx;
+        word[15:8] = srf_wt_index_1_srf_wt_p5_idx;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_lu_op_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = lu_op_opcode;
+        word[15:8] = lu_op_stride_run;
+        word[23:16] = lu_op_stride_skip;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_su_op_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = su_op_opcode;
+        word[15:8] = su_op_src_sel;
+        word[16] = su_op_mxfp8_scale_round;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_valu0_op_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = valu0_op_opcode;
+        word[15:8] = valu0_op_src1_sel;
+        word[23:16] = valu0_op_src2_sel;
+        word[31:24] = valu0_op_src3_sel;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_valu1_op_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = valu1_op_opcode;
+        word[15:8] = valu1_op_src1_sel;
+        word[23:16] = valu1_op_src2_sel;
+        word[31:24] = valu1_op_src3_sel;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_valu2_op_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = valu2_op_opcode;
+        word[15:8] = valu2_op_src1_sel;
+        word[23:16] = valu2_op_src2_sel;
+        word[31:24] = valu2_op_src3_sel;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_vsfu_op_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = vsfu_op_vsfu0_opcode;
+        word[15:8] = vsfu_op_vsfu0_src1_sel;
+        word[23:16] = vsfu_op_vsfu1_opcode;
+        word[31:24] = vsfu_op_vsfu1_src1_sel;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_mexe_op_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = mexe_op_opcode;
+        word[15:8] = mexe_op_src1_sel;
+        word[23:16] = mexe_op_src2_sel;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_sexe0_op_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = sexe0_op_opcode;
+        word[15:8] = sexe0_op_src1_sel;
+        word[23:16] = sexe0_op_src2_sel;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_sexe1_op_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = sexe1_op_opcode;
+        word[15:8] = sexe1_op_src1_sel;
+        word[23:16] = sexe1_op_src2_sel;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_sexe2_op_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = sexe2_op_opcode;
+        word[15:8] = sexe2_op_src1_sel;
+        word[23:16] = sexe2_op_src2_sel;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_mask_op_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = mask_op_valu0_mask_sel;
+        word[15:8] = mask_op_valu1_mask_sel;
+        word[23:16] = mask_op_valu2_mask_sel;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_prf_op_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = prf_op_vrf_wt_p0_src;
+        word[15:8] = prf_op_vrf_wt_p1_src;
+        word[23:16] = prf_op_mrf_wt_src;
+        word[31:24] = prf_op_srf_wt_en;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_static_type_vl_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[15:0] = static_type_vl_vl;
+        word[16] = static_type_vl_data_type;
+        word[19:17] = static_type_vl_round_mode;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_static_ld_addr_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[31:0] = static_ld_addr_cm_addr;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_static_st_addr_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[31:0] = static_st_addr_cm_addr;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_static_vrf_rd_index_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[15:0] = static_vrf_rd_index_vrf_rd_p0_idx;
+        word[31:16] = static_vrf_rd_index_vrf_rd_p1_idx;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_static_vrf_wt_index_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[15:0] = static_vrf_wt_index_vrf_wt_p0_idx;
+        word[31:16] = static_vrf_wt_index_vrf_wt_p1_idx;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_static_mrf_rd_index_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[15:0] = static_mrf_rd_index_mrf_rd_p0_idx;
+        word[31:16] = static_mrf_rd_index_mrf_rd_p1_idx;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_static_mrf_wt_index_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[15:0] = static_mrf_wt_index_mrf_wt_idx;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_static_srf_rd_index_0_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = static_srf_rd_index_0_srf_rd_p0_idx;
+        word[15:8] = static_srf_rd_index_0_srf_rd_p1_idx;
+        word[23:16] = static_srf_rd_index_0_srf_rd_p2_idx;
+        word[31:24] = static_srf_rd_index_0_srf_rd_p3_idx;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_static_srf_rd_index_1_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = static_srf_rd_index_1_srf_rd_p4_idx;
+        word[15:8] = static_srf_rd_index_1_srf_rd_p5_idx;
+        word[23:16] = static_srf_rd_index_1_srf_rd_p6_idx;
+        word[31:24] = static_srf_rd_index_1_srf_rd_p7_idx;
+        return word;
+    endfunction
+
+    function automatic logic [31:0] pack_static_srf_wt_index_0_reg(input logic [31:0] data);
+        logic [31:0] word;
+        word = data;
+        word[7:0] = static_srf_wt_index_0_srf_wt_p0_idx;
+        word[15:8] = static_srf_wt_index_0_srf_wt_p1_idx;
+        word[23:16] = static_srf_wt_index_0_srf_wt_p2_idx;
+        word[31:24] = static_srf_wt_index_0_srf_wt_p3_idx;
+        return word;
+    endfunction
+
+endclass : vu_inst_seq_item
+
+class cross_1_gen_seq_item extends vu_inst_seq_item;
+    //----- cross_inst_1 激励生成控制字段 -----
+    rand cross_inst_1_op_e        cross_inst_1_op;
+    rand vu_lu_type_e             cross_inst_1_lu_type;
+    rand vu_su_type_e             cross_inst_1_su_type;
+    rand vu_valu0_type_e          cross_inst_1_valu0_type;
+    rand vu_valu1_type_e          cross_inst_1_valu1_type;
+    rand vu_valu2_type_e          cross_inst_1_valu2_type;
+    rand vu_vsfu_type_e           cross_inst_1_vsfu0_type;
+    rand vu_vsfu_type_e           cross_inst_1_vsfu1_type;
+    rand vu_mexe_type_e           cross_inst_1_mexe_type;
+    rand vu_sexe_type_e           cross_inst_1_sexe_type;
+
+    `uvm_object_utils_begin(cross_1_gen_seq_item)
+        `uvm_field_enum         (cross_inst_1_op_e,        cross_inst_1_op,       UVM_DEFAULT)
+        `uvm_field_enum         (vu_lu_type_e,        cross_inst_1_lu_type,       UVM_DEFAULT)
+        `uvm_field_enum         (vu_su_type_e,        cross_inst_1_su_type,       UVM_DEFAULT)
+        `uvm_field_enum         (vu_valu0_type_e,        cross_inst_1_valu0_type,       UVM_DEFAULT)
+        `uvm_field_enum         (vu_valu1_type_e,        cross_inst_1_valu1_type,       UVM_DEFAULT)
+        `uvm_field_enum         (vu_valu2_type_e,        cross_inst_1_valu2_type,       UVM_DEFAULT)
+        `uvm_field_enum         (vu_vsfu_type_e,        cross_inst_1_vsfu0_type,       UVM_DEFAULT)
+        `uvm_field_enum         (vu_vsfu_type_e,        cross_inst_1_vsfu1_type,       UVM_DEFAULT)
+        `uvm_field_enum         (vu_mexe_type_e,        cross_inst_1_mexe_type,       UVM_DEFAULT)
+        `uvm_field_enum         (vu_sexe_type_e,        cross_inst_1_sexe_type,       UVM_DEFAULT)
+    `uvm_object_utils_end
+
+    function new (string name = "cross_1_gen_seq_item");
+        super.new(name);
+    endfunction : new
+
+    //----- 求解顺序 -----
+    constraint solve_order_c {
+        solve cross_inst_1_op before cross_inst_1_lu_type;
+        solve cross_inst_1_op before cross_inst_1_su_type;
+        solve cross_inst_1_op before cross_inst_1_valu0_type;
+        solve cross_inst_1_op before cross_inst_1_valu1_type;
+        solve cross_inst_1_op before cross_inst_1_valu2_type;
+        solve cross_inst_1_op before cross_inst_1_vsfu0_type;
+        solve cross_inst_1_op before cross_inst_1_vsfu1_type;
+        solve cross_inst_1_op before cross_inst_1_mexe_type;
+        solve cross_inst_1_op before cross_inst_1_sexe_type;
+        solve cross_inst_1_lu_type before lu_op_opcode;
+        solve cross_inst_1_su_type before su_op_opcode;
+        solve cross_inst_1_valu0_type before valu0_op_opcode;
+        solve cross_inst_1_valu1_type before valu1_op_opcode;
+        solve cross_inst_1_valu2_type before valu2_op_opcode;
+        solve cross_inst_1_vsfu0_type before vsfu_op_vsfu0_opcode;
+        solve cross_inst_1_vsfu1_type before vsfu_op_vsfu1_opcode;
+        solve cross_inst_1_mexe_type before mexe_op_opcode;
+        solve cross_inst_1_sexe_type before sexe0_op_opcode;
+    }
+
+    //----- cross_inst_1 约束 -----
+    constraint cross_inst_1_op_c {
+        if (inst_gen_cfg.cross_1_cfg.fix_cross_inst_1_op_en) {
+            cross_inst_1_op == inst_gen_cfg.cross_1_cfg.cross_inst_1_op;
+        } else {
+            cross_inst_1_op dist {
+                VU_NOP                   := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_NOP];
+                VU_LU                    := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_LU];
+                VU_SU                    := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_SU];
+                VU_VALU0                 := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_VALU0];
+                VU_VALU1                 := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_VALU1];
+                VU_VALU2                 := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_VALU2];
+                VU_VSFU0                 := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_VSFU0];
+                VU_VSFU1                 := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_VSFU1];
+                VU_MEXE                  := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_MEXE];
+                VU_SEXE                  := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_SEXE];
+            };
+        }
+    }
+
+    constraint cross_inst_1_lu_type_c {
+        if (inst_gen_cfg.cross_1_cfg.fix_cross_inst_1_lu_type_en) {
+            cross_inst_1_lu_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type;
+        } else if (cross_inst_1_op == VU_LU) {
+            cross_inst_1_lu_type dist {
+                VU_LU_LD_FP8E4M3_V       := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_FP8E4M3_V];
+                VU_LU_LD_MXFP8_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_MXFP8_V];
+                VU_LU_LD_BF16_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_BF16_V];
+                VU_LU_LD_FP32_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_FP32_V];
+                VU_LU_LD_MASK            := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_MASK];
+                VU_LU_LD_S_FP32          := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_S_FP32];
+            };
+        }
+    }
+
+    constraint cross_inst_1_su_type_c {
+        if (inst_gen_cfg.cross_1_cfg.fix_cross_inst_1_su_type_en) {
+            cross_inst_1_su_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type;
+        } else if (cross_inst_1_op == VU_SU) {
+            cross_inst_1_su_type dist {
+                VU_SU_ST_FP8E4M3_V       := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_FP8E4M3_V];
+                VU_SU_ST_MXFP8_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_MXFP8_V];
+                VU_SU_ST_BF16_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_BF16_V];
+                VU_SU_ST_FP32_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_FP32_V];
+                VU_SU_ST_MASK            := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_MASK];
+                VU_SU_ST_S_FP32          := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_S_FP32];
+            };
+        }
+    }
+
+    constraint cross_inst_1_valu0_type_c {
+        if (inst_gen_cfg.cross_1_cfg.fix_cross_inst_1_valu0_type_en) {
+            cross_inst_1_valu0_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type;
+        } else if (cross_inst_1_op == VU_VALU0) {
+            cross_inst_1_valu0_type dist {
+                VU_VALU0_VFADD_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFADD_VV];
+                VU_VALU0_VFADD_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFADD_VF];
+                VU_VALU0_VFSUB_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSUB_VV];
+                VU_VALU0_VFSUB_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSUB_VF];
+                VU_VALU0_VFRSUB_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFRSUB_VF];
+                VU_VALU0_VFMUL_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMUL_VV];
+                VU_VALU0_VFMUL_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMUL_VF];
+                VU_VALU0_VFDIV_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFDIV_VV];
+                VU_VALU0_VFMIN_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMIN_VV];
+                VU_VALU0_VFMIN_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMIN_VF];
+                VU_VALU0_VFMAX_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMAX_VV];
+                VU_VALU0_VFMAX_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMAX_VF];
+                VU_VALU0_VFMV_V_F        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMV_V_F];
+                VU_VALU0_VFMV_S_F        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMV_S_F];
+                VU_VALU0_VFMACC_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMACC_VF];
+                VU_VALU0_VFNMACC_VF      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFNMACC_VF];
+                VU_VALU0_VFMSAC_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMSAC_VF];
+                VU_VALU0_VFNMSAC_VF      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFNMSAC_VF];
+                VU_VALU0_VFSGNJ_VV       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJ_VV];
+                VU_VALU0_VFSGNJ_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJ_VF];
+                VU_VALU0_VFSGNJN_VV      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJN_VV];
+                VU_VALU0_VFSGNJN_VF      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJN_VF];
+                VU_VALU0_VFSGNJX_VV      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJX_VV];
+                VU_VALU0_VFSGNJX_VF      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJX_VF];
+                VU_VALU0_VMFEQ_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFEQ_VV];
+                VU_VALU0_VMFEQ_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFEQ_VF];
+                VU_VALU0_VMFNE_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFNE_VV];
+                VU_VALU0_VMFNE_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFNE_VF];
+                VU_VALU0_VMFLT_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFLT_VV];
+                VU_VALU0_VMFLT_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFLT_VF];
+                VU_VALU0_VMFLE_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFLE_VV];
+                VU_VALU0_VMFLE_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFLE_VF];
+                VU_VALU0_VMFGT_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFGT_VF];
+                VU_VALU0_VMFGE_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFGE_VF];
+                VU_VALU0_VFCLASS_MV      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFCLASS_MV];
+                VU_VALU0_VFMERGE_VFM     := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMERGE_VFM];
+                VU_VALU0_VFMERGE_VVM     := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMERGE_VVM];
+            };
+        }
+    }
+
+    constraint cross_inst_1_valu1_type_c {
+        if (inst_gen_cfg.cross_1_cfg.fix_cross_inst_1_valu1_type_en) {
+            cross_inst_1_valu1_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type;
+        } else if (cross_inst_1_op == VU_VALU1) {
+            cross_inst_1_valu1_type dist {
+                VU_VALU1_VFADD_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFADD_VV];
+                VU_VALU1_VFADD_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFADD_VF];
+                VU_VALU1_VFSUB_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFSUB_VV];
+                VU_VALU1_VFSUB_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFSUB_VF];
+                VU_VALU1_VFRSUB_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFRSUB_VF];
+                VU_VALU1_VFMUL_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMUL_VV];
+                VU_VALU1_VFMUL_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMUL_VF];
+                VU_VALU1_VFMIN_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMIN_VV];
+                VU_VALU1_VFMIN_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMIN_VF];
+                VU_VALU1_VFMAX_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMAX_VV];
+                VU_VALU1_VFMAX_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMAX_VF];
+                VU_VALU1_VFMV_V_F        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMV_V_F];
+                VU_VALU1_VFMV_F_S        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMV_F_S];
+                VU_VALU1_VFREDUSUM_VS    := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFREDUSUM_VS];
+                VU_VALU1_VFREDMAX_VS     := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFREDMAX_VS];
+                VU_VALU1_VFREDMIN_VS     := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFREDMIN_VS];
+                VU_VALU1_VSORTMAX16_V    := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VSORTMAX16_V];
+                VU_VALU1_VSORTMIN16_V    := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VSORTMIN16_V];
+            };
+        }
+    }
+
+    constraint cross_inst_1_valu2_type_c {
+        if (inst_gen_cfg.cross_1_cfg.fix_cross_inst_1_valu2_type_en) {
+            cross_inst_1_valu2_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type;
+        } else if (cross_inst_1_op == VU_VALU2) {
+            cross_inst_1_valu2_type dist {
+                VU_VALU2_VFADD_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFADD_VV];
+                VU_VALU2_VFADD_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFADD_VF];
+                VU_VALU2_VFSUB_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFSUB_VV];
+                VU_VALU2_VFSUB_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFSUB_VF];
+                VU_VALU2_VFRSUB_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFRSUB_VF];
+                VU_VALU2_VFMUL_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMUL_VV];
+                VU_VALU2_VFMUL_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMUL_VF];
+                VU_VALU2_VFMIN_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMIN_VV];
+                VU_VALU2_VFMIN_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMIN_VF];
+                VU_VALU2_VFMAX_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMAX_VV];
+                VU_VALU2_VFMAX_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMAX_VF];
+                VU_VALU2_VFMV_V_F        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMV_V_F];
+                VU_VALU2_VMV_V_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VMV_V_V];
+                VU_VALU2_VSWAP2_V        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VSWAP2_V];
+                VU_VALU2_VFSLIDE1UP_VF   := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFSLIDE1UP_VF];
+                VU_VALU2_VFSLIDE1DOWN_VF := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFSLIDE1DOWN_VF];
+            };
+        }
+    }
+
+    constraint cross_inst_1_vsfu0_type_c {
+        if (inst_gen_cfg.cross_1_cfg.fix_cross_inst_1_vsfu0_type_en) {
+            cross_inst_1_vsfu0_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type;
+        } else if (cross_inst_1_op == VU_VSFU0) {
+            cross_inst_1_vsfu0_type dist {
+                VU_VSFU_VFSIN_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFSIN_V];
+                VU_VSFU_VFCOS_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFCOS_V];
+                VU_VSFU_VFTANH_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFTANH_V];
+                VU_VSFU_VFSIGMOID_V      := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFSIGMOID_V];
+                VU_VSFU_VFEXP_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFEXP_V];
+                VU_VSFU_VFEXP2_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFEXP2_V];
+                VU_VSFU_VFLN_V           := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFLN_V];
+                VU_VSFU_VFLOG2_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFLOG2_V];
+                VU_VSFU_VFSQRT_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFSQRT_V];
+                VU_VSFU_VFRCP_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFRCP_V];
+                VU_VSFU_VFRSQRT_V        := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFRSQRT_V];
+                VU_VSFU_CUSTOM_FIT       := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_CUSTOM_FIT];
+            };
+        }
+    }
+
+    constraint cross_inst_1_vsfu1_type_c {
+        if (inst_gen_cfg.cross_1_cfg.fix_cross_inst_1_vsfu1_type_en) {
+            cross_inst_1_vsfu1_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type;
+        } else if (cross_inst_1_op == VU_VSFU1) {
+            cross_inst_1_vsfu1_type dist {
+                VU_VSFU_VFSIN_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFSIN_V];
+                VU_VSFU_VFCOS_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFCOS_V];
+                VU_VSFU_VFTANH_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFTANH_V];
+                VU_VSFU_VFSIGMOID_V      := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFSIGMOID_V];
+                VU_VSFU_VFEXP_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFEXP_V];
+                VU_VSFU_VFEXP2_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFEXP2_V];
+                VU_VSFU_VFLN_V           := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFLN_V];
+                VU_VSFU_VFLOG2_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFLOG2_V];
+                VU_VSFU_VFSQRT_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFSQRT_V];
+                VU_VSFU_VFRCP_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFRCP_V];
+                VU_VSFU_VFRSQRT_V        := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFRSQRT_V];
+                VU_VSFU_CUSTOM_FIT       := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_CUSTOM_FIT];
+            };
+        }
+    }
+
+    constraint cross_inst_1_mexe_type_c {
+        if (inst_gen_cfg.cross_1_cfg.fix_cross_inst_1_mexe_type_en) {
+            cross_inst_1_mexe_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type;
+        } else if (cross_inst_1_op == VU_MEXE) {
+            cross_inst_1_mexe_type dist {
+                VU_MEXE_VMAND_MM         := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMAND_MM];
+                VU_MEXE_VMNAND_MM        := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMNAND_MM];
+                VU_MEXE_VMANDN_MM        := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMANDN_MM];
+                VU_MEXE_VMXOR_MM         := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMXOR_MM];
+                VU_MEXE_VMOR_MM          := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMOR_MM];
+                VU_MEXE_VMNOR_MM         := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMNOR_MM];
+                VU_MEXE_VMORN_MM         := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMORN_MM];
+                VU_MEXE_VMXNOR_MM        := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMXNOR_MM];
+                VU_MEXE_VCPOP_M          := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VCPOP_M];
+                VU_MEXE_VFIRST_M         := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VFIRST_M];
+                VU_MEXE_VMSBF_M          := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMSBF_M];
+                VU_MEXE_VMSIF_M          := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMSIF_M];
+                VU_MEXE_VMSOF_M          := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMSOF_M];
+                VU_MEXE_VMIUSET_MV       := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMIUSET_MV];
+                VU_MEXE_VMISET_MV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMISET_MV];
+            };
+        }
+    }
+
+    constraint cross_inst_1_sexe_type_c {
+        if (inst_gen_cfg.cross_1_cfg.fix_cross_inst_1_sexe_type_en) {
+            cross_inst_1_sexe_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type;
+        } else if (cross_inst_1_op == VU_SEXE) {
+            cross_inst_1_sexe_type dist {
+                VU_SEXE_FADD_S           := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FADD_S];
+                VU_SEXE_FSUB_S           := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FSUB_S];
+                VU_SEXE_FMUL_S           := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FMUL_S];
+                VU_SEXE_FDIV_S           := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FDIV_S];
+                VU_SEXE_FSQRT_S          := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FSQRT_S];
+                VU_SEXE_FRSQRT_S         := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FRSQRT_S];
+                VU_SEXE_FRCP_S           := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FRCP_S];
+            };
+        }
+    }
+
+    //----- OPCODE 约束 -----
+    constraint lu_op_opcode_c {
+        if (inst_gen_cfg.fix_lu_op_opcode_en) {
+            lu_op_opcode == inst_gen_cfg.lu_op_opcode;
+        } else begin
+            if (cross_inst_1_op == VU_LU) begin
+                unique case (cross_inst_1_lu_type)
+                VU_LU_LD_FP8E4M3_V: lu_op_opcode == 8'h01;
+                VU_LU_LD_MXFP8_V: lu_op_opcode == 8'h02;
+                VU_LU_LD_BF16_V: lu_op_opcode == 8'h03;
+                VU_LU_LD_FP32_V: lu_op_opcode == 8'h04;
+                VU_LU_LD_MASK: lu_op_opcode == 8'h05;
+                VU_LU_LD_S_FP32: lu_op_opcode == 8'h06;
+                    default: lu_op_opcode inside {8'h00, [8'h07:8'hFF]};
+                endcase
+            } else begin
+                lu_op_opcode inside {8'h00, [8'h07:8'hFF]};
+            }
+        }
+    }
+
+    constraint mexe_op_opcode_c {
+        if (inst_gen_cfg.fix_mexe_op_opcode_en) {
+            mexe_op_opcode == inst_gen_cfg.mexe_op_opcode;
+        } else begin
+            if (cross_inst_1_op == VU_MEXE) begin
+                unique case (cross_inst_1_mexe_type)
+                VU_MEXE_VMAND_MM: mexe_op_opcode == 8'h01;
+                VU_MEXE_VMNAND_MM: mexe_op_opcode == 8'h02;
+                VU_MEXE_VMANDN_MM: mexe_op_opcode == 8'h03;
+                VU_MEXE_VMXOR_MM: mexe_op_opcode == 8'h04;
+                VU_MEXE_VMOR_MM: mexe_op_opcode == 8'h05;
+                VU_MEXE_VMNOR_MM: mexe_op_opcode == 8'h06;
+                VU_MEXE_VMORN_MM: mexe_op_opcode == 8'h07;
+                VU_MEXE_VMXNOR_MM: mexe_op_opcode == 8'h08;
+                VU_MEXE_VCPOP_M: mexe_op_opcode == 8'h10;
+                VU_MEXE_VFIRST_M: mexe_op_opcode == 8'h11;
+                VU_MEXE_VMSBF_M: mexe_op_opcode == 8'h12;
+                VU_MEXE_VMSIF_M: mexe_op_opcode == 8'h13;
+                VU_MEXE_VMSOF_M: mexe_op_opcode == 8'h14;
+                VU_MEXE_VMIUSET_MV: mexe_op_opcode == 8'h15;
+                VU_MEXE_VMISET_MV: mexe_op_opcode == 8'h16;
+                    default: mexe_op_opcode inside {8'h00, [8'h09:8'h0F], [8'h17:8'hFF]};
+                endcase
+            } else begin
+                mexe_op_opcode inside {8'h00, [8'h09:8'h0F], [8'h17:8'hFF]};
+            }
+        }
+    }
+
+    constraint sexe0_op_opcode_c {
+        if (inst_gen_cfg.fix_sexe0_op_opcode_en) {
+            sexe0_op_opcode == inst_gen_cfg.sexe0_op_opcode;
+        } else begin
+            if (cross_inst_1_op == VU_SEXE) begin
+                unique case (cross_inst_1_sexe_type)
+                VU_SEXE_FADD_S: sexe0_op_opcode == 8'h01;
+                VU_SEXE_FSUB_S: sexe0_op_opcode == 8'h02;
+                VU_SEXE_FMUL_S: sexe0_op_opcode == 8'h03;
+                VU_SEXE_FDIV_S: sexe0_op_opcode == 8'h04;
+                VU_SEXE_FSQRT_S: sexe0_op_opcode == 8'h05;
+                VU_SEXE_FRSQRT_S: sexe0_op_opcode == 8'h06;
+                VU_SEXE_FRCP_S: sexe0_op_opcode == 8'h07;
+                    default: sexe0_op_opcode inside {8'h00, [8'h08:8'hFF]};
+                endcase
+            } else begin
+                sexe0_op_opcode inside {8'h00, [8'h08:8'hFF]};
+            }
+        }
+    }
+
+    constraint sexe1_op_opcode_c {
+        if (inst_gen_cfg.fix_sexe1_op_opcode_en) {
+            sexe1_op_opcode == inst_gen_cfg.sexe1_op_opcode;
+        } else begin
+            sexe1_op_opcode inside {8'h00, [8'h08:8'hFF]};
+        }
+    }
+
+    constraint sexe2_op_opcode_c {
+        if (inst_gen_cfg.fix_sexe2_op_opcode_en) {
+            sexe2_op_opcode == inst_gen_cfg.sexe2_op_opcode;
+        } else begin
+            sexe2_op_opcode inside {8'h00, [8'h08:8'hFF]};
+        }
+    }
+
+    constraint su_op_opcode_c {
+        if (inst_gen_cfg.fix_su_op_opcode_en) {
+            su_op_opcode == inst_gen_cfg.su_op_opcode;
+        } else begin
+            if (cross_inst_1_op == VU_SU) begin
+                unique case (cross_inst_1_su_type)
+                VU_SU_ST_FP8E4M3_V: su_op_opcode == 8'h01;
+                VU_SU_ST_MXFP8_V: su_op_opcode == 8'h02;
+                VU_SU_ST_BF16_V: su_op_opcode == 8'h03;
+                VU_SU_ST_FP32_V: su_op_opcode == 8'h04;
+                VU_SU_ST_MASK: su_op_opcode == 8'h05;
+                VU_SU_ST_S_FP32: su_op_opcode == 8'h06;
+                    default: su_op_opcode inside {8'h00, [8'h07:8'hFF]};
+                endcase
+            } else begin
+                su_op_opcode inside {8'h00, [8'h07:8'hFF]};
+            }
+        }
+    }
+
+    constraint valu0_op_opcode_c {
+        if (inst_gen_cfg.fix_valu0_op_opcode_en) {
+            valu0_op_opcode == inst_gen_cfg.valu0_op_opcode;
+        } else begin
+            if (cross_inst_1_op == VU_VALU0) begin
+                unique case (cross_inst_1_valu0_type)
+                VU_VALU0_VFADD_VV: valu0_op_opcode == 8'h01;
+                VU_VALU0_VFADD_VF: valu0_op_opcode == 8'h02;
+                VU_VALU0_VFSUB_VV: valu0_op_opcode == 8'h03;
+                VU_VALU0_VFSUB_VF: valu0_op_opcode == 8'h04;
+                VU_VALU0_VFRSUB_VF: valu0_op_opcode == 8'h05;
+                VU_VALU0_VFMUL_VV: valu0_op_opcode == 8'h06;
+                VU_VALU0_VFMUL_VF: valu0_op_opcode == 8'h07;
+                VU_VALU0_VFDIV_VV: valu0_op_opcode == 8'h08;
+                VU_VALU0_VFMIN_VV: valu0_op_opcode == 8'h10;
+                VU_VALU0_VFMIN_VF: valu0_op_opcode == 8'h11;
+                VU_VALU0_VFMAX_VV: valu0_op_opcode == 8'h12;
+                VU_VALU0_VFMAX_VF: valu0_op_opcode == 8'h13;
+                VU_VALU0_VFMV_V_F: valu0_op_opcode == 8'h20;
+                VU_VALU0_VFMV_S_F: valu0_op_opcode == 8'h21;
+                VU_VALU0_VFMACC_VF: valu0_op_opcode == 8'h31;
+                VU_VALU0_VFNMACC_VF: valu0_op_opcode == 8'h33;
+                VU_VALU0_VFMSAC_VF: valu0_op_opcode == 8'h35;
+                VU_VALU0_VFNMSAC_VF: valu0_op_opcode == 8'h37;
+                VU_VALU0_VFSGNJ_VV: valu0_op_opcode == 8'h40;
+                VU_VALU0_VFSGNJ_VF: valu0_op_opcode == 8'h41;
+                VU_VALU0_VFSGNJN_VV: valu0_op_opcode == 8'h42;
+                VU_VALU0_VFSGNJN_VF: valu0_op_opcode == 8'h43;
+                VU_VALU0_VFSGNJX_VV: valu0_op_opcode == 8'h44;
+                VU_VALU0_VFSGNJX_VF: valu0_op_opcode == 8'h45;
+                VU_VALU0_VMFEQ_VV: valu0_op_opcode == 8'h50;
+                VU_VALU0_VMFEQ_VF: valu0_op_opcode == 8'h51;
+                VU_VALU0_VMFNE_VV: valu0_op_opcode == 8'h52;
+                VU_VALU0_VMFNE_VF: valu0_op_opcode == 8'h53;
+                VU_VALU0_VMFLT_VV: valu0_op_opcode == 8'h54;
+                VU_VALU0_VMFLT_VF: valu0_op_opcode == 8'h55;
+                VU_VALU0_VMFLE_VV: valu0_op_opcode == 8'h56;
+                VU_VALU0_VMFLE_VF: valu0_op_opcode == 8'h57;
+                VU_VALU0_VMFGT_VF: valu0_op_opcode == 8'h58;
+                VU_VALU0_VMFGE_VF: valu0_op_opcode == 8'h59;
+                VU_VALU0_VFCLASS_MV: valu0_op_opcode == 8'h60;
+                VU_VALU0_VFMERGE_VFM: valu0_op_opcode == 8'h61;
+                VU_VALU0_VFMERGE_VVM: valu0_op_opcode == 8'h62;
+                    default: valu0_op_opcode inside {8'h00, [8'h09:8'h0F], [8'h14:8'h1F], [8'h22:8'h2F], [8'h38:8'h3F], [8'h46:8'h4F], [8'h5A:8'h5F], [8'h63:8'hFF]};
+                endcase
+            } else begin
+                valu0_op_opcode inside {8'h00, [8'h09:8'h0F], [8'h14:8'h1F], [8'h22:8'h2F], [8'h38:8'h3F], [8'h46:8'h4F], [8'h5A:8'h5F], [8'h63:8'hFF]};
+            }
+        }
+    }
+
+    constraint valu1_op_opcode_c {
+        if (inst_gen_cfg.fix_valu1_op_opcode_en) {
+            valu1_op_opcode == inst_gen_cfg.valu1_op_opcode;
+        } else begin
+            if (cross_inst_1_op == VU_VALU1) begin
+                unique case (cross_inst_1_valu1_type)
+                VU_VALU1_VFADD_VV: valu1_op_opcode == 8'h01;
+                VU_VALU1_VFADD_VF: valu1_op_opcode == 8'h02;
+                VU_VALU1_VFSUB_VV: valu1_op_opcode == 8'h03;
+                VU_VALU1_VFSUB_VF: valu1_op_opcode == 8'h04;
+                VU_VALU1_VFRSUB_VF: valu1_op_opcode == 8'h05;
+                VU_VALU1_VFMUL_VV: valu1_op_opcode == 8'h06;
+                VU_VALU1_VFMUL_VF: valu1_op_opcode == 8'h07;
+                VU_VALU1_VFMIN_VV: valu1_op_opcode == 8'h10;
+                VU_VALU1_VFMIN_VF: valu1_op_opcode == 8'h11;
+                VU_VALU1_VFMAX_VV: valu1_op_opcode == 8'h12;
+                VU_VALU1_VFMAX_VF: valu1_op_opcode == 8'h13;
+                VU_VALU1_VFMV_V_F: valu1_op_opcode == 8'h20;
+                VU_VALU1_VFMV_F_S: valu1_op_opcode == 8'h22;
+                VU_VALU1_VFREDUSUM_VS: valu1_op_opcode == 8'h70;
+                VU_VALU1_VFREDMAX_VS: valu1_op_opcode == 8'h71;
+                VU_VALU1_VFREDMIN_VS: valu1_op_opcode == 8'h72;
+                VU_VALU1_VSORTMAX16_V: valu1_op_opcode == 8'h73;
+                VU_VALU1_VSORTMIN16_V: valu1_op_opcode == 8'h74;
+                    default: valu1_op_opcode inside {8'h00, [8'h08:8'h0F], [8'h14:8'h1F], 8'h21, [8'h23:8'h6F], [8'h75:8'hFF]};
+                endcase
+            } else begin
+                valu1_op_opcode inside {8'h00, [8'h08:8'h0F], [8'h14:8'h1F], 8'h21, [8'h23:8'h6F], [8'h75:8'hFF]};
+            }
+        }
+    }
+
+    constraint valu2_op_opcode_c {
+        if (inst_gen_cfg.fix_valu2_op_opcode_en) {
+            valu2_op_opcode == inst_gen_cfg.valu2_op_opcode;
+        } else begin
+            if (cross_inst_1_op == VU_VALU2) begin
+                unique case (cross_inst_1_valu2_type)
+                VU_VALU2_VFADD_VV: valu2_op_opcode == 8'h01;
+                VU_VALU2_VFADD_VF: valu2_op_opcode == 8'h02;
+                VU_VALU2_VFSUB_VV: valu2_op_opcode == 8'h03;
+                VU_VALU2_VFSUB_VF: valu2_op_opcode == 8'h04;
+                VU_VALU2_VFRSUB_VF: valu2_op_opcode == 8'h05;
+                VU_VALU2_VFMUL_VV: valu2_op_opcode == 8'h06;
+                VU_VALU2_VFMUL_VF: valu2_op_opcode == 8'h07;
+                VU_VALU2_VFMIN_VV: valu2_op_opcode == 8'h10;
+                VU_VALU2_VFMIN_VF: valu2_op_opcode == 8'h11;
+                VU_VALU2_VFMAX_VV: valu2_op_opcode == 8'h12;
+                VU_VALU2_VFMAX_VF: valu2_op_opcode == 8'h13;
+                VU_VALU2_VFMV_V_F: valu2_op_opcode == 8'h20;
+                VU_VALU2_VMV_V_V: valu2_op_opcode == 8'h23;
+                VU_VALU2_VSWAP2_V: valu2_op_opcode == 8'h24;
+                VU_VALU2_VFSLIDE1UP_VF: valu2_op_opcode == 8'h25;
+                VU_VALU2_VFSLIDE1DOWN_VF: valu2_op_opcode == 8'h26;
+                    default: valu2_op_opcode inside {8'h00, [8'h08:8'h0F], [8'h14:8'h1F], [8'h21:8'h22], [8'h27:8'hFF]};
+                endcase
+            } else begin
+                valu2_op_opcode inside {8'h00, [8'h08:8'h0F], [8'h14:8'h1F], [8'h21:8'h22], [8'h27:8'hFF]};
+            }
+        }
+    }
+
+    constraint vsfu_op_vsfu0_opcode_c {
+        if (inst_gen_cfg.fix_vsfu_op_vsfu0_opcode_en) {
+            vsfu_op_vsfu0_opcode == inst_gen_cfg.vsfu_op_vsfu0_opcode;
+        } else begin
+            if (cross_inst_1_op == VU_VSFU0) begin
+                unique case (cross_inst_1_vsfu0_type)
+                VU_VSFU_VFSIN_V: vsfu_op_vsfu0_opcode == 8'h01;
+                VU_VSFU_VFCOS_V: vsfu_op_vsfu0_opcode == 8'h02;
+                VU_VSFU_VFTANH_V: vsfu_op_vsfu0_opcode == 8'h03;
+                VU_VSFU_VFSIGMOID_V: vsfu_op_vsfu0_opcode == 8'h04;
+                VU_VSFU_VFEXP_V: vsfu_op_vsfu0_opcode == 8'h05;
+                VU_VSFU_VFEXP2_V: vsfu_op_vsfu0_opcode == 8'h06;
+                VU_VSFU_VFLN_V: vsfu_op_vsfu0_opcode == 8'h07;
+                VU_VSFU_VFLOG2_V: vsfu_op_vsfu0_opcode == 8'h08;
+                VU_VSFU_VFSQRT_V: vsfu_op_vsfu0_opcode == 8'h09;
+                VU_VSFU_VFRCP_V: vsfu_op_vsfu0_opcode == 8'h0A;
+                VU_VSFU_VFRSQRT_V: vsfu_op_vsfu0_opcode == 8'h0B;
+                VU_VSFU_CUSTOM_FIT: vsfu_op_vsfu0_opcode == 8'h0C;
+                    default: vsfu_op_vsfu0_opcode inside {8'h00, [8'h0D:8'hFF]};
+                endcase
+            } else begin
+                vsfu_op_vsfu0_opcode inside {8'h00, [8'h0D:8'hFF]};
+            }
+        }
+    }
+
+    constraint vsfu_op_vsfu1_opcode_c {
+        if (inst_gen_cfg.fix_vsfu_op_vsfu1_opcode_en) {
+            vsfu_op_vsfu1_opcode == inst_gen_cfg.vsfu_op_vsfu1_opcode;
+        } else begin
+            if (cross_inst_1_op == VU_VSFU1) begin
+                unique case (cross_inst_1_vsfu1_type)
+                VU_VSFU_VFSIN_V: vsfu_op_vsfu1_opcode == 8'h01;
+                VU_VSFU_VFCOS_V: vsfu_op_vsfu1_opcode == 8'h02;
+                VU_VSFU_VFTANH_V: vsfu_op_vsfu1_opcode == 8'h03;
+                VU_VSFU_VFSIGMOID_V: vsfu_op_vsfu1_opcode == 8'h04;
+                VU_VSFU_VFEXP_V: vsfu_op_vsfu1_opcode == 8'h05;
+                VU_VSFU_VFEXP2_V: vsfu_op_vsfu1_opcode == 8'h06;
+                VU_VSFU_VFLN_V: vsfu_op_vsfu1_opcode == 8'h07;
+                VU_VSFU_VFLOG2_V: vsfu_op_vsfu1_opcode == 8'h08;
+                VU_VSFU_VFSQRT_V: vsfu_op_vsfu1_opcode == 8'h09;
+                VU_VSFU_VFRCP_V: vsfu_op_vsfu1_opcode == 8'h0A;
+                VU_VSFU_VFRSQRT_V: vsfu_op_vsfu1_opcode == 8'h0B;
+                VU_VSFU_CUSTOM_FIT: vsfu_op_vsfu1_opcode == 8'h0C;
+                    default: vsfu_op_vsfu1_opcode inside {8'h00, [8'h0D:8'hFF]};
+                endcase
+            } else begin
+                vsfu_op_vsfu1_opcode inside {8'h00, [8'h0D:8'hFF]};
+            }
+        }
+    }
+
+    //----- 寄存器位域固定值约束（vu激励.xlsx *_op；cross_1 覆盖 vu激励_1inst.xlsx） -----
+    constraint mask_op_valu0_mask_sel_c {
+        if (inst_gen_cfg.fix_mask_op_valu0_mask_sel_en) {
+            mask_op_valu0_mask_sel == inst_gen_cfg.mask_op_valu0_mask_sel;
+        } else begin
+            if (cross_inst_1_op == VU_VALU0) begin
+                unique case (cross_inst_1_valu0_type)
+                    VU_VALU0_VFADD_VV: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VFADD_VF: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VFSUB_VV: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VFSUB_VF: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VFRSUB_VF: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VFMUL_VV: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VFMUL_VF: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VFDIV_VV: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VFMIN_VV: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VFMIN_VF: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VFMAX_VV: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VFMAX_VF: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VFMV_V_F: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VFMV_S_F: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VFMACC_VV: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VFMACC_VF: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VFNMACC_VV: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VFNMACC_VF: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VFMSAC_VV: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VFMSAC_VF: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VFNMSAC_VV: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VFNMSAC_VF: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VFSGNJ_VV: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VFSGNJ_VF: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VFSGNJN_VV: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VFSGNJN_VF: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VFSGNJX_VV: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VFSGNJX_VF: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VMFEQ_VV: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VMFEQ_VF: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VMFNE_VV: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VMFNE_VF: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VMFLT_VV: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VMFLT_VF: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VMFLE_VV: mask_op_valu0_mask_sel == 8'h00;
+                    VU_VALU0_VMFLE_VF: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VMFGT_VF: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VMFGE_VF: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VFCLASS_MV: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VFMERGE_VFM: mask_op_valu0_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU0_VFMERGE_VVM: mask_op_valu0_mask_sel == 8'h00;
+                    default: begin
+                        mask_op_valu0_mask_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                mask_op_valu0_mask_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint mask_op_valu1_mask_sel_c {
+        if (inst_gen_cfg.fix_mask_op_valu1_mask_sel_en) {
+            mask_op_valu1_mask_sel == inst_gen_cfg.mask_op_valu1_mask_sel;
+        } else begin
+            if (cross_inst_1_op == VU_VALU1) begin
+                unique case (cross_inst_1_valu1_type)
+                    VU_VALU1_VFADD_VV: mask_op_valu1_mask_sel == 8'h00;
+                    VU_VALU1_VFADD_VF: mask_op_valu1_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU1_VFSUB_VV: mask_op_valu1_mask_sel == 8'h00;
+                    VU_VALU1_VFSUB_VF: mask_op_valu1_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU1_VFRSUB_VF: mask_op_valu1_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU1_VFMUL_VV: mask_op_valu1_mask_sel == 8'h00;
+                    VU_VALU1_VFMUL_VF: mask_op_valu1_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU1_VFMIN_VV: mask_op_valu1_mask_sel == 8'h00;
+                    VU_VALU1_VFMIN_VF: mask_op_valu1_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU1_VFMAX_VV: mask_op_valu1_mask_sel == 8'h00;
+                    VU_VALU1_VFMAX_VF: mask_op_valu1_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU1_VFMV_V_F: mask_op_valu1_mask_sel == 8'h00;
+                    VU_VALU1_VFMV_F_S: mask_op_valu1_mask_sel == 8'h00;
+                    VU_VALU1_VFREDUSUM_VS: mask_op_valu1_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU1_VFREDMAX_VS: mask_op_valu1_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU1_VFREDMIN_VS: mask_op_valu1_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU1_VSORTMAX16_V: mask_op_valu1_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU1_VSORTMIN16_V: mask_op_valu1_mask_sel inside {[8'h40:8'h41]};
+                    default: begin
+                        mask_op_valu1_mask_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                mask_op_valu1_mask_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint mask_op_valu2_mask_sel_c {
+        if (inst_gen_cfg.fix_mask_op_valu2_mask_sel_en) {
+            mask_op_valu2_mask_sel == inst_gen_cfg.mask_op_valu2_mask_sel;
+        } else begin
+            if (cross_inst_1_op == VU_VALU2) begin
+                unique case (cross_inst_1_valu2_type)
+                    VU_VALU2_VFADD_VV: mask_op_valu2_mask_sel == 8'h00;
+                    VU_VALU2_VFADD_VF: mask_op_valu2_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU2_VFSUB_VV: mask_op_valu2_mask_sel == 8'h00;
+                    VU_VALU2_VFSUB_VF: mask_op_valu2_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU2_VFRSUB_VF: mask_op_valu2_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU2_VFMUL_VV: mask_op_valu2_mask_sel == 8'h00;
+                    VU_VALU2_VFMUL_VF: mask_op_valu2_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU2_VFMIN_VV: mask_op_valu2_mask_sel == 8'h00;
+                    VU_VALU2_VFMIN_VF: mask_op_valu2_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU2_VFMAX_VV: mask_op_valu2_mask_sel == 8'h00;
+                    VU_VALU2_VFMAX_VF: mask_op_valu2_mask_sel inside {[8'h40:8'h41]};
+                    VU_VALU2_VFMV_V_F: mask_op_valu2_mask_sel == 8'h00;
+                    VU_VALU2_VMV_V_V: mask_op_valu2_mask_sel == 8'h00;
+                    VU_VALU2_VSWAP2_V: mask_op_valu2_mask_sel == 8'h00;
+                    VU_VALU2_VFSLIDE1UP_VF: mask_op_valu2_mask_sel == 8'h00;
+                    VU_VALU2_VFSLIDE1DOWN_VF: mask_op_valu2_mask_sel == 8'h00;
+                    default: begin
+                        mask_op_valu2_mask_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                mask_op_valu2_mask_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint mexe_op_src1_sel_c {
+        if (inst_gen_cfg.fix_mexe_op_src1_sel_en) {
+            mexe_op_src1_sel == inst_gen_cfg.mexe_op_src1_sel;
+        } else begin
+            if (cross_inst_1_op == VU_MEXE) begin
+                unique case (cross_inst_1_mexe_type)
+                    VU_MEXE_VMAND_MM: mexe_op_src1_sel == 8'h41;
+                    VU_MEXE_VMNAND_MM: mexe_op_src1_sel == 8'h41;
+                    VU_MEXE_VMANDN_MM: mexe_op_src1_sel == 8'h41;
+                    VU_MEXE_VMXOR_MM: mexe_op_src1_sel == 8'h41;
+                    VU_MEXE_VMOR_MM: mexe_op_src1_sel == 8'h41;
+                    VU_MEXE_VMNOR_MM: mexe_op_src1_sel == 8'h41;
+                    VU_MEXE_VMORN_MM: mexe_op_src1_sel == 8'h41;
+                    VU_MEXE_VMXNOR_MM: mexe_op_src1_sel == 8'h41;
+                    VU_MEXE_VCPOP_M: mexe_op_src1_sel == 8'h41;
+                    VU_MEXE_VFIRST_M: mexe_op_src1_sel == 8'h41;
+                    VU_MEXE_VMSBF_M: mexe_op_src1_sel == 8'h41;
+                    VU_MEXE_VMSIF_M: mexe_op_src1_sel == 8'h41;
+                    VU_MEXE_VMSOF_M: mexe_op_src1_sel == 8'h41;
+                    VU_MEXE_VMIUSET_MV: mexe_op_src1_sel == 8'h41;
+                    VU_MEXE_VMISET_MV: mexe_op_src1_sel == 8'h41;
+                    default: begin
+                        mexe_op_src1_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                mexe_op_src1_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint mexe_op_src2_sel_c {
+        if (inst_gen_cfg.fix_mexe_op_src2_sel_en) {
+            mexe_op_src2_sel == inst_gen_cfg.mexe_op_src2_sel;
+        } else begin
+            if (cross_inst_1_op == VU_MEXE) begin
+                unique case (cross_inst_1_mexe_type)
+                    VU_MEXE_VMAND_MM: mexe_op_src2_sel == 8'h41;
+                    VU_MEXE_VMNAND_MM: mexe_op_src2_sel == 8'h41;
+                    VU_MEXE_VMANDN_MM: mexe_op_src2_sel == 8'h41;
+                    VU_MEXE_VMXOR_MM: mexe_op_src2_sel == 8'h41;
+                    VU_MEXE_VMOR_MM: mexe_op_src2_sel == 8'h41;
+                    VU_MEXE_VMNOR_MM: mexe_op_src2_sel == 8'h41;
+                    VU_MEXE_VMORN_MM: mexe_op_src2_sel == 8'h41;
+                    VU_MEXE_VMXNOR_MM: mexe_op_src2_sel == 8'h41;
+                    VU_MEXE_VCPOP_M: mexe_op_src2_sel == 8'h00;
+                    VU_MEXE_VFIRST_M: mexe_op_src2_sel == 8'h00;
+                    VU_MEXE_VMSBF_M: mexe_op_src2_sel == 8'h00;
+                    VU_MEXE_VMSIF_M: mexe_op_src2_sel == 8'h00;
+                    VU_MEXE_VMSOF_M: mexe_op_src2_sel == 8'h00;
+                    VU_MEXE_VMIUSET_MV: mexe_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_MEXE_VMISET_MV: mexe_op_src2_sel inside {[8'h30:8'h31]};
+                    default: begin
+                        mexe_op_src2_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                mexe_op_src2_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint prf_op_mrf_wt_src_c {
+        if (inst_gen_cfg.fix_prf_op_mrf_wt_src_en) {
+            prf_op_mrf_wt_src == inst_gen_cfg.prf_op_mrf_wt_src;
+        } else begin
+            if (cross_inst_1_op == VU_LU) begin
+                unique case (cross_inst_1_lu_type)
+                    VU_LU_LD_FP8E4M3_V: prf_op_mrf_wt_src == 8'h00;
+                    VU_LU_LD_MXFP8_V: prf_op_mrf_wt_src == 8'h00;
+                    VU_LU_LD_BF16_V: prf_op_mrf_wt_src == 8'h00;
+                    VU_LU_LD_FP32_V: prf_op_mrf_wt_src == 8'h00;
+                    VU_LU_LD_MASK: prf_op_mrf_wt_src == 8'h01;
+                    VU_LU_LD_S_FP32: prf_op_mrf_wt_src == 8'h00;
+                    default: begin
+                        prf_op_mrf_wt_src == 8'h00;
+                    end
+                endcase
+            end
+            else if (cross_inst_1_op == VU_VALU0) begin
+                unique case (cross_inst_1_valu0_type)
+                    VU_VALU0_VFADD_VV: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFADD_VF: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFSUB_VV: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFSUB_VF: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFRSUB_VF: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFMUL_VV: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFMUL_VF: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFDIV_VV: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFMIN_VV: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFMIN_VF: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFMAX_VV: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFMAX_VF: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFMV_V_F: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFMV_S_F: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFMACC_VV: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFMACC_VF: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFNMACC_VV: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFNMACC_VF: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFMSAC_VV: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFMSAC_VF: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFNMSAC_VV: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFNMSAC_VF: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFSGNJ_VV: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFSGNJ_VF: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFSGNJN_VV: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFSGNJN_VF: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFSGNJX_VV: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFSGNJX_VF: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VMFEQ_VV: prf_op_mrf_wt_src == 8'h02;
+                    VU_VALU0_VMFEQ_VF: prf_op_mrf_wt_src == 8'h02;
+                    VU_VALU0_VMFNE_VV: prf_op_mrf_wt_src == 8'h02;
+                    VU_VALU0_VMFNE_VF: prf_op_mrf_wt_src == 8'h02;
+                    VU_VALU0_VMFLT_VV: prf_op_mrf_wt_src == 8'h02;
+                    VU_VALU0_VMFLT_VF: prf_op_mrf_wt_src == 8'h02;
+                    VU_VALU0_VMFLE_VV: prf_op_mrf_wt_src == 8'h02;
+                    VU_VALU0_VMFLE_VF: prf_op_mrf_wt_src == 8'h02;
+                    VU_VALU0_VMFGT_VF: prf_op_mrf_wt_src == 8'h02;
+                    VU_VALU0_VMFGE_VF: prf_op_mrf_wt_src == 8'h02;
+                    VU_VALU0_VFCLASS_MV: prf_op_mrf_wt_src == 8'h02;
+                    VU_VALU0_VFMERGE_VFM: prf_op_mrf_wt_src == 8'h00;
+                    VU_VALU0_VFMERGE_VVM: prf_op_mrf_wt_src == 8'h00;
+                    default: begin
+                        prf_op_mrf_wt_src == 8'h00;
+                    end
+                endcase
+            end
+            else if (cross_inst_1_op == VU_MEXE) begin
+                unique case (cross_inst_1_mexe_type)
+                    VU_MEXE_VMAND_MM: prf_op_mrf_wt_src == 8'h10;
+                    VU_MEXE_VMNAND_MM: prf_op_mrf_wt_src == 8'h10;
+                    VU_MEXE_VMANDN_MM: prf_op_mrf_wt_src == 8'h10;
+                    VU_MEXE_VMXOR_MM: prf_op_mrf_wt_src == 8'h10;
+                    VU_MEXE_VMOR_MM: prf_op_mrf_wt_src == 8'h10;
+                    VU_MEXE_VMNOR_MM: prf_op_mrf_wt_src == 8'h10;
+                    VU_MEXE_VMORN_MM: prf_op_mrf_wt_src == 8'h10;
+                    VU_MEXE_VMXNOR_MM: prf_op_mrf_wt_src == 8'h10;
+                    VU_MEXE_VCPOP_M: prf_op_mrf_wt_src == 8'h00;
+                    VU_MEXE_VFIRST_M: prf_op_mrf_wt_src == 8'h00;
+                    VU_MEXE_VMSBF_M: prf_op_mrf_wt_src == 8'h10;
+                    VU_MEXE_VMSIF_M: prf_op_mrf_wt_src == 8'h10;
+                    VU_MEXE_VMSOF_M: prf_op_mrf_wt_src == 8'h10;
+                    VU_MEXE_VMIUSET_MV: prf_op_mrf_wt_src == 8'h10;
+                    VU_MEXE_VMISET_MV: prf_op_mrf_wt_src == 8'h10;
+                    default: begin
+                        prf_op_mrf_wt_src == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                prf_op_mrf_wt_src == 8'h00;
+            end
+        end
+    }
+
+    constraint prf_op_srf_wt_en_bit0_c {
+        if (inst_gen_cfg.fix_prf_op_srf_wt_en_en) {
+            prf_op_srf_wt_en[0] == inst_gen_cfg.prf_op_srf_wt_en;
+        } else begin
+            if (cross_inst_1_op == VU_LU) begin
+                unique case (cross_inst_1_lu_type)
+                    VU_LU_LD_FP8E4M3_V: prf_op_srf_wt_en[0] == 1'b0;
+                    VU_LU_LD_MXFP8_V: prf_op_srf_wt_en[0] == 1'b0;
+                    VU_LU_LD_BF16_V: prf_op_srf_wt_en[0] == 1'b0;
+                    VU_LU_LD_FP32_V: prf_op_srf_wt_en[0] == 1'b0;
+                    VU_LU_LD_MASK: prf_op_srf_wt_en[0] == 1'b0;
+                    VU_LU_LD_S_FP32: prf_op_srf_wt_en[0] == 1'b1;
+                    default: begin
+                        prf_op_srf_wt_en[0] == 1'b0;
+                    end
+                endcase
+            end
+            else begin
+                prf_op_srf_wt_en[0] == 1'b0;
+            end
+        end
+    }
+
+    constraint prf_op_srf_wt_en_bit1_c {
+        if (inst_gen_cfg.fix_prf_op_srf_wt_en_en) {
+            prf_op_srf_wt_en[1] == inst_gen_cfg.prf_op_srf_wt_en;
+        } else begin
+            if (cross_inst_1_op == VU_VALU1) begin
+                unique case (cross_inst_1_valu1_type)
+                    VU_VALU1_VFADD_VV: prf_op_srf_wt_en[1] == 1'b0;
+                    VU_VALU1_VFADD_VF: prf_op_srf_wt_en[1] == 1'b0;
+                    VU_VALU1_VFSUB_VV: prf_op_srf_wt_en[1] == 1'b0;
+                    VU_VALU1_VFSUB_VF: prf_op_srf_wt_en[1] == 1'b0;
+                    VU_VALU1_VFRSUB_VF: prf_op_srf_wt_en[1] == 1'b0;
+                    VU_VALU1_VFMUL_VV: prf_op_srf_wt_en[1] == 1'b0;
+                    VU_VALU1_VFMUL_VF: prf_op_srf_wt_en[1] == 1'b0;
+                    VU_VALU1_VFMIN_VV: prf_op_srf_wt_en[1] == 1'b0;
+                    VU_VALU1_VFMIN_VF: prf_op_srf_wt_en[1] == 1'b0;
+                    VU_VALU1_VFMAX_VV: prf_op_srf_wt_en[1] == 1'b0;
+                    VU_VALU1_VFMAX_VF: prf_op_srf_wt_en[1] == 1'b0;
+                    VU_VALU1_VFMV_V_F: prf_op_srf_wt_en[1] == 1'b0;
+                    VU_VALU1_VFMV_F_S: prf_op_srf_wt_en[1] == 1'b1;
+                    VU_VALU1_VFREDUSUM_VS: prf_op_srf_wt_en[1] == 1'b1;
+                    VU_VALU1_VFREDMAX_VS: prf_op_srf_wt_en[1] == 1'b1;
+                    VU_VALU1_VFREDMIN_VS: prf_op_srf_wt_en[1] == 1'b1;
+                    VU_VALU1_VSORTMAX16_V: prf_op_srf_wt_en[1] == 1'b0;
+                    VU_VALU1_VSORTMIN16_V: prf_op_srf_wt_en[1] == 1'b0;
+                    default: begin
+                        prf_op_srf_wt_en[1] == 1'b0;
+                    end
+                endcase
+            end
+            else begin
+                prf_op_srf_wt_en[1] == 1'b0;
+            end
+        end
+    }
+
+    constraint prf_op_srf_wt_en_bit2_c {
+        if (inst_gen_cfg.fix_prf_op_srf_wt_en_en) {
+            prf_op_srf_wt_en[2] == inst_gen_cfg.prf_op_srf_wt_en;
+        } else begin
+            if (cross_inst_1_op == VU_MEXE) begin
+                unique case (cross_inst_1_mexe_type)
+                    VU_MEXE_VMAND_MM: prf_op_srf_wt_en[2] == 1'b0;
+                    VU_MEXE_VMNAND_MM: prf_op_srf_wt_en[2] == 1'b0;
+                    VU_MEXE_VMANDN_MM: prf_op_srf_wt_en[2] == 1'b0;
+                    VU_MEXE_VMXOR_MM: prf_op_srf_wt_en[2] == 1'b0;
+                    VU_MEXE_VMOR_MM: prf_op_srf_wt_en[2] == 1'b0;
+                    VU_MEXE_VMNOR_MM: prf_op_srf_wt_en[2] == 1'b0;
+                    VU_MEXE_VMORN_MM: prf_op_srf_wt_en[2] == 1'b0;
+                    VU_MEXE_VMXNOR_MM: prf_op_srf_wt_en[2] == 1'b0;
+                    VU_MEXE_VCPOP_M: prf_op_srf_wt_en[2] == 1'b1;
+                    VU_MEXE_VFIRST_M: prf_op_srf_wt_en[2] == 1'b1;
+                    VU_MEXE_VMSBF_M: prf_op_srf_wt_en[2] == 1'b0;
+                    VU_MEXE_VMSIF_M: prf_op_srf_wt_en[2] == 1'b0;
+                    VU_MEXE_VMSOF_M: prf_op_srf_wt_en[2] == 1'b0;
+                    VU_MEXE_VMIUSET_MV: prf_op_srf_wt_en[2] == 1'b0;
+                    VU_MEXE_VMISET_MV: prf_op_srf_wt_en[2] == 1'b0;
+                    default: begin
+                        prf_op_srf_wt_en[2] == 1'b0;
+                    end
+                endcase
+            end
+            else begin
+                prf_op_srf_wt_en[2] == 1'b0;
+            end
+        end
+    }
+
+    constraint prf_op_srf_wt_en_bit3_c {
+        if (inst_gen_cfg.fix_prf_op_srf_wt_en_en) {
+            prf_op_srf_wt_en[3] == inst_gen_cfg.prf_op_srf_wt_en;
+        } else begin
+            if (cross_inst_1_op == VU_SEXE) begin
+                unique case (cross_inst_1_sexe_type)
+                    VU_SEXE_FADD_S: prf_op_srf_wt_en[3] == 1'b1;
+                    VU_SEXE_FSUB_S: prf_op_srf_wt_en[3] == 1'b1;
+                    VU_SEXE_FMUL_S: prf_op_srf_wt_en[3] == 1'b1;
+                    VU_SEXE_FDIV_S: prf_op_srf_wt_en[3] == 1'b1;
+                    VU_SEXE_FSQRT_S: prf_op_srf_wt_en[3] == 1'b1;
+                    VU_SEXE_FRSQRT_S: prf_op_srf_wt_en[3] == 1'b1;
+                    VU_SEXE_FRCP_S: prf_op_srf_wt_en[3] == 1'b1;
+                    default: begin
+                        prf_op_srf_wt_en[3] == 1'b0;
+                    end
+                endcase
+            end
+            else begin
+                prf_op_srf_wt_en[3] == 1'b0;
+            end
+        end
+    }
+
+    constraint prf_op_srf_wt_en_bit4_c {
+        if (inst_gen_cfg.fix_prf_op_srf_wt_en_en) {
+            prf_op_srf_wt_en[4] == inst_gen_cfg.prf_op_srf_wt_en;
+        } else begin
+            if (cross_inst_1_op == VU_SEXE) begin
+                unique case (cross_inst_1_sexe_type)
+                    VU_SEXE_FADD_S: prf_op_srf_wt_en[4] == 1'b1;
+                    VU_SEXE_FSUB_S: prf_op_srf_wt_en[4] == 1'b1;
+                    VU_SEXE_FMUL_S: prf_op_srf_wt_en[4] == 1'b1;
+                    VU_SEXE_FDIV_S: prf_op_srf_wt_en[4] == 1'b1;
+                    VU_SEXE_FSQRT_S: prf_op_srf_wt_en[4] == 1'b1;
+                    VU_SEXE_FRSQRT_S: prf_op_srf_wt_en[4] == 1'b1;
+                    VU_SEXE_FRCP_S: prf_op_srf_wt_en[4] == 1'b1;
+                    default: begin
+                        prf_op_srf_wt_en[4] == 1'b0;
+                    end
+                endcase
+            end
+            else begin
+                prf_op_srf_wt_en[4] == 1'b0;
+            end
+        end
+    }
+
+    constraint prf_op_srf_wt_en_bit5_c {
+        if (inst_gen_cfg.fix_prf_op_srf_wt_en_en) {
+            prf_op_srf_wt_en[5] == inst_gen_cfg.prf_op_srf_wt_en;
+        } else begin
+            if (cross_inst_1_op == VU_SEXE) begin
+                unique case (cross_inst_1_sexe_type)
+                    VU_SEXE_FADD_S: prf_op_srf_wt_en[5] == 1'b1;
+                    VU_SEXE_FSUB_S: prf_op_srf_wt_en[5] == 1'b1;
+                    VU_SEXE_FMUL_S: prf_op_srf_wt_en[5] == 1'b1;
+                    VU_SEXE_FDIV_S: prf_op_srf_wt_en[5] == 1'b1;
+                    VU_SEXE_FSQRT_S: prf_op_srf_wt_en[5] == 1'b1;
+                    VU_SEXE_FRSQRT_S: prf_op_srf_wt_en[5] == 1'b1;
+                    VU_SEXE_FRCP_S: prf_op_srf_wt_en[5] == 1'b1;
+                    default: begin
+                        prf_op_srf_wt_en[5] == 1'b0;
+                    end
+                endcase
+            end
+            else begin
+                prf_op_srf_wt_en[5] == 1'b0;
+            end
+        end
+    }
+
+    constraint sexe0_op_src1_sel_c {
+        if (inst_gen_cfg.fix_sexe0_op_src1_sel_en) {
+            sexe0_op_src1_sel == inst_gen_cfg.sexe0_op_src1_sel;
+        } else begin
+            if (cross_inst_1_op == VU_SEXE) begin
+                unique case (cross_inst_1_sexe_type)
+                    VU_SEXE_FADD_S: sexe0_op_src1_sel == 8'h54;
+                    VU_SEXE_FSUB_S: sexe0_op_src1_sel == 8'h54;
+                    VU_SEXE_FMUL_S: sexe0_op_src1_sel == 8'h54;
+                    VU_SEXE_FDIV_S: sexe0_op_src1_sel == 8'h54;
+                    VU_SEXE_FSQRT_S: sexe0_op_src1_sel == 8'h54;
+                    VU_SEXE_FRSQRT_S: sexe0_op_src1_sel == 8'h54;
+                    VU_SEXE_FRCP_S: sexe0_op_src1_sel == 8'h54;
+                    default: begin
+                        sexe0_op_src1_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                sexe0_op_src1_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint sexe0_op_src2_sel_c {
+        if (inst_gen_cfg.fix_sexe0_op_src2_sel_en) {
+            sexe0_op_src2_sel == inst_gen_cfg.sexe0_op_src2_sel;
+        } else begin
+            if (cross_inst_1_op == VU_SEXE) begin
+                unique case (cross_inst_1_sexe_type)
+                    VU_SEXE_FADD_S: sexe0_op_src2_sel == 8'h55;
+                    VU_SEXE_FSUB_S: sexe0_op_src2_sel == 8'h55;
+                    VU_SEXE_FMUL_S: sexe0_op_src2_sel == 8'h55;
+                    VU_SEXE_FDIV_S: sexe0_op_src2_sel == 8'h55;
+                    VU_SEXE_FSQRT_S: sexe0_op_src2_sel == 8'h00;
+                    VU_SEXE_FRSQRT_S: sexe0_op_src2_sel == 8'h00;
+                    VU_SEXE_FRCP_S: sexe0_op_src2_sel == 8'h00;
+                    default: begin
+                        sexe0_op_src2_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                sexe0_op_src2_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint sexe1_op_src1_sel_c {
+        if (inst_gen_cfg.fix_sexe1_op_src1_sel_en) {
+            sexe1_op_src1_sel == inst_gen_cfg.sexe1_op_src1_sel;
+        } else begin
+            if (cross_inst_1_op == VU_SEXE) begin
+                unique case (cross_inst_1_sexe_type)
+                    VU_SEXE_FADD_S: sexe1_op_src1_sel == 8'h56;
+                    VU_SEXE_FSUB_S: sexe1_op_src1_sel == 8'h56;
+                    VU_SEXE_FMUL_S: sexe1_op_src1_sel == 8'h56;
+                    VU_SEXE_FDIV_S: sexe1_op_src1_sel == 8'h56;
+                    VU_SEXE_FSQRT_S: sexe1_op_src1_sel == 8'h56;
+                    VU_SEXE_FRSQRT_S: sexe1_op_src1_sel == 8'h56;
+                    VU_SEXE_FRCP_S: sexe1_op_src1_sel == 8'h56;
+                    default: begin
+                        sexe1_op_src1_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                sexe1_op_src1_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint sexe1_op_src2_sel_c {
+        if (inst_gen_cfg.fix_sexe1_op_src2_sel_en) {
+            sexe1_op_src2_sel == inst_gen_cfg.sexe1_op_src2_sel;
+        } else begin
+            if (cross_inst_1_op == VU_SEXE) begin
+                unique case (cross_inst_1_sexe_type)
+                    VU_SEXE_FADD_S: sexe1_op_src2_sel == 8'h56;
+                    VU_SEXE_FSUB_S: sexe1_op_src2_sel == 8'h56;
+                    VU_SEXE_FMUL_S: sexe1_op_src2_sel == 8'h56;
+                    VU_SEXE_FDIV_S: sexe1_op_src2_sel == 8'h56;
+                    VU_SEXE_FSQRT_S: sexe1_op_src2_sel == 8'h00;
+                    VU_SEXE_FRSQRT_S: sexe1_op_src2_sel == 8'h00;
+                    VU_SEXE_FRCP_S: sexe1_op_src2_sel == 8'h00;
+                    default: begin
+                        sexe1_op_src2_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                sexe1_op_src2_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint sexe2_op_src1_sel_c {
+        if (inst_gen_cfg.fix_sexe2_op_src1_sel_en) {
+            sexe2_op_src1_sel == inst_gen_cfg.sexe2_op_src1_sel;
+        } else begin
+            if (cross_inst_1_op == VU_SEXE) begin
+                unique case (cross_inst_1_sexe_type)
+                    VU_SEXE_FADD_S: sexe2_op_src1_sel == 8'h57;
+                    VU_SEXE_FSUB_S: sexe2_op_src1_sel == 8'h57;
+                    VU_SEXE_FMUL_S: sexe2_op_src1_sel == 8'h57;
+                    VU_SEXE_FDIV_S: sexe2_op_src1_sel == 8'h57;
+                    VU_SEXE_FSQRT_S: sexe2_op_src1_sel == 8'h57;
+                    VU_SEXE_FRSQRT_S: sexe2_op_src1_sel == 8'h57;
+                    VU_SEXE_FRCP_S: sexe2_op_src1_sel == 8'h57;
+                    default: begin
+                        sexe2_op_src1_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                sexe2_op_src1_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint sexe2_op_src2_sel_c {
+        if (inst_gen_cfg.fix_sexe2_op_src2_sel_en) {
+            sexe2_op_src2_sel == inst_gen_cfg.sexe2_op_src2_sel;
+        } else begin
+            if (cross_inst_1_op == VU_SEXE) begin
+                unique case (cross_inst_1_sexe_type)
+                    VU_SEXE_FADD_S: sexe2_op_src2_sel == 8'h57;
+                    VU_SEXE_FSUB_S: sexe2_op_src2_sel == 8'h57;
+                    VU_SEXE_FMUL_S: sexe2_op_src2_sel == 8'h57;
+                    VU_SEXE_FDIV_S: sexe2_op_src2_sel == 8'h57;
+                    VU_SEXE_FSQRT_S: sexe2_op_src2_sel == 8'h00;
+                    VU_SEXE_FRSQRT_S: sexe2_op_src2_sel == 8'h00;
+                    VU_SEXE_FRCP_S: sexe2_op_src2_sel == 8'h00;
+                    default: begin
+                        sexe2_op_src2_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                sexe2_op_src2_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint static_type_vl_data_type_c {
+        if (inst_gen_cfg.fix_static_type_vl_data_type_en) {
+            static_type_vl_data_type == inst_gen_cfg.static_type_vl_data_type;
+        } else begin
+            if (cross_inst_1_op == VU_VSFU1) begin
+                unique case (cross_inst_1_vsfu1_type)
+                    VU_VSFU_VFSIN_V: static_type_vl_data_type == 1'b0;
+                    VU_VSFU_VFCOS_V: static_type_vl_data_type == 1'b0;
+                    VU_VSFU_VFTANH_V: static_type_vl_data_type == 1'b0;
+                    VU_VSFU_VFSIGMOID_V: static_type_vl_data_type == 1'b0;
+                    VU_VSFU_VFEXP_V: static_type_vl_data_type == 1'b0;
+                    VU_VSFU_VFEXP2_V: static_type_vl_data_type == 1'b0;
+                    VU_VSFU_VFLN_V: static_type_vl_data_type == 1'b0;
+                    VU_VSFU_VFLOG2_V: static_type_vl_data_type == 1'b0;
+                    VU_VSFU_VFSQRT_V: static_type_vl_data_type == 1'b0;
+                    VU_VSFU_VFRCP_V: static_type_vl_data_type == 1'b0;
+                    VU_VSFU_VFRSQRT_V: static_type_vl_data_type == 1'b0;
+                    VU_VSFU_CUSTOM_FIT: static_type_vl_data_type == 1'b0;
+                    default: ;
+                endcase
+            end
+            else begin
+                static_type_vl_data_type == 1'b0;
+            end
+        end
+    }
+
+    constraint su_op_src_sel_c {
+        if (inst_gen_cfg.fix_su_op_src_sel_en) {
+            su_op_src_sel == inst_gen_cfg.su_op_src_sel;
+        } else begin
+            if (cross_inst_1_op == VU_SU) begin
+                unique case (cross_inst_1_su_type)
+                    VU_SU_ST_FP8E4M3_V: su_op_src_sel inside {[8'h30:8'h31]};
+                    VU_SU_ST_MXFP8_V: su_op_src_sel inside {[8'h30:8'h31]};
+                    VU_SU_ST_BF16_V: su_op_src_sel inside {[8'h30:8'h31]};
+                    VU_SU_ST_FP32_V: su_op_src_sel inside {[8'h30:8'h31]};
+                    VU_SU_ST_MASK: su_op_src_sel inside {[8'h40:8'h41]};
+                    VU_SU_ST_S_FP32: su_op_src_sel == 8'h50;
+                    default: begin
+                        su_op_src_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                su_op_src_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint valu0_op_src1_sel_c {
+        if (inst_gen_cfg.fix_valu0_op_src1_sel_en) {
+            valu0_op_src1_sel == inst_gen_cfg.valu0_op_src1_sel;
+        } else begin
+            if (cross_inst_1_op == VU_VALU0) begin
+                unique case (cross_inst_1_valu0_type)
+                    VU_VALU0_VFADD_VV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFADD_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VFSUB_VV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFSUB_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VFRSUB_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VFMUL_VV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMUL_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VFDIV_VV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMIN_VV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMIN_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VFMAX_VV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMAX_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VFMV_V_F: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VFMV_S_F: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VFMACC_VV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMACC_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VFNMACC_VV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFNMACC_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VFMSAC_VV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMSAC_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VFNMSAC_VV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFNMSAC_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VFSGNJ_VV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFSGNJ_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VFSGNJN_VV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFSGNJN_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VFSGNJX_VV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFSGNJX_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VMFEQ_VV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VMFEQ_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VMFNE_VV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VMFNE_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VMFLT_VV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VMFLT_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VMFLE_VV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VMFLE_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VMFGT_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VMFGE_VF: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VFCLASS_MV: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMERGE_VFM: valu0_op_src1_sel == 8'h51;
+                    VU_VALU0_VFMERGE_VVM: valu0_op_src1_sel inside {[8'h30:8'h31]};
+                    default: begin
+                        valu0_op_src1_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                valu0_op_src1_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint valu0_op_src2_sel_c {
+        if (inst_gen_cfg.fix_valu0_op_src2_sel_en) {
+            valu0_op_src2_sel == inst_gen_cfg.valu0_op_src2_sel;
+        } else begin
+            if (cross_inst_1_op == VU_VALU0) begin
+                unique case (cross_inst_1_valu0_type)
+                    VU_VALU0_VFADD_VV: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFADD_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFSUB_VV: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFSUB_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFRSUB_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMUL_VV: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMUL_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFDIV_VV: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMIN_VV: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMIN_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMAX_VV: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMAX_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMV_V_F: valu0_op_src2_sel == 8'h00;
+                    VU_VALU0_VFMACC_VV: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMACC_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFNMACC_VV: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFNMACC_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMSAC_VV: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMSAC_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFNMSAC_VV: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFNMSAC_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFSGNJ_VV: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFSGNJ_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFSGNJN_VV: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFSGNJN_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFSGNJX_VV: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFSGNJX_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VMFEQ_VV: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VMFEQ_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VMFNE_VV: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VMFNE_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VMFLT_VV: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VMFLT_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VMFLE_VV: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VMFLE_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VMFGT_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VMFGE_VF: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMERGE_VFM: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMERGE_VVM: valu0_op_src2_sel inside {[8'h30:8'h31]};
+                    default: begin
+                        valu0_op_src2_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                valu0_op_src2_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint valu0_op_src3_sel_c {
+        if (inst_gen_cfg.fix_valu0_op_src3_sel_en) {
+            valu0_op_src3_sel == inst_gen_cfg.valu0_op_src3_sel;
+        } else begin
+            if (cross_inst_1_op == VU_VALU0) begin
+                unique case (cross_inst_1_valu0_type)
+                    VU_VALU0_VFADD_VV: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFADD_VF: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFSUB_VV: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFSUB_VF: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFRSUB_VF: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFMUL_VV: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFMUL_VF: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFDIV_VV: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFMIN_VV: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFMIN_VF: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFMAX_VV: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFMAX_VF: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFMV_V_F: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFMV_S_F: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFMACC_VV: valu0_op_src3_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMACC_VF: valu0_op_src3_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFNMACC_VV: valu0_op_src3_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFNMACC_VF: valu0_op_src3_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMSAC_VV: valu0_op_src3_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFMSAC_VF: valu0_op_src3_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFNMSAC_VV: valu0_op_src3_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFNMSAC_VF: valu0_op_src3_sel inside {[8'h30:8'h31]};
+                    VU_VALU0_VFSGNJ_VV: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFSGNJ_VF: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFSGNJN_VV: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFSGNJN_VF: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFSGNJX_VV: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VFSGNJX_VF: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VMFEQ_VV: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VMFEQ_VF: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VMFNE_VV: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VMFNE_VF: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VMFLT_VV: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VMFLT_VF: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VMFLE_VV: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VMFLE_VF: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VMFGT_VF: valu0_op_src3_sel == 8'h00;
+                    VU_VALU0_VMFGE_VF: valu0_op_src3_sel == 8'h00;
+                    default: begin
+                        valu0_op_src3_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                valu0_op_src3_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint valu1_op_src1_sel_c {
+        if (inst_gen_cfg.fix_valu1_op_src1_sel_en) {
+            valu1_op_src1_sel == inst_gen_cfg.valu1_op_src1_sel;
+        } else begin
+            if (cross_inst_1_op == VU_VALU1) begin
+                unique case (cross_inst_1_valu1_type)
+                    VU_VALU1_VFADD_VV: valu1_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFADD_VF: valu1_op_src1_sel == 8'h52;
+                    VU_VALU1_VFSUB_VV: valu1_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFSUB_VF: valu1_op_src1_sel == 8'h52;
+                    VU_VALU1_VFRSUB_VF: valu1_op_src1_sel == 8'h52;
+                    VU_VALU1_VFMUL_VV: valu1_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFMUL_VF: valu1_op_src1_sel == 8'h52;
+                    VU_VALU1_VFMIN_VV: valu1_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFMIN_VF: valu1_op_src1_sel == 8'h52;
+                    VU_VALU1_VFMAX_VV: valu1_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFMAX_VF: valu1_op_src1_sel == 8'h52;
+                    VU_VALU1_VFMV_V_F: valu1_op_src1_sel == 8'h52;
+                    VU_VALU1_VFREDUSUM_VS: valu1_op_src1_sel == 8'h52;
+                    VU_VALU1_VFREDMAX_VS: valu1_op_src1_sel == 8'h52;
+                    VU_VALU1_VFREDMIN_VS: valu1_op_src1_sel == 8'h52;
+                    VU_VALU1_VSORTMAX16_V: valu1_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VSORTMIN16_V: valu1_op_src1_sel inside {[8'h30:8'h31]};
+                    default: begin
+                        valu1_op_src1_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                valu1_op_src1_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint valu1_op_src2_sel_c {
+        if (inst_gen_cfg.fix_valu1_op_src2_sel_en) {
+            valu1_op_src2_sel == inst_gen_cfg.valu1_op_src2_sel;
+        } else begin
+            if (cross_inst_1_op == VU_VALU1) begin
+                unique case (cross_inst_1_valu1_type)
+                    VU_VALU1_VFADD_VV: valu1_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFADD_VF: valu1_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFSUB_VV: valu1_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFSUB_VF: valu1_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFRSUB_VF: valu1_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFMUL_VV: valu1_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFMUL_VF: valu1_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFMIN_VV: valu1_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFMIN_VF: valu1_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFMAX_VV: valu1_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFMAX_VF: valu1_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFMV_V_F: valu1_op_src2_sel == 8'h00;
+                    VU_VALU1_VFMV_F_S: valu1_op_src2_sel == 8'h00;
+                    VU_VALU1_VFREDUSUM_VS: valu1_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFREDMAX_VS: valu1_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VFREDMIN_VS: valu1_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU1_VSORTMAX16_V: valu1_op_src2_sel == 8'h00;
+                    VU_VALU1_VSORTMIN16_V: valu1_op_src2_sel == 8'h00;
+                    default: begin
+                        valu1_op_src2_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                valu1_op_src2_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint valu1_op_src3_sel_c {
+        if (inst_gen_cfg.fix_valu1_op_src3_sel_en) {
+            valu1_op_src3_sel == inst_gen_cfg.valu1_op_src3_sel;
+        } else begin
+            if (cross_inst_1_op == VU_VALU1) begin
+                unique case (cross_inst_1_valu1_type)
+                    VU_VALU1_VFADD_VV: valu1_op_src3_sel == 8'h00;
+                    VU_VALU1_VFADD_VF: valu1_op_src3_sel == 8'h00;
+                    VU_VALU1_VFSUB_VV: valu1_op_src3_sel == 8'h00;
+                    VU_VALU1_VFSUB_VF: valu1_op_src3_sel == 8'h00;
+                    VU_VALU1_VFRSUB_VF: valu1_op_src3_sel == 8'h00;
+                    VU_VALU1_VFMUL_VV: valu1_op_src3_sel == 8'h00;
+                    VU_VALU1_VFMUL_VF: valu1_op_src3_sel == 8'h00;
+                    VU_VALU1_VFMIN_VV: valu1_op_src3_sel == 8'h00;
+                    VU_VALU1_VFMIN_VF: valu1_op_src3_sel == 8'h00;
+                    VU_VALU1_VFMAX_VV: valu1_op_src3_sel == 8'h00;
+                    VU_VALU1_VFMAX_VF: valu1_op_src3_sel == 8'h00;
+                    VU_VALU1_VFMV_V_F: valu1_op_src3_sel == 8'h00;
+                    VU_VALU1_VFMV_F_S: valu1_op_src3_sel == 8'h00;
+                    VU_VALU1_VFREDUSUM_VS: valu1_op_src3_sel == 8'h00;
+                    VU_VALU1_VFREDMAX_VS: valu1_op_src3_sel == 8'h00;
+                    VU_VALU1_VFREDMIN_VS: valu1_op_src3_sel == 8'h00;
+                    VU_VALU1_VSORTMAX16_V: valu1_op_src3_sel == 8'h00;
+                    VU_VALU1_VSORTMIN16_V: valu1_op_src3_sel == 8'h00;
+                    default: begin
+                        valu1_op_src3_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                valu1_op_src3_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint valu2_op_src1_sel_c {
+        if (inst_gen_cfg.fix_valu2_op_src1_sel_en) {
+            valu2_op_src1_sel == inst_gen_cfg.valu2_op_src1_sel;
+        } else begin
+            if (cross_inst_1_op == VU_VALU2) begin
+                unique case (cross_inst_1_valu2_type)
+                    VU_VALU2_VFADD_VV: valu2_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFADD_VF: valu2_op_src1_sel == 8'h53;
+                    VU_VALU2_VFSUB_VV: valu2_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFSUB_VF: valu2_op_src1_sel == 8'h53;
+                    VU_VALU2_VFRSUB_VF: valu2_op_src1_sel == 8'h53;
+                    VU_VALU2_VFMUL_VV: valu2_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFMUL_VF: valu2_op_src1_sel == 8'h53;
+                    VU_VALU2_VFMIN_VV: valu2_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFMIN_VF: valu2_op_src1_sel == 8'h53;
+                    VU_VALU2_VFMAX_VV: valu2_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFMAX_VF: valu2_op_src1_sel == 8'h53;
+                    VU_VALU2_VFMV_V_F: valu2_op_src1_sel == 8'h53;
+                    VU_VALU2_VMV_V_V: valu2_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VSWAP2_V: valu2_op_src1_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFSLIDE1UP_VF: valu2_op_src1_sel == 8'h53;
+                    VU_VALU2_VFSLIDE1DOWN_VF: valu2_op_src1_sel == 8'h53;
+                    default: begin
+                        valu2_op_src1_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                valu2_op_src1_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint valu2_op_src2_sel_c {
+        if (inst_gen_cfg.fix_valu2_op_src2_sel_en) {
+            valu2_op_src2_sel == inst_gen_cfg.valu2_op_src2_sel;
+        } else begin
+            if (cross_inst_1_op == VU_VALU2) begin
+                unique case (cross_inst_1_valu2_type)
+                    VU_VALU2_VFADD_VV: valu2_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFADD_VF: valu2_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFSUB_VV: valu2_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFSUB_VF: valu2_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFRSUB_VF: valu2_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFMUL_VV: valu2_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFMUL_VF: valu2_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFMIN_VV: valu2_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFMIN_VF: valu2_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFMAX_VV: valu2_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFMAX_VF: valu2_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFMV_V_F: valu2_op_src2_sel == 8'h00;
+                    VU_VALU2_VMV_V_V: valu2_op_src2_sel == 8'h00;
+                    VU_VALU2_VSWAP2_V: valu2_op_src2_sel == 8'h00;
+                    VU_VALU2_VFSLIDE1UP_VF: valu2_op_src2_sel inside {[8'h30:8'h31]};
+                    VU_VALU2_VFSLIDE1DOWN_VF: valu2_op_src2_sel inside {[8'h30:8'h31]};
+                    default: begin
+                        valu2_op_src2_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                valu2_op_src2_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint valu2_op_src3_sel_c {
+        if (inst_gen_cfg.fix_valu2_op_src3_sel_en) {
+            valu2_op_src3_sel == inst_gen_cfg.valu2_op_src3_sel;
+        } else begin
+            if (cross_inst_1_op == VU_VALU2) begin
+                unique case (cross_inst_1_valu2_type)
+                    VU_VALU2_VFADD_VV: valu2_op_src3_sel == 8'h00;
+                    VU_VALU2_VFADD_VF: valu2_op_src3_sel == 8'h00;
+                    VU_VALU2_VFSUB_VV: valu2_op_src3_sel == 8'h00;
+                    VU_VALU2_VFSUB_VF: valu2_op_src3_sel == 8'h00;
+                    VU_VALU2_VFRSUB_VF: valu2_op_src3_sel == 8'h00;
+                    VU_VALU2_VFMUL_VV: valu2_op_src3_sel == 8'h00;
+                    VU_VALU2_VFMUL_VF: valu2_op_src3_sel == 8'h00;
+                    VU_VALU2_VFMIN_VV: valu2_op_src3_sel == 8'h00;
+                    VU_VALU2_VFMIN_VF: valu2_op_src3_sel == 8'h00;
+                    VU_VALU2_VFMAX_VV: valu2_op_src3_sel == 8'h00;
+                    VU_VALU2_VFMAX_VF: valu2_op_src3_sel == 8'h00;
+                    VU_VALU2_VFMV_V_F: valu2_op_src3_sel == 8'h00;
+                    VU_VALU2_VMV_V_V: valu2_op_src3_sel == 8'h00;
+                    VU_VALU2_VSWAP2_V: valu2_op_src3_sel == 8'h00;
+                    VU_VALU2_VFSLIDE1UP_VF: valu2_op_src3_sel == 8'h00;
+                    VU_VALU2_VFSLIDE1DOWN_VF: valu2_op_src3_sel == 8'h00;
+                    default: begin
+                        valu2_op_src3_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                valu2_op_src3_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint vsfu_op_vsfu0_src1_sel_c {
+        if (inst_gen_cfg.fix_vsfu_op_vsfu0_src1_sel_en) {
+            vsfu_op_vsfu0_src1_sel == inst_gen_cfg.vsfu_op_vsfu0_src1_sel;
+        } else begin
+            if (cross_inst_1_op == VU_VSFU0) begin
+                unique case (cross_inst_1_vsfu0_type)
+                    VU_VSFU_VFSIN_V: vsfu_op_vsfu0_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFCOS_V: vsfu_op_vsfu0_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFTANH_V: vsfu_op_vsfu0_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFSIGMOID_V: vsfu_op_vsfu0_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFEXP_V: vsfu_op_vsfu0_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFEXP2_V: vsfu_op_vsfu0_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFLN_V: vsfu_op_vsfu0_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFLOG2_V: vsfu_op_vsfu0_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFSQRT_V: vsfu_op_vsfu0_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFRCP_V: vsfu_op_vsfu0_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFRSQRT_V: vsfu_op_vsfu0_src1_sel inside {[8'h30:8'h31]};
+                    default: begin
+                        vsfu_op_vsfu0_src1_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                vsfu_op_vsfu0_src1_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint vsfu_op_vsfu1_src1_sel_c {
+        if (inst_gen_cfg.fix_vsfu_op_vsfu1_src1_sel_en) {
+            vsfu_op_vsfu1_src1_sel == inst_gen_cfg.vsfu_op_vsfu1_src1_sel;
+        } else begin
+            if (cross_inst_1_op == VU_VSFU1) begin
+                unique case (cross_inst_1_vsfu1_type)
+                    VU_VSFU_VFSIN_V: vsfu_op_vsfu1_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFCOS_V: vsfu_op_vsfu1_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFTANH_V: vsfu_op_vsfu1_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFSIGMOID_V: vsfu_op_vsfu1_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFEXP_V: vsfu_op_vsfu1_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFEXP2_V: vsfu_op_vsfu1_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFLN_V: vsfu_op_vsfu1_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFLOG2_V: vsfu_op_vsfu1_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFSQRT_V: vsfu_op_vsfu1_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFRCP_V: vsfu_op_vsfu1_src1_sel inside {[8'h30:8'h31]};
+                    VU_VSFU_VFRSQRT_V: vsfu_op_vsfu1_src1_sel inside {[8'h30:8'h31]};
+                    default: begin
+                        vsfu_op_vsfu1_src1_sel == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                vsfu_op_vsfu1_src1_sel == 8'h00;
+            end
+        end
+    }
+
+    constraint prf_op_vrf_wt_src_c {
+        if (inst_gen_cfg.fix_prf_op_vrf_wt_p0_src_en) {
+            prf_op_vrf_wt_p0_src == inst_gen_cfg.prf_op_vrf_wt_p0_src;
+        }
+        if (inst_gen_cfg.fix_prf_op_vrf_wt_p1_src_en) {
+            prf_op_vrf_wt_p1_src == inst_gen_cfg.prf_op_vrf_wt_p1_src;
+        }
+        if (!inst_gen_cfg.fix_prf_op_vrf_wt_p0_src_en
+            && !inst_gen_cfg.fix_prf_op_vrf_wt_p1_src_en) {
+            if (cross_inst_1_op == VU_LU) begin
+                unique case (cross_inst_1_lu_type)
+                    VU_LU_LD_FP8E4M3_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h01, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h01} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_LU_LD_MXFP8_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h01, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h01} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_LU_LD_BF16_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h01, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h01} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_LU_LD_FP32_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h01, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h01} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_LU_LD_MASK: prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    VU_LU_LD_S_FP32: prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    default: begin
+                        prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    end
+                endcase
+            end
+            else if (cross_inst_1_op == VU_VALU0) begin
+                unique case (cross_inst_1_valu0_type)
+                    VU_VALU0_VFADD_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFADD_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFSUB_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFSUB_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFRSUB_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFMUL_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFMUL_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFDIV_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFMIN_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFMIN_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFMAX_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFMAX_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFMV_V_F: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFMV_S_F: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFMACC_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFMACC_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFNMACC_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFNMACC_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFMSAC_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFMSAC_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFNMSAC_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFNMSAC_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFSGNJ_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFSGNJ_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFSGNJN_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFSGNJN_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFSGNJX_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFSGNJX_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VMFEQ_VV: prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    VU_VALU0_VMFEQ_VF: prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    VU_VALU0_VMFNE_VV: prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    VU_VALU0_VMFNE_VF: prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    VU_VALU0_VMFLT_VV: prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    VU_VALU0_VMFLT_VF: prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    VU_VALU0_VMFLE_VV: prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    VU_VALU0_VMFLE_VF: prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    VU_VALU0_VMFGT_VF: prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    VU_VALU0_VMFGE_VF: prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    VU_VALU0_VFCLASS_MV: prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    VU_VALU0_VFMERGE_VFM: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU0_VFMERGE_VVM: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    default: begin
+                        prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    end
+                endcase
+            end
+            else if (cross_inst_1_op == VU_VALU1) begin
+                unique case (cross_inst_1_valu1_type)
+                    VU_VALU1_VFADD_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU1_VFADD_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU1_VFSUB_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU1_VFSUB_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU1_VFRSUB_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU1_VFMUL_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU1_VFMUL_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU1_VFMIN_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU1_VFMIN_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU1_VFMAX_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU1_VFMAX_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU1_VFMV_V_F: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU1_VFMV_F_S: prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    VU_VALU1_VFREDUSUM_VS: prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    VU_VALU1_VFREDMAX_VS: prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    VU_VALU1_VFREDMIN_VS: prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    VU_VALU1_VSORTMAX16_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU1_VSORTMIN16_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    default: begin
+                        prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    end
+                endcase
+            end
+            else if (cross_inst_1_op == VU_VALU2) begin
+                unique case (cross_inst_1_valu2_type)
+                    VU_VALU2_VFADD_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU2_VFADD_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU2_VFSUB_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU2_VFSUB_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU2_VFRSUB_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU2_VFMUL_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU2_VFMUL_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU2_VFMIN_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU2_VFMIN_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU2_VFMAX_VV: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU2_VFMAX_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU2_VFMV_V_F: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU2_VMV_V_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU2_VSWAP2_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU2_VFSLIDE1UP_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VALU2_VFSLIDE1DOWN_VF: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    default: begin
+                        prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    end
+                endcase
+            end
+            else if (cross_inst_1_op == VU_VSFU0) begin
+                unique case (cross_inst_1_vsfu0_type)
+                    VU_VSFU_VFSIN_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h05, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h05} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFCOS_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h05, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h05} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFTANH_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h05, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h05} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFSIGMOID_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h05, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h05} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFEXP_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h05, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h05} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFEXP2_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h05, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h05} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFLN_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h05, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h05} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFLOG2_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h05, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h05} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFSQRT_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h05, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h05} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFRCP_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h05, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h05} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFRSQRT_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h05, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h05} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_CUSTOM_FIT: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h05, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h05} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    default: begin
+                        prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    end
+                endcase
+            end
+            else if (cross_inst_1_op == VU_VSFU1) begin
+                unique case (cross_inst_1_vsfu1_type)
+                    VU_VSFU_VFSIN_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h06, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h06} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFCOS_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h06, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h06} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFTANH_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h06, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h06} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFSIGMOID_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h06, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h06} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFEXP_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h06, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h06} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFEXP2_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h06, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h06} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFLN_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h06, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h06} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFLOG2_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h06, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h06} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFSQRT_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h06, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h06} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFRCP_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h06, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h06} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_VFRSQRT_V: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h06, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h06} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    VU_VSFU_CUSTOM_FIT: begin
+                    {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
+                        {8'h06, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h00, 8'h06} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                    }
+                    end
+                    default: begin
+                        prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
+                    end
+                endcase
+            end
+            else begin
+                prf_op_vrf_wt_p0_src == 8'h00;
+                prf_op_vrf_wt_p1_src == 8'h00;
+            end
+        }
+    }
+
+endclass : cross_1_gen_seq_item
+
+class cross_2_gen_seq_item extends vu_inst_seq_item;
+    //----- cross_inst_2 激励生成控制字段 -----
+    rand cross_inst_2_type_e      cross_inst_2_type;
+
+    `uvm_object_utils_begin(cross_2_gen_seq_item)
+        `uvm_field_enum         (cross_inst_2_type_e,        cross_inst_2_type,       UVM_DEFAULT)
+    `uvm_object_utils_end
+
+    function new (string name = "cross_2_gen_seq_item");
+        super.new(name);
+    endfunction : new
+
+    constraint cross_inst_2_type_c {
+        if (inst_gen_cfg.cross_2_cfg.fix_cross_inst_2_type_en) {
+            cross_inst_2_type == inst_gen_cfg.cross_2_cfg.cross_inst_2_type;
+        } else {
+            cross_inst_2_type dist {
+                VU_CROSS_INST_2_NOP      := inst_gen_cfg.cross_2_cfg.cross_inst_2_type_dist[VU_CROSS_INST_2_NOP];
+            };
+        }
+    }
+
+endclass : cross_2_gen_seq_item
+
+class cross_3_gen_seq_item extends vu_inst_seq_item;
+    //----- cross_inst_3 激励生成控制字段 -----
+    rand cross_inst_3_type_e      cross_inst_3_type;
+
+    `uvm_object_utils_begin(cross_3_gen_seq_item)
+        `uvm_field_enum         (cross_inst_3_type_e,        cross_inst_3_type,       UVM_DEFAULT)
+    `uvm_object_utils_end
+
+    function new (string name = "cross_3_gen_seq_item");
+        super.new(name);
+    endfunction : new
+
+    constraint cross_inst_3_type_c {
+        if (inst_gen_cfg.cross_3_cfg.fix_cross_inst_3_type_en) {
+            cross_inst_3_type == inst_gen_cfg.cross_3_cfg.cross_inst_3_type;
+        } else {
+            cross_inst_3_type dist {
+                VU_CROSS_INST_3_NOP      := inst_gen_cfg.cross_3_cfg.cross_inst_3_type_dist[VU_CROSS_INST_3_NOP];
+            };
+        }
+    }
+
+endclass : cross_3_gen_seq_item
+
+class cross_4_gen_seq_item extends vu_inst_seq_item;
+    //----- cross_inst_4 激励生成控制字段 -----
+    rand cross_inst_4_type_e      cross_inst_4_type;
+
+    `uvm_object_utils_begin(cross_4_gen_seq_item)
+        `uvm_field_enum         (cross_inst_4_type_e,        cross_inst_4_type,       UVM_DEFAULT)
+    `uvm_object_utils_end
+
+    function new (string name = "cross_4_gen_seq_item");
+        super.new(name);
+    endfunction : new
+
+    constraint cross_inst_4_type_c {
+        if (inst_gen_cfg.cross_4_cfg.fix_cross_inst_4_type_en) {
+            cross_inst_4_type == inst_gen_cfg.cross_4_cfg.cross_inst_4_type;
+        } else {
+            cross_inst_4_type dist {
+                VU_CROSS_INST_4_NOP      := inst_gen_cfg.cross_4_cfg.cross_inst_4_type_dist[VU_CROSS_INST_4_NOP];
+            };
+        }
+    }
+
+endclass : cross_4_gen_seq_item
+
+class cross_5_gen_seq_item extends vu_inst_seq_item;
+    //----- cross_inst_5 激励生成控制字段 -----
+    rand cross_inst_5_type_e      cross_inst_5_type;
+
+    `uvm_object_utils_begin(cross_5_gen_seq_item)
+        `uvm_field_enum         (cross_inst_5_type_e,        cross_inst_5_type,       UVM_DEFAULT)
+    `uvm_object_utils_end
+
+    function new (string name = "cross_5_gen_seq_item");
+        super.new(name);
+    endfunction : new
+
+    constraint cross_inst_5_type_c {
+        if (inst_gen_cfg.cross_5_cfg.fix_cross_inst_5_type_en) {
+            cross_inst_5_type == inst_gen_cfg.cross_5_cfg.cross_inst_5_type;
+        } else {
+            cross_inst_5_type dist {
+                VU_CROSS_INST_5_NOP      := inst_gen_cfg.cross_5_cfg.cross_inst_5_type_dist[VU_CROSS_INST_5_NOP];
+            };
+        }
+    }
+
+endclass : cross_5_gen_seq_item
+
+class cross_6_gen_seq_item extends vu_inst_seq_item;
+    //----- cross_inst_6 激励生成控制字段 -----
+    rand cross_inst_6_type_e      cross_inst_6_type;
+
+    `uvm_object_utils_begin(cross_6_gen_seq_item)
+        `uvm_field_enum         (cross_inst_6_type_e,        cross_inst_6_type,       UVM_DEFAULT)
+    `uvm_object_utils_end
+
+    function new (string name = "cross_6_gen_seq_item");
+        super.new(name);
+    endfunction : new
+
+    constraint cross_inst_6_type_c {
+        if (inst_gen_cfg.cross_6_cfg.fix_cross_inst_6_type_en) {
+            cross_inst_6_type == inst_gen_cfg.cross_6_cfg.cross_inst_6_type;
+        } else {
+            cross_inst_6_type dist {
+                VU_CROSS_INST_6_NOP      := inst_gen_cfg.cross_6_cfg.cross_inst_6_type_dist[VU_CROSS_INST_6_NOP];
+            };
+        }
+    }
+
+endclass : cross_6_gen_seq_item
+
+class cross_7_gen_seq_item extends vu_inst_seq_item;
+    //----- cross_inst_7 激励生成控制字段 -----
+    rand cross_inst_7_type_e      cross_inst_7_type;
+
+    `uvm_object_utils_begin(cross_7_gen_seq_item)
+        `uvm_field_enum         (cross_inst_7_type_e,        cross_inst_7_type,       UVM_DEFAULT)
+    `uvm_object_utils_end
+
+    function new (string name = "cross_7_gen_seq_item");
+        super.new(name);
+    endfunction : new
+
+    constraint cross_inst_7_type_c {
+        if (inst_gen_cfg.cross_7_cfg.fix_cross_inst_7_type_en) {
+            cross_inst_7_type == inst_gen_cfg.cross_7_cfg.cross_inst_7_type;
+        } else {
+            cross_inst_7_type dist {
+                VU_CROSS_INST_7_NOP      := inst_gen_cfg.cross_7_cfg.cross_inst_7_type_dist[VU_CROSS_INST_7_NOP];
+            };
+        }
+    }
+
+endclass : cross_7_gen_seq_item
+
+class cross_8_gen_seq_item extends vu_inst_seq_item;
+    //----- cross_inst_8 激励生成控制字段 -----
+    rand cross_inst_8_type_e      cross_inst_8_type;
+
+    `uvm_object_utils_begin(cross_8_gen_seq_item)
+        `uvm_field_enum         (cross_inst_8_type_e,        cross_inst_8_type,       UVM_DEFAULT)
+    `uvm_object_utils_end
+
+    function new (string name = "cross_8_gen_seq_item");
+        super.new(name);
+    endfunction : new
+
+    constraint cross_inst_8_type_c {
+        if (inst_gen_cfg.cross_8_cfg.fix_cross_inst_8_type_en) {
+            cross_inst_8_type == inst_gen_cfg.cross_8_cfg.cross_inst_8_type;
+        } else {
+            cross_inst_8_type dist {
+                VU_CROSS_INST_8_NOP      := inst_gen_cfg.cross_8_cfg.cross_inst_8_type_dist[VU_CROSS_INST_8_NOP];
+            };
+        }
+    }
+
+endclass : cross_8_gen_seq_item
+
+class cross_9_gen_seq_item extends vu_inst_seq_item;
+    //----- cross_inst_9 激励生成控制字段 -----
+    rand cross_inst_9_type_e      cross_inst_9_type;
+
+    `uvm_object_utils_begin(cross_9_gen_seq_item)
+        `uvm_field_enum         (cross_inst_9_type_e,        cross_inst_9_type,       UVM_DEFAULT)
+    `uvm_object_utils_end
+
+    function new (string name = "cross_9_gen_seq_item");
+        super.new(name);
+    endfunction : new
+
+    constraint cross_inst_9_type_c {
+        if (inst_gen_cfg.cross_9_cfg.fix_cross_inst_9_type_en) {
+            cross_inst_9_type == inst_gen_cfg.cross_9_cfg.cross_inst_9_type;
+        } else {
+            cross_inst_9_type dist {
+                VU_CROSS_INST_9_NOP      := inst_gen_cfg.cross_9_cfg.cross_inst_9_type_dist[VU_CROSS_INST_9_NOP];
+            };
+        }
+    }
+
+endclass : cross_9_gen_seq_item
+
+class cross_10_gen_seq_item extends vu_inst_seq_item;
+    //----- cross_inst_10 激励生成控制字段 -----
+    rand cross_inst_10_type_e     cross_inst_10_type;
+
+    `uvm_object_utils_begin(cross_10_gen_seq_item)
+        `uvm_field_enum         (cross_inst_10_type_e,        cross_inst_10_type,       UVM_DEFAULT)
+    `uvm_object_utils_end
+
+    function new (string name = "cross_10_gen_seq_item");
+        super.new(name);
+    endfunction : new
+
+    constraint cross_inst_10_type_c {
+        if (inst_gen_cfg.cross_10_cfg.fix_cross_inst_10_type_en) {
+            cross_inst_10_type == inst_gen_cfg.cross_10_cfg.cross_inst_10_type;
+        } else {
+            cross_inst_10_type dist {
+                VU_CROSS_INST_10_NOP     := inst_gen_cfg.cross_10_cfg.cross_inst_10_type_dist[VU_CROSS_INST_10_NOP];
+            };
+        }
+    }
+
+endclass : cross_10_gen_seq_item
+
+class cross_11_gen_seq_item extends vu_inst_seq_item;
+    //----- cross_inst_11 激励生成控制字段 -----
+    rand cross_inst_11_type_e     cross_inst_11_type;
+
+    `uvm_object_utils_begin(cross_11_gen_seq_item)
+        `uvm_field_enum         (cross_inst_11_type_e,        cross_inst_11_type,       UVM_DEFAULT)
+    `uvm_object_utils_end
+
+    function new (string name = "cross_11_gen_seq_item");
+        super.new(name);
+    endfunction : new
+
+    constraint cross_inst_11_type_c {
+        if (inst_gen_cfg.cross_11_cfg.fix_cross_inst_11_type_en) {
+            cross_inst_11_type == inst_gen_cfg.cross_11_cfg.cross_inst_11_type;
+        } else {
+            cross_inst_11_type dist {
+                VU_CROSS_INST_11_NOP     := inst_gen_cfg.cross_11_cfg.cross_inst_11_type_dist[VU_CROSS_INST_11_NOP];
+            };
+        }
+    }
+
+endclass : cross_11_gen_seq_item
+class vu_reg_read_seq_item extends uvm_sequence_item;
+    rand vu_reg_read_addr_cat_e   reg_read_addr_cat;
+    rand logic [2:0]              reg_read_static_idx;
+    rand logic [31:0]             reg_read_addr;
+
+    inst_gen_config     inst_gen_cfg;
+
+    function automatic bit vu_reg_read_hi14_legal(logic [13:0] hi14);
+        return hi14 inside {[14'h0:14'hB], [14'h400:14'h416], [14'h440:14'h456], [14'h480:14'h496], [14'h4C0:14'h4D6], [14'h500:14'h516], [14'h540:14'h556], [14'h580:14'h596], [14'h5C0:14'h5D6], [14'h800:14'h801], [14'hC00:14'hC05], 14'h1000, [14'h1002:14'h103D]};
+    endfunction
+
+    `uvm_object_utils_begin(vu_reg_read_seq_item)
+        `uvm_field_enum         (vu_reg_read_addr_cat_e, reg_read_addr_cat, UVM_DEFAULT)
+        `uvm_field_int          (reg_read_static_idx, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (reg_read_addr, UVM_DEFAULT | UVM_DEC)
+        `uvm_field_object       (inst_gen_cfg, UVM_DEFAULT)
+    `uvm_object_utils_end
+
+    function new (string name = "vu_reg_read_seq_item");
+        super.new(name);
+    endfunction : new
+
+    //----- 求解顺序 -----
+    constraint solve_order_c {
+        solve reg_read_addr_cat before reg_read_static_idx;
+        solve reg_read_addr_cat before reg_read_addr;
+        solve reg_read_static_idx before reg_read_addr;
+    }
+
+    constraint reg_read_addr_cat_c {
+        if (inst_gen_cfg.fix_reg_read_addr_cat_en) {
+            reg_read_addr_cat == inst_gen_cfg.reg_read_addr_cat;
+        } else {
+            reg_read_addr_cat dist {
+                VU_REG_READ_CAT_DYN_PARAM    := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_DYN_PARAM];
+                VU_REG_READ_CAT_STATIC_CFG   := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_STATIC_CFG];
+                VU_REG_READ_CAT_DSA_RF       := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_DSA_RF];
+                VU_REG_READ_CAT_STATUS       := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_STATUS];
+                VU_REG_READ_CAT_PROFILE      := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_PROFILE];
+                VU_REG_READ_CAT_ILLEGAL      := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_ILLEGAL];
+            };
+        }
+    }
+
+    constraint reg_read_static_idx_c {
+        if (inst_gen_cfg.fix_reg_read_static_idx_en) {
+            reg_read_static_idx == inst_gen_cfg.reg_read_static_idx;
+        }
+    }
+
+    constraint reg_read_addr_align_c {
+        if (!inst_gen_cfg.fix_reg_read_addr_en) {
+            reg_read_addr[1:0] dist {
+                2'b00              := inst_gen_cfg.align_addr_weight;
+                [2'b01:2'b11]      := 100 - inst_gen_cfg.align_addr_weight;
+            };
+        }
+    }
+
+    constraint reg_read_addr_c {
+        if (inst_gen_cfg.fix_reg_read_addr_en) {
+            reg_read_addr == inst_gen_cfg.reg_read_addr;
+        end
+        else if (reg_read_addr_cat == VU_REG_READ_CAT_ILLEGAL)
+            !vu_reg_read_hi14_legal(reg_read_addr[15:2]);
+        else if (reg_read_addr_cat == VU_REG_READ_CAT_DYN_PARAM)
+            reg_read_addr[15:2] inside {[14'h0:14'hB]};
+        else if (reg_read_addr_cat == VU_REG_READ_CAT_STATIC_CFG)
+            (reg_read_addr[15:2] - (14'(reg_read_static_idx) * 14'h40)) inside {[14'h400:14'h416]};
+        else if (reg_read_addr_cat == VU_REG_READ_CAT_DSA_RF)
+            reg_read_addr[15:2] inside {[14'h800:14'h801]};
+        else if (reg_read_addr_cat == VU_REG_READ_CAT_STATUS)
+            reg_read_addr[15:2] inside {[14'hC00:14'hC05]};
+        else if (reg_read_addr_cat == VU_REG_READ_CAT_PROFILE)
+            reg_read_addr[15:2] inside {14'h1000, [14'h1002:14'h103D]};
+    }
+
+endclass : vu_reg_read_seq_item
+
+`endif

@@ -12,7 +12,6 @@ class reset_driver extends uvm_driver #(reset_seq_item);
     virtual reset_if             reset_vif;
     reset_config                 reset_cfg;
 
-    // int      reset_drv_log;
 
     `uvm_component_utils_begin(reset_driver)
     `uvm_component_utils_end
@@ -29,9 +28,6 @@ class reset_driver extends uvm_driver #(reset_seq_item);
 
         reset_vif = reset_cfg.reset_vif;
 
-        // reset_drv_log = $fopen("./log/reset.drv.log","w");
-        // set_report_id_action("RESET_DRV",UVM_LOG);
-        // set_report_id_file("RESET_DRV",reset_drv_log);
     endfunction: build_phase
    
     extern virtual task reset_phase(uvm_phase phase);

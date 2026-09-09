@@ -6,7 +6,7 @@
 +incdir+../uvm_tb/scb/
 +incdir+../uvm_tb/ref/
 +incdir+../uvm_tb/mon/
-//+incdir+../uvm_tb/xxx_uvc/
-//+incdir+../uvm_tb/xxx_uvc/seq/
++incdir+../uvm_tb/inst_gen_uvc/
++incdir+../uvm_tb/inst_gen_uvc/seq/
 +incdir+../uvm_tb/reset_uvc/
 +incdir+../uvm_tb/reset_uvc/seq/

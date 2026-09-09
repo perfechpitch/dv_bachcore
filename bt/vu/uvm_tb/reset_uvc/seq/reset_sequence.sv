@@ -6,7 +6,6 @@
 // Update Count         :
 // Description          :
 // ============================================================================
-
 `ifndef RESET_SEQUENCE_SV
 `define RESET_SEQUENCE_SV
 

@@ -1,11 +1,3 @@
-// ============================================================================
-// Filename             : vu_vsequence.sv
-// Author               : kippy
-// Created On           : 2026-9-1 11:53
-// Last Modified        :
-// Update Count         :
-// Description          :
-// ============================================================================
 `ifndef VU_VSEQUENCE_SV
 `define VU_VSEQUENCE_SV
 class vu_vsequence extends vu_base_vsequence;
@@ -17,17 +9,14 @@ class vu_vsequence extends vu_base_vsequence;
     endfunction
 
     virtual task body();
-    //    fork
-    //        begin
-    //            wait(p_sequencer.vu_case_cfg.exp_exe_num <= p_sequencer.vu_case_cfg.vu_ref_cfg.exe_num);
-    //        end
-    //        begin
-    //            `uvm_do_on(xxx_seq,p_sequencer.xxx_sqr)
-    //        end
-    //        begin
-    //            `uvm_do_on(reset_seq,p_sequencer.reset_sqr)
-    //        end
-    //    join_any
+        fork
+            begin
+                `uvm_do_on(inst_gen_seq, p_sequencer.inst_gen_sqr)
+            end
+            begin
+                `uvm_do_on(reset_seq, p_sequencer.reset_sqr)
+            end
+        join_any
     endtask
 endclass : vu_vsequence
 `endif
