@@ -1,4 +1,4 @@
-typedef enum{RAND_LS,LINEAR_LS,LRSC_LS,MEMCPY_LS}ls_seq_type_e;
+typedef enum{RAND_LS,LINEAR_LS,MEMCPY_LS}ls_seq_type_e;
 class ls_seq_info_item extends inst_seq_info_item;
     //override inst_seq_cfg
     ls_seq_config inst_seq_cfg;
@@ -8,7 +8,6 @@ class ls_seq_info_item extends inst_seq_info_item;
     rand int unsigned flush_inst_dist;
     rand int unsigned except_inst_dist;
     rand int unsigned ls_inst_dist;
-    rand int unsigned wfi_inst_dist;
     //ls inst dist
     rand int unsigned pref_dist;
     rand int unsigned load_dist;
@@ -28,7 +27,6 @@ class ls_seq_info_item extends inst_seq_info_item;
         `uvm_field_int(flush_inst_dist,UVM_DEFAULT)
         `uvm_field_int(except_inst_dist,UVM_DEFAULT)
         `uvm_field_int(ls_inst_dist,UVM_DEFAULT)
-        `uvm_field_int(wfi_inst_dist,UVM_DEFAULT)
 
         `uvm_field_int(pref_dist,UVM_DEFAULT)
         `uvm_field_int(load_dist,UVM_DEFAULT)
@@ -48,8 +46,7 @@ class ls_seq_info_item extends inst_seq_info_item;
         ls_seq_type dist{
         RAND_LS     := inst_seq_cfg.ls_seq_type_dist[0],
         LINEAR_LS   := inst_seq_cfg.ls_seq_type_dist[1],
-        LRSC_LS     := inst_seq_cfg.ls_seq_type_dist[2],
-        MEMCPY_LS   := inst_seq_cfg.ls_seq_type_dist[3]
+        MEMCPY_LS   := inst_seq_cfg.ls_seq_type_dist[2]
         };
     }
 
@@ -64,10 +61,7 @@ class ls_seq_info_item extends inst_seq_info_item;
         //if(!inst_seq_cfg.except_inst_enable){except_inst_dist == 'd0;}
         //else{
         //except_inst_dist inside{[0:100]};}
-        if(!inst_seq_cfg.wfi_inst_enable){wfi_inst_dist == 'd0;}
-        else{
-        wfi_inst_dist inside{[0:100]};}
-        (safe_inst_dist + flush_inst_dist + except_inst_dist + wfi_inst_dist + ls_inst_dist) == 100;
+        (safe_inst_dist + flush_inst_dist + except_inst_dist + ls_inst_dist) == 100;
     }
  //TODO:cache inst dist
     constraint ls_inst_dist_c{

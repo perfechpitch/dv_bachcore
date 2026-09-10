@@ -29,6 +29,6 @@ package cpu_set_pkg;
   } csr_set_e;
 endpackage
 
-`define SUPPORT_INST_SET '{RVI, RVM, RVA, RVC}
+`define SUPPORT_INST_SET '{RVI, RVM, RVA, RVC,CUSTOM}
 `define SUPPORT_PRV_MODE '{M_MODE}
 `define SUPPORT_CSR_SET CSR_NONE

@@ -7,15 +7,32 @@ class mu_random_scenario_seq extends scenario_base_seq;
 
     virtual function void configure_tasks();
         int unsigned task_num;
-        int unsigned seq_num;
-        task_num = 2;
-        seq_num  = 1;
-        void'($value$plusargs("scenario_task_num=%d", task_num));
-        void'($value$plusargs("scenario_seq_num=%d", seq_num));
-        if(!(task_num inside {[1:8]}) || seq_num == 0)
-            `uvm_fatal("RANDOM_SCENARIO", "scenario_task_num must be 1..8 and scenario_seq_num must be nonzero")
-        for(int i = 0; i < task_num; i++)
-            add_random_task(100 + i, HART_MU, seq_num, (i == 0), '0);
+        int unsigned task_id;
+        task_num = random_task_num();
+        for(int i = 0; i < task_num; i++) begin
+            // Omitted task_id is allocated uniquely by scenario_base_seq.
+            // Omitted seq_num is resolved from inst_gen_case_config at runtime.
+            task_id = add_random_task(.rv_core(HART_MU),
+                                      .use_start_pc(i == 0),
+                                      .start_pc('0));
+            // No top-level override: use all platform-enabled random seq types.
+            // Optional top/sub-sequence overrides can be enabled when needed:
+            //set_task_seq_weight(task_id, SAFE_INST_SEQ,   WEIGHT_HIGH);
+            //set_task_seq_weight(task_id, LS_INST_SEQ,     WEIGHT_MEDIUM);
+            //set_task_seq_weight(task_id, BRANCH_INST_SEQ, WEIGHT_LOW);
+            //set_task_subseq_weight(task_id, SAFE_INST_SEQ,
+            //                       SCENARIO_SAFE_INT_CAL, WEIGHT_HIGH);
+            //set_task_subseq_weight(task_id, SAFE_INST_SEQ,
+            //                       SCENARIO_SAFE_CUSTOM_DSA, WEIGHT_LOW);
+            //set_task_subseq_weight(task_id, LS_INST_SEQ,
+            //                       SCENARIO_LS_RAND, WEIGHT_HIGH);
+            //set_task_subseq_weight(task_id, LS_INST_SEQ,
+            //                       SCENARIO_LS_LINEAR, WEIGHT_LOW);
+            //set_task_subseq_weight(task_id, BRANCH_INST_SEQ,
+            //                       SCENARIO_BRANCH_SINGLE, WEIGHT_HIGH);
+            //set_task_subseq_weight(task_id, BRANCH_INST_SEQ,
+            //                       SCENARIO_BRANCH_LOOP, WEIGHT_LOW);
+        end
     endfunction
 endclass
 

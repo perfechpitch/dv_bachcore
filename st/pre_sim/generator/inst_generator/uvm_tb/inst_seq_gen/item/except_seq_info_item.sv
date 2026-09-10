@@ -23,12 +23,12 @@ class except_seq_info_item extends inst_seq_info_item;
         };
     }
     constraint dist_c{
-        except_inst_dist.size() == 6;
+        except_inst_dist.size() == 5;
         except_inst_dist.sum() == 100;
         foreach(except_inst_dist[i]){
             except_inst_dist[i] inside{[0:100]};
         }
-        if(inst_seq_cfg.disable_misalign_branch)    except_inst_dist[3] == 0;
+        if(inst_seq_cfg.disable_misalign_branch)    except_inst_dist[2] == 0;
 
     }
 

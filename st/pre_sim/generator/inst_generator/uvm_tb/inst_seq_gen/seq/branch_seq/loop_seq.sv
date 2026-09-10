@@ -81,6 +81,9 @@ class loop_sequence extends base_inst_sequence;
 
  //reg_pool.gpr_full_valid=1'b1;
         //reg_pool.randomize();
+        loop_seq_info.inst_seq_cfg = branch_seq_cfg;
+        `RANDOMIZE_CHECK(loop_seq_info, "ERROR: loop seq info randomize failed!!")
+        N = loop_seq_info.loop_num;
         inst_gen.reg_pool.branch_reg_get(N*2);
         regs = inst_gen.reg_pool.branch_regs;
         N= regs.size()/2;//reg may not enough
@@ -92,6 +95,7 @@ class loop_sequence extends base_inst_sequence;
             li_seq_inst_num[i] = 0;
             inst_num[i] = 0;
             loop_stride[i] = ((loop_seq_info.start_index[i][0] | loop_seq_info.end_index[i][0])==0) + 1;
+            ops.push_back('0);
             a_reg_num[i] = regs.pop_front();
             i_reg_num[i] = regs.pop_front();
             $fwrite(inst_gen.gen_file,("//--------------li branch reg start\n"));
@@ -116,10 +120,8 @@ class loop_sequence extends base_inst_sequence;
             $fwrite(inst_gen.gen_file,("//---------------li branch reg end\n"));
             $fwrite(inst_gen.gen_file,("loop_seq%0d_loop%0d:\n"),seq_num,i);
             loop_target_pc[i] = inst_gen.inst_addr;
-            gen_rand_inst(inst_gen,loop_seq_info.target_inst_num[i],loop_seq_info.ls_inst_dist,loop_seq_info.safe_inst_dist,loop_seq_info.flush_inst_dist,loop_seq_info.except_inst_dist,'d0,loop_seq_info.wfi_inst_dist);
+            gen_rand_inst(inst_gen,loop_seq_info.target_inst_num[i],loop_seq_info.ls_inst_dist,loop_seq_info.safe_inst_dist,loop_seq_info.flush_inst_dist,loop_seq_info.except_inst_dist,'d0);
 
-            ops[i][24:20] = i_reg_num[i];
-            ops[i][19:15] = a_reg_num[i];
             ops[i][31] = 1'b1;
             //$display("i_reg_num[i] =  %0d. i_reg_val = %0h",i_reg_num[i],loop_seq_info.start_index[i]);
             //$display("a_reg_num[i] =  %0d. a_reg_val = %0h",a_reg_num[i],loop_seq_info.end_index[i]);
@@ -134,7 +136,38 @@ class loop_sequence extends base_inst_sequence;
             {ops[i][7],ops[i][30:25],ops[i][11:8]} =
                 {branch_delta[12],branch_delta[10:5],
                  branch_delta[4:1],branch_delta[11]};
+            // BLT uses rs1=current, rs2=max. The custom LOOP encoding uses
+            // rs1=max, rs2=current. Both share the same PC-relative B-type
+            // immediate prepared above.
+            inst_gen.branch_inst_gen.branch_is_jump = 1'b0;
+            inst_gen.branch_inst_gen.loop_context = 1'b1;
+            if(!(CUSTOM inside inst_gen.inst_gen_cfg.support_inst_set)) begin
+                inst_gen.branch_inst_gen.loop_use_custom = 1'b0;
+            end
+            else begin
+                randcase
+                    branch_seq_cfg.loop_blt_weight:
+                        inst_gen.branch_inst_gen.loop_use_custom = 1'b0;
+                    branch_seq_cfg.loop_custom_weight:
+                        inst_gen.branch_inst_gen.loop_use_custom = 1'b1;
+                endcase
+            end
+            if(inst_gen.branch_inst_gen.loop_use_custom) begin
+                ops[i][19:15] = a_reg_num[i];
+                ops[i][24:20] = i_reg_num[i];
+            end
+            else begin
+                ops[i][19:15] = i_reg_num[i];
+                ops[i][24:20] = a_reg_num[i];
+            end
             inst_gen.get_rand_branch_inst(ops[i]);
+            `uvm_info("LOOP_TAIL",
+                      $sformatf("level=%0d inst=%0s target_pc=0x%0h branch_pc=0x%0h delta=%0d weights(blt=%0d,loop=%0d)",
+                                i, inst_gen.branch_inst_gen.inst_name, loop_target_pc[i],
+                                inst_gen.inst_pc_history[$], $signed(branch_delta),
+                                branch_seq_cfg.loop_blt_weight,
+                                branch_seq_cfg.loop_custom_weight), UVM_LOW)
+            inst_gen.branch_inst_gen.loop_context = 1'b0;
             //$display("target_inst_num[%0d] = %0d, inst_num=%0d,imm=%0h",i,loop_seq_info.target_inst_num[i],inst_num[i],'h1000-inst_num[i]*'h4);
         end
 

@@ -12,8 +12,10 @@ typedef enum {
     C_J,C_BEQZ,C_BNEZ,
     C_SLLI,C_LWSP,C_JR,C_MV,C_EBREAK,C_JALR,C_ADD,C_SWSP,
 
-    // DSA custom write instructions.
-    DSAW,DSAWI,
+    // DSA custom instructions.
+    DSAR,DSARI,DSAW,DSAWI,
+    // Other custom instructions.
+    TASK_DONE,LOOP,
 
     MUL,MULH,MULHSU,MULHU,DIV,DIVU,REM,REMU,MULW,
     DIVW,DIVUW,REMW,REMUW,
@@ -39,8 +41,6 @@ typedef enum {
     ///*
     FENCE,FENCEI,
     //*/
-    LR_W,SC_W,LR_D,SC_D,
-    INVALID_LR_W,INVALID_SC_W,INVALID_LR_D,INVALID_SC_D,
     AMOSWAP_W,AMOADD_W,AMOXOR_W,
     AMOOR_W,AMOAND_W,AMOMIN_W,
     AMOMAX_W,AMOMINU_W,AMOMAXU_W,
@@ -80,8 +80,8 @@ typedef enum {
     URET,SRET,
     */
 
-   // /*except inst or flush inst or wfi is special inst
-    ECALL,EBREAK,SRET,MRET,DRET,WFI,
+   // /*except inst or flush inst is special inst
+    ECALL,EBREAK,SRET,MRET,
     //*/ not safe inst add constraint , trans to be safe inst
     MISALIGN_BEQ ,
     MISALIGN_BNE ,
@@ -94,7 +94,7 @@ typedef enum {
 }inst_e;
 typedef enum {
   N_TYPE,R_TYPE, S_TYPE, U_TYPE, J_TYPE, B_TYPE,I_TYPE,
-  DSAW_TYPE,DSAWI_TYPE,
+  DSAR_TYPE,DSARI_TYPE,DSAW_TYPE,DSAWI_TYPE,TASK_DONE_TYPE,
   FP_R_TYPE,FP_SR_TYPE,FP_R4_TYPE,
   VV_TYPE,VX_TYPE,VF_TYPE,VI_TYPE,VS_TYPE,SX_TYPE,VD_TYPE,
   VLS_TYPE,VLS_IDX_TYPE,VLS_VIDX_TYPE

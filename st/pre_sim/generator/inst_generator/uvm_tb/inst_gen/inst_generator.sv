@@ -61,8 +61,12 @@ class inst_generator extends uvm_component;
  `INST_GEN_DECLARATION(c_jalr_gen)
  `INST_GEN_DECLARATION(c_add_gen)
  `INST_GEN_DECLARATION(c_swsp_gen)
+ `INST_GEN_DECLARATION(dsar_gen)
+ `INST_GEN_DECLARATION(dsari_gen)
  `INST_GEN_DECLARATION(dsaw_gen)
  `INST_GEN_DECLARATION(dsawi_gen)
+ `INST_GEN_DECLARATION(task_done_gen)
+ `INST_GEN_DECLARATION(loop_gen)
  `INST_GEN_DECLARATION(addi_gen)
     `INST_GEN_DECLARATION(slti_gen)
     `INST_GEN_DECLARATION(sltiu_gen)
@@ -137,8 +141,6 @@ class inst_generator extends uvm_component;
     `INST_GEN_DECLARATION(ecall_gen)
     `INST_GEN_DECLARATION(mret_gen)
     `INST_GEN_DECLARATION(sret_gen)
-    `INST_GEN_DECLARATION(dret_gen)
-    `INST_GEN_DECLARATION(wfi_gen)
 
     `INST_GEN_DECLARATION(lb_gen)
     `INST_GEN_DECLARATION(lh_gen)
@@ -152,10 +154,6 @@ class inst_generator extends uvm_component;
     `INST_GEN_DECLARATION(sw_gen)
     `INST_GEN_DECLARATION(sd_gen)
 
-  `INST_GEN_DECLARATION(lr_w_gen)
-    `INST_GEN_DECLARATION(lr_d_gen)
-    `INST_GEN_DECLARATION(sc_w_gen)
-    `INST_GEN_DECLARATION(sc_d_gen)
     `INST_GEN_DECLARATION(invalid_amoswap_w_gen)
     `INST_GEN_DECLARATION(invalid_amoadd_w_gen)
     `INST_GEN_DECLARATION(invalid_amoxor_w_gen)
@@ -201,8 +199,6 @@ class inst_generator extends uvm_component;
     `INST_GEN_DECLARATION(invalid_lbu_gen)
     `INST_GEN_DECLARATION(invalid_lhu_gen)
     `INST_GEN_DECLARATION(invalid_lwu_gen)
-    `INST_GEN_DECLARATION(invalid_lr_d_gen)
-    `INST_GEN_DECLARATION(invalid_lr_w_gen)
     `INST_GEN_DECLARATION(invalid_fld_gen)
     `INST_GEN_DECLARATION(invalid_flw_gen)
 
@@ -218,8 +214,6 @@ class inst_generator extends uvm_component;
     `INST_GEN_DECLARATION(invalid_sh_gen)
     `INST_GEN_DECLARATION(invalid_sw_gen)
     `INST_GEN_DECLARATION(invalid_sd_gen)
-    `INST_GEN_DECLARATION(invalid_sc_w_gen)
-    `INST_GEN_DECLARATION(invalid_sc_d_gen)
     `INST_GEN_DECLARATION(invalid_fsd_gen)
     `INST_GEN_DECLARATION(invalid_fsw_gen)
 
@@ -582,8 +576,11 @@ class inst_generator extends uvm_component;
                 U_TYPE  : ops = {imm[19:0],rd,7'b0};
                 B_TYPE  : ops = {imm[11],imm[9:4],rs2,rs1,3'b0,imm[3:0],imm[10],7'b0};
                 J_TYPE  : ops = {imm[20],imm[10:1],imm[11],imm[19:12],rd,7'b0};
+                DSAR_TYPE  : ops = {12'b0,rs1,3'b0,rd,7'b0};
+                DSARI_TYPE : ops = {1'b0,imm[15:0],3'b0,rd,7'b0};
                 DSAW_TYPE  : ops = {7'b0,rs2,rs1,3'b0,5'b0,7'b0};
                 DSAWI_TYPE : ops = {1'b0,imm[15:5],rs1,3'b0,imm[4:0],7'b0};
+                TASK_DONE_TYPE : ops = {imm[0],31'b0};
             endcase
                 inst = inst_gen_queue[i].get_specified_inst(ops);
                 find_inst = 1'b1;
@@ -647,6 +644,9 @@ function void inst_queue_gen();
     end
     if(CUSTOM inside inst_gen_cfg.support_inst_set)begin
         `CUSTOM_INST_CREATE
+        `uvm_info("CUSTOM_RANDOM_CATEGORY",
+                  $sformatf("DSAR/DSARI/DSAW/DSAWI -> SAFE_CUSTOM_DSA (weight=%0d); LOOP -> BRANCH_LOOP_ONLY; TASK_DONE -> TASK_END",
+                            safe_inst_gen.safe_custom_dsa_dist), UVM_LOW)
     end
     if(M_MODE inside inst_gen_cfg.support_prv_mode)begin
         `M_MODE_PRV_INST_CREATE

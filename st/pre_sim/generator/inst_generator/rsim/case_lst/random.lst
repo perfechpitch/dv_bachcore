@@ -1,0 +1,25 @@
+ #---------------------MU random scenario
+ - case_name      = mu_random_scenario_test
+   uvm_tc         = random_scenario_test
+   vcs_tb_args    = +random_scenario_name=mu_random+test_mode=INT_TEST
+   batch_times    = 1
+
+ - case_name      = mu_safe_random_scenario_test
+   uvm_tc         = random_scenario_test
+   vcs_tb_args    = +random_scenario_name=mu_safe_random+test_mode=INT_TEST
+   batch_times    = 1
+
+ - case_name      = mu_branch_random_scenario_test
+   uvm_tc         = random_scenario_test
+   vcs_tb_args    = +random_scenario_name=mu_branch_random+test_mode=INT_TEST
+   batch_times    = 1
+
+ - case_name      = mu_c_random_scenario_test
+   uvm_tc         = random_scenario_test
+   vcs_tb_args    = +random_scenario_name=mu_c_random+test_mode=INT_TEST
+   batch_times    = 1
+
+ - case_name      = mu_ls_random_scenario_test
+   uvm_tc         = random_scenario_test
+   vcs_tb_args    = +random_scenario_name=mu_ls_random+test_mode=INT_TEST
+   batch_times    = 1

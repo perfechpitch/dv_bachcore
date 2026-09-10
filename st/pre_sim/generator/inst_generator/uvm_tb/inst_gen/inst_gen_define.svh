@@ -111,15 +111,21 @@
     `INST_GEN_CREATE(pref_r_gen )\
     `INST_GEN_CREATE(pref_w_gen )
 `define DSA_CUSTOM_INST_CREATE \
+    `INST_GEN_CREATE(dsar_gen )\
+    `INST_GEN_CREATE(dsari_gen)\
     `INST_GEN_CREATE(dsaw_gen )\
     `INST_GEN_CREATE(dsawi_gen)
+`define OTHER_CUSTOM_INST_CREATE \
+    `INST_GEN_CREATE(task_done_gen)\
+    `INST_GEN_CREATE(loop_gen)
 `define CUSTOM_INST_CREATE \
-    `DSA_CUSTOM_INST_CREATE
+    `DSA_CUSTOM_INST_CREATE \
+    `OTHER_CUSTOM_INST_CREATE
 // XLEN-filtered subsets. Legacy RV64 aggregate macros remain unchanged.
 `define I_COMMON_ALU_CREATE \
  `INST_GEN_CREATE(addi_gen) `INST_GEN_CREATE(slti_gen) `INST_GEN_CREATE(sltiu_gen) `INST_GEN_CREATE(xori_gen) `INST_GEN_CREATE(ori_gen) `INST_GEN_CREATE(andi_gen) `INST_GEN_CREATE(slli_gen) `INST_GEN_CREATE(srli_gen) `INST_GEN_CREATE(srai_gen) `INST_GEN_CREATE(add_gen) `INST_GEN_CREATE(sub_gen) `INST_GEN_CREATE(sll_gen) `INST_GEN_CREATE(slt_gen) `INST_GEN_CREATE(sltu_gen) `INST_GEN_CREATE(xor_gen) `INST_GEN_CREATE(srl_gen) `INST_GEN_CREATE(sra_gen) `INST_GEN_CREATE(or_gen) `INST_GEN_CREATE(and_gen)
 `define I_COMMON_CTRL_CREATE \
- `INST_GEN_CREATE(lui_gen) `INST_GEN_CREATE(auipc_gen) `INST_GEN_CREATE(jal_gen) `INST_GEN_CREATE(jalr_gen) `INST_GEN_CREATE(beq_gen) `INST_GEN_CREATE(bne_gen) `INST_GEN_CREATE(bge_gen) `INST_GEN_CREATE(blt_gen) `INST_GEN_CREATE(bgeu_gen) `INST_GEN_CREATE(bltu_gen) `INST_GEN_CREATE(ebreak_gen) `INST_GEN_CREATE(ecall_gen) `INST_GEN_CREATE(dret_gen) `INST_GEN_CREATE(wfi_gen) `INST_GEN_CREATE(fence_gen) `INST_GEN_CREATE(misalign_jal_gen) `INST_GEN_CREATE(misalign_beq_gen) `INST_GEN_CREATE(misalign_bne_gen) `INST_GEN_CREATE(misalign_bge_gen) `INST_GEN_CREATE(misalign_blt_gen) `INST_GEN_CREATE(misalign_bgeu_gen) `INST_GEN_CREATE(misalign_bltu_gen)
+ `INST_GEN_CREATE(lui_gen) `INST_GEN_CREATE(auipc_gen) `INST_GEN_CREATE(jal_gen) `INST_GEN_CREATE(jalr_gen) `INST_GEN_CREATE(beq_gen) `INST_GEN_CREATE(bne_gen) `INST_GEN_CREATE(bge_gen) `INST_GEN_CREATE(blt_gen) `INST_GEN_CREATE(bgeu_gen) `INST_GEN_CREATE(bltu_gen) `INST_GEN_CREATE(ebreak_gen) `INST_GEN_CREATE(ecall_gen) `INST_GEN_CREATE(fence_gen) `INST_GEN_CREATE(misalign_jal_gen) `INST_GEN_CREATE(misalign_beq_gen) `INST_GEN_CREATE(misalign_bne_gen) `INST_GEN_CREATE(misalign_bge_gen) `INST_GEN_CREATE(misalign_blt_gen) `INST_GEN_CREATE(misalign_bgeu_gen) `INST_GEN_CREATE(misalign_bltu_gen)
 `define I_COMMON_LS_CREATE \
  `INST_GEN_CREATE(lb_gen) `INST_GEN_CREATE(lh_gen) `INST_GEN_CREATE(lw_gen) `INST_GEN_CREATE(lbu_gen) `INST_GEN_CREATE(lhu_gen) `INST_GEN_CREATE(sb_gen) `INST_GEN_CREATE(sh_gen) `INST_GEN_CREATE(sw_gen) `INST_GEN_CREATE(invalid_lb_gen) `INST_GEN_CREATE(invalid_lh_gen) `INST_GEN_CREATE(invalid_lw_gen) `INST_GEN_CREATE(invalid_lbu_gen) `INST_GEN_CREATE(invalid_lhu_gen) `INST_GEN_CREATE(invalid_sb_gen) `INST_GEN_CREATE(invalid_sh_gen) `INST_GEN_CREATE(invalid_sw_gen)
 `define I_COMMON_INST_CREATE \
@@ -131,9 +137,9 @@
 `define M_RV64_ONLY_INST_CREATE \
  `INST_GEN_CREATE(mulw_gen) `INST_GEN_CREATE(divw_gen) `INST_GEN_CREATE(divuw_gen) `INST_GEN_CREATE(remw_gen) `INST_GEN_CREATE(remuw_gen)
 `define A_WORD_INST_CREATE \
- `INST_GEN_CREATE(lr_w_gen) `INST_GEN_CREATE(sc_w_gen) `INST_GEN_CREATE(invalid_lr_w_gen) `INST_GEN_CREATE(invalid_sc_w_gen) `INST_GEN_CREATE(amoswap_w_gen) `INST_GEN_CREATE(amoadd_w_gen) `INST_GEN_CREATE(amoxor_w_gen) `INST_GEN_CREATE(amoor_w_gen) `INST_GEN_CREATE(amoand_w_gen) `INST_GEN_CREATE(amomin_w_gen) `INST_GEN_CREATE(amomax_w_gen) `INST_GEN_CREATE(amominu_w_gen) `INST_GEN_CREATE(amomaxu_w_gen) `INST_GEN_CREATE(invalid_amoswap_w_gen) `INST_GEN_CREATE(invalid_amoadd_w_gen) `INST_GEN_CREATE(invalid_amoxor_w_gen) `INST_GEN_CREATE(invalid_amoor_w_gen) `INST_GEN_CREATE(invalid_amoand_w_gen) `INST_GEN_CREATE(invalid_amomin_w_gen) `INST_GEN_CREATE(invalid_amomax_w_gen) `INST_GEN_CREATE(invalid_amominu_w_gen) `INST_GEN_CREATE(invalid_amomaxu_w_gen)
+ `INST_GEN_CREATE(amoswap_w_gen) `INST_GEN_CREATE(amoadd_w_gen) `INST_GEN_CREATE(amoxor_w_gen) `INST_GEN_CREATE(amoor_w_gen) `INST_GEN_CREATE(amoand_w_gen) `INST_GEN_CREATE(amomin_w_gen) `INST_GEN_CREATE(amomax_w_gen) `INST_GEN_CREATE(amominu_w_gen) `INST_GEN_CREATE(amomaxu_w_gen) `INST_GEN_CREATE(invalid_amoswap_w_gen) `INST_GEN_CREATE(invalid_amoadd_w_gen) `INST_GEN_CREATE(invalid_amoxor_w_gen) `INST_GEN_CREATE(invalid_amoor_w_gen) `INST_GEN_CREATE(invalid_amoand_w_gen) `INST_GEN_CREATE(invalid_amomin_w_gen) `INST_GEN_CREATE(invalid_amomax_w_gen) `INST_GEN_CREATE(invalid_amominu_w_gen) `INST_GEN_CREATE(invalid_amomaxu_w_gen)
 `define A_RV64_ONLY_INST_CREATE \
- `INST_GEN_CREATE(lr_d_gen) `INST_GEN_CREATE(sc_d_gen) `INST_GEN_CREATE(invalid_lr_d_gen) `INST_GEN_CREATE(invalid_sc_d_gen) `INST_GEN_CREATE(amoswap_d_gen) `INST_GEN_CREATE(amoadd_d_gen) `INST_GEN_CREATE(amoxor_d_gen) `INST_GEN_CREATE(amoor_d_gen) `INST_GEN_CREATE(amoand_d_gen) `INST_GEN_CREATE(amomin_d_gen) `INST_GEN_CREATE(amomax_d_gen) `INST_GEN_CREATE(amominu_d_gen) `INST_GEN_CREATE(amomaxu_d_gen) `INST_GEN_CREATE(invalid_amoswap_d_gen) `INST_GEN_CREATE(invalid_amoadd_d_gen) `INST_GEN_CREATE(invalid_amoxor_d_gen) `INST_GEN_CREATE(invalid_amoor_d_gen) `INST_GEN_CREATE(invalid_amoand_d_gen) `INST_GEN_CREATE(invalid_amomin_d_gen) `INST_GEN_CREATE(invalid_amomax_d_gen) `INST_GEN_CREATE(invalid_amominu_d_gen) `INST_GEN_CREATE(invalid_amomaxu_d_gen)
+ `INST_GEN_CREATE(amoswap_d_gen) `INST_GEN_CREATE(amoadd_d_gen) `INST_GEN_CREATE(amoxor_d_gen) `INST_GEN_CREATE(amoor_d_gen) `INST_GEN_CREATE(amoand_d_gen) `INST_GEN_CREATE(amomin_d_gen) `INST_GEN_CREATE(amomax_d_gen) `INST_GEN_CREATE(amominu_d_gen) `INST_GEN_CREATE(amomaxu_d_gen) `INST_GEN_CREATE(invalid_amoswap_d_gen) `INST_GEN_CREATE(invalid_amoadd_d_gen) `INST_GEN_CREATE(invalid_amoxor_d_gen) `INST_GEN_CREATE(invalid_amoor_d_gen) `INST_GEN_CREATE(invalid_amoand_d_gen) `INST_GEN_CREATE(invalid_amomin_d_gen) `INST_GEN_CREATE(invalid_amomax_d_gen) `INST_GEN_CREATE(invalid_amominu_d_gen) `INST_GEN_CREATE(invalid_amomaxu_d_gen)
 `define RV32I_INST_CREATE `I_COMMON_INST_CREATE
 `define RV64I_INST_CREATE `I_COMMON_INST_CREATE `I_RV64_ONLY_INST_CREATE
 `define RV32M_INST_CREATE `M_COMMON_INST_CREATE
@@ -289,3 +295,67 @@
     `SPECIFIED_S_TYPE_INST(SW,``A,``B,``C)
 `define sd(A,C,B) \
     `SPECIFIED_S_TYPE_INST(SD,``A,``B,``C)
+
+// Select one exact instruction class while leaving its operands to that
+// class's legal randomization.  Compressed instructions use this path so
+// their register subsets, SP state, LS address and control-flow constraints
+// are not bypassed by a duplicated 16-bit encoder here.
+`define SPECIFIED_RAND_NAME_INST(N) \
+    inst_gen.get_specified_rand_inst(``N)
+
+// RVC single-instruction helpers: fixed instruction name, legal random operands.
+`define c_addi4spn `SPECIFIED_RAND_NAME_INST(C_ADDI4SPN)
+`define c_lw       `SPECIFIED_RAND_NAME_INST(C_LW)
+`define c_sw       `SPECIFIED_RAND_NAME_INST(C_SW)
+`define c_nop      `SPECIFIED_RAND_NAME_INST(C_NOP)
+`define c_addi     `SPECIFIED_RAND_NAME_INST(C_ADDI)
+`define c_jal      `SPECIFIED_RAND_NAME_INST(C_JAL)
+`define c_li       `SPECIFIED_RAND_NAME_INST(C_LI)
+`define c_addi16sp `SPECIFIED_RAND_NAME_INST(C_ADDI16SP)
+`define c_lui      `SPECIFIED_RAND_NAME_INST(C_LUI)
+`define c_srli     `SPECIFIED_RAND_NAME_INST(C_SRLI)
+`define c_srai     `SPECIFIED_RAND_NAME_INST(C_SRAI)
+`define c_andi     `SPECIFIED_RAND_NAME_INST(C_ANDI)
+`define c_sub      `SPECIFIED_RAND_NAME_INST(C_SUB)
+`define c_xor      `SPECIFIED_RAND_NAME_INST(C_XOR)
+`define c_or       `SPECIFIED_RAND_NAME_INST(C_OR)
+`define c_and      `SPECIFIED_RAND_NAME_INST(C_AND)
+`define c_j        `SPECIFIED_RAND_NAME_INST(C_J)
+`define c_beqz     `SPECIFIED_RAND_NAME_INST(C_BEQZ)
+`define c_bnez     `SPECIFIED_RAND_NAME_INST(C_BNEZ)
+`define c_slli     `SPECIFIED_RAND_NAME_INST(C_SLLI)
+`define c_lwsp     `SPECIFIED_RAND_NAME_INST(C_LWSP)
+`define c_jr       `SPECIFIED_RAND_NAME_INST(C_JR)
+`define c_mv       `SPECIFIED_RAND_NAME_INST(C_MV)
+`define c_ebreak   `SPECIFIED_RAND_NAME_INST(C_EBREAK)
+`define c_jalr     `SPECIFIED_RAND_NAME_INST(C_JALR)
+`define c_add      `SPECIFIED_RAND_NAME_INST(C_ADD)
+`define c_swsp     `SPECIFIED_RAND_NAME_INST(C_SWSP)
+
+// DSA custom instruction helpers.
+// dsar(rd, rs1), dsari(rd, imm16), dsaw(rs1, rs2), dsawi(rs1, imm16)
+`define SPECIFIED_DSAR_TYPE_INST(N,A,B) \
+    inst_gen.get_specified_inst(``N,``B,'d0,``A,'d0)
+`define SPECIFIED_DSARI_TYPE_INST(N,A,C) \
+    inst_gen.get_specified_inst(``N,'d0,'d0,``A,``C)
+`define SPECIFIED_DSAW_TYPE_INST(N,A,B) \
+    inst_gen.get_specified_inst(``N,``A,``B,'d0,'d0)
+`define SPECIFIED_DSAWI_TYPE_INST(N,A,C) \
+    inst_gen.get_specified_inst(``N,``A,'d0,'d0,``C)
+
+`define dsar(A,B) \
+    `SPECIFIED_DSAR_TYPE_INST(DSAR,``A,``B)
+`define dsari(A,C) \
+    `SPECIFIED_DSARI_TYPE_INST(DSARI,``A,``C)
+`define dsaw(A,B) \
+    `SPECIFIED_DSAW_TYPE_INST(DSAW,``A,``B)
+`define dsawi(A,C) \
+    `SPECIFIED_DSAWI_TYPE_INST(DSAWI,``A,``C)
+
+// task_done(notify_ts): notify_ts is encoded in bit 31.
+`define task_done(A) \
+    inst_gen.get_specified_inst(TASK_DONE,'d0,'d0,'d0,``A)
+
+// loop(rs1, rs2, byte_offset): LOOP uses the B-type immediate layout.
+`define loop(A,B,C) \
+    `SPECIFIED_B_TYPE_INST(LOOP,``A,``B,``C)

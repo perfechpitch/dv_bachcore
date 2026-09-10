@@ -1,47 +1,3 @@
-#---------------------rand inst
- - case_name      = normal_rand_test
-   uvm_tc         = rand_inst_test
-   #vcs_tb_args    = +debug_print
- 
- - case_name      = all_rand_test
-   uvm_tc         = rand_flush_except_inst_test
- #---------------------safe inst
- 
- - case_name      = safe_mix_inst_test
-   base_case      = safe_inst_test
-   vcs_tb_args    = +start_pc=1000
- 
- - case_name      = safe_mix_inst_disable_ls_test
-   base_case      = safe_inst_test
-   vcs_tb_args    = +global_disable_ls
- 
- - case_name      = safe_int_inst_test
-   base_case      = safe_inst_test
-   vcs_tb_args    = +test_mode=INT_TEST
- 
- - case_name      = safe_fp_inst_test
-   base_case      = safe_inst_test
-   vcs_tb_args    = +test_mode=FP_TEST
- 
- - case_name      = safe_vector_inst_test
-   base_case      = safe_inst_test
-   vcs_tb_args    = +test_mode=VECTOR_TEST
- 
- #---------------------branch inst
- - case_name      = branch_mix_inst_test
-   base_case      = branch_inst_test
- 
- - case_name      = branch_int_inst_test
-   base_case      = branch_inst_test
-   vcs_tb_args    = +test_mode=INT_TEST
-- case_name      = branch_fp_inst_test
-   base_case      = branch_inst_test
-   vcs_tb_args    = +test_mode=FP_TEST
- 
- - case_name      = branch_vector_inst_test
-   base_case      = branch_inst_test
-   vcs_tb_args    = +test_mode=VECTOR_TEST
- 
  #---------------------vector inst traversal
  - case_name      = vector_rand_traversal_test
    base_name      = vector_rand_traversal_test
@@ -52,23 +8,6 @@
    base_name      = vector_specified_traversal_test
    uvm_tc         = vector_specified_traversal_test
    vcs_tb_args    = +vs=3+fs=3+vsew=0+vlmul=0+inst_ops=78816206
- 
- 
- #---------------------ls inst
- - case_name      = ls_mix_inst_test
-   base_case      = ls_inst_test
- 
- - case_name      = ls_int_inst_test
-   base_case      = ls_inst_test
-   vcs_tb_args    = +test_mode=INT_TEST
- 
- - case_name      = ls_fp_inst_test
-   base_case      = ls_inst_test
-   vcs_tb_args    = +test_mode=FP_TEST
- 
- - case_name      = ls_vector_inst_test
-   base_case      = ls_inst_test
-   vcs_tb_args    = +test_mode=VECTOR_TEST
  
 #---------------------ls_base_confirm inst
  - case_name      = ls_base_confirm_mix_inst_test

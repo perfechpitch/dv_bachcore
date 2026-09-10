@@ -15,11 +15,7 @@ package inst_gen_env_pkg;
 
 `include "inst_gen_vsequencer.sv"
 `include "inst_gen_environment.sv"
-`include "vseq/inst_gen_base_vsequence.sv"
 `include "vseq/asm_gen_vsequence.sv"
 `include "vseq/seq_debug_vsequence.sv"
-`include "vseq/c_inst_vsequence.sv"
 `include "vseq/scenario_base_vsequence.sv"
-`include "vseq/directed_vsequence.sv"
-`include "vseq/random_scenario_vsequence.sv"
 endpackage : inst_gen_env_pkg

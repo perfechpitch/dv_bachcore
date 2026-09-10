@@ -36,6 +36,7 @@ package inst_gen_pkg;
 `include "inst_group/base_inst.sv"
 `include "inst_group/dsa_custom_inst.sv"
 `include "inst_group/int_inst/b_type_inst.sv"
+`include "inst_group/other_custom_inst.sv"
 `include "inst_group/int_inst/jump_inst.sv"
 `include "inst_group/int_inst/n_type_inst.sv"
 `include "inst_group/int_inst/ri_type_inst.sv"
