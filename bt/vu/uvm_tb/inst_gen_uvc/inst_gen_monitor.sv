@@ -13,9 +13,9 @@ class inst_gen_monitor extends uvm_monitor;
     inst_gen_config               inst_gen_cfg;
     int      inst_gen_mon_log;
    
-    uvm_analysis_port #(inst_gen_base_seq_item) inst_gen_ap;
+    uvm_analysis_port #(inst_gen_seq_item) inst_gen_ap;
 
-    protected inst_gen_base_seq_item  inst_gen_tr;
+    protected inst_gen_seq_item  inst_gen_tr;
     
     `uvm_component_utils_begin(inst_gen_monitor)
     `uvm_component_utils_end

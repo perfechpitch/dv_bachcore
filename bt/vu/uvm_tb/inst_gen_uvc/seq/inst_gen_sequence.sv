@@ -566,7 +566,7 @@ class fix_moe_sequence extends inst_gen_case_base_sequence;
         p_sequencer.inst_gen_cfg.inst_type = VU_INST;
         rand_send_tr();
     endtask
-endclass : inst_gen_case0_sequence
+endclass : fix_moe_sequence
 
 class fix_moe_reduction_sequence extends inst_gen_case_base_sequence;
     `uvm_object_utils(fix_moe_reduction_sequence)

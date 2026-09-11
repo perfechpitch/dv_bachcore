@@ -12,8 +12,8 @@ class inst_gen_driver extends uvm_driver #(inst_gen_seq_item);
     virtual inst_gen_if             inst_gen_vif;
     inst_gen_config                 inst_gen_cfg;
     int      inst_gen_drv_log;
-    int      vld_delay_q[];
-    inst_gen_seq_item inst_q[];
+    int      vld_delay_q[$];
+    inst_gen_seq_item inst_q[$];
 
     `uvm_component_utils_begin(inst_gen_driver)
     `uvm_component_utils_end

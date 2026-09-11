@@ -23,7 +23,7 @@ module vu_tb_top;
     reset_if    reset_if(clk);
     inst_gen_if inst_gen_if(clk, reset_if.reset);
 
-    vu u_DUT();
+    //vu u_DUT();
 
     vu_wrapper u_vu_wrapper(
          reset_if

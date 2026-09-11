@@ -899,15 +899,27 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
         if (inst_gen_cfg.fix_lu_op_opcode_en) {
             lu_op_opcode == inst_gen_cfg.lu_op_opcode;
         } else {
-            unique case (lu_type)
-                VU_LU_LD_FP8E4M3_V: lu_op_opcode == 8'h01;
-                VU_LU_LD_MXFP8_V: lu_op_opcode == 8'h02;
-                VU_LU_LD_BF16_V: lu_op_opcode == 8'h03;
-                VU_LU_LD_FP32_V: lu_op_opcode == 8'h04;
-                VU_LU_LD_MASK: lu_op_opcode == 8'h05;
-                VU_LU_LD_S_FP32: lu_op_opcode == 8'h06;
-                default: lu_op_opcode inside {8'h00, [8'h07:8'hFF]};
-            endcase
+            if (lu_type == VU_LU_LD_FP8E4M3_V) {
+                lu_op_opcode == 8'h01;
+            }
+            else if (lu_type == VU_LU_LD_MXFP8_V) {
+                lu_op_opcode == 8'h02;
+            }
+            else if (lu_type == VU_LU_LD_BF16_V) {
+                lu_op_opcode == 8'h03;
+            }
+            else if (lu_type == VU_LU_LD_FP32_V) {
+                lu_op_opcode == 8'h04;
+            }
+            else if (lu_type == VU_LU_LD_MASK) {
+                lu_op_opcode == 8'h05;
+            }
+            else if (lu_type == VU_LU_LD_S_FP32) {
+                lu_op_opcode == 8'h06;
+            }
+            else {
+                lu_op_opcode inside {8'h00, [8'h07:8'hFF]};
+            }
         }
     }
 
@@ -915,24 +927,54 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
         if (inst_gen_cfg.fix_mexe_op_opcode_en) {
             mexe_op_opcode == inst_gen_cfg.mexe_op_opcode;
         } else {
-            unique case (mexe_type)
-                VU_MEXE_VMAND_MM: mexe_op_opcode == 8'h01;
-                VU_MEXE_VMNAND_MM: mexe_op_opcode == 8'h02;
-                VU_MEXE_VMANDN_MM: mexe_op_opcode == 8'h03;
-                VU_MEXE_VMXOR_MM: mexe_op_opcode == 8'h04;
-                VU_MEXE_VMOR_MM: mexe_op_opcode == 8'h05;
-                VU_MEXE_VMNOR_MM: mexe_op_opcode == 8'h06;
-                VU_MEXE_VMORN_MM: mexe_op_opcode == 8'h07;
-                VU_MEXE_VMXNOR_MM: mexe_op_opcode == 8'h08;
-                VU_MEXE_VCPOP_M: mexe_op_opcode == 8'h10;
-                VU_MEXE_VFIRST_M: mexe_op_opcode == 8'h11;
-                VU_MEXE_VMSBF_M: mexe_op_opcode == 8'h12;
-                VU_MEXE_VMSIF_M: mexe_op_opcode == 8'h13;
-                VU_MEXE_VMSOF_M: mexe_op_opcode == 8'h14;
-                VU_MEXE_VMIUSET_MV: mexe_op_opcode == 8'h15;
-                VU_MEXE_VMISET_MV: mexe_op_opcode == 8'h16;
-                default: mexe_op_opcode inside {8'h00, [8'h09:8'h0F], [8'h17:8'hFF]};
-            endcase
+            if (mexe_type == VU_MEXE_VMAND_MM) {
+                mexe_op_opcode == 8'h01;
+            }
+            else if (mexe_type == VU_MEXE_VMNAND_MM) {
+                mexe_op_opcode == 8'h02;
+            }
+            else if (mexe_type == VU_MEXE_VMANDN_MM) {
+                mexe_op_opcode == 8'h03;
+            }
+            else if (mexe_type == VU_MEXE_VMXOR_MM) {
+                mexe_op_opcode == 8'h04;
+            }
+            else if (mexe_type == VU_MEXE_VMOR_MM) {
+                mexe_op_opcode == 8'h05;
+            }
+            else if (mexe_type == VU_MEXE_VMNOR_MM) {
+                mexe_op_opcode == 8'h06;
+            }
+            else if (mexe_type == VU_MEXE_VMORN_MM) {
+                mexe_op_opcode == 8'h07;
+            }
+            else if (mexe_type == VU_MEXE_VMXNOR_MM) {
+                mexe_op_opcode == 8'h08;
+            }
+            else if (mexe_type == VU_MEXE_VCPOP_M) {
+                mexe_op_opcode == 8'h10;
+            }
+            else if (mexe_type == VU_MEXE_VFIRST_M) {
+                mexe_op_opcode == 8'h11;
+            }
+            else if (mexe_type == VU_MEXE_VMSBF_M) {
+                mexe_op_opcode == 8'h12;
+            }
+            else if (mexe_type == VU_MEXE_VMSIF_M) {
+                mexe_op_opcode == 8'h13;
+            }
+            else if (mexe_type == VU_MEXE_VMSOF_M) {
+                mexe_op_opcode == 8'h14;
+            }
+            else if (mexe_type == VU_MEXE_VMIUSET_MV) {
+                mexe_op_opcode == 8'h15;
+            }
+            else if (mexe_type == VU_MEXE_VMISET_MV) {
+                mexe_op_opcode == 8'h16;
+            }
+            else {
+                mexe_op_opcode inside {8'h00, [8'h09:8'h0F], [8'h17:8'hFF]};
+            }
         }
     }
 
@@ -940,16 +982,30 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
         if (inst_gen_cfg.fix_sexe0_op_opcode_en) {
             sexe0_op_opcode == inst_gen_cfg.sexe0_op_opcode;
         } else {
-            unique case (sexe0_type)
-                VU_SEXE_FADD_S: sexe0_op_opcode == 8'h01;
-                VU_SEXE_FSUB_S: sexe0_op_opcode == 8'h02;
-                VU_SEXE_FMUL_S: sexe0_op_opcode == 8'h03;
-                VU_SEXE_FDIV_S: sexe0_op_opcode == 8'h04;
-                VU_SEXE_FSQRT_S: sexe0_op_opcode == 8'h05;
-                VU_SEXE_FRSQRT_S: sexe0_op_opcode == 8'h06;
-                VU_SEXE_FRCP_S: sexe0_op_opcode == 8'h07;
-                default: sexe0_op_opcode inside {8'h00, [8'h08:8'hFF]};
-            endcase
+            if (sexe0_type == VU_SEXE_FADD_S) {
+                sexe0_op_opcode == 8'h01;
+            }
+            else if (sexe0_type == VU_SEXE_FSUB_S) {
+                sexe0_op_opcode == 8'h02;
+            }
+            else if (sexe0_type == VU_SEXE_FMUL_S) {
+                sexe0_op_opcode == 8'h03;
+            }
+            else if (sexe0_type == VU_SEXE_FDIV_S) {
+                sexe0_op_opcode == 8'h04;
+            }
+            else if (sexe0_type == VU_SEXE_FSQRT_S) {
+                sexe0_op_opcode == 8'h05;
+            }
+            else if (sexe0_type == VU_SEXE_FRSQRT_S) {
+                sexe0_op_opcode == 8'h06;
+            }
+            else if (sexe0_type == VU_SEXE_FRCP_S) {
+                sexe0_op_opcode == 8'h07;
+            }
+            else {
+                sexe0_op_opcode inside {8'h00, [8'h08:8'hFF]};
+            }
         }
     }
 
@@ -957,16 +1013,30 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
         if (inst_gen_cfg.fix_sexe1_op_opcode_en) {
             sexe1_op_opcode == inst_gen_cfg.sexe1_op_opcode;
         } else {
-            unique case (sexe1_type)
-                VU_SEXE_FADD_S: sexe1_op_opcode == 8'h01;
-                VU_SEXE_FSUB_S: sexe1_op_opcode == 8'h02;
-                VU_SEXE_FMUL_S: sexe1_op_opcode == 8'h03;
-                VU_SEXE_FDIV_S: sexe1_op_opcode == 8'h04;
-                VU_SEXE_FSQRT_S: sexe1_op_opcode == 8'h05;
-                VU_SEXE_FRSQRT_S: sexe1_op_opcode == 8'h06;
-                VU_SEXE_FRCP_S: sexe1_op_opcode == 8'h07;
-                default: sexe1_op_opcode inside {8'h00, [8'h08:8'hFF]};
-            endcase
+            if (sexe1_type == VU_SEXE_FADD_S) {
+                sexe1_op_opcode == 8'h01;
+            }
+            else if (sexe1_type == VU_SEXE_FSUB_S) {
+                sexe1_op_opcode == 8'h02;
+            }
+            else if (sexe1_type == VU_SEXE_FMUL_S) {
+                sexe1_op_opcode == 8'h03;
+            }
+            else if (sexe1_type == VU_SEXE_FDIV_S) {
+                sexe1_op_opcode == 8'h04;
+            }
+            else if (sexe1_type == VU_SEXE_FSQRT_S) {
+                sexe1_op_opcode == 8'h05;
+            }
+            else if (sexe1_type == VU_SEXE_FRSQRT_S) {
+                sexe1_op_opcode == 8'h06;
+            }
+            else if (sexe1_type == VU_SEXE_FRCP_S) {
+                sexe1_op_opcode == 8'h07;
+            }
+            else {
+                sexe1_op_opcode inside {8'h00, [8'h08:8'hFF]};
+            }
         }
     }
 
@@ -974,16 +1044,30 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
         if (inst_gen_cfg.fix_sexe2_op_opcode_en) {
             sexe2_op_opcode == inst_gen_cfg.sexe2_op_opcode;
         } else {
-            unique case (sexe2_type)
-                VU_SEXE_FADD_S: sexe2_op_opcode == 8'h01;
-                VU_SEXE_FSUB_S: sexe2_op_opcode == 8'h02;
-                VU_SEXE_FMUL_S: sexe2_op_opcode == 8'h03;
-                VU_SEXE_FDIV_S: sexe2_op_opcode == 8'h04;
-                VU_SEXE_FSQRT_S: sexe2_op_opcode == 8'h05;
-                VU_SEXE_FRSQRT_S: sexe2_op_opcode == 8'h06;
-                VU_SEXE_FRCP_S: sexe2_op_opcode == 8'h07;
-                default: sexe2_op_opcode inside {8'h00, [8'h08:8'hFF]};
-            endcase
+            if (sexe2_type == VU_SEXE_FADD_S) {
+                sexe2_op_opcode == 8'h01;
+            }
+            else if (sexe2_type == VU_SEXE_FSUB_S) {
+                sexe2_op_opcode == 8'h02;
+            }
+            else if (sexe2_type == VU_SEXE_FMUL_S) {
+                sexe2_op_opcode == 8'h03;
+            }
+            else if (sexe2_type == VU_SEXE_FDIV_S) {
+                sexe2_op_opcode == 8'h04;
+            }
+            else if (sexe2_type == VU_SEXE_FSQRT_S) {
+                sexe2_op_opcode == 8'h05;
+            }
+            else if (sexe2_type == VU_SEXE_FRSQRT_S) {
+                sexe2_op_opcode == 8'h06;
+            }
+            else if (sexe2_type == VU_SEXE_FRCP_S) {
+                sexe2_op_opcode == 8'h07;
+            }
+            else {
+                sexe2_op_opcode inside {8'h00, [8'h08:8'hFF]};
+            }
         }
     }
 
@@ -991,15 +1075,27 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
         if (inst_gen_cfg.fix_su_op_opcode_en) {
             su_op_opcode == inst_gen_cfg.su_op_opcode;
         } else {
-            unique case (su_type)
-                VU_SU_ST_FP8E4M3_V: su_op_opcode == 8'h01;
-                VU_SU_ST_MXFP8_V: su_op_opcode == 8'h02;
-                VU_SU_ST_BF16_V: su_op_opcode == 8'h03;
-                VU_SU_ST_FP32_V: su_op_opcode == 8'h04;
-                VU_SU_ST_MASK: su_op_opcode == 8'h05;
-                VU_SU_ST_S_FP32: su_op_opcode == 8'h06;
-                default: su_op_opcode inside {8'h00, [8'h07:8'hFF]};
-            endcase
+            if (su_type == VU_SU_ST_FP8E4M3_V) {
+                su_op_opcode == 8'h01;
+            }
+            else if (su_type == VU_SU_ST_MXFP8_V) {
+                su_op_opcode == 8'h02;
+            }
+            else if (su_type == VU_SU_ST_BF16_V) {
+                su_op_opcode == 8'h03;
+            }
+            else if (su_type == VU_SU_ST_FP32_V) {
+                su_op_opcode == 8'h04;
+            }
+            else if (su_type == VU_SU_ST_MASK) {
+                su_op_opcode == 8'h05;
+            }
+            else if (su_type == VU_SU_ST_S_FP32) {
+                su_op_opcode == 8'h06;
+            }
+            else {
+                su_op_opcode inside {8'h00, [8'h07:8'hFF]};
+            }
         }
     }
 
@@ -1007,46 +1103,120 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
         if (inst_gen_cfg.fix_valu0_op_opcode_en) {
             valu0_op_opcode == inst_gen_cfg.valu0_op_opcode;
         } else {
-            unique case (valu0_type)
-                VU_VALU0_VFADD_VV: valu0_op_opcode == 8'h01;
-                VU_VALU0_VFADD_VF: valu0_op_opcode == 8'h02;
-                VU_VALU0_VFSUB_VV: valu0_op_opcode == 8'h03;
-                VU_VALU0_VFSUB_VF: valu0_op_opcode == 8'h04;
-                VU_VALU0_VFRSUB_VF: valu0_op_opcode == 8'h05;
-                VU_VALU0_VFMUL_VV: valu0_op_opcode == 8'h06;
-                VU_VALU0_VFMUL_VF: valu0_op_opcode == 8'h07;
-                VU_VALU0_VFDIV_VV: valu0_op_opcode == 8'h08;
-                VU_VALU0_VFMIN_VV: valu0_op_opcode == 8'h10;
-                VU_VALU0_VFMIN_VF: valu0_op_opcode == 8'h11;
-                VU_VALU0_VFMAX_VV: valu0_op_opcode == 8'h12;
-                VU_VALU0_VFMAX_VF: valu0_op_opcode == 8'h13;
-                VU_VALU0_VFMV_V_F: valu0_op_opcode == 8'h20;
-                VU_VALU0_VFMV_S_F: valu0_op_opcode == 8'h21;
-                VU_VALU0_VFMACC_VF: valu0_op_opcode == 8'h31;
-                VU_VALU0_VFNMACC_VF: valu0_op_opcode == 8'h33;
-                VU_VALU0_VFMSAC_VF: valu0_op_opcode == 8'h35;
-                VU_VALU0_VFNMSAC_VF: valu0_op_opcode == 8'h37;
-                VU_VALU0_VFSGNJ_VV: valu0_op_opcode == 8'h40;
-                VU_VALU0_VFSGNJ_VF: valu0_op_opcode == 8'h41;
-                VU_VALU0_VFSGNJN_VV: valu0_op_opcode == 8'h42;
-                VU_VALU0_VFSGNJN_VF: valu0_op_opcode == 8'h43;
-                VU_VALU0_VFSGNJX_VV: valu0_op_opcode == 8'h44;
-                VU_VALU0_VFSGNJX_VF: valu0_op_opcode == 8'h45;
-                VU_VALU0_VMFEQ_VV: valu0_op_opcode == 8'h50;
-                VU_VALU0_VMFEQ_VF: valu0_op_opcode == 8'h51;
-                VU_VALU0_VMFNE_VV: valu0_op_opcode == 8'h52;
-                VU_VALU0_VMFNE_VF: valu0_op_opcode == 8'h53;
-                VU_VALU0_VMFLT_VV: valu0_op_opcode == 8'h54;
-                VU_VALU0_VMFLT_VF: valu0_op_opcode == 8'h55;
-                VU_VALU0_VMFLE_VV: valu0_op_opcode == 8'h56;
-                VU_VALU0_VMFLE_VF: valu0_op_opcode == 8'h57;
-                VU_VALU0_VMFGT_VF: valu0_op_opcode == 8'h58;
-                VU_VALU0_VMFGE_VF: valu0_op_opcode == 8'h59;
-                VU_VALU0_VFCLASS_MV: valu0_op_opcode == 8'h60;
-                VU_VALU0_VFMERGE_VFM: valu0_op_opcode == 8'h61;
-                VU_VALU0_VFMERGE_VVM: valu0_op_opcode == 8'h62;
-                default: valu0_op_opcode inside {8'h00, [8'h09:8'h0F], [8'h14:8'h1F], [8'h22:8'h2F], [8'h38:8'h3F], [8'h46:8'h4F], [8'h5A:8'h5F], [8'h63:8'hFF]};
-            endcase
+            if (valu0_type == VU_VALU0_VFADD_VV) {
+                valu0_op_opcode == 8'h01;
+            }
+            else if (valu0_type == VU_VALU0_VFADD_VF) {
+                valu0_op_opcode == 8'h02;
+            }
+            else if (valu0_type == VU_VALU0_VFSUB_VV) {
+                valu0_op_opcode == 8'h03;
+            }
+            else if (valu0_type == VU_VALU0_VFSUB_VF) {
+                valu0_op_opcode == 8'h04;
+            }
+            else if (valu0_type == VU_VALU0_VFRSUB_VF) {
+                valu0_op_opcode == 8'h05;
+            }
+            else if (valu0_type == VU_VALU0_VFMUL_VV) {
+                valu0_op_opcode == 8'h06;
+            }
+            else if (valu0_type == VU_VALU0_VFMUL_VF) {
+                valu0_op_opcode == 8'h07;
+            }
+            else if (valu0_type == VU_VALU0_VFDIV_VV) {
+                valu0_op_opcode == 8'h08;
+            }
+            else if (valu0_type == VU_VALU0_VFMIN_VV) {
+                valu0_op_opcode == 8'h10;
+            }
+            else if (valu0_type == VU_VALU0_VFMIN_VF) {
+                valu0_op_opcode == 8'h11;
+            }
+            else if (valu0_type == VU_VALU0_VFMAX_VV) {
+                valu0_op_opcode == 8'h12;
+            }
+            else if (valu0_type == VU_VALU0_VFMAX_VF) {
+                valu0_op_opcode == 8'h13;
+            }
+            else if (valu0_type == VU_VALU0_VFMV_V_F) {
+                valu0_op_opcode == 8'h20;
+            }
+            else if (valu0_type == VU_VALU0_VFMV_S_F) {
+                valu0_op_opcode == 8'h21;
+            }
+            else if (valu0_type == VU_VALU0_VFMACC_VF) {
+                valu0_op_opcode == 8'h31;
+            }
+            else if (valu0_type == VU_VALU0_VFNMACC_VF) {
+                valu0_op_opcode == 8'h33;
+            }
+            else if (valu0_type == VU_VALU0_VFMSAC_VF) {
+                valu0_op_opcode == 8'h35;
+            }
+            else if (valu0_type == VU_VALU0_VFNMSAC_VF) {
+                valu0_op_opcode == 8'h37;
+            }
+            else if (valu0_type == VU_VALU0_VFSGNJ_VV) {
+                valu0_op_opcode == 8'h40;
+            }
+            else if (valu0_type == VU_VALU0_VFSGNJ_VF) {
+                valu0_op_opcode == 8'h41;
+            }
+            else if (valu0_type == VU_VALU0_VFSGNJN_VV) {
+                valu0_op_opcode == 8'h42;
+            }
+            else if (valu0_type == VU_VALU0_VFSGNJN_VF) {
+                valu0_op_opcode == 8'h43;
+            }
+            else if (valu0_type == VU_VALU0_VFSGNJX_VV) {
+                valu0_op_opcode == 8'h44;
+            }
+            else if (valu0_type == VU_VALU0_VFSGNJX_VF) {
+                valu0_op_opcode == 8'h45;
+            }
+            else if (valu0_type == VU_VALU0_VMFEQ_VV) {
+                valu0_op_opcode == 8'h50;
+            }
+            else if (valu0_type == VU_VALU0_VMFEQ_VF) {
+                valu0_op_opcode == 8'h51;
+            }
+            else if (valu0_type == VU_VALU0_VMFNE_VV) {
+                valu0_op_opcode == 8'h52;
+            }
+            else if (valu0_type == VU_VALU0_VMFNE_VF) {
+                valu0_op_opcode == 8'h53;
+            }
+            else if (valu0_type == VU_VALU0_VMFLT_VV) {
+                valu0_op_opcode == 8'h54;
+            }
+            else if (valu0_type == VU_VALU0_VMFLT_VF) {
+                valu0_op_opcode == 8'h55;
+            }
+            else if (valu0_type == VU_VALU0_VMFLE_VV) {
+                valu0_op_opcode == 8'h56;
+            }
+            else if (valu0_type == VU_VALU0_VMFLE_VF) {
+                valu0_op_opcode == 8'h57;
+            }
+            else if (valu0_type == VU_VALU0_VMFGT_VF) {
+                valu0_op_opcode == 8'h58;
+            }
+            else if (valu0_type == VU_VALU0_VMFGE_VF) {
+                valu0_op_opcode == 8'h59;
+            }
+            else if (valu0_type == VU_VALU0_VFCLASS_MV) {
+                valu0_op_opcode == 8'h60;
+            }
+            else if (valu0_type == VU_VALU0_VFMERGE_VFM) {
+                valu0_op_opcode == 8'h61;
+            }
+            else if (valu0_type == VU_VALU0_VFMERGE_VVM) {
+                valu0_op_opcode == 8'h62;
+            }
+            else {
+                valu0_op_opcode inside {8'h00, [8'h09:8'h0F], [8'h14:8'h1F], [8'h22:8'h2F], [8'h38:8'h3F], [8'h46:8'h4F], [8'h5A:8'h5F], [8'h63:8'hFF]};
+            }
         }
     }
 
@@ -1054,27 +1224,63 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
         if (inst_gen_cfg.fix_valu1_op_opcode_en) {
             valu1_op_opcode == inst_gen_cfg.valu1_op_opcode;
         } else {
-            unique case (valu1_type)
-                VU_VALU1_VFADD_VV: valu1_op_opcode == 8'h01;
-                VU_VALU1_VFADD_VF: valu1_op_opcode == 8'h02;
-                VU_VALU1_VFSUB_VV: valu1_op_opcode == 8'h03;
-                VU_VALU1_VFSUB_VF: valu1_op_opcode == 8'h04;
-                VU_VALU1_VFRSUB_VF: valu1_op_opcode == 8'h05;
-                VU_VALU1_VFMUL_VV: valu1_op_opcode == 8'h06;
-                VU_VALU1_VFMUL_VF: valu1_op_opcode == 8'h07;
-                VU_VALU1_VFMIN_VV: valu1_op_opcode == 8'h10;
-                VU_VALU1_VFMIN_VF: valu1_op_opcode == 8'h11;
-                VU_VALU1_VFMAX_VV: valu1_op_opcode == 8'h12;
-                VU_VALU1_VFMAX_VF: valu1_op_opcode == 8'h13;
-                VU_VALU1_VFMV_V_F: valu1_op_opcode == 8'h20;
-                VU_VALU1_VFMV_F_S: valu1_op_opcode == 8'h22;
-                VU_VALU1_VFREDUSUM_VS: valu1_op_opcode == 8'h70;
-                VU_VALU1_VFREDMAX_VS: valu1_op_opcode == 8'h71;
-                VU_VALU1_VFREDMIN_VS: valu1_op_opcode == 8'h72;
-                VU_VALU1_VSORTMAX16_V: valu1_op_opcode == 8'h73;
-                VU_VALU1_VSORTMIN16_V: valu1_op_opcode == 8'h74;
-                default: valu1_op_opcode inside {8'h00, [8'h08:8'h0F], [8'h14:8'h1F], 8'h21, [8'h23:8'h6F], [8'h75:8'hFF]};
-            endcase
+            if (valu1_type == VU_VALU1_VFADD_VV) {
+                valu1_op_opcode == 8'h01;
+            }
+            else if (valu1_type == VU_VALU1_VFADD_VF) {
+                valu1_op_opcode == 8'h02;
+            }
+            else if (valu1_type == VU_VALU1_VFSUB_VV) {
+                valu1_op_opcode == 8'h03;
+            }
+            else if (valu1_type == VU_VALU1_VFSUB_VF) {
+                valu1_op_opcode == 8'h04;
+            }
+            else if (valu1_type == VU_VALU1_VFRSUB_VF) {
+                valu1_op_opcode == 8'h05;
+            }
+            else if (valu1_type == VU_VALU1_VFMUL_VV) {
+                valu1_op_opcode == 8'h06;
+            }
+            else if (valu1_type == VU_VALU1_VFMUL_VF) {
+                valu1_op_opcode == 8'h07;
+            }
+            else if (valu1_type == VU_VALU1_VFMIN_VV) {
+                valu1_op_opcode == 8'h10;
+            }
+            else if (valu1_type == VU_VALU1_VFMIN_VF) {
+                valu1_op_opcode == 8'h11;
+            }
+            else if (valu1_type == VU_VALU1_VFMAX_VV) {
+                valu1_op_opcode == 8'h12;
+            }
+            else if (valu1_type == VU_VALU1_VFMAX_VF) {
+                valu1_op_opcode == 8'h13;
+            }
+            else if (valu1_type == VU_VALU1_VFMV_V_F) {
+                valu1_op_opcode == 8'h20;
+            }
+            else if (valu1_type == VU_VALU1_VFMV_F_S) {
+                valu1_op_opcode == 8'h22;
+            }
+            else if (valu1_type == VU_VALU1_VFREDUSUM_VS) {
+                valu1_op_opcode == 8'h70;
+            }
+            else if (valu1_type == VU_VALU1_VFREDMAX_VS) {
+                valu1_op_opcode == 8'h71;
+            }
+            else if (valu1_type == VU_VALU1_VFREDMIN_VS) {
+                valu1_op_opcode == 8'h72;
+            }
+            else if (valu1_type == VU_VALU1_VSORTMAX16_V) {
+                valu1_op_opcode == 8'h73;
+            }
+            else if (valu1_type == VU_VALU1_VSORTMIN16_V) {
+                valu1_op_opcode == 8'h74;
+            }
+            else {
+                valu1_op_opcode inside {8'h00, [8'h08:8'h0F], [8'h14:8'h1F], 8'h21, [8'h23:8'h6F], [8'h75:8'hFF]};
+            }
         }
     }
 
@@ -1082,25 +1288,57 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
         if (inst_gen_cfg.fix_valu2_op_opcode_en) {
             valu2_op_opcode == inst_gen_cfg.valu2_op_opcode;
         } else {
-            unique case (valu2_type)
-                VU_VALU2_VFADD_VV: valu2_op_opcode == 8'h01;
-                VU_VALU2_VFADD_VF: valu2_op_opcode == 8'h02;
-                VU_VALU2_VFSUB_VV: valu2_op_opcode == 8'h03;
-                VU_VALU2_VFSUB_VF: valu2_op_opcode == 8'h04;
-                VU_VALU2_VFRSUB_VF: valu2_op_opcode == 8'h05;
-                VU_VALU2_VFMUL_VV: valu2_op_opcode == 8'h06;
-                VU_VALU2_VFMUL_VF: valu2_op_opcode == 8'h07;
-                VU_VALU2_VFMIN_VV: valu2_op_opcode == 8'h10;
-                VU_VALU2_VFMIN_VF: valu2_op_opcode == 8'h11;
-                VU_VALU2_VFMAX_VV: valu2_op_opcode == 8'h12;
-                VU_VALU2_VFMAX_VF: valu2_op_opcode == 8'h13;
-                VU_VALU2_VFMV_V_F: valu2_op_opcode == 8'h20;
-                VU_VALU2_VMV_V_V: valu2_op_opcode == 8'h23;
-                VU_VALU2_VSWAP2_V: valu2_op_opcode == 8'h24;
-                VU_VALU2_VFSLIDE1UP_VF: valu2_op_opcode == 8'h25;
-                VU_VALU2_VFSLIDE1DOWN_VF: valu2_op_opcode == 8'h26;
-                default: valu2_op_opcode inside {8'h00, [8'h08:8'h0F], [8'h14:8'h1F], [8'h21:8'h22], [8'h27:8'hFF]};
-            endcase
+            if (valu2_type == VU_VALU2_VFADD_VV) {
+                valu2_op_opcode == 8'h01;
+            }
+            else if (valu2_type == VU_VALU2_VFADD_VF) {
+                valu2_op_opcode == 8'h02;
+            }
+            else if (valu2_type == VU_VALU2_VFSUB_VV) {
+                valu2_op_opcode == 8'h03;
+            }
+            else if (valu2_type == VU_VALU2_VFSUB_VF) {
+                valu2_op_opcode == 8'h04;
+            }
+            else if (valu2_type == VU_VALU2_VFRSUB_VF) {
+                valu2_op_opcode == 8'h05;
+            }
+            else if (valu2_type == VU_VALU2_VFMUL_VV) {
+                valu2_op_opcode == 8'h06;
+            }
+            else if (valu2_type == VU_VALU2_VFMUL_VF) {
+                valu2_op_opcode == 8'h07;
+            }
+            else if (valu2_type == VU_VALU2_VFMIN_VV) {
+                valu2_op_opcode == 8'h10;
+            }
+            else if (valu2_type == VU_VALU2_VFMIN_VF) {
+                valu2_op_opcode == 8'h11;
+            }
+            else if (valu2_type == VU_VALU2_VFMAX_VV) {
+                valu2_op_opcode == 8'h12;
+            }
+            else if (valu2_type == VU_VALU2_VFMAX_VF) {
+                valu2_op_opcode == 8'h13;
+            }
+            else if (valu2_type == VU_VALU2_VFMV_V_F) {
+                valu2_op_opcode == 8'h20;
+            }
+            else if (valu2_type == VU_VALU2_VMV_V_V) {
+                valu2_op_opcode == 8'h23;
+            }
+            else if (valu2_type == VU_VALU2_VSWAP2_V) {
+                valu2_op_opcode == 8'h24;
+            }
+            else if (valu2_type == VU_VALU2_VFSLIDE1UP_VF) {
+                valu2_op_opcode == 8'h25;
+            }
+            else if (valu2_type == VU_VALU2_VFSLIDE1DOWN_VF) {
+                valu2_op_opcode == 8'h26;
+            }
+            else {
+                valu2_op_opcode inside {8'h00, [8'h08:8'h0F], [8'h14:8'h1F], [8'h21:8'h22], [8'h27:8'hFF]};
+            }
         }
     }
 
@@ -1108,21 +1346,45 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
         if (inst_gen_cfg.fix_vsfu_op_vsfu0_opcode_en) {
             vsfu_op_vsfu0_opcode == inst_gen_cfg.vsfu_op_vsfu0_opcode;
         } else {
-            unique case (vsfu0_type)
-                VU_VSFU_VFSIN_V: vsfu_op_vsfu0_opcode == 8'h01;
-                VU_VSFU_VFCOS_V: vsfu_op_vsfu0_opcode == 8'h02;
-                VU_VSFU_VFTANH_V: vsfu_op_vsfu0_opcode == 8'h03;
-                VU_VSFU_VFSIGMOID_V: vsfu_op_vsfu0_opcode == 8'h04;
-                VU_VSFU_VFEXP_V: vsfu_op_vsfu0_opcode == 8'h05;
-                VU_VSFU_VFEXP2_V: vsfu_op_vsfu0_opcode == 8'h06;
-                VU_VSFU_VFLN_V: vsfu_op_vsfu0_opcode == 8'h07;
-                VU_VSFU_VFLOG2_V: vsfu_op_vsfu0_opcode == 8'h08;
-                VU_VSFU_VFSQRT_V: vsfu_op_vsfu0_opcode == 8'h09;
-                VU_VSFU_VFRCP_V: vsfu_op_vsfu0_opcode == 8'h0A;
-                VU_VSFU_VFRSQRT_V: vsfu_op_vsfu0_opcode == 8'h0B;
-                VU_VSFU_CUSTOM_FIT: vsfu_op_vsfu0_opcode == 8'h0C;
-                default: vsfu_op_vsfu0_opcode inside {8'h00, [8'h0D:8'hFF]};
-            endcase
+            if (vsfu0_type == VU_VSFU_VFSIN_V) {
+                vsfu_op_vsfu0_opcode == 8'h01;
+            }
+            else if (vsfu0_type == VU_VSFU_VFCOS_V) {
+                vsfu_op_vsfu0_opcode == 8'h02;
+            }
+            else if (vsfu0_type == VU_VSFU_VFTANH_V) {
+                vsfu_op_vsfu0_opcode == 8'h03;
+            }
+            else if (vsfu0_type == VU_VSFU_VFSIGMOID_V) {
+                vsfu_op_vsfu0_opcode == 8'h04;
+            }
+            else if (vsfu0_type == VU_VSFU_VFEXP_V) {
+                vsfu_op_vsfu0_opcode == 8'h05;
+            }
+            else if (vsfu0_type == VU_VSFU_VFEXP2_V) {
+                vsfu_op_vsfu0_opcode == 8'h06;
+            }
+            else if (vsfu0_type == VU_VSFU_VFLN_V) {
+                vsfu_op_vsfu0_opcode == 8'h07;
+            }
+            else if (vsfu0_type == VU_VSFU_VFLOG2_V) {
+                vsfu_op_vsfu0_opcode == 8'h08;
+            }
+            else if (vsfu0_type == VU_VSFU_VFSQRT_V) {
+                vsfu_op_vsfu0_opcode == 8'h09;
+            }
+            else if (vsfu0_type == VU_VSFU_VFRCP_V) {
+                vsfu_op_vsfu0_opcode == 8'h0A;
+            }
+            else if (vsfu0_type == VU_VSFU_VFRSQRT_V) {
+                vsfu_op_vsfu0_opcode == 8'h0B;
+            }
+            else if (vsfu0_type == VU_VSFU_CUSTOM_FIT) {
+                vsfu_op_vsfu0_opcode == 8'h0C;
+            }
+            else {
+                vsfu_op_vsfu0_opcode inside {8'h00, [8'h0D:8'hFF]};
+            }
         }
     }
 
@@ -1130,21 +1392,45 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
         if (inst_gen_cfg.fix_vsfu_op_vsfu1_opcode_en) {
             vsfu_op_vsfu1_opcode == inst_gen_cfg.vsfu_op_vsfu1_opcode;
         } else {
-            unique case (vsfu1_type)
-                VU_VSFU_VFSIN_V: vsfu_op_vsfu1_opcode == 8'h01;
-                VU_VSFU_VFCOS_V: vsfu_op_vsfu1_opcode == 8'h02;
-                VU_VSFU_VFTANH_V: vsfu_op_vsfu1_opcode == 8'h03;
-                VU_VSFU_VFSIGMOID_V: vsfu_op_vsfu1_opcode == 8'h04;
-                VU_VSFU_VFEXP_V: vsfu_op_vsfu1_opcode == 8'h05;
-                VU_VSFU_VFEXP2_V: vsfu_op_vsfu1_opcode == 8'h06;
-                VU_VSFU_VFLN_V: vsfu_op_vsfu1_opcode == 8'h07;
-                VU_VSFU_VFLOG2_V: vsfu_op_vsfu1_opcode == 8'h08;
-                VU_VSFU_VFSQRT_V: vsfu_op_vsfu1_opcode == 8'h09;
-                VU_VSFU_VFRCP_V: vsfu_op_vsfu1_opcode == 8'h0A;
-                VU_VSFU_VFRSQRT_V: vsfu_op_vsfu1_opcode == 8'h0B;
-                VU_VSFU_CUSTOM_FIT: vsfu_op_vsfu1_opcode == 8'h0C;
-                default: vsfu_op_vsfu1_opcode inside {8'h00, [8'h0D:8'hFF]};
-            endcase
+            if (vsfu1_type == VU_VSFU_VFSIN_V) {
+                vsfu_op_vsfu1_opcode == 8'h01;
+            }
+            else if (vsfu1_type == VU_VSFU_VFCOS_V) {
+                vsfu_op_vsfu1_opcode == 8'h02;
+            }
+            else if (vsfu1_type == VU_VSFU_VFTANH_V) {
+                vsfu_op_vsfu1_opcode == 8'h03;
+            }
+            else if (vsfu1_type == VU_VSFU_VFSIGMOID_V) {
+                vsfu_op_vsfu1_opcode == 8'h04;
+            }
+            else if (vsfu1_type == VU_VSFU_VFEXP_V) {
+                vsfu_op_vsfu1_opcode == 8'h05;
+            }
+            else if (vsfu1_type == VU_VSFU_VFEXP2_V) {
+                vsfu_op_vsfu1_opcode == 8'h06;
+            }
+            else if (vsfu1_type == VU_VSFU_VFLN_V) {
+                vsfu_op_vsfu1_opcode == 8'h07;
+            }
+            else if (vsfu1_type == VU_VSFU_VFLOG2_V) {
+                vsfu_op_vsfu1_opcode == 8'h08;
+            }
+            else if (vsfu1_type == VU_VSFU_VFSQRT_V) {
+                vsfu_op_vsfu1_opcode == 8'h09;
+            }
+            else if (vsfu1_type == VU_VSFU_VFRCP_V) {
+                vsfu_op_vsfu1_opcode == 8'h0A;
+            }
+            else if (vsfu1_type == VU_VSFU_VFRSQRT_V) {
+                vsfu_op_vsfu1_opcode == 8'h0B;
+            }
+            else if (vsfu1_type == VU_VSFU_CUSTOM_FIT) {
+                vsfu_op_vsfu1_opcode == 8'h0C;
+            }
+            else {
+                vsfu_op_vsfu1_opcode inside {8'h00, [8'h0D:8'hFF]};
+            }
         }
     }
 
@@ -1519,28 +1805,28 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
             prf_op_mrf_wt_src == inst_gen_cfg.prf_op_mrf_wt_src;
         } else {
             if (cross_inst_1_op == VU_LU) {
-                unique case (cross_inst_1_lu_type)
-                    VU_LU_LD_MASK: prf_op_mrf_wt_src == 8'h01;
-                    default: {
+                    if (cross_inst_1_lu_type == VU_LU_LD_MASK) {
+                        prf_op_mrf_wt_src == 8'h01;
+                    }
+                    else {
                         prf_op_mrf_wt_src == 8'h00;
                     }
-                endcase
             }
             else if (cross_inst_1_op == VU_VALU0) {
-                unique case (cross_inst_1_valu0_type)
-                    VU_VALU0_VMFEQ_VV, VU_VALU0_VMFEQ_VF, VU_VALU0_VMFNE_VV, VU_VALU0_VMFNE_VF, VU_VALU0_VMFLT_VV, VU_VALU0_VMFLT_VF, VU_VALU0_VMFLE_VV, VU_VALU0_VMFLE_VF, VU_VALU0_VMFGT_VF, VU_VALU0_VMFGE_VF, VU_VALU0_VFCLASS_MV: prf_op_mrf_wt_src == 8'h02;
-                    default: {
+                    if (cross_inst_1_valu0_type inside {VU_VALU0_VMFEQ_VV, VU_VALU0_VMFEQ_VF, VU_VALU0_VMFNE_VV, VU_VALU0_VMFNE_VF, VU_VALU0_VMFLT_VV, VU_VALU0_VMFLT_VF, VU_VALU0_VMFLE_VV, VU_VALU0_VMFLE_VF, VU_VALU0_VMFGT_VF, VU_VALU0_VMFGE_VF, VU_VALU0_VFCLASS_MV}) {
+                        prf_op_mrf_wt_src == 8'h02;
+                    }
+                    else {
                         prf_op_mrf_wt_src == 8'h00;
                     }
-                endcase
             }
             else if (cross_inst_1_op == VU_MEXE) {
-                unique case (cross_inst_1_mexe_type)
-                    VU_MEXE_VMAND_MM, VU_MEXE_VMNAND_MM, VU_MEXE_VMANDN_MM, VU_MEXE_VMXOR_MM, VU_MEXE_VMOR_MM, VU_MEXE_VMNOR_MM, VU_MEXE_VMORN_MM, VU_MEXE_VMXNOR_MM, VU_MEXE_VMSBF_M, VU_MEXE_VMSIF_M, VU_MEXE_VMSOF_M, VU_MEXE_VMIUSET_MV, VU_MEXE_VMISET_MV: prf_op_mrf_wt_src == 8'h10;
-                    default: {
+                    if (cross_inst_1_mexe_type inside {VU_MEXE_VMAND_MM, VU_MEXE_VMNAND_MM, VU_MEXE_VMANDN_MM, VU_MEXE_VMXOR_MM, VU_MEXE_VMOR_MM, VU_MEXE_VMNOR_MM, VU_MEXE_VMORN_MM, VU_MEXE_VMXNOR_MM, VU_MEXE_VMSBF_M, VU_MEXE_VMSIF_M, VU_MEXE_VMSOF_M, VU_MEXE_VMIUSET_MV, VU_MEXE_VMISET_MV}) {
+                        prf_op_mrf_wt_src == 8'h10;
+                    }
+                    else {
                         prf_op_mrf_wt_src == 8'h00;
                     }
-                endcase
             }
             else {
                 prf_op_mrf_wt_src == 8'h00;
@@ -1553,36 +1839,36 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
             prf_op_srf_wt_en == inst_gen_cfg.prf_op_srf_wt_en;
         } else {
             if (cross_inst_1_op == VU_LU) {
-                unique case (cross_inst_1_lu_type)
-                    VU_LU_LD_S_FP32: prf_op_srf_wt_en == 8'h01;
-                    default: {
+                    if (cross_inst_1_lu_type == VU_LU_LD_S_FP32) {
+                        prf_op_srf_wt_en == 8'h01;
+                    }
+                    else {
                         prf_op_srf_wt_en == 8'h00;
                     }
-                endcase
             }
             else if (cross_inst_1_op == VU_VALU1) {
-                unique case (cross_inst_1_valu1_type)
-                    VU_VALU1_VFMV_F_S, VU_VALU1_VFREDUSUM_VS, VU_VALU1_VFREDMAX_VS, VU_VALU1_VFREDMIN_VS: prf_op_srf_wt_en == 8'h02;
-                    default: {
+                    if (cross_inst_1_valu1_type inside {VU_VALU1_VFMV_F_S, VU_VALU1_VFREDUSUM_VS, VU_VALU1_VFREDMAX_VS, VU_VALU1_VFREDMIN_VS}) {
+                        prf_op_srf_wt_en == 8'h02;
+                    }
+                    else {
                         prf_op_srf_wt_en == 8'h00;
                     }
-                endcase
             }
             else if (cross_inst_1_op == VU_MEXE) {
-                unique case (cross_inst_1_mexe_type)
-                    VU_MEXE_VCPOP_M, VU_MEXE_VFIRST_M: prf_op_srf_wt_en == 8'h04;
-                    default: {
+                    if (cross_inst_1_mexe_type inside {VU_MEXE_VCPOP_M, VU_MEXE_VFIRST_M}) {
+                        prf_op_srf_wt_en == 8'h04;
+                    }
+                    else {
                         prf_op_srf_wt_en == 8'h00;
                     }
-                endcase
             }
             else if (cross_inst_1_op == VU_SEXE) {
-                unique case (cross_inst_1_sexe_type)
-                    VU_SEXE_FADD_S, VU_SEXE_FSUB_S, VU_SEXE_FMUL_S, VU_SEXE_FDIV_S, VU_SEXE_FSQRT_S, VU_SEXE_FRSQRT_S, VU_SEXE_FRCP_S: prf_op_srf_wt_en == 8'h08;
-                    default: {
+                    if (cross_inst_1_sexe_type inside {VU_SEXE_FADD_S, VU_SEXE_FSUB_S, VU_SEXE_FMUL_S, VU_SEXE_FDIV_S, VU_SEXE_FSQRT_S, VU_SEXE_FRSQRT_S, VU_SEXE_FRCP_S}) {
+                        prf_op_srf_wt_en == 8'h08;
+                    }
+                    else {
                         prf_op_srf_wt_en == 8'h00;
                     }
-                endcase
             }
             else {
                 prf_op_srf_wt_en == 8'h00;
@@ -1610,82 +1896,70 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
         if (!inst_gen_cfg.fix_prf_op_vrf_wt_p0_src_en
             && !inst_gen_cfg.fix_prf_op_vrf_wt_p1_src_en) {
             if (cross_inst_1_op == VU_LU) {
-                unique case (cross_inst_1_lu_type)
-                    VU_LU_LD_FP8E4M3_V, VU_LU_LD_MXFP8_V, VU_LU_LD_BF16_V, VU_LU_LD_FP32_V: {
+                    if (cross_inst_1_lu_type inside {VU_LU_LD_FP8E4M3_V, VU_LU_LD_MXFP8_V, VU_LU_LD_BF16_V, VU_LU_LD_FP32_V}) {
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
                         {8'h01, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
                         {8'h00, 8'h01} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
+                    };
                     }
-                    }
-                    default: {
+                    else {
                         prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
                     }
-                endcase
             }
             else if (cross_inst_1_op == VU_VALU0) {
-                unique case (cross_inst_1_valu0_type)
-                    VU_VALU0_VFADD_VV, VU_VALU0_VFADD_VF, VU_VALU0_VFSUB_VV, VU_VALU0_VFSUB_VF, VU_VALU0_VFRSUB_VF, VU_VALU0_VFMUL_VV, VU_VALU0_VFMUL_VF, VU_VALU0_VFDIV_VV, VU_VALU0_VFMIN_VV, VU_VALU0_VFMIN_VF, VU_VALU0_VFMAX_VV, VU_VALU0_VFMAX_VF, VU_VALU0_VFMV_V_F, VU_VALU0_VFMV_S_F, VU_VALU0_VFMACC_VF, VU_VALU0_VFNMACC_VF, VU_VALU0_VFMSAC_VF, VU_VALU0_VFNMSAC_VF, VU_VALU0_VFSGNJ_VV, VU_VALU0_VFSGNJ_VF, VU_VALU0_VFSGNJN_VV, VU_VALU0_VFSGNJN_VF, VU_VALU0_VFSGNJX_VV, VU_VALU0_VFSGNJX_VF, VU_VALU0_VFMERGE_VFM, VU_VALU0_VFMERGE_VVM: {
+                    if (cross_inst_1_valu0_type inside {VU_VALU0_VFADD_VV, VU_VALU0_VFADD_VF, VU_VALU0_VFSUB_VV, VU_VALU0_VFSUB_VF, VU_VALU0_VFRSUB_VF, VU_VALU0_VFMUL_VV, VU_VALU0_VFMUL_VF, VU_VALU0_VFDIV_VV, VU_VALU0_VFMIN_VV, VU_VALU0_VFMIN_VF, VU_VALU0_VFMAX_VV, VU_VALU0_VFMAX_VF, VU_VALU0_VFMV_V_F, VU_VALU0_VFMV_S_F, VU_VALU0_VFMACC_VF, VU_VALU0_VFNMACC_VF, VU_VALU0_VFMSAC_VF, VU_VALU0_VFNMSAC_VF, VU_VALU0_VFSGNJ_VV, VU_VALU0_VFSGNJ_VF, VU_VALU0_VFSGNJN_VV, VU_VALU0_VFSGNJN_VF, VU_VALU0_VFSGNJX_VV, VU_VALU0_VFSGNJX_VF, VU_VALU0_VFMERGE_VFM, VU_VALU0_VFMERGE_VVM}) {
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
                         {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
                         {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
+                    };
                     }
-                    }
-                    default: {
+                    else {
                         prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
                     }
-                endcase
             }
             else if (cross_inst_1_op == VU_VALU1) {
-                unique case (cross_inst_1_valu1_type)
-                    VU_VALU1_VFADD_VV, VU_VALU1_VFADD_VF, VU_VALU1_VFSUB_VV, VU_VALU1_VFSUB_VF, VU_VALU1_VFRSUB_VF, VU_VALU1_VFMUL_VV, VU_VALU1_VFMUL_VF, VU_VALU1_VFMIN_VV, VU_VALU1_VFMIN_VF, VU_VALU1_VFMAX_VV, VU_VALU1_VFMAX_VF, VU_VALU1_VFMV_V_F, VU_VALU1_VSORTMAX16_V, VU_VALU1_VSORTMIN16_V: {
+                    if (cross_inst_1_valu1_type inside {VU_VALU1_VFADD_VV, VU_VALU1_VFADD_VF, VU_VALU1_VFSUB_VV, VU_VALU1_VFSUB_VF, VU_VALU1_VFRSUB_VF, VU_VALU1_VFMUL_VV, VU_VALU1_VFMUL_VF, VU_VALU1_VFMIN_VV, VU_VALU1_VFMIN_VF, VU_VALU1_VFMAX_VV, VU_VALU1_VFMAX_VF, VU_VALU1_VFMV_V_F, VU_VALU1_VSORTMAX16_V, VU_VALU1_VSORTMIN16_V}) {
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
                         {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
                         {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
+                    };
                     }
-                    }
-                    default: {
+                    else {
                         prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
                     }
-                endcase
             }
             else if (cross_inst_1_op == VU_VALU2) {
-                unique case (cross_inst_1_valu2_type)
-                    VU_VALU2_VFADD_VV, VU_VALU2_VFADD_VF, VU_VALU2_VFSUB_VV, VU_VALU2_VFSUB_VF, VU_VALU2_VFRSUB_VF, VU_VALU2_VFMUL_VV, VU_VALU2_VFMUL_VF, VU_VALU2_VFMIN_VV, VU_VALU2_VFMIN_VF, VU_VALU2_VFMAX_VV, VU_VALU2_VFMAX_VF, VU_VALU2_VFMV_V_F, VU_VALU2_VMV_V_V, VU_VALU2_VSWAP2_V, VU_VALU2_VFSLIDE1UP_VF, VU_VALU2_VFSLIDE1DOWN_VF: {
+                    if (cross_inst_1_valu2_type inside {VU_VALU2_VFADD_VV, VU_VALU2_VFADD_VF, VU_VALU2_VFSUB_VV, VU_VALU2_VFSUB_VF, VU_VALU2_VFRSUB_VF, VU_VALU2_VFMUL_VV, VU_VALU2_VFMUL_VF, VU_VALU2_VFMIN_VV, VU_VALU2_VFMIN_VF, VU_VALU2_VFMAX_VV, VU_VALU2_VFMAX_VF, VU_VALU2_VFMV_V_F, VU_VALU2_VMV_V_V, VU_VALU2_VSWAP2_V, VU_VALU2_VFSLIDE1UP_VF, VU_VALU2_VFSLIDE1DOWN_VF}) {
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
                         {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
                         {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
+                    };
                     }
-                    }
-                    default: {
+                    else {
                         prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
                     }
-                endcase
             }
             else if (cross_inst_1_op == VU_VSFU0) {
-                unique case (cross_inst_1_vsfu0_type)
-                    VU_VSFU_VFSIN_V, VU_VSFU_VFCOS_V, VU_VSFU_VFTANH_V, VU_VSFU_VFSIGMOID_V, VU_VSFU_VFEXP_V, VU_VSFU_VFEXP2_V, VU_VSFU_VFLN_V, VU_VSFU_VFLOG2_V, VU_VSFU_VFSQRT_V, VU_VSFU_VFRCP_V, VU_VSFU_VFRSQRT_V, VU_VSFU_CUSTOM_FIT: {
+                    if (cross_inst_1_vsfu0_type inside {VU_VSFU_VFSIN_V, VU_VSFU_VFCOS_V, VU_VSFU_VFTANH_V, VU_VSFU_VFSIGMOID_V, VU_VSFU_VFEXP_V, VU_VSFU_VFEXP2_V, VU_VSFU_VFLN_V, VU_VSFU_VFLOG2_V, VU_VSFU_VFSQRT_V, VU_VSFU_VFRCP_V, VU_VSFU_VFRSQRT_V, VU_VSFU_CUSTOM_FIT}) {
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
                         {8'h05, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
                         {8'h00, 8'h05} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
+                    };
                     }
-                    }
-                    default: {
+                    else {
                         prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
                     }
-                endcase
             }
             else if (cross_inst_1_op == VU_VSFU1) {
-                unique case (cross_inst_1_vsfu1_type)
-                    VU_VSFU_VFSIN_V, VU_VSFU_VFCOS_V, VU_VSFU_VFTANH_V, VU_VSFU_VFSIGMOID_V, VU_VSFU_VFEXP_V, VU_VSFU_VFEXP2_V, VU_VSFU_VFLN_V, VU_VSFU_VFLOG2_V, VU_VSFU_VFSQRT_V, VU_VSFU_VFRCP_V, VU_VSFU_VFRSQRT_V, VU_VSFU_CUSTOM_FIT: {
+                    if (cross_inst_1_vsfu1_type inside {VU_VSFU_VFSIN_V, VU_VSFU_VFCOS_V, VU_VSFU_VFTANH_V, VU_VSFU_VFSIGMOID_V, VU_VSFU_VFEXP_V, VU_VSFU_VFEXP2_V, VU_VSFU_VFLN_V, VU_VSFU_VFLOG2_V, VU_VSFU_VFSQRT_V, VU_VSFU_VFRCP_V, VU_VSFU_VFRSQRT_V, VU_VSFU_CUSTOM_FIT}) {
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
                         {8'h06, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
                         {8'h00, 8'h06} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
+                    };
                     }
-                    }
-                    default: {
+                    else {
                         prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
                     }
-                endcase
             }
             else {
                 prf_op_vrf_wt_p0_src == 8'h00;
@@ -1699,14 +1973,18 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
     constraint su_src_sel_c {
         if (!inst_gen_cfg.fix_su_op_src_sel_en) {
             if (cross_inst_1_op == VU_SU) {
-                unique case (cross_inst_1_su_type)
-                    VU_SU_ST_FP8E4M3_V, VU_SU_ST_MXFP8_V, VU_SU_ST_BF16_V, VU_SU_ST_FP32_V: su_op_src_sel inside {[8'h30:8'h31]};
-                    VU_SU_ST_MASK: su_op_src_sel inside {[8'h40:8'h41]};
-                    VU_SU_ST_S_FP32: su_op_src_sel == 8'h50;
-                    default: {
-                        su_op_src_sel == 8'h00;
+                    if (cross_inst_1_su_type inside {VU_SU_ST_FP8E4M3_V, VU_SU_ST_MXFP8_V, VU_SU_ST_BF16_V, VU_SU_ST_FP32_V}) {
+                        su_op_src_sel inside {[8'h30:8'h31]};
                     }
-                endcase
+                    else if (cross_inst_1_su_type == VU_SU_ST_MASK) {
+                        su_op_src_sel inside {[8'h40:8'h41]};
+                    }
+                    else if (cross_inst_1_su_type == VU_SU_ST_S_FP32) {
+                        su_op_src_sel == 8'h50;
+                    }
+                    else {
+                                                su_op_src_sel == 8'h00;
+                    }
             }
             else {
                 su_op_src_sel == 8'h00;
@@ -1720,40 +1998,42 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
             !inst_gen_cfg.fix_valu0_op_src3_sel_en &&
             !inst_gen_cfg.fix_mask_op_valu0_mask_sel_en) {
             if (cross_inst_1_op == VU_VALU0) {
-                unique case (cross_inst_1_valu0_type)
-                    VU_VALU0_VFADD_VV, VU_VALU0_VFSUB_VV, VU_VALU0_VFMUL_VV, VU_VALU0_VFDIV_VV, VU_VALU0_VFMIN_VV, VU_VALU0_VFMAX_VV, VU_VALU0_VFSGNJ_VV, VU_VALU0_VFSGNJN_VV, VU_VALU0_VFSGNJX_VV, VU_VALU0_VMFEQ_VV, VU_VALU0_VMFNE_VV, VU_VALU0_VMFLT_VV, VU_VALU0_VMFLE_VV, VU_VALU0_VFMERGE_VVM: {
+                    if (cross_inst_1_valu0_type inside {VU_VALU0_VFADD_VV, VU_VALU0_VFSUB_VV, VU_VALU0_VFMUL_VV, VU_VALU0_VFDIV_VV, VU_VALU0_VFMIN_VV, VU_VALU0_VFMAX_VV, VU_VALU0_VFSGNJ_VV, VU_VALU0_VFSGNJN_VV, VU_VALU0_VFSGNJX_VV, VU_VALU0_VMFEQ_VV, VU_VALU0_VMFNE_VV, VU_VALU0_VMFLT_VV, VU_VALU0_VMFLE_VV, VU_VALU0_VFMERGE_VVM}) {
                     {valu0_op_src1_sel, valu0_op_src2_sel, valu0_op_src3_sel, mask_op_valu0_mask_sel} dist {
                         {8'h30, 8'h31, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
                         {8'h31, 8'h30, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
+                    };
                     }
-                    }
-                    VU_VALU0_VFADD_VF, VU_VALU0_VFSUB_VF, VU_VALU0_VFRSUB_VF, VU_VALU0_VFMUL_VF, VU_VALU0_VFMIN_VF, VU_VALU0_VFMAX_VF, VU_VALU0_VFSGNJ_VF, VU_VALU0_VFSGNJN_VF, VU_VALU0_VFSGNJX_VF, VU_VALU0_VMFEQ_VF, VU_VALU0_VMFNE_VF, VU_VALU0_VMFLT_VF, VU_VALU0_VMFLE_VF, VU_VALU0_VMFGT_VF, VU_VALU0_VMFGE_VF, VU_VALU0_VFMERGE_VFM: {
+                    else if (cross_inst_1_valu0_type inside {VU_VALU0_VFADD_VF, VU_VALU0_VFSUB_VF, VU_VALU0_VFRSUB_VF, VU_VALU0_VFMUL_VF, VU_VALU0_VFMIN_VF, VU_VALU0_VFMAX_VF, VU_VALU0_VFSGNJ_VF, VU_VALU0_VFSGNJN_VF, VU_VALU0_VFSGNJX_VF, VU_VALU0_VMFEQ_VF, VU_VALU0_VMFNE_VF, VU_VALU0_VMFLT_VF, VU_VALU0_VMFLE_VF, VU_VALU0_VMFGT_VF, VU_VALU0_VMFGE_VF, VU_VALU0_VFMERGE_VFM}) {
                     {valu0_op_src1_sel, valu0_op_src2_sel, valu0_op_src3_sel, mask_op_valu0_mask_sel} dist {
                         {8'h51, 8'h30, 8'h00, 8'h40} := inst_gen_cfg.sel_pair_weight,
                         {8'h51, 8'h31, 8'h00, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight
+                    };
                     }
+                    else if (cross_inst_1_valu0_type == VU_VALU0_VFMV_V_F) {
+                        valu0_op_src1_sel == 8'h51 && valu0_op_src2_sel == 8'h00 && valu0_op_src3_sel == 8'h00 && mask_op_valu0_mask_sel == 8'h00;
                     }
-                    VU_VALU0_VFMV_V_F: valu0_op_src1_sel == 8'h51 && valu0_op_src2_sel == 8'h00 && valu0_op_src3_sel == 8'h00 && mask_op_valu0_mask_sel == 8'h00;
-                    VU_VALU0_VFMV_S_F: valu0_op_src1_sel == 8'h51 && valu0_op_src3_sel == 8'h00 && mask_op_valu0_mask_sel == 8'h00;
-                    VU_VALU0_VFMACC_VF, VU_VALU0_VFNMACC_VF, VU_VALU0_VFMSAC_VF, VU_VALU0_VFNMSAC_VF: {
+                    else if (cross_inst_1_valu0_type == VU_VALU0_VFMV_S_F) {
+                        valu0_op_src1_sel == 8'h51 && valu0_op_src3_sel == 8'h00 && mask_op_valu0_mask_sel == 8'h00;
+                    }
+                    else if (cross_inst_1_valu0_type inside {VU_VALU0_VFMACC_VF, VU_VALU0_VFNMACC_VF, VU_VALU0_VFMSAC_VF, VU_VALU0_VFNMSAC_VF}) {
                     {valu0_op_src1_sel, valu0_op_src2_sel, valu0_op_src3_sel, mask_op_valu0_mask_sel} dist {
                         {8'h51, 8'h30, 8'h31, 8'h00} := inst_gen_cfg.sel_pair_weight,
                         {8'h51, 8'h31, 8'h30, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
+                    };
                     }
-                    }
-                    VU_VALU0_VFCLASS_MV: {
+                    else if (cross_inst_1_valu0_type == VU_VALU0_VFCLASS_MV) {
                     {valu0_op_src1_sel, mask_op_valu0_mask_sel} dist {
                         {8'h30, 8'h40} := inst_gen_cfg.sel_pair_weight,
                         {8'h31, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight
+                    };
                     }
-                    }
-                    default: {
+                    else {
                         valu0_op_src1_sel == 8'h00;
                         valu0_op_src2_sel == 8'h00;
                         valu0_op_src3_sel == 8'h00;
                         mask_op_valu0_mask_sel == 8'h00;
                     }
-                endcase
             }
             else {
                 valu0_op_src1_sel == 8'h00;
@@ -1770,39 +2050,39 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
             !inst_gen_cfg.fix_valu1_op_src3_sel_en &&
             !inst_gen_cfg.fix_mask_op_valu1_mask_sel_en) {
             if (cross_inst_1_op == VU_VALU1) {
-                unique case (cross_inst_1_valu1_type)
-                    VU_VALU1_VFADD_VV, VU_VALU1_VFSUB_VV, VU_VALU1_VFMUL_VV, VU_VALU1_VFMIN_VV, VU_VALU1_VFMAX_VV: {
+                    if (cross_inst_1_valu1_type inside {VU_VALU1_VFADD_VV, VU_VALU1_VFSUB_VV, VU_VALU1_VFMUL_VV, VU_VALU1_VFMIN_VV, VU_VALU1_VFMAX_VV}) {
                     {valu1_op_src1_sel, valu1_op_src2_sel, valu1_op_src3_sel, mask_op_valu1_mask_sel} dist {
                         {8'h30, 8'h31, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
                         {8'h31, 8'h30, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
+                    };
                     }
-                    }
-                    VU_VALU1_VFADD_VF, VU_VALU1_VFSUB_VF, VU_VALU1_VFRSUB_VF, VU_VALU1_VFMUL_VF, VU_VALU1_VFMIN_VF, VU_VALU1_VFMAX_VF, VU_VALU1_VFREDUSUM_VS, VU_VALU1_VFREDMAX_VS, VU_VALU1_VFREDMIN_VS: {
+                    else if (cross_inst_1_valu1_type inside {VU_VALU1_VFADD_VF, VU_VALU1_VFSUB_VF, VU_VALU1_VFRSUB_VF, VU_VALU1_VFMUL_VF, VU_VALU1_VFMIN_VF, VU_VALU1_VFMAX_VF, VU_VALU1_VFREDUSUM_VS, VU_VALU1_VFREDMAX_VS, VU_VALU1_VFREDMIN_VS}) {
                     {valu1_op_src1_sel, valu1_op_src2_sel, valu1_op_src3_sel, mask_op_valu1_mask_sel} dist {
                         {8'h52, 8'h30, 8'h00, 8'h40} := inst_gen_cfg.sel_pair_weight,
                         {8'h52, 8'h31, 8'h00, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight
+                    };
                     }
+                    else if (cross_inst_1_valu1_type == VU_VALU1_VFMV_V_F) {
+                        valu1_op_src1_sel == 8'h52 && valu1_op_src2_sel == 8'h00 && valu1_op_src3_sel == 8'h00 && mask_op_valu1_mask_sel == 8'h00;
                     }
-                    VU_VALU1_VFMV_V_F: valu1_op_src1_sel == 8'h52 && valu1_op_src2_sel == 8'h00 && valu1_op_src3_sel == 8'h00 && mask_op_valu1_mask_sel == 8'h00;
-                    VU_VALU1_VFMV_F_S: {
+                    else if (cross_inst_1_valu1_type == VU_VALU1_VFMV_F_S) {
                     {valu1_op_src1_sel, valu1_op_src3_sel, mask_op_valu1_mask_sel} dist {
                         {8'h30, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
                         {8'h31, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
+                    };
                     }
-                    }
-                    VU_VALU1_VSORTMAX16_V, VU_VALU1_VSORTMIN16_V: {
+                    else if (cross_inst_1_valu1_type inside {VU_VALU1_VSORTMAX16_V, VU_VALU1_VSORTMIN16_V}) {
                     {valu1_op_src1_sel, valu1_op_src2_sel, valu1_op_src3_sel, mask_op_valu1_mask_sel} dist {
                         {8'h30, 8'h00, 8'h00, 8'h40} := inst_gen_cfg.sel_pair_weight,
                         {8'h31, 8'h00, 8'h00, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight
+                    };
                     }
-                    }
-                    default: {
+                    else {
                         valu1_op_src1_sel == 8'h00;
                         valu1_op_src2_sel == 8'h00;
                         valu1_op_src3_sel == 8'h00;
                         mask_op_valu1_mask_sel == 8'h00;
                     }
-                endcase
             }
             else {
                 valu1_op_src1_sel == 8'h00;
@@ -1819,39 +2099,39 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
             !inst_gen_cfg.fix_valu2_op_src3_sel_en &&
             !inst_gen_cfg.fix_mask_op_valu2_mask_sel_en) {
             if (cross_inst_1_op == VU_VALU2) {
-                unique case (cross_inst_1_valu2_type)
-                    VU_VALU2_VFADD_VV, VU_VALU2_VFSUB_VV, VU_VALU2_VFMUL_VV, VU_VALU2_VFMIN_VV, VU_VALU2_VFMAX_VV: {
+                    if (cross_inst_1_valu2_type inside {VU_VALU2_VFADD_VV, VU_VALU2_VFSUB_VV, VU_VALU2_VFMUL_VV, VU_VALU2_VFMIN_VV, VU_VALU2_VFMAX_VV}) {
                     {valu2_op_src1_sel, valu2_op_src2_sel, valu2_op_src3_sel, mask_op_valu2_mask_sel} dist {
                         {8'h30, 8'h31, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
                         {8'h31, 8'h30, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
+                    };
                     }
-                    }
-                    VU_VALU2_VFADD_VF, VU_VALU2_VFSUB_VF, VU_VALU2_VFRSUB_VF, VU_VALU2_VFMUL_VF, VU_VALU2_VFMIN_VF, VU_VALU2_VFMAX_VF: {
+                    else if (cross_inst_1_valu2_type inside {VU_VALU2_VFADD_VF, VU_VALU2_VFSUB_VF, VU_VALU2_VFRSUB_VF, VU_VALU2_VFMUL_VF, VU_VALU2_VFMIN_VF, VU_VALU2_VFMAX_VF}) {
                     {valu2_op_src1_sel, valu2_op_src2_sel, valu2_op_src3_sel, mask_op_valu2_mask_sel} dist {
                         {8'h53, 8'h30, 8'h00, 8'h40} := inst_gen_cfg.sel_pair_weight,
                         {8'h53, 8'h31, 8'h00, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight
+                    };
                     }
+                    else if (cross_inst_1_valu2_type == VU_VALU2_VFMV_V_F) {
+                        valu2_op_src1_sel == 8'h53 && valu2_op_src2_sel == 8'h00 && valu2_op_src3_sel == 8'h00 && mask_op_valu2_mask_sel == 8'h00;
                     }
-                    VU_VALU2_VFMV_V_F: valu2_op_src1_sel == 8'h53 && valu2_op_src2_sel == 8'h00 && valu2_op_src3_sel == 8'h00 && mask_op_valu2_mask_sel == 8'h00;
-                    VU_VALU2_VMV_V_V, VU_VALU2_VSWAP2_V: {
+                    else if (cross_inst_1_valu2_type inside {VU_VALU2_VMV_V_V, VU_VALU2_VSWAP2_V}) {
                     {valu2_op_src1_sel, valu2_op_src2_sel, valu2_op_src3_sel, mask_op_valu2_mask_sel} dist {
                         {8'h30, 8'h00, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
                         {8'h31, 8'h00, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
+                    };
                     }
-                    }
-                    VU_VALU2_VFSLIDE1UP_VF, VU_VALU2_VFSLIDE1DOWN_VF: {
+                    else if (cross_inst_1_valu2_type inside {VU_VALU2_VFSLIDE1UP_VF, VU_VALU2_VFSLIDE1DOWN_VF}) {
                     {valu2_op_src1_sel, valu2_op_src2_sel, valu2_op_src3_sel, mask_op_valu2_mask_sel} dist {
                         {8'h53, 8'h30, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
                         {8'h53, 8'h31, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
+                    };
                     }
-                    }
-                    default: {
+                    else {
                         valu2_op_src1_sel == 8'h00;
                         valu2_op_src2_sel == 8'h00;
                         valu2_op_src3_sel == 8'h00;
                         mask_op_valu2_mask_sel == 8'h00;
                     }
-                endcase
             }
             else {
                 valu2_op_src1_sel == 8'h00;
@@ -1865,12 +2145,12 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
     constraint vsfu0_src_sel_c {
         if (!inst_gen_cfg.fix_vsfu_op_vsfu0_src1_sel_en) {
             if (cross_inst_1_op == VU_VSFU0) {
-                unique case (cross_inst_1_vsfu0_type)
-                    VU_VSFU_VFSIN_V, VU_VSFU_VFCOS_V, VU_VSFU_VFTANH_V, VU_VSFU_VFSIGMOID_V, VU_VSFU_VFEXP_V, VU_VSFU_VFEXP2_V, VU_VSFU_VFLN_V, VU_VSFU_VFLOG2_V, VU_VSFU_VFSQRT_V, VU_VSFU_VFRCP_V, VU_VSFU_VFRSQRT_V, VU_VSFU_CUSTOM_FIT: vsfu_op_vsfu0_src1_sel inside {[8'h30:8'h31]};
-                    default: {
-                        vsfu_op_vsfu0_src1_sel == 8'h00;
+                    if (cross_inst_1_vsfu0_type inside {VU_VSFU_VFSIN_V, VU_VSFU_VFCOS_V, VU_VSFU_VFTANH_V, VU_VSFU_VFSIGMOID_V, VU_VSFU_VFEXP_V, VU_VSFU_VFEXP2_V, VU_VSFU_VFLN_V, VU_VSFU_VFLOG2_V, VU_VSFU_VFSQRT_V, VU_VSFU_VFRCP_V, VU_VSFU_VFRSQRT_V, VU_VSFU_CUSTOM_FIT}) {
+                        vsfu_op_vsfu0_src1_sel inside {[8'h30:8'h31]};
                     }
-                endcase
+                    else {
+                                                vsfu_op_vsfu0_src1_sel == 8'h00;
+                    }
             }
             else {
                 vsfu_op_vsfu0_src1_sel == 8'h00;
@@ -1881,12 +2161,12 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
     constraint vsfu1_src_sel_c {
         if (!inst_gen_cfg.fix_vsfu_op_vsfu1_src1_sel_en) {
             if (cross_inst_1_op == VU_VSFU1) {
-                unique case (cross_inst_1_vsfu1_type)
-                    VU_VSFU_VFSIN_V, VU_VSFU_VFCOS_V, VU_VSFU_VFTANH_V, VU_VSFU_VFSIGMOID_V, VU_VSFU_VFEXP_V, VU_VSFU_VFEXP2_V, VU_VSFU_VFLN_V, VU_VSFU_VFLOG2_V, VU_VSFU_VFSQRT_V, VU_VSFU_VFRCP_V, VU_VSFU_VFRSQRT_V, VU_VSFU_CUSTOM_FIT: vsfu_op_vsfu1_src1_sel inside {[8'h30:8'h31]};
-                    default: {
-                        vsfu_op_vsfu1_src1_sel == 8'h00;
+                    if (cross_inst_1_vsfu1_type inside {VU_VSFU_VFSIN_V, VU_VSFU_VFCOS_V, VU_VSFU_VFTANH_V, VU_VSFU_VFSIGMOID_V, VU_VSFU_VFEXP_V, VU_VSFU_VFEXP2_V, VU_VSFU_VFLN_V, VU_VSFU_VFLOG2_V, VU_VSFU_VFSQRT_V, VU_VSFU_VFRCP_V, VU_VSFU_VFRSQRT_V, VU_VSFU_CUSTOM_FIT}) {
+                        vsfu_op_vsfu1_src1_sel inside {[8'h30:8'h31]};
                     }
-                endcase
+                    else {
+                                                vsfu_op_vsfu1_src1_sel == 8'h00;
+                    }
             }
             else {
                 vsfu_op_vsfu1_src1_sel == 8'h00;
@@ -1898,30 +2178,28 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
         if (!inst_gen_cfg.fix_mexe_op_src1_sel_en &&
             !inst_gen_cfg.fix_mexe_op_src2_sel_en) {
             if (cross_inst_1_op == VU_MEXE) {
-                unique case (cross_inst_1_mexe_type)
-                    VU_MEXE_VMAND_MM, VU_MEXE_VMNAND_MM, VU_MEXE_VMANDN_MM, VU_MEXE_VMXOR_MM, VU_MEXE_VMOR_MM, VU_MEXE_VMNOR_MM, VU_MEXE_VMORN_MM, VU_MEXE_VMXNOR_MM: {
+                    if (cross_inst_1_mexe_type inside {VU_MEXE_VMAND_MM, VU_MEXE_VMNAND_MM, VU_MEXE_VMANDN_MM, VU_MEXE_VMXOR_MM, VU_MEXE_VMOR_MM, VU_MEXE_VMNOR_MM, VU_MEXE_VMORN_MM, VU_MEXE_VMXNOR_MM}) {
                     {mexe_op_src1_sel, mexe_op_src2_sel} dist {
                         {8'h40, 8'h41} := inst_gen_cfg.sel_pair_weight,
                         {8'h41, 8'h40} := 100 - inst_gen_cfg.sel_pair_weight
+                    };
                     }
-                    }
-                    VU_MEXE_VCPOP_M, VU_MEXE_VFIRST_M, VU_MEXE_VMSBF_M, VU_MEXE_VMSIF_M, VU_MEXE_VMSOF_M: {
+                    else if (cross_inst_1_mexe_type inside {VU_MEXE_VCPOP_M, VU_MEXE_VFIRST_M, VU_MEXE_VMSBF_M, VU_MEXE_VMSIF_M, VU_MEXE_VMSOF_M}) {
                     {mexe_op_src1_sel, mexe_op_src2_sel} dist {
                         {8'h40, 8'h00} := inst_gen_cfg.sel_pair_weight,
                         {8'h41, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
+                    };
                     }
-                    }
-                    VU_MEXE_VMIUSET_MV, VU_MEXE_VMISET_MV: {
+                    else if (cross_inst_1_mexe_type inside {VU_MEXE_VMIUSET_MV, VU_MEXE_VMISET_MV}) {
                     {mexe_op_src1_sel, mexe_op_src2_sel} dist {
                         {8'h40, 8'h30} := inst_gen_cfg.sel_pair_weight,
                         {8'h41, 8'h31} := 100 - inst_gen_cfg.sel_pair_weight
+                    };
                     }
-                    }
-                    default: {
+                    else {
                         mexe_op_src1_sel == 8'h00;
                         mexe_op_src2_sel == 8'h00;
                     }
-                endcase
             }
             else {
                 mexe_op_src1_sel == 8'h00;
@@ -1934,14 +2212,16 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
         if (!inst_gen_cfg.fix_sexe0_op_src1_sel_en &&
             !inst_gen_cfg.fix_sexe0_op_src2_sel_en) {
             if (cross_inst_1_op == VU_SEXE) {
-                unique case (cross_inst_1_sexe_type)
-                    VU_SEXE_FADD_S, VU_SEXE_FSUB_S, VU_SEXE_FMUL_S, VU_SEXE_FDIV_S: sexe0_op_src1_sel == 8'h54 && sexe0_op_src2_sel == 8'h55;
-                    VU_SEXE_FSQRT_S, VU_SEXE_FRSQRT_S, VU_SEXE_FRCP_S: sexe0_op_src1_sel == 8'h54 && sexe0_op_src2_sel == 8'h00;
-                    default: {
+                    if (cross_inst_1_sexe_type inside {VU_SEXE_FADD_S, VU_SEXE_FSUB_S, VU_SEXE_FMUL_S, VU_SEXE_FDIV_S}) {
+                        sexe0_op_src1_sel == 8'h54 && sexe0_op_src2_sel == 8'h55;
+                    }
+                    else if (cross_inst_1_sexe_type inside {VU_SEXE_FSQRT_S, VU_SEXE_FRSQRT_S, VU_SEXE_FRCP_S}) {
+                        sexe0_op_src1_sel == 8'h54 && sexe0_op_src2_sel == 8'h00;
+                    }
+                    else {
                         sexe0_op_src1_sel == 8'h00;
                         sexe0_op_src2_sel == 8'h00;
                     }
-                endcase
             }
             else {
                 sexe0_op_src1_sel == 8'h00;

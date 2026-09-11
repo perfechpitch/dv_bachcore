@@ -21,7 +21,8 @@ typedef enum {
 
 typedef enum {
     MU_INST,
-    VU_INST
+    VU_INST,
+    INST_TYPE_END
 } inst_type_e;
 
 typedef enum {
@@ -30,7 +31,8 @@ typedef enum {
     MU_INST_TYPE_SUB,
     MU_INST_TYPE_MUL,
     MU_INST_TYPE_DIV,
-    MU_INST_TYPE_MOD
+    MU_INST_TYPE_MOD,
+    MU_INST_END
 } mu_inst_type_e;
 
 typedef enum {
