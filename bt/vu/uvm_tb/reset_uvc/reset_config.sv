@@ -8,6 +8,7 @@
 // ============================================================================
 `ifndef RESET_CONFIG_SV
 `define RESET_CONFIG_SV
+typedef enum {RESET_ONCE, RESET_RANDOM} reset_type_e;
 class reset_config extends uvm_object;
     uvm_active_passive_enum is_active = UVM_ACTIVE;
 

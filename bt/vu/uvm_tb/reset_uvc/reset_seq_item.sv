@@ -9,6 +9,8 @@
 `ifndef RESET_SEQ_ITEM_SV
 `define RESET_SEQ_ITEM_SV
 
+typedef enum {MIN, LOW, AVR, HIGH, MAX} delay_e;
+
 class reset_seq_item extends uvm_sequence_item;                                  
     rand delay_e                delay_type; 
     rand delay_e                next_reset_delay_type; 

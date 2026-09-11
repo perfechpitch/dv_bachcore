@@ -630,7 +630,7 @@ class inst_gen_config extends uvm_object;
         `uvm_field_array_int    (case_type_dist,                            UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (fix_inst_type_en,                          UVM_DEFAULT)
         `uvm_field_enum         (inst_type_e,           inst_type,          UVM_DEFAULT)
-        `uvm_filed_array_int    (inst_type_dist,                            UVM_DEFAULT | UVM_DEC)
+        `uvm_field_array_int    (inst_type_dist,                            UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (fix_mu_inst_type_en,                       UVM_DEFAULT)
         `uvm_field_enum         (mu_inst_type_e,        mu_inst_type,       UVM_DEFAULT)
         `uvm_field_array_int    (mu_inst_type_dist,                         UVM_DEFAULT | UVM_DEC)

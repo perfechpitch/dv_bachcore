@@ -47,10 +47,10 @@ class inst_gen_base_seq_item extends uvm_sequence_item;
             inst == inst_gen_cfg.inst;
         } else {
             inst dist {
-                DSARI := inst_gen_cfg.inst_dist[DSARI];
-                DSAR  := inst_gen_cfg.inst_dist[DSAR];
-                DSAWI := inst_gen_cfg.inst_dist[DSAWI];
-                DSAW  := inst_gen_cfg.inst_dist[DSAW];
+                DSARI := inst_gen_cfg.inst_dist[DSARI],
+                DSAR  := inst_gen_cfg.inst_dist[DSAR],
+                DSAWI := inst_gen_cfg.inst_dist[DSAWI],
+                DSAW  := inst_gen_cfg.inst_dist[DSAW]
             };
         }
     }
@@ -80,8 +80,8 @@ class inst_gen_seq_item extends inst_gen_base_seq_item;
             inst_type == inst_gen_cfg.inst_type;
         } else {
             inst_type dist {
-                MU_INST := inst_gen_cfg.inst_type_dist[MU_INST];
-                VU_INST := inst_gen_cfg.inst_type_dist[VU_INST];
+                MU_INST := inst_gen_cfg.inst_type_dist[MU_INST],
+                VU_INST := inst_gen_cfg.inst_type_dist[VU_INST]
             };
         }
     }
@@ -90,12 +90,12 @@ class inst_gen_seq_item extends inst_gen_base_seq_item;
             mu_inst_type == inst_gen_cfg.mu_inst_type;
         } else {
             mu_inst_type dist {
-                MU_INST_TYPE_NONE := inst_gen_cfg.mu_inst_type_dist[MU_INST_TYPE_NONE];
-                MU_INST_TYPE_ADD  := inst_gen_cfg.mu_inst_type_dist[MU_INST_TYPE_ADD];
-                MU_INST_TYPE_SUB  := inst_gen_cfg.mu_inst_type_dist[MU_INST_TYPE_SUB];
-                MU_INST_TYPE_MUL  := inst_gen_cfg.mu_inst_type_dist[MU_INST_TYPE_MUL];
-                MU_INST_TYPE_DIV  := inst_gen_cfg.mu_inst_type_dist[MU_INST_TYPE_DIV];
-                MU_INST_TYPE_MOD  := inst_gen_cfg.mu_inst_type_dist[MU_INST_TYPE_MOD];
+                MU_INST_TYPE_NONE := inst_gen_cfg.mu_inst_type_dist[MU_INST_TYPE_NONE],
+                MU_INST_TYPE_ADD  := inst_gen_cfg.mu_inst_type_dist[MU_INST_TYPE_ADD],
+                MU_INST_TYPE_SUB  := inst_gen_cfg.mu_inst_type_dist[MU_INST_TYPE_SUB],
+                MU_INST_TYPE_MUL  := inst_gen_cfg.mu_inst_type_dist[MU_INST_TYPE_MUL],
+                MU_INST_TYPE_DIV  := inst_gen_cfg.mu_inst_type_dist[MU_INST_TYPE_DIV],
+                MU_INST_TYPE_MOD  := inst_gen_cfg.mu_inst_type_dist[MU_INST_TYPE_MOD]
             };
         }
     }
@@ -104,17 +104,17 @@ class inst_gen_seq_item extends inst_gen_base_seq_item;
             vu_inst_type == inst_gen_cfg.vu_inst_type;
         } else {
             vu_inst_type dist {
-                CROSS_INST_1             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_1];
-                CROSS_INST_2             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_2];
-                CROSS_INST_3             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_3];
-                CROSS_INST_4             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_4];
-                CROSS_INST_5             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_5];
-                CROSS_INST_6             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_6];
-                CROSS_INST_7             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_7];
-                CROSS_INST_8             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_8];
-                CROSS_INST_9             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_9];
-                CROSS_INST_10            := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_10];
-                CROSS_INST_11            := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_11];
+                CROSS_INST_1             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_1],
+                CROSS_INST_2             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_2],
+                CROSS_INST_3             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_3],
+                CROSS_INST_4             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_4],
+                CROSS_INST_5             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_5],
+                CROSS_INST_6             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_6],
+                CROSS_INST_7             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_7],
+                CROSS_INST_8             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_8],
+                CROSS_INST_9             := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_9],
+                CROSS_INST_10            := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_10],
+                CROSS_INST_11            := inst_gen_cfg.vu_inst_type_dist[CROSS_INST_11]
             };
         }
     }
@@ -123,10 +123,10 @@ class inst_gen_seq_item extends inst_gen_base_seq_item;
             vld_delay == inst_gen_cfg.vld_delay;
         } else {
             vld_delay dist {              
-                0        := inst_gen_cfg.vld_delay_dist[0];
-                [1:10]   := inst_gen_cfg.vld_delay_dist[1];
-                [11:50]  := inst_gen_cfg.vld_delay_dist[2];
-                [51:100] := inst_gen_cfg.vld_delay_dist[3];
+                0        := inst_gen_cfg.vld_delay_dist[0],
+                [1:10]   := inst_gen_cfg.vld_delay_dist[1],
+                [11:50]  := inst_gen_cfg.vld_delay_dist[2],
+                [51:100] := inst_gen_cfg.vld_delay_dist[3]
             };
         }
     }
@@ -138,8 +138,8 @@ class inst_gen_seq_item extends inst_gen_base_seq_item;
             src_bypass == inst_gen_cfg.src_bypass;
         } else {
             src_bypass dist {
-                1 := inst_gen_cfg.src_bypass_weight;
-                0 := 100 - inst_gen_cfg.src_bypass_weight;
+                1 := inst_gen_cfg.src_bypass_weight,
+                0 := 100 - inst_gen_cfg.src_bypass_weight
             };
         }
     }
@@ -159,10 +159,10 @@ class case_type_seq_item extends uvm_sequence_item;
 
     constraint case_type_c {
             case_type dist {
-                0       := inst_gen_cfg.case_type_dist[0];
-                1       := inst_gen_cfg.case_type_dist[1];
-                2       := inst_gen_cfg.case_type_dist[2];
-                3       := inst_gen_cfg.case_type_dist[3];
+                0       := inst_gen_cfg.case_type_dist[0],
+                1       := inst_gen_cfg.case_type_dist[1],
+                2       := inst_gen_cfg.case_type_dist[2],
+                3       := inst_gen_cfg.case_type_dist[3]
             };
     }
 endclass : case_type_seq_item

@@ -7,7 +7,6 @@
 // Update Count         :
 // Description          :
 
-`include    "XXXX_if.sv"
 `include    "reset_if.sv"
 `include    "inst_gen_if.sv"
 `include    "vu_tc_pkg.sv"
@@ -17,19 +16,18 @@ module vu_tb_top;
     import uvm_pkg::*;
     import vu_tc_pkg::*;
    
-    parameter clk_period = XXXX; 
+    parameter clk_period = 50; 
    
     bit clk;
 
     reset_if    reset_if(clk);
     inst_gen_if inst_gen_if(clk, reset_if.reset);
-    XXXX_if     XXXX_if(clk,reset_if.reset);
 
     vu u_DUT();
 
     vu_wrapper u_vu_wrapper(
          reset_if
-        ,XXXX_if  
+        ,inst_gen_if  
     );
 
 
@@ -50,9 +48,7 @@ module vu_tb_top;
         end
     end
 
-    // Set interface on the uvm_test_top and start UVM tests
     initial begin
-        uvm_config_db#(virtual XXXX_if)::set(null,"uvm_test_top*","XXXX_vif",XXXX_if);
         uvm_config_db#(virtual reset_if)::set(null,"uvm_test_top*","reset_vif",reset_if);
         uvm_config_db#(virtual inst_gen_if)::set(null,"uvm_test_top*","inst_gen_vif",inst_gen_if);
         run_test();

@@ -1208,16 +1208,16 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_1_op == inst_gen_cfg.cross_1_cfg.cross_inst_1_op;
         } else {
             cross_inst_1_op dist {
-                VU_NOP                   := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_NOP];
-                VU_LU                    := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_LU];
-                VU_SU                    := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_SU];
-                VU_VALU0                 := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_VALU0];
-                VU_VALU1                 := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_VALU1];
-                VU_VALU2                 := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_VALU2];
-                VU_VSFU0                 := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_VSFU0];
-                VU_VSFU1                 := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_VSFU1];
-                VU_MEXE                  := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_MEXE];
-                VU_SEXE                  := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_SEXE];
+                VU_NOP                   := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_NOP],
+                VU_LU                    := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_LU],
+                VU_SU                    := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_SU],
+                VU_VALU0                 := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_VALU0],
+                VU_VALU1                 := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_VALU1],
+                VU_VALU2                 := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_VALU2],
+                VU_VSFU0                 := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_VSFU0],
+                VU_VSFU1                 := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_VSFU1],
+                VU_MEXE                  := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_MEXE],
+                VU_SEXE                  := inst_gen_cfg.cross_1_cfg.cross_inst_1_op_dist[VU_SEXE]
             };
         }
     }
@@ -1227,12 +1227,12 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_1_lu_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type;
         } else if (cross_inst_1_op == VU_LU) {
             cross_inst_1_lu_type dist {
-                VU_LU_LD_FP8E4M3_V       := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_FP8E4M3_V];
-                VU_LU_LD_MXFP8_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_MXFP8_V];
-                VU_LU_LD_BF16_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_BF16_V];
-                VU_LU_LD_FP32_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_FP32_V];
-                VU_LU_LD_MASK            := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_MASK];
-                VU_LU_LD_S_FP32          := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_S_FP32];
+                VU_LU_LD_FP8E4M3_V       := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_FP8E4M3_V],
+                VU_LU_LD_MXFP8_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_MXFP8_V],
+                VU_LU_LD_BF16_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_BF16_V],
+                VU_LU_LD_FP32_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_FP32_V],
+                VU_LU_LD_MASK            := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_MASK],
+                VU_LU_LD_S_FP32          := inst_gen_cfg.cross_1_cfg.cross_inst_1_lu_type_dist[VU_LU_LD_S_FP32]
             };
         }
     }
@@ -1242,12 +1242,12 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_1_su_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type;
         } else if (cross_inst_1_op == VU_SU) {
             cross_inst_1_su_type dist {
-                VU_SU_ST_FP8E4M3_V       := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_FP8E4M3_V];
-                VU_SU_ST_MXFP8_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_MXFP8_V];
-                VU_SU_ST_BF16_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_BF16_V];
-                VU_SU_ST_FP32_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_FP32_V];
-                VU_SU_ST_MASK            := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_MASK];
-                VU_SU_ST_S_FP32          := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_S_FP32];
+                VU_SU_ST_FP8E4M3_V       := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_FP8E4M3_V],
+                VU_SU_ST_MXFP8_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_MXFP8_V],
+                VU_SU_ST_BF16_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_BF16_V],
+                VU_SU_ST_FP32_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_FP32_V],
+                VU_SU_ST_MASK            := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_MASK],
+                VU_SU_ST_S_FP32          := inst_gen_cfg.cross_1_cfg.cross_inst_1_su_type_dist[VU_SU_ST_S_FP32]
             };
         }
     }
@@ -1257,43 +1257,43 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_1_valu0_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type;
         } else if (cross_inst_1_op == VU_VALU0) {
             cross_inst_1_valu0_type dist {
-                VU_VALU0_VFADD_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFADD_VV];
-                VU_VALU0_VFADD_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFADD_VF];
-                VU_VALU0_VFSUB_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSUB_VV];
-                VU_VALU0_VFSUB_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSUB_VF];
-                VU_VALU0_VFRSUB_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFRSUB_VF];
-                VU_VALU0_VFMUL_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMUL_VV];
-                VU_VALU0_VFMUL_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMUL_VF];
-                VU_VALU0_VFDIV_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFDIV_VV];
-                VU_VALU0_VFMIN_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMIN_VV];
-                VU_VALU0_VFMIN_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMIN_VF];
-                VU_VALU0_VFMAX_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMAX_VV];
-                VU_VALU0_VFMAX_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMAX_VF];
-                VU_VALU0_VFMV_V_F        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMV_V_F];
-                VU_VALU0_VFMV_S_F        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMV_S_F];
-                VU_VALU0_VFMACC_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMACC_VF];
-                VU_VALU0_VFNMACC_VF      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFNMACC_VF];
-                VU_VALU0_VFMSAC_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMSAC_VF];
-                VU_VALU0_VFNMSAC_VF      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFNMSAC_VF];
-                VU_VALU0_VFSGNJ_VV       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJ_VV];
-                VU_VALU0_VFSGNJ_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJ_VF];
-                VU_VALU0_VFSGNJN_VV      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJN_VV];
-                VU_VALU0_VFSGNJN_VF      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJN_VF];
-                VU_VALU0_VFSGNJX_VV      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJX_VV];
-                VU_VALU0_VFSGNJX_VF      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJX_VF];
-                VU_VALU0_VMFEQ_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFEQ_VV];
-                VU_VALU0_VMFEQ_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFEQ_VF];
-                VU_VALU0_VMFNE_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFNE_VV];
-                VU_VALU0_VMFNE_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFNE_VF];
-                VU_VALU0_VMFLT_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFLT_VV];
-                VU_VALU0_VMFLT_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFLT_VF];
-                VU_VALU0_VMFLE_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFLE_VV];
-                VU_VALU0_VMFLE_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFLE_VF];
-                VU_VALU0_VMFGT_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFGT_VF];
-                VU_VALU0_VMFGE_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFGE_VF];
-                VU_VALU0_VFCLASS_MV      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFCLASS_MV];
-                VU_VALU0_VFMERGE_VFM     := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMERGE_VFM];
-                VU_VALU0_VFMERGE_VVM     := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMERGE_VVM];
+                VU_VALU0_VFADD_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFADD_VV],
+                VU_VALU0_VFADD_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFADD_VF],
+                VU_VALU0_VFSUB_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSUB_VV],
+                VU_VALU0_VFSUB_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSUB_VF],
+                VU_VALU0_VFRSUB_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFRSUB_VF],
+                VU_VALU0_VFMUL_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMUL_VV],
+                VU_VALU0_VFMUL_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMUL_VF],
+                VU_VALU0_VFDIV_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFDIV_VV],
+                VU_VALU0_VFMIN_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMIN_VV],
+                VU_VALU0_VFMIN_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMIN_VF],
+                VU_VALU0_VFMAX_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMAX_VV],
+                VU_VALU0_VFMAX_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMAX_VF],
+                VU_VALU0_VFMV_V_F        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMV_V_F],
+                VU_VALU0_VFMV_S_F        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMV_S_F],
+                VU_VALU0_VFMACC_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMACC_VF],
+                VU_VALU0_VFNMACC_VF      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFNMACC_VF],
+                VU_VALU0_VFMSAC_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMSAC_VF],
+                VU_VALU0_VFNMSAC_VF      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFNMSAC_VF],
+                VU_VALU0_VFSGNJ_VV       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJ_VV],
+                VU_VALU0_VFSGNJ_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJ_VF],
+                VU_VALU0_VFSGNJN_VV      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJN_VV],
+                VU_VALU0_VFSGNJN_VF      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJN_VF],
+                VU_VALU0_VFSGNJX_VV      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJX_VV],
+                VU_VALU0_VFSGNJX_VF      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFSGNJX_VF],
+                VU_VALU0_VMFEQ_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFEQ_VV],
+                VU_VALU0_VMFEQ_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFEQ_VF],
+                VU_VALU0_VMFNE_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFNE_VV],
+                VU_VALU0_VMFNE_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFNE_VF],
+                VU_VALU0_VMFLT_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFLT_VV],
+                VU_VALU0_VMFLT_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFLT_VF],
+                VU_VALU0_VMFLE_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFLE_VV],
+                VU_VALU0_VMFLE_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFLE_VF],
+                VU_VALU0_VMFGT_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFGT_VF],
+                VU_VALU0_VMFGE_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VMFGE_VF],
+                VU_VALU0_VFCLASS_MV      := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFCLASS_MV],
+                VU_VALU0_VFMERGE_VFM     := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMERGE_VFM],
+                VU_VALU0_VFMERGE_VVM     := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu0_type_dist[VU_VALU0_VFMERGE_VVM]
             };
         }
     }
@@ -1303,24 +1303,24 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_1_valu1_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type;
         } else if (cross_inst_1_op == VU_VALU1) {
             cross_inst_1_valu1_type dist {
-                VU_VALU1_VFADD_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFADD_VV];
-                VU_VALU1_VFADD_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFADD_VF];
-                VU_VALU1_VFSUB_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFSUB_VV];
-                VU_VALU1_VFSUB_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFSUB_VF];
-                VU_VALU1_VFRSUB_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFRSUB_VF];
-                VU_VALU1_VFMUL_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMUL_VV];
-                VU_VALU1_VFMUL_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMUL_VF];
-                VU_VALU1_VFMIN_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMIN_VV];
-                VU_VALU1_VFMIN_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMIN_VF];
-                VU_VALU1_VFMAX_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMAX_VV];
-                VU_VALU1_VFMAX_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMAX_VF];
-                VU_VALU1_VFMV_V_F        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMV_V_F];
-                VU_VALU1_VFMV_F_S        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMV_F_S];
-                VU_VALU1_VFREDUSUM_VS    := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFREDUSUM_VS];
-                VU_VALU1_VFREDMAX_VS     := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFREDMAX_VS];
-                VU_VALU1_VFREDMIN_VS     := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFREDMIN_VS];
-                VU_VALU1_VSORTMAX16_V    := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VSORTMAX16_V];
-                VU_VALU1_VSORTMIN16_V    := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VSORTMIN16_V];
+                VU_VALU1_VFADD_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFADD_VV],
+                VU_VALU1_VFADD_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFADD_VF],
+                VU_VALU1_VFSUB_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFSUB_VV],
+                VU_VALU1_VFSUB_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFSUB_VF],
+                VU_VALU1_VFRSUB_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFRSUB_VF],
+                VU_VALU1_VFMUL_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMUL_VV],
+                VU_VALU1_VFMUL_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMUL_VF],
+                VU_VALU1_VFMIN_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMIN_VV],
+                VU_VALU1_VFMIN_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMIN_VF],
+                VU_VALU1_VFMAX_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMAX_VV],
+                VU_VALU1_VFMAX_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMAX_VF],
+                VU_VALU1_VFMV_V_F        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMV_V_F],
+                VU_VALU1_VFMV_F_S        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFMV_F_S],
+                VU_VALU1_VFREDUSUM_VS    := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFREDUSUM_VS],
+                VU_VALU1_VFREDMAX_VS     := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFREDMAX_VS],
+                VU_VALU1_VFREDMIN_VS     := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VFREDMIN_VS],
+                VU_VALU1_VSORTMAX16_V    := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VSORTMAX16_V],
+                VU_VALU1_VSORTMIN16_V    := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu1_type_dist[VU_VALU1_VSORTMIN16_V]
             };
         }
     }
@@ -1330,22 +1330,22 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_1_valu2_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type;
         } else if (cross_inst_1_op == VU_VALU2) {
             cross_inst_1_valu2_type dist {
-                VU_VALU2_VFADD_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFADD_VV];
-                VU_VALU2_VFADD_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFADD_VF];
-                VU_VALU2_VFSUB_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFSUB_VV];
-                VU_VALU2_VFSUB_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFSUB_VF];
-                VU_VALU2_VFRSUB_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFRSUB_VF];
-                VU_VALU2_VFMUL_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMUL_VV];
-                VU_VALU2_VFMUL_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMUL_VF];
-                VU_VALU2_VFMIN_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMIN_VV];
-                VU_VALU2_VFMIN_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMIN_VF];
-                VU_VALU2_VFMAX_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMAX_VV];
-                VU_VALU2_VFMAX_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMAX_VF];
-                VU_VALU2_VFMV_V_F        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMV_V_F];
-                VU_VALU2_VMV_V_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VMV_V_V];
-                VU_VALU2_VSWAP2_V        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VSWAP2_V];
-                VU_VALU2_VFSLIDE1UP_VF   := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFSLIDE1UP_VF];
-                VU_VALU2_VFSLIDE1DOWN_VF := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFSLIDE1DOWN_VF];
+                VU_VALU2_VFADD_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFADD_VV],
+                VU_VALU2_VFADD_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFADD_VF],
+                VU_VALU2_VFSUB_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFSUB_VV],
+                VU_VALU2_VFSUB_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFSUB_VF],
+                VU_VALU2_VFRSUB_VF       := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFRSUB_VF],
+                VU_VALU2_VFMUL_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMUL_VV],
+                VU_VALU2_VFMUL_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMUL_VF],
+                VU_VALU2_VFMIN_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMIN_VV],
+                VU_VALU2_VFMIN_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMIN_VF],
+                VU_VALU2_VFMAX_VV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMAX_VV],
+                VU_VALU2_VFMAX_VF        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMAX_VF],
+                VU_VALU2_VFMV_V_F        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFMV_V_F],
+                VU_VALU2_VMV_V_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VMV_V_V],
+                VU_VALU2_VSWAP2_V        := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VSWAP2_V],
+                VU_VALU2_VFSLIDE1UP_VF   := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFSLIDE1UP_VF],
+                VU_VALU2_VFSLIDE1DOWN_VF := inst_gen_cfg.cross_1_cfg.cross_inst_1_valu2_type_dist[VU_VALU2_VFSLIDE1DOWN_VF]
             };
         }
     }
@@ -1355,18 +1355,18 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_1_vsfu0_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type;
         } else if (cross_inst_1_op == VU_VSFU0) {
             cross_inst_1_vsfu0_type dist {
-                VU_VSFU_VFSIN_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFSIN_V];
-                VU_VSFU_VFCOS_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFCOS_V];
-                VU_VSFU_VFTANH_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFTANH_V];
-                VU_VSFU_VFSIGMOID_V      := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFSIGMOID_V];
-                VU_VSFU_VFEXP_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFEXP_V];
-                VU_VSFU_VFEXP2_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFEXP2_V];
-                VU_VSFU_VFLN_V           := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFLN_V];
-                VU_VSFU_VFLOG2_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFLOG2_V];
-                VU_VSFU_VFSQRT_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFSQRT_V];
-                VU_VSFU_VFRCP_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFRCP_V];
-                VU_VSFU_VFRSQRT_V        := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFRSQRT_V];
-                VU_VSFU_CUSTOM_FIT       := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_CUSTOM_FIT];
+                VU_VSFU_VFSIN_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFSIN_V],
+                VU_VSFU_VFCOS_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFCOS_V],
+                VU_VSFU_VFTANH_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFTANH_V],
+                VU_VSFU_VFSIGMOID_V      := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFSIGMOID_V],
+                VU_VSFU_VFEXP_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFEXP_V],
+                VU_VSFU_VFEXP2_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFEXP2_V],
+                VU_VSFU_VFLN_V           := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFLN_V],
+                VU_VSFU_VFLOG2_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFLOG2_V],
+                VU_VSFU_VFSQRT_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFSQRT_V],
+                VU_VSFU_VFRCP_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFRCP_V],
+                VU_VSFU_VFRSQRT_V        := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_VFRSQRT_V],
+                VU_VSFU_CUSTOM_FIT       := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu0_type_dist[VU_VSFU_CUSTOM_FIT]
             };
         }
     }
@@ -1376,18 +1376,18 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_1_vsfu1_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type;
         } else if (cross_inst_1_op == VU_VSFU1) {
             cross_inst_1_vsfu1_type dist {
-                VU_VSFU_VFSIN_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFSIN_V];
-                VU_VSFU_VFCOS_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFCOS_V];
-                VU_VSFU_VFTANH_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFTANH_V];
-                VU_VSFU_VFSIGMOID_V      := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFSIGMOID_V];
-                VU_VSFU_VFEXP_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFEXP_V];
-                VU_VSFU_VFEXP2_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFEXP2_V];
-                VU_VSFU_VFLN_V           := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFLN_V];
-                VU_VSFU_VFLOG2_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFLOG2_V];
-                VU_VSFU_VFSQRT_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFSQRT_V];
-                VU_VSFU_VFRCP_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFRCP_V];
-                VU_VSFU_VFRSQRT_V        := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFRSQRT_V];
-                VU_VSFU_CUSTOM_FIT       := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_CUSTOM_FIT];
+                VU_VSFU_VFSIN_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFSIN_V],
+                VU_VSFU_VFCOS_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFCOS_V],
+                VU_VSFU_VFTANH_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFTANH_V],
+                VU_VSFU_VFSIGMOID_V      := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFSIGMOID_V],
+                VU_VSFU_VFEXP_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFEXP_V],
+                VU_VSFU_VFEXP2_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFEXP2_V],
+                VU_VSFU_VFLN_V           := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFLN_V],
+                VU_VSFU_VFLOG2_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFLOG2_V],
+                VU_VSFU_VFSQRT_V         := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFSQRT_V],
+                VU_VSFU_VFRCP_V          := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFRCP_V],
+                VU_VSFU_VFRSQRT_V        := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_VFRSQRT_V],
+                VU_VSFU_CUSTOM_FIT       := inst_gen_cfg.cross_1_cfg.cross_inst_1_vsfu1_type_dist[VU_VSFU_CUSTOM_FIT]
             };
         }
     }
@@ -1397,21 +1397,21 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_1_mexe_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type;
         } else if (cross_inst_1_op == VU_MEXE) {
             cross_inst_1_mexe_type dist {
-                VU_MEXE_VMAND_MM         := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMAND_MM];
-                VU_MEXE_VMNAND_MM        := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMNAND_MM];
-                VU_MEXE_VMANDN_MM        := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMANDN_MM];
-                VU_MEXE_VMXOR_MM         := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMXOR_MM];
-                VU_MEXE_VMOR_MM          := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMOR_MM];
-                VU_MEXE_VMNOR_MM         := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMNOR_MM];
-                VU_MEXE_VMORN_MM         := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMORN_MM];
-                VU_MEXE_VMXNOR_MM        := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMXNOR_MM];
-                VU_MEXE_VCPOP_M          := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VCPOP_M];
-                VU_MEXE_VFIRST_M         := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VFIRST_M];
-                VU_MEXE_VMSBF_M          := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMSBF_M];
-                VU_MEXE_VMSIF_M          := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMSIF_M];
-                VU_MEXE_VMSOF_M          := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMSOF_M];
-                VU_MEXE_VMIUSET_MV       := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMIUSET_MV];
-                VU_MEXE_VMISET_MV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMISET_MV];
+                VU_MEXE_VMAND_MM         := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMAND_MM],
+                VU_MEXE_VMNAND_MM        := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMNAND_MM],
+                VU_MEXE_VMANDN_MM        := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMANDN_MM],
+                VU_MEXE_VMXOR_MM         := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMXOR_MM],
+                VU_MEXE_VMOR_MM          := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMOR_MM],
+                VU_MEXE_VMNOR_MM         := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMNOR_MM],
+                VU_MEXE_VMORN_MM         := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMORN_MM],
+                VU_MEXE_VMXNOR_MM        := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMXNOR_MM],
+                VU_MEXE_VCPOP_M          := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VCPOP_M],
+                VU_MEXE_VFIRST_M         := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VFIRST_M],
+                VU_MEXE_VMSBF_M          := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMSBF_M],
+                VU_MEXE_VMSIF_M          := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMSIF_M],
+                VU_MEXE_VMSOF_M          := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMSOF_M],
+                VU_MEXE_VMIUSET_MV       := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMIUSET_MV],
+                VU_MEXE_VMISET_MV        := inst_gen_cfg.cross_1_cfg.cross_inst_1_mexe_type_dist[VU_MEXE_VMISET_MV]
             };
         }
     }
@@ -1421,13 +1421,13 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_1_sexe_type == inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type;
         } else if (cross_inst_1_op == VU_SEXE) {
             cross_inst_1_sexe_type dist {
-                VU_SEXE_FADD_S           := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FADD_S];
-                VU_SEXE_FSUB_S           := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FSUB_S];
-                VU_SEXE_FMUL_S           := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FMUL_S];
-                VU_SEXE_FDIV_S           := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FDIV_S];
-                VU_SEXE_FSQRT_S          := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FSQRT_S];
-                VU_SEXE_FRSQRT_S         := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FRSQRT_S];
-                VU_SEXE_FRCP_S           := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FRCP_S];
+                VU_SEXE_FADD_S           := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FADD_S],
+                VU_SEXE_FSUB_S           := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FSUB_S],
+                VU_SEXE_FMUL_S           := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FMUL_S],
+                VU_SEXE_FDIV_S           := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FDIV_S],
+                VU_SEXE_FSQRT_S          := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FSQRT_S],
+                VU_SEXE_FRSQRT_S         := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FRSQRT_S],
+                VU_SEXE_FRCP_S           := inst_gen_cfg.cross_1_cfg.cross_inst_1_sexe_type_dist[VU_SEXE_FRCP_S]
             };
         }
     }
@@ -1613,8 +1613,8 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
                 unique case (cross_inst_1_lu_type)
                     VU_LU_LD_FP8E4M3_V, VU_LU_LD_MXFP8_V, VU_LU_LD_BF16_V, VU_LU_LD_FP32_V: begin
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
-                        {8'h01, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
-                        {8'h00, 8'h01} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h01, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
+                        {8'h00, 8'h01} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
                     }
                     end
                     default: begin
@@ -1626,8 +1626,8 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
                 unique case (cross_inst_1_valu0_type)
                     VU_VALU0_VFADD_VV, VU_VALU0_VFADD_VF, VU_VALU0_VFSUB_VV, VU_VALU0_VFSUB_VF, VU_VALU0_VFRSUB_VF, VU_VALU0_VFMUL_VV, VU_VALU0_VFMUL_VF, VU_VALU0_VFDIV_VV, VU_VALU0_VFMIN_VV, VU_VALU0_VFMIN_VF, VU_VALU0_VFMAX_VV, VU_VALU0_VFMAX_VF, VU_VALU0_VFMV_V_F, VU_VALU0_VFMV_S_F, VU_VALU0_VFMACC_VF, VU_VALU0_VFNMACC_VF, VU_VALU0_VFMSAC_VF, VU_VALU0_VFNMSAC_VF, VU_VALU0_VFSGNJ_VV, VU_VALU0_VFSGNJ_VF, VU_VALU0_VFSGNJN_VV, VU_VALU0_VFSGNJN_VF, VU_VALU0_VFSGNJX_VV, VU_VALU0_VFSGNJX_VF, VU_VALU0_VFMERGE_VFM, VU_VALU0_VFMERGE_VVM: begin
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
-                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
-                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
+                        {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
                     }
                     end
                     default: begin
@@ -1639,8 +1639,8 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
                 unique case (cross_inst_1_valu1_type)
                     VU_VALU1_VFADD_VV, VU_VALU1_VFADD_VF, VU_VALU1_VFSUB_VV, VU_VALU1_VFSUB_VF, VU_VALU1_VFRSUB_VF, VU_VALU1_VFMUL_VV, VU_VALU1_VFMUL_VF, VU_VALU1_VFMIN_VV, VU_VALU1_VFMIN_VF, VU_VALU1_VFMAX_VV, VU_VALU1_VFMAX_VF, VU_VALU1_VFMV_V_F, VU_VALU1_VSORTMAX16_V, VU_VALU1_VSORTMIN16_V: begin
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
-                        {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
-                        {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
+                        {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
                     }
                     end
                     default: begin
@@ -1652,8 +1652,8 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
                 unique case (cross_inst_1_valu2_type)
                     VU_VALU2_VFADD_VV, VU_VALU2_VFADD_VF, VU_VALU2_VFSUB_VV, VU_VALU2_VFSUB_VF, VU_VALU2_VFRSUB_VF, VU_VALU2_VFMUL_VV, VU_VALU2_VFMUL_VF, VU_VALU2_VFMIN_VV, VU_VALU2_VFMIN_VF, VU_VALU2_VFMAX_VV, VU_VALU2_VFMAX_VF, VU_VALU2_VFMV_V_F, VU_VALU2_VMV_V_V, VU_VALU2_VSWAP2_V, VU_VALU2_VFSLIDE1UP_VF, VU_VALU2_VFSLIDE1DOWN_VF: begin
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
-                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
-                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
+                        {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
                     }
                     end
                     default: begin
@@ -1665,8 +1665,8 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
                 unique case (cross_inst_1_vsfu0_type)
                     VU_VSFU_VFSIN_V, VU_VSFU_VFCOS_V, VU_VSFU_VFTANH_V, VU_VSFU_VFSIGMOID_V, VU_VSFU_VFEXP_V, VU_VSFU_VFEXP2_V, VU_VSFU_VFLN_V, VU_VSFU_VFLOG2_V, VU_VSFU_VFSQRT_V, VU_VSFU_VFRCP_V, VU_VSFU_VFRSQRT_V, VU_VSFU_CUSTOM_FIT: begin
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
-                        {8'h05, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
-                        {8'h00, 8'h05} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h05, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
+                        {8'h00, 8'h05} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
                     }
                     end
                     default: begin
@@ -1678,8 +1678,8 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
                 unique case (cross_inst_1_vsfu1_type)
                     VU_VSFU_VFSIN_V, VU_VSFU_VFCOS_V, VU_VSFU_VFTANH_V, VU_VSFU_VFSIGMOID_V, VU_VSFU_VFEXP_V, VU_VSFU_VFEXP2_V, VU_VSFU_VFLN_V, VU_VSFU_VFLOG2_V, VU_VSFU_VFSQRT_V, VU_VSFU_VFRCP_V, VU_VSFU_VFRSQRT_V, VU_VSFU_CUSTOM_FIT: begin
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
-                        {8'h06, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight;
-                        {8'h00, 8'h06} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight;
+                        {8'h06, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
+                        {8'h00, 8'h06} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
                     }
                     end
                     default: begin
@@ -1723,28 +1723,28 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
                 unique case (cross_inst_1_valu0_type)
                     VU_VALU0_VFADD_VV, VU_VALU0_VFSUB_VV, VU_VALU0_VFMUL_VV, VU_VALU0_VFDIV_VV, VU_VALU0_VFMIN_VV, VU_VALU0_VFMAX_VV, VU_VALU0_VFSGNJ_VV, VU_VALU0_VFSGNJN_VV, VU_VALU0_VFSGNJX_VV, VU_VALU0_VMFEQ_VV, VU_VALU0_VMFNE_VV, VU_VALU0_VMFLT_VV, VU_VALU0_VMFLE_VV, VU_VALU0_VFMERGE_VVM: begin
                     {valu0_op_src1_sel, valu0_op_src2_sel, valu0_op_src3_sel, mask_op_valu0_mask_sel} dist {
-                        {8'h30, 8'h31, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight;
-                        {8'h31, 8'h30, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight;
+                        {8'h30, 8'h31, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
+                        {8'h31, 8'h30, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
                     }
                     end
                     VU_VALU0_VFADD_VF, VU_VALU0_VFSUB_VF, VU_VALU0_VFRSUB_VF, VU_VALU0_VFMUL_VF, VU_VALU0_VFMIN_VF, VU_VALU0_VFMAX_VF, VU_VALU0_VFSGNJ_VF, VU_VALU0_VFSGNJN_VF, VU_VALU0_VFSGNJX_VF, VU_VALU0_VMFEQ_VF, VU_VALU0_VMFNE_VF, VU_VALU0_VMFLT_VF, VU_VALU0_VMFLE_VF, VU_VALU0_VMFGT_VF, VU_VALU0_VMFGE_VF, VU_VALU0_VFMERGE_VFM: begin
                     {valu0_op_src1_sel, valu0_op_src2_sel, valu0_op_src3_sel, mask_op_valu0_mask_sel} dist {
-                        {8'h51, 8'h30, 8'h00, 8'h40} := inst_gen_cfg.sel_pair_weight;
-                        {8'h51, 8'h31, 8'h00, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight;
+                        {8'h51, 8'h30, 8'h00, 8'h40} := inst_gen_cfg.sel_pair_weight,
+                        {8'h51, 8'h31, 8'h00, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight
                     }
                     end
                     VU_VALU0_VFMV_V_F: valu0_op_src1_sel == 8'h51 && valu0_op_src2_sel == 8'h00 && valu0_op_src3_sel == 8'h00 && mask_op_valu0_mask_sel == 8'h00;
                     VU_VALU0_VFMV_S_F: valu0_op_src1_sel == 8'h51 && valu0_op_src3_sel == 8'h00 && mask_op_valu0_mask_sel == 8'h00;
                     VU_VALU0_VFMACC_VF, VU_VALU0_VFNMACC_VF, VU_VALU0_VFMSAC_VF, VU_VALU0_VFNMSAC_VF: begin
                     {valu0_op_src1_sel, valu0_op_src2_sel, valu0_op_src3_sel, mask_op_valu0_mask_sel} dist {
-                        {8'h51, 8'h30, 8'h31, 8'h00} := inst_gen_cfg.sel_pair_weight;
-                        {8'h51, 8'h31, 8'h30, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight;
+                        {8'h51, 8'h30, 8'h31, 8'h00} := inst_gen_cfg.sel_pair_weight,
+                        {8'h51, 8'h31, 8'h30, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
                     }
                     end
                     VU_VALU0_VFCLASS_MV: begin
                     {valu0_op_src1_sel, mask_op_valu0_mask_sel} dist {
-                        {8'h30, 8'h40} := inst_gen_cfg.sel_pair_weight;
-                        {8'h31, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight;
+                        {8'h30, 8'h40} := inst_gen_cfg.sel_pair_weight,
+                        {8'h31, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight
                     }
                     end
                     default: begin
@@ -1773,27 +1773,27 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
                 unique case (cross_inst_1_valu1_type)
                     VU_VALU1_VFADD_VV, VU_VALU1_VFSUB_VV, VU_VALU1_VFMUL_VV, VU_VALU1_VFMIN_VV, VU_VALU1_VFMAX_VV: begin
                     {valu1_op_src1_sel, valu1_op_src2_sel, valu1_op_src3_sel, mask_op_valu1_mask_sel} dist {
-                        {8'h30, 8'h31, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight;
-                        {8'h31, 8'h30, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight;
+                        {8'h30, 8'h31, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
+                        {8'h31, 8'h30, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
                     }
                     end
                     VU_VALU1_VFADD_VF, VU_VALU1_VFSUB_VF, VU_VALU1_VFRSUB_VF, VU_VALU1_VFMUL_VF, VU_VALU1_VFMIN_VF, VU_VALU1_VFMAX_VF, VU_VALU1_VFREDUSUM_VS, VU_VALU1_VFREDMAX_VS, VU_VALU1_VFREDMIN_VS: begin
                     {valu1_op_src1_sel, valu1_op_src2_sel, valu1_op_src3_sel, mask_op_valu1_mask_sel} dist {
-                        {8'h52, 8'h30, 8'h00, 8'h40} := inst_gen_cfg.sel_pair_weight;
-                        {8'h52, 8'h31, 8'h00, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight;
+                        {8'h52, 8'h30, 8'h00, 8'h40} := inst_gen_cfg.sel_pair_weight,
+                        {8'h52, 8'h31, 8'h00, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight
                     }
                     end
                     VU_VALU1_VFMV_V_F: valu1_op_src1_sel == 8'h52 && valu1_op_src2_sel == 8'h00 && valu1_op_src3_sel == 8'h00 && mask_op_valu1_mask_sel == 8'h00;
                     VU_VALU1_VFMV_F_S: begin
                     {valu1_op_src1_sel, valu1_op_src3_sel, mask_op_valu1_mask_sel} dist {
-                        {8'h30, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight;
-                        {8'h31, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight;
+                        {8'h30, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
+                        {8'h31, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
                     }
                     end
                     VU_VALU1_VSORTMAX16_V, VU_VALU1_VSORTMIN16_V: begin
                     {valu1_op_src1_sel, valu1_op_src2_sel, valu1_op_src3_sel, mask_op_valu1_mask_sel} dist {
-                        {8'h30, 8'h00, 8'h00, 8'h40} := inst_gen_cfg.sel_pair_weight;
-                        {8'h31, 8'h00, 8'h00, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight;
+                        {8'h30, 8'h00, 8'h00, 8'h40} := inst_gen_cfg.sel_pair_weight,
+                        {8'h31, 8'h00, 8'h00, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight
                     }
                     end
                     default: begin
@@ -1822,27 +1822,27 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
                 unique case (cross_inst_1_valu2_type)
                     VU_VALU2_VFADD_VV, VU_VALU2_VFSUB_VV, VU_VALU2_VFMUL_VV, VU_VALU2_VFMIN_VV, VU_VALU2_VFMAX_VV: begin
                     {valu2_op_src1_sel, valu2_op_src2_sel, valu2_op_src3_sel, mask_op_valu2_mask_sel} dist {
-                        {8'h30, 8'h31, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight;
-                        {8'h31, 8'h30, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight;
+                        {8'h30, 8'h31, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
+                        {8'h31, 8'h30, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
                     }
                     end
                     VU_VALU2_VFADD_VF, VU_VALU2_VFSUB_VF, VU_VALU2_VFRSUB_VF, VU_VALU2_VFMUL_VF, VU_VALU2_VFMIN_VF, VU_VALU2_VFMAX_VF: begin
                     {valu2_op_src1_sel, valu2_op_src2_sel, valu2_op_src3_sel, mask_op_valu2_mask_sel} dist {
-                        {8'h53, 8'h30, 8'h00, 8'h40} := inst_gen_cfg.sel_pair_weight;
-                        {8'h53, 8'h31, 8'h00, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight;
+                        {8'h53, 8'h30, 8'h00, 8'h40} := inst_gen_cfg.sel_pair_weight,
+                        {8'h53, 8'h31, 8'h00, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight
                     }
                     end
                     VU_VALU2_VFMV_V_F: valu2_op_src1_sel == 8'h53 && valu2_op_src2_sel == 8'h00 && valu2_op_src3_sel == 8'h00 && mask_op_valu2_mask_sel == 8'h00;
                     VU_VALU2_VMV_V_V, VU_VALU2_VSWAP2_V: begin
                     {valu2_op_src1_sel, valu2_op_src2_sel, valu2_op_src3_sel, mask_op_valu2_mask_sel} dist {
-                        {8'h30, 8'h00, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight;
-                        {8'h31, 8'h00, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight;
+                        {8'h30, 8'h00, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
+                        {8'h31, 8'h00, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
                     }
                     end
                     VU_VALU2_VFSLIDE1UP_VF, VU_VALU2_VFSLIDE1DOWN_VF: begin
                     {valu2_op_src1_sel, valu2_op_src2_sel, valu2_op_src3_sel, mask_op_valu2_mask_sel} dist {
-                        {8'h53, 8'h30, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight;
-                        {8'h53, 8'h31, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight;
+                        {8'h53, 8'h30, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
+                        {8'h53, 8'h31, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
                     }
                     end
                     default: begin
@@ -1901,20 +1901,20 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
                 unique case (cross_inst_1_mexe_type)
                     VU_MEXE_VMAND_MM, VU_MEXE_VMNAND_MM, VU_MEXE_VMANDN_MM, VU_MEXE_VMXOR_MM, VU_MEXE_VMOR_MM, VU_MEXE_VMNOR_MM, VU_MEXE_VMORN_MM, VU_MEXE_VMXNOR_MM: begin
                     {mexe_op_src1_sel, mexe_op_src2_sel} dist {
-                        {8'h40, 8'h41} := inst_gen_cfg.sel_pair_weight;
-                        {8'h41, 8'h40} := 100 - inst_gen_cfg.sel_pair_weight;
+                        {8'h40, 8'h41} := inst_gen_cfg.sel_pair_weight,
+                        {8'h41, 8'h40} := 100 - inst_gen_cfg.sel_pair_weight
                     }
                     end
                     VU_MEXE_VCPOP_M, VU_MEXE_VFIRST_M, VU_MEXE_VMSBF_M, VU_MEXE_VMSIF_M, VU_MEXE_VMSOF_M: begin
                     {mexe_op_src1_sel, mexe_op_src2_sel} dist {
-                        {8'h40, 8'h00} := inst_gen_cfg.sel_pair_weight;
-                        {8'h41, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight;
+                        {8'h40, 8'h00} := inst_gen_cfg.sel_pair_weight,
+                        {8'h41, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
                     }
                     end
                     VU_MEXE_VMIUSET_MV, VU_MEXE_VMISET_MV: begin
                     {mexe_op_src1_sel, mexe_op_src2_sel} dist {
-                        {8'h40, 8'h30} := inst_gen_cfg.sel_pair_weight;
-                        {8'h41, 8'h31} := 100 - inst_gen_cfg.sel_pair_weight;
+                        {8'h40, 8'h30} := inst_gen_cfg.sel_pair_weight,
+                        {8'h41, 8'h31} := 100 - inst_gen_cfg.sel_pair_weight
                     }
                     end
                     default: begin
@@ -1969,7 +1969,7 @@ class cross_2_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_2_type == inst_gen_cfg.cross_2_cfg.cross_inst_2_type;
         } else {
             cross_inst_2_type dist {
-                VU_CROSS_INST_2_NOP      := inst_gen_cfg.cross_2_cfg.cross_inst_2_type_dist[VU_CROSS_INST_2_NOP];
+                VU_CROSS_INST_2_NOP      := inst_gen_cfg.cross_2_cfg.cross_inst_2_type_dist[VU_CROSS_INST_2_NOP]
             };
         }
     }
@@ -1994,7 +1994,7 @@ class cross_2_bypass_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_2_type == inst_gen_cfg.cross_2_cfg.cross_inst_2_type;
         } else {
             cross_inst_2_type dist {
-                VU_CROSS_INST_2_NOP      := inst_gen_cfg.cross_2_cfg.cross_inst_2_type_dist[VU_CROSS_INST_2_NOP];
+                VU_CROSS_INST_2_NOP      := inst_gen_cfg.cross_2_cfg.cross_inst_2_type_dist[VU_CROSS_INST_2_NOP]
             };
         }
     }
@@ -2018,7 +2018,7 @@ class cross_3_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_3_type == inst_gen_cfg.cross_3_cfg.cross_inst_3_type;
         } else {
             cross_inst_3_type dist {
-                VU_CROSS_INST_3_NOP      := inst_gen_cfg.cross_3_cfg.cross_inst_3_type_dist[VU_CROSS_INST_3_NOP];
+                VU_CROSS_INST_3_NOP      := inst_gen_cfg.cross_3_cfg.cross_inst_3_type_dist[VU_CROSS_INST_3_NOP]
             };
         }
     }
@@ -2043,7 +2043,7 @@ class cross_3_bypass_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_3_type == inst_gen_cfg.cross_3_cfg.cross_inst_3_type;
         } else {
             cross_inst_3_type dist {
-                VU_CROSS_INST_3_NOP      := inst_gen_cfg.cross_3_cfg.cross_inst_3_type_dist[VU_CROSS_INST_3_NOP];
+                VU_CROSS_INST_3_NOP      := inst_gen_cfg.cross_3_cfg.cross_inst_3_type_dist[VU_CROSS_INST_3_NOP]
             };
         }
     }
@@ -2067,7 +2067,7 @@ class cross_4_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_4_type == inst_gen_cfg.cross_4_cfg.cross_inst_4_type;
         } else {
             cross_inst_4_type dist {
-                VU_CROSS_INST_4_NOP      := inst_gen_cfg.cross_4_cfg.cross_inst_4_type_dist[VU_CROSS_INST_4_NOP];
+                VU_CROSS_INST_4_NOP      := inst_gen_cfg.cross_4_cfg.cross_inst_4_type_dist[VU_CROSS_INST_4_NOP]
             };
         }
     }
@@ -2092,7 +2092,7 @@ class cross_4_bypass_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_4_type == inst_gen_cfg.cross_4_cfg.cross_inst_4_type;
         } else {
             cross_inst_4_type dist {
-                VU_CROSS_INST_4_NOP      := inst_gen_cfg.cross_4_cfg.cross_inst_4_type_dist[VU_CROSS_INST_4_NOP];
+                VU_CROSS_INST_4_NOP      := inst_gen_cfg.cross_4_cfg.cross_inst_4_type_dist[VU_CROSS_INST_4_NOP]
             };
         }
     }
@@ -2116,7 +2116,7 @@ class cross_5_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_5_type == inst_gen_cfg.cross_5_cfg.cross_inst_5_type;
         } else {
             cross_inst_5_type dist {
-                VU_CROSS_INST_5_NOP      := inst_gen_cfg.cross_5_cfg.cross_inst_5_type_dist[VU_CROSS_INST_5_NOP];
+                VU_CROSS_INST_5_NOP      := inst_gen_cfg.cross_5_cfg.cross_inst_5_type_dist[VU_CROSS_INST_5_NOP]
             };
         }
     }
@@ -2141,7 +2141,7 @@ class cross_5_bypass_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_5_type == inst_gen_cfg.cross_5_cfg.cross_inst_5_type;
         } else {
             cross_inst_5_type dist {
-                VU_CROSS_INST_5_NOP      := inst_gen_cfg.cross_5_cfg.cross_inst_5_type_dist[VU_CROSS_INST_5_NOP];
+                VU_CROSS_INST_5_NOP      := inst_gen_cfg.cross_5_cfg.cross_inst_5_type_dist[VU_CROSS_INST_5_NOP]
             };
         }
     }
@@ -2165,7 +2165,7 @@ class cross_6_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_6_type == inst_gen_cfg.cross_6_cfg.cross_inst_6_type;
         } else {
             cross_inst_6_type dist {
-                VU_CROSS_INST_6_NOP      := inst_gen_cfg.cross_6_cfg.cross_inst_6_type_dist[VU_CROSS_INST_6_NOP];
+                VU_CROSS_INST_6_NOP      := inst_gen_cfg.cross_6_cfg.cross_inst_6_type_dist[VU_CROSS_INST_6_NOP]
             };
         }
     }
@@ -2190,7 +2190,7 @@ class cross_6_bypass_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_6_type == inst_gen_cfg.cross_6_cfg.cross_inst_6_type;
         } else {
             cross_inst_6_type dist {
-                VU_CROSS_INST_6_NOP      := inst_gen_cfg.cross_6_cfg.cross_inst_6_type_dist[VU_CROSS_INST_6_NOP];
+                VU_CROSS_INST_6_NOP      := inst_gen_cfg.cross_6_cfg.cross_inst_6_type_dist[VU_CROSS_INST_6_NOP]
             };
         }
     }
@@ -2214,7 +2214,7 @@ class cross_7_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_7_type == inst_gen_cfg.cross_7_cfg.cross_inst_7_type;
         } else {
             cross_inst_7_type dist {
-                VU_CROSS_INST_7_NOP      := inst_gen_cfg.cross_7_cfg.cross_inst_7_type_dist[VU_CROSS_INST_7_NOP];
+                VU_CROSS_INST_7_NOP      := inst_gen_cfg.cross_7_cfg.cross_inst_7_type_dist[VU_CROSS_INST_7_NOP]
             };
         }
     }
@@ -2239,7 +2239,7 @@ class cross_7_bypass_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_7_type == inst_gen_cfg.cross_7_cfg.cross_inst_7_type;
         } else {
             cross_inst_7_type dist {
-                VU_CROSS_INST_7_NOP      := inst_gen_cfg.cross_7_cfg.cross_inst_7_type_dist[VU_CROSS_INST_7_NOP];
+                VU_CROSS_INST_7_NOP      := inst_gen_cfg.cross_7_cfg.cross_inst_7_type_dist[VU_CROSS_INST_7_NOP]
             };
         }
     }
@@ -2263,7 +2263,7 @@ class cross_8_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_8_type == inst_gen_cfg.cross_8_cfg.cross_inst_8_type;
         } else {
             cross_inst_8_type dist {
-                VU_CROSS_INST_8_NOP      := inst_gen_cfg.cross_8_cfg.cross_inst_8_type_dist[VU_CROSS_INST_8_NOP];
+                VU_CROSS_INST_8_NOP      := inst_gen_cfg.cross_8_cfg.cross_inst_8_type_dist[VU_CROSS_INST_8_NOP]
             };
         }
     }
@@ -2288,7 +2288,7 @@ class cross_8_bypass_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_8_type == inst_gen_cfg.cross_8_cfg.cross_inst_8_type;
         } else {
             cross_inst_8_type dist {
-                VU_CROSS_INST_8_NOP      := inst_gen_cfg.cross_8_cfg.cross_inst_8_type_dist[VU_CROSS_INST_8_NOP];
+                VU_CROSS_INST_8_NOP      := inst_gen_cfg.cross_8_cfg.cross_inst_8_type_dist[VU_CROSS_INST_8_NOP]
             };
         }
     }
@@ -2312,7 +2312,7 @@ class cross_9_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_9_type == inst_gen_cfg.cross_9_cfg.cross_inst_9_type;
         } else {
             cross_inst_9_type dist {
-                VU_CROSS_INST_9_NOP      := inst_gen_cfg.cross_9_cfg.cross_inst_9_type_dist[VU_CROSS_INST_9_NOP];
+                VU_CROSS_INST_9_NOP      := inst_gen_cfg.cross_9_cfg.cross_inst_9_type_dist[VU_CROSS_INST_9_NOP]
             };
         }
     }
@@ -2337,7 +2337,7 @@ class cross_9_bypass_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_9_type == inst_gen_cfg.cross_9_cfg.cross_inst_9_type;
         } else {
             cross_inst_9_type dist {
-                VU_CROSS_INST_9_NOP      := inst_gen_cfg.cross_9_cfg.cross_inst_9_type_dist[VU_CROSS_INST_9_NOP];
+                VU_CROSS_INST_9_NOP      := inst_gen_cfg.cross_9_cfg.cross_inst_9_type_dist[VU_CROSS_INST_9_NOP]
             };
         }
     }
@@ -2361,7 +2361,7 @@ class cross_10_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_10_type == inst_gen_cfg.cross_10_cfg.cross_inst_10_type;
         } else {
             cross_inst_10_type dist {
-                VU_CROSS_INST_10_NOP     := inst_gen_cfg.cross_10_cfg.cross_inst_10_type_dist[VU_CROSS_INST_10_NOP];
+                VU_CROSS_INST_10_NOP     := inst_gen_cfg.cross_10_cfg.cross_inst_10_type_dist[VU_CROSS_INST_10_NOP]
             };
         }
     }
@@ -2386,7 +2386,7 @@ class cross_10_bypass_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_10_type == inst_gen_cfg.cross_10_cfg.cross_inst_10_type;
         } else {
             cross_inst_10_type dist {
-                VU_CROSS_INST_10_NOP     := inst_gen_cfg.cross_10_cfg.cross_inst_10_type_dist[VU_CROSS_INST_10_NOP];
+                VU_CROSS_INST_10_NOP     := inst_gen_cfg.cross_10_cfg.cross_inst_10_type_dist[VU_CROSS_INST_10_NOP]
             };
         }
     }
@@ -2410,7 +2410,7 @@ class cross_11_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_11_type == inst_gen_cfg.cross_11_cfg.cross_inst_11_type;
         } else {
             cross_inst_11_type dist {
-                VU_CROSS_INST_11_NOP     := inst_gen_cfg.cross_11_cfg.cross_inst_11_type_dist[VU_CROSS_INST_11_NOP];
+                VU_CROSS_INST_11_NOP     := inst_gen_cfg.cross_11_cfg.cross_inst_11_type_dist[VU_CROSS_INST_11_NOP]
             };
         }
     }
@@ -2435,7 +2435,7 @@ class cross_11_bypass_gen_seq_item extends vu_mac_inst_seq_item;
             cross_inst_11_type == inst_gen_cfg.cross_11_cfg.cross_inst_11_type;
         } else {
             cross_inst_11_type dist {
-                VU_CROSS_INST_11_NOP     := inst_gen_cfg.cross_11_cfg.cross_inst_11_type_dist[VU_CROSS_INST_11_NOP];
+                VU_CROSS_INST_11_NOP     := inst_gen_cfg.cross_11_cfg.cross_inst_11_type_dist[VU_CROSS_INST_11_NOP]
             };
         }
     }
@@ -2475,12 +2475,12 @@ class vu_reg_read_seq_item extends uvm_sequence_item;
             reg_read_addr_cat == inst_gen_cfg.reg_read_addr_cat;
         } else {
             reg_read_addr_cat dist {
-                VU_REG_READ_CAT_DYN_PARAM    := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_DYN_PARAM];
-                VU_REG_READ_CAT_STATIC_CFG   := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_STATIC_CFG];
-                VU_REG_READ_CAT_DSA_RF       := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_DSA_RF];
-                VU_REG_READ_CAT_STATUS       := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_STATUS];
-                VU_REG_READ_CAT_PROFILE      := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_PROFILE];
-                VU_REG_READ_CAT_ILLEGAL      := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_ILLEGAL];
+                VU_REG_READ_CAT_DYN_PARAM    := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_DYN_PARAM],
+                VU_REG_READ_CAT_STATIC_CFG   := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_STATIC_CFG],
+                VU_REG_READ_CAT_DSA_RF       := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_DSA_RF],
+                VU_REG_READ_CAT_STATUS       := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_STATUS],
+                VU_REG_READ_CAT_PROFILE      := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_PROFILE],
+                VU_REG_READ_CAT_ILLEGAL      := inst_gen_cfg.reg_read_addr_cat_dist[VU_REG_READ_CAT_ILLEGAL]
             };
         }
     }
@@ -2494,8 +2494,8 @@ class vu_reg_read_seq_item extends uvm_sequence_item;
     constraint reg_read_addr_align_c {
         if (!inst_gen_cfg.fix_reg_read_addr_en) {
             reg_read_addr[1:0] dist {
-                2'b00              := inst_gen_cfg.align_addr_weight;
-                [2'b01:2'b11]      := 100 - inst_gen_cfg.align_addr_weight;
+                2'b00              := inst_gen_cfg.align_addr_weight,
+                [2'b01:2'b11]      := 100 - inst_gen_cfg.align_addr_weight
             };
         }
     }
