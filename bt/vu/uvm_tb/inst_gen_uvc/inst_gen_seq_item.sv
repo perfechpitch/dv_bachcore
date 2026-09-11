@@ -61,12 +61,14 @@ class inst_gen_seq_item extends inst_gen_base_seq_item;
     rand mu_inst_type_e          mu_inst_type;
     rand vu_inst_type_e          vu_inst_type;
     rand int                    vld_delay;
+    rand bit                    src_bypass;
 
     `uvm_object_utils_begin(inst_gen_seq_item)
         `uvm_field_enum         (inst_type_e,           inst_type,          UVM_DEFAULT)
         `uvm_field_enum         (mu_inst_type_e,        mu_inst_type,       UVM_DEFAULT)
         `uvm_field_enum         (vu_inst_type_e,        vu_inst_type,       UVM_DEFAULT)
         `uvm_field_int          (vld_delay,                                 UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (src_bypass,                                UVM_DEFAULT)
     `uvm_object_utils_end
     
     function new (string name = "inst_gen_seq_item");
@@ -125,6 +127,19 @@ class inst_gen_seq_item extends inst_gen_base_seq_item;
                 [1:10]   := inst_gen_cfg.vld_delay_dist[1];
                 [11:50]  := inst_gen_cfg.vld_delay_dist[2];
                 [51:100] := inst_gen_cfg.vld_delay_dist[3];
+            };
+        }
+    }
+    constraint src_bypass_c {
+        // cross_1 无 bypass；仅 cross_2~11 可选 cross_N_gen / cross_N_bypass_gen
+        if (vu_inst_type == CROSS_INST_1) {
+            src_bypass == 1'b0;
+        } else if(inst_gen_cfg.fix_src_bypass_en) {
+            src_bypass == inst_gen_cfg.src_bypass;
+        } else {
+            src_bypass dist {
+                1 := inst_gen_cfg.src_bypass_weight;
+                0 := 100 - inst_gen_cfg.src_bypass_weight;
             };
         }
     }

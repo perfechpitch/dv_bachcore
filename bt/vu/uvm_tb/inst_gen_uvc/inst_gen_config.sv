@@ -455,6 +455,8 @@ class inst_gen_config extends uvm_object;
     bit                 fix_vsfu_op_vsfu1_opcode_en=0;
     rand logic [7:0]    vsfu_op_vsfu1_opcode;
     // ===================== VU 寄存器位域 fix（含 sheet 固定值字段） =====================
+    bit                 fix_inf_replace_value_inf_replace_value_en=0;
+    rand logic [31:0]     inf_replace_value_inf_replace_value;
     bit                 fix_lu_op_stride_run_en=0;
     rand logic [7:0]      lu_op_stride_run;
     bit                 fix_lu_op_stride_skip_en=0;
@@ -483,6 +485,8 @@ class inst_gen_config extends uvm_object;
     rand logic [7:0]      mexe_op_src1_sel;
     bit                 fix_mexe_op_src2_sel_en=0;
     rand logic [7:0]      mexe_op_src2_sel;
+    bit                 fix_nan_replace_value_nan_replace_value_en=0;
+    rand logic [31:0]     nan_replace_value_nan_replace_value;
     bit                 fix_prf_op_mrf_wt_src_en=0;
     rand logic [7:0]      prf_op_mrf_wt_src;
     bit                 fix_prf_op_srf_wt_en_en=0;
@@ -583,6 +587,8 @@ class inst_gen_config extends uvm_object;
     rand logic [7:0]      vsfu_op_vsfu1_src1_sel;
     // ===================== VRF_WT P0/P1 配对分布 =====================
     rand int unsigned   prf_op_vrf_wt_pair_weight;
+    // ===================== SRC/MASK 联合分布 =====================
+    rand int unsigned   sel_pair_weight;
     // ===================== VU 寄存器读地址分类控制 =====================
     bit                         fix_reg_read_addr_cat_en=0;
     rand vu_reg_read_addr_cat_e reg_read_addr_cat;
@@ -609,6 +615,10 @@ class inst_gen_config extends uvm_object;
     bit                 fix_vld_delay_en=0;
     rand int unsigned   vld_delay;
     rand int unsigned   vld_delay_dist[];
+    // ===================== SRC bypass 控制 =====================
+    bit                 fix_src_bypass_en=0;
+    rand bit            src_bypass;
+    rand int unsigned   src_bypass_weight;
     // ===================== 场景类型控制 =====================
     rand int unsigned   case_type_dist[];
 
@@ -660,6 +670,8 @@ class inst_gen_config extends uvm_object;
         `uvm_field_int          (vsfu_op_vsfu0_opcode,                                  UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (fix_vsfu_op_vsfu1_opcode_en,                               UVM_DEFAULT)
         `uvm_field_int          (vsfu_op_vsfu1_opcode,                                  UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (fix_inf_replace_value_inf_replace_value_en,                               UVM_DEFAULT)
+        `uvm_field_int          (inf_replace_value_inf_replace_value,                                  UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (fix_lu_op_stride_run_en,                               UVM_DEFAULT)
         `uvm_field_int          (lu_op_stride_run,                                  UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (fix_lu_op_stride_skip_en,                               UVM_DEFAULT)
@@ -688,6 +700,8 @@ class inst_gen_config extends uvm_object;
         `uvm_field_int          (mexe_op_src1_sel,                                  UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (fix_mexe_op_src2_sel_en,                               UVM_DEFAULT)
         `uvm_field_int          (mexe_op_src2_sel,                                  UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (fix_nan_replace_value_nan_replace_value_en,                               UVM_DEFAULT)
+        `uvm_field_int          (nan_replace_value_nan_replace_value,                                  UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (fix_prf_op_mrf_wt_src_en,                               UVM_DEFAULT)
         `uvm_field_int          (prf_op_mrf_wt_src,                                  UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (fix_prf_op_srf_wt_en_en,                               UVM_DEFAULT)
@@ -787,6 +801,7 @@ class inst_gen_config extends uvm_object;
         `uvm_field_int          (fix_vsfu_op_vsfu1_src1_sel_en,                               UVM_DEFAULT)
         `uvm_field_int          (vsfu_op_vsfu1_src1_sel,                                  UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (prf_op_vrf_wt_pair_weight,                  UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (sel_pair_weight,                            UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (fix_reg_read_addr_cat_en,                  UVM_DEFAULT)
         `uvm_field_enum         (vu_reg_read_addr_cat_e, reg_read_addr_cat, UVM_DEFAULT)
         `uvm_field_array_int    (reg_read_addr_cat_dist,                   UVM_DEFAULT | UVM_DEC)
@@ -808,6 +823,9 @@ class inst_gen_config extends uvm_object;
         `uvm_field_int          (fix_vld_delay_en,                          UVM_DEFAULT)
         `uvm_field_int          (vld_delay,                                 UVM_DEFAULT | UVM_DEC)
         `uvm_field_array_int    (vld_delay_dist,                            UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (fix_src_bypass_en,                         UVM_DEFAULT)
+        `uvm_field_int          (src_bypass,                                UVM_DEFAULT)
+        `uvm_field_int          (src_bypass_weight,                         UVM_DEFAULT | UVM_DEC)
     `uvm_object_utils_end
     
     function new (string name = "inst_gen_config");
@@ -842,6 +860,10 @@ class inst_gen_config extends uvm_object;
          vld_delay_dist.size() == 4;
          foreach(vld_delay_dist[i])
              vld_delay_dist[i] inside {[0:100]};
+    }
+
+    constraint src_bypass_weight_c {
+        src_bypass_weight inside {[0:100]};
     }
 
     constraint inst_type_dist_c {
@@ -883,6 +905,9 @@ class inst_gen_config extends uvm_object;
     }
     constraint prf_op_vrf_wt_pair_weight_c {
         prf_op_vrf_wt_pair_weight inside {[0:100]};
+    }
+    constraint sel_pair_weight_c {
+        sel_pair_weight inside {[0:100]};
     }
 
     constraint  case_type_dist_c{

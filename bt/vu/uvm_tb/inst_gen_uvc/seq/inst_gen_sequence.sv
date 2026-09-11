@@ -220,6 +220,18 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
             else
                 push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1054, inst_tr.rs1_data); // static_SRF_wt_index_0 数据
 
+            inst_tr = new_inst_tr(vu_inst);
+            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1058, vu_inst.pack_static_srf_wt_index_1_reg(inst_tr.rs1_data)); // static_SRF_wt_index_1 数据
+            else
+                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1058, inst_tr.rs1_data); // static_SRF_wt_index_1 数据
+
+            inst_tr = new_inst_tr(vu_inst);
+            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h105C, vu_inst.pack_inf_replace_value_reg(inst_tr.rs1_data)); // INF_REPLACE_VALUE 数据
+            else
+                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h105C, inst_tr.rs1_data); // INF_REPLACE_VALUE 数据
+
         end
 
         inst_tr = new_inst_tr(vu_inst);
@@ -227,7 +239,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
 
     endfunction
 
-    // 按 req.vu_inst_type 随机化对应 cross_N_gen_seq_item，结果写入 inst_q
+    // 按 req.vu_inst_type / src_bypass 选择 cross_N(_bypass)_gen_seq_item
     virtual function void gen_vu_inst();
         vu_inst_seq_item vu_inst;
 
@@ -242,94 +254,204 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                 vu_inst = vu_cross;
             end
             CROSS_INST_2: begin
-                cross_2_gen_seq_item vu_cross;
-                vu_cross = cross_2_gen_seq_item::type_id::create("vu_inst");
-                vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
-                if (!vu_cross.randomize()) begin
-                    `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                if (req.src_bypass) begin
+                    cross_2_bypass_gen_seq_item vu_cross;
+                    vu_cross = cross_2_bypass_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst bypass randomize failed")
+                    end
+                    vu_inst = vu_cross;
                 end
-                vu_inst = vu_cross;
+                else begin
+                    cross_2_gen_seq_item vu_cross;
+                    vu_cross = cross_2_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                    end
+                    vu_inst = vu_cross;
+                end
             end
             CROSS_INST_3: begin
-                cross_3_gen_seq_item vu_cross;
-                vu_cross = cross_3_gen_seq_item::type_id::create("vu_inst");
-                vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
-                if (!vu_cross.randomize()) begin
-                    `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                if (req.src_bypass) begin
+                    cross_3_bypass_gen_seq_item vu_cross;
+                    vu_cross = cross_3_bypass_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst bypass randomize failed")
+                    end
+                    vu_inst = vu_cross;
                 end
-                vu_inst = vu_cross;
+                else begin
+                    cross_3_gen_seq_item vu_cross;
+                    vu_cross = cross_3_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                    end
+                    vu_inst = vu_cross;
+                end
             end
             CROSS_INST_4: begin
-                cross_4_gen_seq_item vu_cross;
-                vu_cross = cross_4_gen_seq_item::type_id::create("vu_inst");
-                vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
-                if (!vu_cross.randomize()) begin
-                    `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                if (req.src_bypass) begin
+                    cross_4_bypass_gen_seq_item vu_cross;
+                    vu_cross = cross_4_bypass_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst bypass randomize failed")
+                    end
+                    vu_inst = vu_cross;
                 end
-                vu_inst = vu_cross;
+                else begin
+                    cross_4_gen_seq_item vu_cross;
+                    vu_cross = cross_4_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                    end
+                    vu_inst = vu_cross;
+                end
             end
             CROSS_INST_5: begin
-                cross_5_gen_seq_item vu_cross;
-                vu_cross = cross_5_gen_seq_item::type_id::create("vu_inst");
-                vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
-                if (!vu_cross.randomize()) begin
-                    `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                if (req.src_bypass) begin
+                    cross_5_bypass_gen_seq_item vu_cross;
+                    vu_cross = cross_5_bypass_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst bypass randomize failed")
+                    end
+                    vu_inst = vu_cross;
                 end
-                vu_inst = vu_cross;
+                else begin
+                    cross_5_gen_seq_item vu_cross;
+                    vu_cross = cross_5_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                    end
+                    vu_inst = vu_cross;
+                end
             end
             CROSS_INST_6: begin
-                cross_6_gen_seq_item vu_cross;
-                vu_cross = cross_6_gen_seq_item::type_id::create("vu_inst");
-                vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
-                if (!vu_cross.randomize()) begin
-                    `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                if (req.src_bypass) begin
+                    cross_6_bypass_gen_seq_item vu_cross;
+                    vu_cross = cross_6_bypass_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst bypass randomize failed")
+                    end
+                    vu_inst = vu_cross;
                 end
-                vu_inst = vu_cross;
+                else begin
+                    cross_6_gen_seq_item vu_cross;
+                    vu_cross = cross_6_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                    end
+                    vu_inst = vu_cross;
+                end
             end
             CROSS_INST_7: begin
-                cross_7_gen_seq_item vu_cross;
-                vu_cross = cross_7_gen_seq_item::type_id::create("vu_inst");
-                vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
-                if (!vu_cross.randomize()) begin
-                    `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                if (req.src_bypass) begin
+                    cross_7_bypass_gen_seq_item vu_cross;
+                    vu_cross = cross_7_bypass_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst bypass randomize failed")
+                    end
+                    vu_inst = vu_cross;
                 end
-                vu_inst = vu_cross;
+                else begin
+                    cross_7_gen_seq_item vu_cross;
+                    vu_cross = cross_7_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                    end
+                    vu_inst = vu_cross;
+                end
             end
             CROSS_INST_8: begin
-                cross_8_gen_seq_item vu_cross;
-                vu_cross = cross_8_gen_seq_item::type_id::create("vu_inst");
-                vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
-                if (!vu_cross.randomize()) begin
-                    `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                if (req.src_bypass) begin
+                    cross_8_bypass_gen_seq_item vu_cross;
+                    vu_cross = cross_8_bypass_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst bypass randomize failed")
+                    end
+                    vu_inst = vu_cross;
                 end
-                vu_inst = vu_cross;
+                else begin
+                    cross_8_gen_seq_item vu_cross;
+                    vu_cross = cross_8_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                    end
+                    vu_inst = vu_cross;
+                end
             end
             CROSS_INST_9: begin
-                cross_9_gen_seq_item vu_cross;
-                vu_cross = cross_9_gen_seq_item::type_id::create("vu_inst");
-                vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
-                if (!vu_cross.randomize()) begin
-                    `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                if (req.src_bypass) begin
+                    cross_9_bypass_gen_seq_item vu_cross;
+                    vu_cross = cross_9_bypass_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst bypass randomize failed")
+                    end
+                    vu_inst = vu_cross;
                 end
-                vu_inst = vu_cross;
+                else begin
+                    cross_9_gen_seq_item vu_cross;
+                    vu_cross = cross_9_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                    end
+                    vu_inst = vu_cross;
+                end
             end
             CROSS_INST_10: begin
-                cross_10_gen_seq_item vu_cross;
-                vu_cross = cross_10_gen_seq_item::type_id::create("vu_inst");
-                vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
-                if (!vu_cross.randomize()) begin
-                    `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                if (req.src_bypass) begin
+                    cross_10_bypass_gen_seq_item vu_cross;
+                    vu_cross = cross_10_bypass_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst bypass randomize failed")
+                    end
+                    vu_inst = vu_cross;
                 end
-                vu_inst = vu_cross;
+                else begin
+                    cross_10_gen_seq_item vu_cross;
+                    vu_cross = cross_10_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                    end
+                    vu_inst = vu_cross;
+                end
             end
             CROSS_INST_11: begin
-                cross_11_gen_seq_item vu_cross;
-                vu_cross = cross_11_gen_seq_item::type_id::create("vu_inst");
-                vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
-                if (!vu_cross.randomize()) begin
-                    `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                if (req.src_bypass) begin
+                    cross_11_bypass_gen_seq_item vu_cross;
+                    vu_cross = cross_11_bypass_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst bypass randomize failed")
+                    end
+                    vu_inst = vu_cross;
                 end
-                vu_inst = vu_cross;
+                else begin
+                    cross_11_gen_seq_item vu_cross;
+                    vu_cross = cross_11_gen_seq_item::type_id::create("vu_inst");
+                    vu_cross.inst_gen_cfg = p_sequencer.inst_gen_cfg;
+                    if (!vu_cross.randomize()) begin
+                        `uvm_fatal(get_type_name(), "vu_inst randomize failed")
+                    end
+                    vu_inst = vu_cross;
+                end
             end
             default: begin
                 `uvm_fatal(get_type_name(),

@@ -53,7 +53,8 @@ class vu_reg_creater extends uvm_component;
     m_my_block.create_field(32'h00000004, "TYPE_VL_VL", 0, 15, REG_RW);
     m_my_block.create_field(32'h00000004, "TYPE_VL_DATA_TYPE", 16, 16, REG_RW);
     m_my_block.create_field(32'h00000004, "TYPE_VL_ROUND_MODE", 17, 19, REG_RW);
-    m_my_block.create_field(32'h00000004, "TYPE_VL_RESERVED_31_20", 20, 31, REG_RO);
+    m_my_block.create_field(32'h00000004, "TYPE_VL_RESERVED_31_21", 21, 31, REG_RO);
+    m_my_block.create_field(32'h00000004, "TYPE_VL_NAN_INF_EN", 20, 20, REG_RW);
 
     m_my_block.create_reg("LD_addr", 32'h00000008, 32'h00000000, make_hdl_path("LD_addr"));
     m_my_block.create_field(32'h00000008, "LD_addr_CM_ADDR", 0, 31, REG_RW);
@@ -410,6 +411,28 @@ class vu_reg_creater extends uvm_component;
       m_my_block.create_field(reg_addr, $sformatf("%s_RESERVED_31_16", reg_name), 16, 31, REG_RO);
     end
 
+    for (int i = 0; i < 8; i++) begin
+      string idx_str;
+      string reg_name;
+      int unsigned reg_addr;
+      idx_str = $sformatf("%0d", i);
+      reg_name = $sformatf("INF_REPLACE_VALUE_g%s", idx_str);
+      reg_addr = 32'h0000105C + i * 32'h00000100;
+      m_my_block.create_reg(reg_name, reg_addr, 32'h00000000, make_hdl_path(reg_name));
+      m_my_block.create_field(reg_addr, $sformatf("%s_INF_REPLACE_VALUE", reg_name), 0, 31, REG_RW);
+    end
+
+    for (int i = 0; i < 8; i++) begin
+      string idx_str;
+      string reg_name;
+      int unsigned reg_addr;
+      idx_str = $sformatf("%0d", i);
+      reg_name = $sformatf("NAN_REPLACE_VALUE_g%s", idx_str);
+      reg_addr = 32'h00001060 + i * 32'h00000100;
+      m_my_block.create_reg(reg_name, reg_addr, 32'h00000000, make_hdl_path(reg_name));
+      m_my_block.create_field(reg_addr, $sformatf("%s_NAN_REPLACE_VALUE", reg_name), 0, 31, REG_RW);
+    end
+
 
     //----- DSA-RF 读写寄存器 -----
     m_my_block.create_reg("reg_file_addr", 32'h00002000, 32'h00000000, make_hdl_path("reg_file_addr"));
@@ -434,22 +457,24 @@ class vu_reg_creater extends uvm_component;
 
     m_my_block.create_reg("error_code", 32'h00003008, 32'h00000000, make_hdl_path("error_code"));
     m_my_block.create_field(32'h00003008, "error_code_REG_ADDR_ERROR", 0, 0, REG_RO);
-    m_my_block.create_field(32'h00003008, "error_code_RESERVED_1_1", 1, 1, REG_RO);
-    m_my_block.create_field(32'h00003008, "error_code_CFG_ERROR", 2, 2, REG_RO);
-    m_my_block.create_field(32'h00003008, "error_code_RF_IDX_ERROR", 3, 3, REG_RO);
-    m_my_block.create_field(32'h00003008, "error_code_CM_ADDR_ERROR", 4, 4, REG_RO);
-    m_my_block.create_field(32'h00003008, "error_code_CM_RESP_ERROR", 5, 5, REG_RO);
-    m_my_block.create_field(32'h00003008, "error_code_DATA_CVT_ERROR", 6, 6, REG_RO);
-    m_my_block.create_field(32'h00003008, "error_code_RESERVED_31_7", 7, 31, REG_RO);
+    m_my_block.create_field(32'h00003008, "error_code_CFG_ERROR", 1, 1, REG_RO);
+    m_my_block.create_field(32'h00003008, "error_code_RF_IDX_ERROR", 2, 2, REG_RO);
+    m_my_block.create_field(32'h00003008, "error_code_CM_ADDR_ERROR", 3, 3, REG_RO);
+    m_my_block.create_field(32'h00003008, "error_code_NAN_ERROR", 4, 4, REG_RO);
+    m_my_block.create_field(32'h00003008, "error_code_VRF_ECC_ERROR", 5, 5, REG_RO);
+    m_my_block.create_field(32'h00003008, "error_code_MRF_ECC_ERROR", 6, 6, REG_RO);
+    m_my_block.create_field(32'h00003008, "error_code_SRF_ECC_ERROR", 7, 7, REG_RO);
+    m_my_block.create_field(32'h00003008, "error_code_CM_ECC_ERROR", 8, 8, REG_RO);
+    m_my_block.create_field(32'h00003008, "error_code_RESERVED_31_9", 9, 31, REG_RO);
 
     m_my_block.create_reg("error_info", 32'h0000300C, 32'h00000000, make_hdl_path("error_info"));
-    m_my_block.create_field(32'h0000300C, "error_info_STATIC_DYNAMIC_MASK", 0, 7, REG_RO);
-    m_my_block.create_field(32'h0000300C, "error_info_CONFIG_IDX", 8, 10, REG_RO);
-    m_my_block.create_field(32'h0000300C, "error_info_RESERVED_11_11", 11, 11, REG_RO);
-    m_my_block.create_field(32'h0000300C, "error_info_ERR_UNIT", 12, 15, REG_RO);
-    m_my_block.create_field(32'h0000300C, "error_info_FIRST_ERR", 16, 18, REG_RO);
-    m_my_block.create_field(32'h0000300C, "error_info_VALID", 19, 19, REG_RO);
-    m_my_block.create_field(32'h0000300C, "error_info_RESERVED_31_20", 20, 31, REG_RO);
+    m_my_block.create_field(32'h0000300C, "error_info_USER_ID", 0, 15, REG_RO);
+    m_my_block.create_field(32'h0000300C, "error_info_STREAM_ID", 16, 19, REG_RO);
+    m_my_block.create_field(32'h0000300C, "error_info_CONFIG_IDX", 20, 22, REG_RO);
+    m_my_block.create_field(32'h0000300C, "error_info_RESERVED_23_23", 23, 23, REG_RO);
+    m_my_block.create_field(32'h0000300C, "error_info_ERR_UNIT", 23, 26, REG_RO);
+    m_my_block.create_field(32'h0000300C, "error_info_FIRST_ERR", 27, 30, REG_RO);
+    m_my_block.create_field(32'h0000300C, "error_info_VALID", 31, 31, REG_RO);
 
     m_my_block.create_reg("snapshot_addr", 32'h00003010, 32'h00000000, make_hdl_path("snapshot_addr"));
     m_my_block.create_field(32'h00003010, "snapshot_addr_SNAP_IDX", 0, 3, REG_RW);
@@ -458,6 +483,38 @@ class vu_reg_creater extends uvm_component;
 
     m_my_block.create_reg("snapshot_data", 32'h00003014, 32'h00000000, make_hdl_path("snapshot_data"));
     m_my_block.create_field(32'h00003014, "snapshot_data_SNAP_DATA", 0, 31, REG_RO);
+
+    m_my_block.create_reg("vrf_err_info", 32'h00003018, 32'h00000000, make_hdl_path("vrf_err_info"));
+    m_my_block.create_field(32'h00003018, "vrf_err_info_USER_ID", 0, 15, REG_RO);
+    m_my_block.create_field(32'h00003018, "vrf_err_info_RF_ERR_IDX", 16, 24, REG_RO);
+    m_my_block.create_field(32'h00003018, "vrf_err_info_RESERVED_30_25", 25, 30, REG_RO);
+    m_my_block.create_field(32'h00003018, "vrf_err_info_VALID", 31, 31, REG_RO);
+
+    m_my_block.create_reg("mrf_err_info", 32'h0000301C, 32'h00000000, make_hdl_path("mrf_err_info"));
+    m_my_block.create_field(32'h0000301C, "mrf_err_info_USER_ID", 0, 15, REG_RO);
+    m_my_block.create_field(32'h0000301C, "mrf_err_info_RF_ERR_IDX", 16, 24, REG_RO);
+    m_my_block.create_field(32'h0000301C, "mrf_err_info_RESERVED_30_25", 25, 30, REG_RO);
+    m_my_block.create_field(32'h0000301C, "mrf_err_info_VALID", 31, 31, REG_RO);
+
+    m_my_block.create_reg("srf_err_info", 32'h00003020, 32'h00000000, make_hdl_path("srf_err_info"));
+    m_my_block.create_field(32'h00003020, "srf_err_info_USER_ID", 0, 15, REG_RO);
+    m_my_block.create_field(32'h00003020, "srf_err_info_RF_ERR_IDX", 16, 24, REG_RO);
+    m_my_block.create_field(32'h00003020, "srf_err_info_RESERVED_30_25", 25, 30, REG_RO);
+    m_my_block.create_field(32'h00003020, "srf_err_info_VALID", 31, 31, REG_RO);
+
+    m_my_block.create_reg("cm_err_info", 32'h00003024, 32'h00000000, make_hdl_path("cm_err_info"));
+    m_my_block.create_field(32'h00003024, "cm_err_info_USER_ID", 0, 15, REG_RO);
+    m_my_block.create_field(32'h00003024, "cm_err_info_DIR", 16, 16, REG_RO);
+    m_my_block.create_field(32'h00003024, "cm_err_info_RESERVED_30_17", 17, 30, REG_RO);
+    m_my_block.create_field(32'h00003024, "cm_err_info_VALID", 31, 31, REG_RO);
+
+    m_my_block.create_reg("cm_err_addr", 32'h00003028, 32'h00000000, make_hdl_path("cm_err_addr"));
+    m_my_block.create_field(32'h00003028, "cm_err_addr_CM_ERR_ADDR", 0, 31, REG_RO);
+
+    m_my_block.create_reg("nan_err_info", 32'h0000302C, 32'h00000000, make_hdl_path("nan_err_info"));
+    m_my_block.create_field(32'h0000302C, "nan_err_info_USER_ID", 0, 15, REG_RO);
+    m_my_block.create_field(32'h0000302C, "nan_err_info_RESERVED_30_16", 16, 30, REG_RO);
+    m_my_block.create_field(32'h0000302C, "nan_err_info_VALID", 31, 31, REG_RO);
 
 
     //----- Profile 寄存器 -----
@@ -645,6 +702,18 @@ class vu_reg_creater extends uvm_component;
 
     m_my_block.create_reg("mrf_wt_busy_cycle", 32'h000040F4, 32'h00000000, make_hdl_path("mrf_wt_busy_cycle"));
     m_my_block.create_field(32'h000040F4, "mrf_wt_busy_cycle_COUNT_31_0", 0, 31, REG_RO);
+
+    m_my_block.create_reg("nan_replace_cnt", 32'h000040F8, 32'h00000000, make_hdl_path("nan_replace_cnt"));
+    m_my_block.create_field(32'h000040F8, "nan_replace_cnt_COUNT", 0, 31, REG_RO);
+
+    m_my_block.create_reg("nan_replace_cnt", 32'h000040FC, 32'h00000000, make_hdl_path("nan_replace_cnt"));
+    m_my_block.create_field(32'h000040FC, "nan_replace_cnt_COUNT_31_0", 0, 31, REG_RO);
+
+    m_my_block.create_reg("inf_replace_cnt", 32'h00004100, 32'h00000000, make_hdl_path("inf_replace_cnt"));
+    m_my_block.create_field(32'h00004100, "inf_replace_cnt_COUNT", 0, 31, REG_RO);
+
+    m_my_block.create_reg("inf_replace_cnt", 32'h00004104, 32'h00000000, make_hdl_path("inf_replace_cnt"));
+    m_my_block.create_field(32'h00004104, "inf_replace_cnt_COUNT_31_0", 0, 31, REG_RO);
 
   endfunction
 
