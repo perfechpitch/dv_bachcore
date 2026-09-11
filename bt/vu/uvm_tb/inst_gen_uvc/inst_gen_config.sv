@@ -851,6 +851,18 @@ class inst_gen_config extends uvm_object;
             `uvm_fatal("inst_gen_config", $sformatf("only_one_cross: invalid cross_idx=%0d (valid: 1~%0d)", cross_idx, VU_INST_END))
     endfunction : only_one_cross
 
+    // cross_idx: 1~VU_INST_END，锁定单一 vu_inst_type；bypass: 0/1 控制 src_bypass_weight(0/100)
+    function void set_vu_scene(int cross_idx, bit bypass);
+        foreach (vu_inst_type_dist[i])
+            vu_inst_type_dist[i] = (cross_idx == i + 1) ? 100 : 0;
+        if (cross_idx < 1 || cross_idx > VU_INST_END)
+            `uvm_fatal("inst_gen_config", $sformatf("set_vu_scene: invalid cross_idx=%0d (valid: 1~%0d)", cross_idx, VU_INST_END))
+        // cross_1 无 bypass
+        if (cross_idx == 1 && bypass)
+            `uvm_fatal("inst_gen_config", "set_vu_scene: CROSS_INST_1 does not support bypass")
+        src_bypass_weight = bypass ? 100 : 0;
+    endfunction : set_vu_scene
+
     constraint first_delay_c  {
         first_delay inside {[0:10]};
     }
