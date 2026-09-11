@@ -37,6 +37,9 @@
 `define VU_OPCODE_VFMV_S_F     8'h21
 `define VU_OPCODE_VFMV_F_S     8'h22
 `define VU_OPCODE_VMV_V_V      8'h23
+`define VU_OPCODE_VSWAP2_V     8'h24
+`define VU_OPCODE_VFSLIDE1UP_VF 8'h25
+`define VU_OPCODE_VFSLIDE1DOWN_VF 8'h26
 `define VU_OPCODE_VFMACC_VV    8'h30
 `define VU_OPCODE_VFMACC_VF    8'h31
 `define VU_OPCODE_VFNMACC_VV   8'h32

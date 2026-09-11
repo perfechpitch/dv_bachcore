@@ -234,12 +234,10 @@ localparam int MASK_OP_COUNT = 8;
 localparam bit [31:0] MASK_OP_STRIDE = 32'h00000100;
 localparam bit [31:0] MASK_OP_END_ADDR = 32'h00001728;
 typedef struct packed {
-    bit [21:0] reserved_31_10;
-    bit [1:0] vsfu1_mask_sel;
-    bit [1:0] vsfu0_mask_sel;
-    bit [1:0] valu2_mask_sel;
-    bit [1:0] valu1_mask_sel;
-    bit [1:0] valu0_mask_sel;
+    bit [7:0] reserved_31_24;
+    bit [7:0] valu2_mask_sel;
+    bit [7:0] valu1_mask_sel;
+    bit [7:0] valu0_mask_sel;
 } mask_op_field_s;
 mask_op_field_s mask_op[8];
 bit [31:0] mask_op_val[8];
@@ -918,11 +916,9 @@ typedef struct {
     bit [7:0] src2_sel;
 } sexe2_op_param_s;
 typedef struct {
-    bit [1:0] valu0_mask_sel;
-    bit [1:0] valu1_mask_sel;
-    bit [1:0] valu2_mask_sel;
-    bit [1:0] vsfu0_mask_sel;
-    bit [1:0] vsfu1_mask_sel;
+    bit [7:0] valu0_mask_sel;
+    bit [7:0] valu1_mask_sel;
+    bit [7:0] valu2_mask_sel;
 } mask_op_param_s;
 typedef struct {
     bit [7:0] vrf_wt_p0_src;
