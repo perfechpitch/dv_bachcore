@@ -898,7 +898,7 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
     constraint lu_op_opcode_c {
         if (inst_gen_cfg.fix_lu_op_opcode_en) {
             lu_op_opcode == inst_gen_cfg.lu_op_opcode;
-        } else begin
+        } else {
             unique case (lu_type)
                 VU_LU_LD_FP8E4M3_V: lu_op_opcode == 8'h01;
                 VU_LU_LD_MXFP8_V: lu_op_opcode == 8'h02;
@@ -914,7 +914,7 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
     constraint mexe_op_opcode_c {
         if (inst_gen_cfg.fix_mexe_op_opcode_en) {
             mexe_op_opcode == inst_gen_cfg.mexe_op_opcode;
-        } else begin
+        } else {
             unique case (mexe_type)
                 VU_MEXE_VMAND_MM: mexe_op_opcode == 8'h01;
                 VU_MEXE_VMNAND_MM: mexe_op_opcode == 8'h02;
@@ -939,7 +939,7 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
     constraint sexe0_op_opcode_c {
         if (inst_gen_cfg.fix_sexe0_op_opcode_en) {
             sexe0_op_opcode == inst_gen_cfg.sexe0_op_opcode;
-        } else begin
+        } else {
             unique case (sexe0_type)
                 VU_SEXE_FADD_S: sexe0_op_opcode == 8'h01;
                 VU_SEXE_FSUB_S: sexe0_op_opcode == 8'h02;
@@ -956,7 +956,7 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
     constraint sexe1_op_opcode_c {
         if (inst_gen_cfg.fix_sexe1_op_opcode_en) {
             sexe1_op_opcode == inst_gen_cfg.sexe1_op_opcode;
-        } else begin
+        } else {
             unique case (sexe1_type)
                 VU_SEXE_FADD_S: sexe1_op_opcode == 8'h01;
                 VU_SEXE_FSUB_S: sexe1_op_opcode == 8'h02;
@@ -973,7 +973,7 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
     constraint sexe2_op_opcode_c {
         if (inst_gen_cfg.fix_sexe2_op_opcode_en) {
             sexe2_op_opcode == inst_gen_cfg.sexe2_op_opcode;
-        } else begin
+        } else {
             unique case (sexe2_type)
                 VU_SEXE_FADD_S: sexe2_op_opcode == 8'h01;
                 VU_SEXE_FSUB_S: sexe2_op_opcode == 8'h02;
@@ -990,7 +990,7 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
     constraint su_op_opcode_c {
         if (inst_gen_cfg.fix_su_op_opcode_en) {
             su_op_opcode == inst_gen_cfg.su_op_opcode;
-        } else begin
+        } else {
             unique case (su_type)
                 VU_SU_ST_FP8E4M3_V: su_op_opcode == 8'h01;
                 VU_SU_ST_MXFP8_V: su_op_opcode == 8'h02;
@@ -1006,7 +1006,7 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
     constraint valu0_op_opcode_c {
         if (inst_gen_cfg.fix_valu0_op_opcode_en) {
             valu0_op_opcode == inst_gen_cfg.valu0_op_opcode;
-        } else begin
+        } else {
             unique case (valu0_type)
                 VU_VALU0_VFADD_VV: valu0_op_opcode == 8'h01;
                 VU_VALU0_VFADD_VF: valu0_op_opcode == 8'h02;
@@ -1053,7 +1053,7 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
     constraint valu1_op_opcode_c {
         if (inst_gen_cfg.fix_valu1_op_opcode_en) {
             valu1_op_opcode == inst_gen_cfg.valu1_op_opcode;
-        } else begin
+        } else {
             unique case (valu1_type)
                 VU_VALU1_VFADD_VV: valu1_op_opcode == 8'h01;
                 VU_VALU1_VFADD_VF: valu1_op_opcode == 8'h02;
@@ -1081,7 +1081,7 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
     constraint valu2_op_opcode_c {
         if (inst_gen_cfg.fix_valu2_op_opcode_en) {
             valu2_op_opcode == inst_gen_cfg.valu2_op_opcode;
-        } else begin
+        } else {
             unique case (valu2_type)
                 VU_VALU2_VFADD_VV: valu2_op_opcode == 8'h01;
                 VU_VALU2_VFADD_VF: valu2_op_opcode == 8'h02;
@@ -1107,7 +1107,7 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
     constraint vsfu_op_vsfu0_opcode_c {
         if (inst_gen_cfg.fix_vsfu_op_vsfu0_opcode_en) {
             vsfu_op_vsfu0_opcode == inst_gen_cfg.vsfu_op_vsfu0_opcode;
-        } else begin
+        } else {
             unique case (vsfu0_type)
                 VU_VSFU_VFSIN_V: vsfu_op_vsfu0_opcode == 8'h01;
                 VU_VSFU_VFCOS_V: vsfu_op_vsfu0_opcode == 8'h02;
@@ -1129,7 +1129,7 @@ class vu_mac_inst_seq_item extends vu_inst_seq_item;
     constraint vsfu_op_vsfu1_opcode_c {
         if (inst_gen_cfg.fix_vsfu_op_vsfu1_opcode_en) {
             vsfu_op_vsfu1_opcode == inst_gen_cfg.vsfu_op_vsfu1_opcode;
-        } else begin
+        } else {
             unique case (vsfu1_type)
                 VU_VSFU_VFSIN_V: vsfu_op_vsfu1_opcode == 8'h01;
                 VU_VSFU_VFCOS_V: vsfu_op_vsfu1_opcode == 8'h02;
@@ -1517,87 +1517,87 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
     constraint prf_op_mrf_wt_src_c {
         if (inst_gen_cfg.fix_prf_op_mrf_wt_src_en) {
             prf_op_mrf_wt_src == inst_gen_cfg.prf_op_mrf_wt_src;
-        } else begin
-            if (cross_inst_1_op == VU_LU) begin
+        } else {
+            if (cross_inst_1_op == VU_LU) {
                 unique case (cross_inst_1_lu_type)
                     VU_LU_LD_MASK: prf_op_mrf_wt_src == 8'h01;
-                    default: begin
+                    default: {
                         prf_op_mrf_wt_src == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else if (cross_inst_1_op == VU_VALU0) begin
+            }
+            else if (cross_inst_1_op == VU_VALU0) {
                 unique case (cross_inst_1_valu0_type)
                     VU_VALU0_VMFEQ_VV, VU_VALU0_VMFEQ_VF, VU_VALU0_VMFNE_VV, VU_VALU0_VMFNE_VF, VU_VALU0_VMFLT_VV, VU_VALU0_VMFLT_VF, VU_VALU0_VMFLE_VV, VU_VALU0_VMFLE_VF, VU_VALU0_VMFGT_VF, VU_VALU0_VMFGE_VF, VU_VALU0_VFCLASS_MV: prf_op_mrf_wt_src == 8'h02;
-                    default: begin
+                    default: {
                         prf_op_mrf_wt_src == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else if (cross_inst_1_op == VU_MEXE) begin
+            }
+            else if (cross_inst_1_op == VU_MEXE) {
                 unique case (cross_inst_1_mexe_type)
                     VU_MEXE_VMAND_MM, VU_MEXE_VMNAND_MM, VU_MEXE_VMANDN_MM, VU_MEXE_VMXOR_MM, VU_MEXE_VMOR_MM, VU_MEXE_VMNOR_MM, VU_MEXE_VMORN_MM, VU_MEXE_VMXNOR_MM, VU_MEXE_VMSBF_M, VU_MEXE_VMSIF_M, VU_MEXE_VMSOF_M, VU_MEXE_VMIUSET_MV, VU_MEXE_VMISET_MV: prf_op_mrf_wt_src == 8'h10;
-                    default: begin
+                    default: {
                         prf_op_mrf_wt_src == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else begin
+            }
+            else {
                 prf_op_mrf_wt_src == 8'h00;
-            end
-        end
+            }
+        }
     }
 
     constraint prf_op_srf_wt_en_c {
         if (inst_gen_cfg.fix_prf_op_srf_wt_en_en) {
             prf_op_srf_wt_en == inst_gen_cfg.prf_op_srf_wt_en;
-        } else begin
-            if (cross_inst_1_op == VU_LU) begin
+        } else {
+            if (cross_inst_1_op == VU_LU) {
                 unique case (cross_inst_1_lu_type)
                     VU_LU_LD_S_FP32: prf_op_srf_wt_en == 8'h01;
-                    default: begin
+                    default: {
                         prf_op_srf_wt_en == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else if (cross_inst_1_op == VU_VALU1) begin
+            }
+            else if (cross_inst_1_op == VU_VALU1) {
                 unique case (cross_inst_1_valu1_type)
                     VU_VALU1_VFMV_F_S, VU_VALU1_VFREDUSUM_VS, VU_VALU1_VFREDMAX_VS, VU_VALU1_VFREDMIN_VS: prf_op_srf_wt_en == 8'h02;
-                    default: begin
+                    default: {
                         prf_op_srf_wt_en == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else if (cross_inst_1_op == VU_MEXE) begin
+            }
+            else if (cross_inst_1_op == VU_MEXE) {
                 unique case (cross_inst_1_mexe_type)
                     VU_MEXE_VCPOP_M, VU_MEXE_VFIRST_M: prf_op_srf_wt_en == 8'h04;
-                    default: begin
+                    default: {
                         prf_op_srf_wt_en == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else if (cross_inst_1_op == VU_SEXE) begin
+            }
+            else if (cross_inst_1_op == VU_SEXE) {
                 unique case (cross_inst_1_sexe_type)
                     VU_SEXE_FADD_S, VU_SEXE_FSUB_S, VU_SEXE_FMUL_S, VU_SEXE_FDIV_S, VU_SEXE_FSQRT_S, VU_SEXE_FRSQRT_S, VU_SEXE_FRCP_S: prf_op_srf_wt_en == 8'h08;
-                    default: begin
+                    default: {
                         prf_op_srf_wt_en == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else begin
+            }
+            else {
                 prf_op_srf_wt_en == 8'h00;
-            end
-        end
+            }
+        }
     }
 
     constraint static_type_vl_data_type_c {
         if (inst_gen_cfg.fix_static_type_vl_data_type_en) {
             static_type_vl_data_type == inst_gen_cfg.static_type_vl_data_type;
-        } else begin
-            if (cross_inst_1_op == VU_VSFU1) begin
+        } else {
+            if (cross_inst_1_op == VU_VSFU1) {
                 static_type_vl_data_type == 1'b0;
-            end
-        end
+            }
+        }
     }
 
     constraint prf_op_vrf_wt_src_c {
@@ -1609,345 +1609,345 @@ class cross_1_gen_seq_item extends vu_mac_inst_seq_item;
         }
         if (!inst_gen_cfg.fix_prf_op_vrf_wt_p0_src_en
             && !inst_gen_cfg.fix_prf_op_vrf_wt_p1_src_en) {
-            if (cross_inst_1_op == VU_LU) begin
+            if (cross_inst_1_op == VU_LU) {
                 unique case (cross_inst_1_lu_type)
-                    VU_LU_LD_FP8E4M3_V, VU_LU_LD_MXFP8_V, VU_LU_LD_BF16_V, VU_LU_LD_FP32_V: begin
+                    VU_LU_LD_FP8E4M3_V, VU_LU_LD_MXFP8_V, VU_LU_LD_BF16_V, VU_LU_LD_FP32_V: {
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
                         {8'h01, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
                         {8'h00, 8'h01} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
                     }
-                    end
-                    default: begin
+                    }
+                    default: {
                         prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else if (cross_inst_1_op == VU_VALU0) begin
+            }
+            else if (cross_inst_1_op == VU_VALU0) {
                 unique case (cross_inst_1_valu0_type)
-                    VU_VALU0_VFADD_VV, VU_VALU0_VFADD_VF, VU_VALU0_VFSUB_VV, VU_VALU0_VFSUB_VF, VU_VALU0_VFRSUB_VF, VU_VALU0_VFMUL_VV, VU_VALU0_VFMUL_VF, VU_VALU0_VFDIV_VV, VU_VALU0_VFMIN_VV, VU_VALU0_VFMIN_VF, VU_VALU0_VFMAX_VV, VU_VALU0_VFMAX_VF, VU_VALU0_VFMV_V_F, VU_VALU0_VFMV_S_F, VU_VALU0_VFMACC_VF, VU_VALU0_VFNMACC_VF, VU_VALU0_VFMSAC_VF, VU_VALU0_VFNMSAC_VF, VU_VALU0_VFSGNJ_VV, VU_VALU0_VFSGNJ_VF, VU_VALU0_VFSGNJN_VV, VU_VALU0_VFSGNJN_VF, VU_VALU0_VFSGNJX_VV, VU_VALU0_VFSGNJX_VF, VU_VALU0_VFMERGE_VFM, VU_VALU0_VFMERGE_VVM: begin
+                    VU_VALU0_VFADD_VV, VU_VALU0_VFADD_VF, VU_VALU0_VFSUB_VV, VU_VALU0_VFSUB_VF, VU_VALU0_VFRSUB_VF, VU_VALU0_VFMUL_VV, VU_VALU0_VFMUL_VF, VU_VALU0_VFDIV_VV, VU_VALU0_VFMIN_VV, VU_VALU0_VFMIN_VF, VU_VALU0_VFMAX_VV, VU_VALU0_VFMAX_VF, VU_VALU0_VFMV_V_F, VU_VALU0_VFMV_S_F, VU_VALU0_VFMACC_VF, VU_VALU0_VFNMACC_VF, VU_VALU0_VFMSAC_VF, VU_VALU0_VFNMSAC_VF, VU_VALU0_VFSGNJ_VV, VU_VALU0_VFSGNJ_VF, VU_VALU0_VFSGNJN_VV, VU_VALU0_VFSGNJN_VF, VU_VALU0_VFSGNJX_VV, VU_VALU0_VFSGNJX_VF, VU_VALU0_VFMERGE_VFM, VU_VALU0_VFMERGE_VVM: {
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
                         {8'h02, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
                         {8'h00, 8'h02} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
                     }
-                    end
-                    default: begin
+                    }
+                    default: {
                         prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else if (cross_inst_1_op == VU_VALU1) begin
+            }
+            else if (cross_inst_1_op == VU_VALU1) {
                 unique case (cross_inst_1_valu1_type)
-                    VU_VALU1_VFADD_VV, VU_VALU1_VFADD_VF, VU_VALU1_VFSUB_VV, VU_VALU1_VFSUB_VF, VU_VALU1_VFRSUB_VF, VU_VALU1_VFMUL_VV, VU_VALU1_VFMUL_VF, VU_VALU1_VFMIN_VV, VU_VALU1_VFMIN_VF, VU_VALU1_VFMAX_VV, VU_VALU1_VFMAX_VF, VU_VALU1_VFMV_V_F, VU_VALU1_VSORTMAX16_V, VU_VALU1_VSORTMIN16_V: begin
+                    VU_VALU1_VFADD_VV, VU_VALU1_VFADD_VF, VU_VALU1_VFSUB_VV, VU_VALU1_VFSUB_VF, VU_VALU1_VFRSUB_VF, VU_VALU1_VFMUL_VV, VU_VALU1_VFMUL_VF, VU_VALU1_VFMIN_VV, VU_VALU1_VFMIN_VF, VU_VALU1_VFMAX_VV, VU_VALU1_VFMAX_VF, VU_VALU1_VFMV_V_F, VU_VALU1_VSORTMAX16_V, VU_VALU1_VSORTMIN16_V: {
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
                         {8'h03, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
                         {8'h00, 8'h03} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
                     }
-                    end
-                    default: begin
+                    }
+                    default: {
                         prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else if (cross_inst_1_op == VU_VALU2) begin
+            }
+            else if (cross_inst_1_op == VU_VALU2) {
                 unique case (cross_inst_1_valu2_type)
-                    VU_VALU2_VFADD_VV, VU_VALU2_VFADD_VF, VU_VALU2_VFSUB_VV, VU_VALU2_VFSUB_VF, VU_VALU2_VFRSUB_VF, VU_VALU2_VFMUL_VV, VU_VALU2_VFMUL_VF, VU_VALU2_VFMIN_VV, VU_VALU2_VFMIN_VF, VU_VALU2_VFMAX_VV, VU_VALU2_VFMAX_VF, VU_VALU2_VFMV_V_F, VU_VALU2_VMV_V_V, VU_VALU2_VSWAP2_V, VU_VALU2_VFSLIDE1UP_VF, VU_VALU2_VFSLIDE1DOWN_VF: begin
+                    VU_VALU2_VFADD_VV, VU_VALU2_VFADD_VF, VU_VALU2_VFSUB_VV, VU_VALU2_VFSUB_VF, VU_VALU2_VFRSUB_VF, VU_VALU2_VFMUL_VV, VU_VALU2_VFMUL_VF, VU_VALU2_VFMIN_VV, VU_VALU2_VFMIN_VF, VU_VALU2_VFMAX_VV, VU_VALU2_VFMAX_VF, VU_VALU2_VFMV_V_F, VU_VALU2_VMV_V_V, VU_VALU2_VSWAP2_V, VU_VALU2_VFSLIDE1UP_VF, VU_VALU2_VFSLIDE1DOWN_VF: {
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
                         {8'h04, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
                         {8'h00, 8'h04} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
                     }
-                    end
-                    default: begin
+                    }
+                    default: {
                         prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else if (cross_inst_1_op == VU_VSFU0) begin
+            }
+            else if (cross_inst_1_op == VU_VSFU0) {
                 unique case (cross_inst_1_vsfu0_type)
-                    VU_VSFU_VFSIN_V, VU_VSFU_VFCOS_V, VU_VSFU_VFTANH_V, VU_VSFU_VFSIGMOID_V, VU_VSFU_VFEXP_V, VU_VSFU_VFEXP2_V, VU_VSFU_VFLN_V, VU_VSFU_VFLOG2_V, VU_VSFU_VFSQRT_V, VU_VSFU_VFRCP_V, VU_VSFU_VFRSQRT_V, VU_VSFU_CUSTOM_FIT: begin
+                    VU_VSFU_VFSIN_V, VU_VSFU_VFCOS_V, VU_VSFU_VFTANH_V, VU_VSFU_VFSIGMOID_V, VU_VSFU_VFEXP_V, VU_VSFU_VFEXP2_V, VU_VSFU_VFLN_V, VU_VSFU_VFLOG2_V, VU_VSFU_VFSQRT_V, VU_VSFU_VFRCP_V, VU_VSFU_VFRSQRT_V, VU_VSFU_CUSTOM_FIT: {
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
                         {8'h05, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
                         {8'h00, 8'h05} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
                     }
-                    end
-                    default: begin
+                    }
+                    default: {
                         prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else if (cross_inst_1_op == VU_VSFU1) begin
+            }
+            else if (cross_inst_1_op == VU_VSFU1) {
                 unique case (cross_inst_1_vsfu1_type)
-                    VU_VSFU_VFSIN_V, VU_VSFU_VFCOS_V, VU_VSFU_VFTANH_V, VU_VSFU_VFSIGMOID_V, VU_VSFU_VFEXP_V, VU_VSFU_VFEXP2_V, VU_VSFU_VFLN_V, VU_VSFU_VFLOG2_V, VU_VSFU_VFSQRT_V, VU_VSFU_VFRCP_V, VU_VSFU_VFRSQRT_V, VU_VSFU_CUSTOM_FIT: begin
+                    VU_VSFU_VFSIN_V, VU_VSFU_VFCOS_V, VU_VSFU_VFTANH_V, VU_VSFU_VFSIGMOID_V, VU_VSFU_VFEXP_V, VU_VSFU_VFEXP2_V, VU_VSFU_VFLN_V, VU_VSFU_VFLOG2_V, VU_VSFU_VFSQRT_V, VU_VSFU_VFRCP_V, VU_VSFU_VFRSQRT_V, VU_VSFU_CUSTOM_FIT: {
                     {prf_op_vrf_wt_p0_src, prf_op_vrf_wt_p1_src} dist {
                         {8'h06, 8'h00} := inst_gen_cfg.prf_op_vrf_wt_pair_weight,
                         {8'h00, 8'h06} := 100 - inst_gen_cfg.prf_op_vrf_wt_pair_weight
                     }
-                    end
-                    default: begin
+                    }
+                    default: {
                         prf_op_vrf_wt_p0_src == 8'h00 && prf_op_vrf_wt_p1_src == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else begin
+            }
+            else {
                 prf_op_vrf_wt_p0_src == 8'h00;
                 prf_op_vrf_wt_p1_src == 8'h00;
-            end
+            }
         }
     }
 
     //----- SRC*_SEL / MASK_SEL：按执行单元独立约束（'/' 分段联合 dist） -----
 
     constraint su_src_sel_c {
-        if (!inst_gen_cfg.fix_su_op_src_sel_en) begin
-            if (cross_inst_1_op == VU_SU) begin
+        if (!inst_gen_cfg.fix_su_op_src_sel_en) {
+            if (cross_inst_1_op == VU_SU) {
                 unique case (cross_inst_1_su_type)
                     VU_SU_ST_FP8E4M3_V, VU_SU_ST_MXFP8_V, VU_SU_ST_BF16_V, VU_SU_ST_FP32_V: su_op_src_sel inside {[8'h30:8'h31]};
                     VU_SU_ST_MASK: su_op_src_sel inside {[8'h40:8'h41]};
                     VU_SU_ST_S_FP32: su_op_src_sel == 8'h50;
-                    default: begin
+                    default: {
                         su_op_src_sel == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else begin
+            }
+            else {
                 su_op_src_sel == 8'h00;
-            end
-        end
+            }
+        }
     }
 
     constraint valu0_src_mask_sel_c {
         if (!inst_gen_cfg.fix_valu0_op_src1_sel_en &&
             !inst_gen_cfg.fix_valu0_op_src2_sel_en &&
             !inst_gen_cfg.fix_valu0_op_src3_sel_en &&
-            !inst_gen_cfg.fix_mask_op_valu0_mask_sel_en) begin
-            if (cross_inst_1_op == VU_VALU0) begin
+            !inst_gen_cfg.fix_mask_op_valu0_mask_sel_en) {
+            if (cross_inst_1_op == VU_VALU0) {
                 unique case (cross_inst_1_valu0_type)
-                    VU_VALU0_VFADD_VV, VU_VALU0_VFSUB_VV, VU_VALU0_VFMUL_VV, VU_VALU0_VFDIV_VV, VU_VALU0_VFMIN_VV, VU_VALU0_VFMAX_VV, VU_VALU0_VFSGNJ_VV, VU_VALU0_VFSGNJN_VV, VU_VALU0_VFSGNJX_VV, VU_VALU0_VMFEQ_VV, VU_VALU0_VMFNE_VV, VU_VALU0_VMFLT_VV, VU_VALU0_VMFLE_VV, VU_VALU0_VFMERGE_VVM: begin
+                    VU_VALU0_VFADD_VV, VU_VALU0_VFSUB_VV, VU_VALU0_VFMUL_VV, VU_VALU0_VFDIV_VV, VU_VALU0_VFMIN_VV, VU_VALU0_VFMAX_VV, VU_VALU0_VFSGNJ_VV, VU_VALU0_VFSGNJN_VV, VU_VALU0_VFSGNJX_VV, VU_VALU0_VMFEQ_VV, VU_VALU0_VMFNE_VV, VU_VALU0_VMFLT_VV, VU_VALU0_VMFLE_VV, VU_VALU0_VFMERGE_VVM: {
                     {valu0_op_src1_sel, valu0_op_src2_sel, valu0_op_src3_sel, mask_op_valu0_mask_sel} dist {
                         {8'h30, 8'h31, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
                         {8'h31, 8'h30, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
                     }
-                    end
-                    VU_VALU0_VFADD_VF, VU_VALU0_VFSUB_VF, VU_VALU0_VFRSUB_VF, VU_VALU0_VFMUL_VF, VU_VALU0_VFMIN_VF, VU_VALU0_VFMAX_VF, VU_VALU0_VFSGNJ_VF, VU_VALU0_VFSGNJN_VF, VU_VALU0_VFSGNJX_VF, VU_VALU0_VMFEQ_VF, VU_VALU0_VMFNE_VF, VU_VALU0_VMFLT_VF, VU_VALU0_VMFLE_VF, VU_VALU0_VMFGT_VF, VU_VALU0_VMFGE_VF, VU_VALU0_VFMERGE_VFM: begin
+                    }
+                    VU_VALU0_VFADD_VF, VU_VALU0_VFSUB_VF, VU_VALU0_VFRSUB_VF, VU_VALU0_VFMUL_VF, VU_VALU0_VFMIN_VF, VU_VALU0_VFMAX_VF, VU_VALU0_VFSGNJ_VF, VU_VALU0_VFSGNJN_VF, VU_VALU0_VFSGNJX_VF, VU_VALU0_VMFEQ_VF, VU_VALU0_VMFNE_VF, VU_VALU0_VMFLT_VF, VU_VALU0_VMFLE_VF, VU_VALU0_VMFGT_VF, VU_VALU0_VMFGE_VF, VU_VALU0_VFMERGE_VFM: {
                     {valu0_op_src1_sel, valu0_op_src2_sel, valu0_op_src3_sel, mask_op_valu0_mask_sel} dist {
                         {8'h51, 8'h30, 8'h00, 8'h40} := inst_gen_cfg.sel_pair_weight,
                         {8'h51, 8'h31, 8'h00, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight
                     }
-                    end
+                    }
                     VU_VALU0_VFMV_V_F: valu0_op_src1_sel == 8'h51 && valu0_op_src2_sel == 8'h00 && valu0_op_src3_sel == 8'h00 && mask_op_valu0_mask_sel == 8'h00;
                     VU_VALU0_VFMV_S_F: valu0_op_src1_sel == 8'h51 && valu0_op_src3_sel == 8'h00 && mask_op_valu0_mask_sel == 8'h00;
-                    VU_VALU0_VFMACC_VF, VU_VALU0_VFNMACC_VF, VU_VALU0_VFMSAC_VF, VU_VALU0_VFNMSAC_VF: begin
+                    VU_VALU0_VFMACC_VF, VU_VALU0_VFNMACC_VF, VU_VALU0_VFMSAC_VF, VU_VALU0_VFNMSAC_VF: {
                     {valu0_op_src1_sel, valu0_op_src2_sel, valu0_op_src3_sel, mask_op_valu0_mask_sel} dist {
                         {8'h51, 8'h30, 8'h31, 8'h00} := inst_gen_cfg.sel_pair_weight,
                         {8'h51, 8'h31, 8'h30, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
                     }
-                    end
-                    VU_VALU0_VFCLASS_MV: begin
+                    }
+                    VU_VALU0_VFCLASS_MV: {
                     {valu0_op_src1_sel, mask_op_valu0_mask_sel} dist {
                         {8'h30, 8'h40} := inst_gen_cfg.sel_pair_weight,
                         {8'h31, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight
                     }
-                    end
-                    default: begin
+                    }
+                    default: {
                         valu0_op_src1_sel == 8'h00;
                         valu0_op_src2_sel == 8'h00;
                         valu0_op_src3_sel == 8'h00;
                         mask_op_valu0_mask_sel == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else begin
+            }
+            else {
                 valu0_op_src1_sel == 8'h00;
                 valu0_op_src2_sel == 8'h00;
                 valu0_op_src3_sel == 8'h00;
                 mask_op_valu0_mask_sel == 8'h00;
-            end
-        end
+            }
+        }
     }
 
     constraint valu1_src_mask_sel_c {
         if (!inst_gen_cfg.fix_valu1_op_src1_sel_en &&
             !inst_gen_cfg.fix_valu1_op_src2_sel_en &&
             !inst_gen_cfg.fix_valu1_op_src3_sel_en &&
-            !inst_gen_cfg.fix_mask_op_valu1_mask_sel_en) begin
-            if (cross_inst_1_op == VU_VALU1) begin
+            !inst_gen_cfg.fix_mask_op_valu1_mask_sel_en) {
+            if (cross_inst_1_op == VU_VALU1) {
                 unique case (cross_inst_1_valu1_type)
-                    VU_VALU1_VFADD_VV, VU_VALU1_VFSUB_VV, VU_VALU1_VFMUL_VV, VU_VALU1_VFMIN_VV, VU_VALU1_VFMAX_VV: begin
+                    VU_VALU1_VFADD_VV, VU_VALU1_VFSUB_VV, VU_VALU1_VFMUL_VV, VU_VALU1_VFMIN_VV, VU_VALU1_VFMAX_VV: {
                     {valu1_op_src1_sel, valu1_op_src2_sel, valu1_op_src3_sel, mask_op_valu1_mask_sel} dist {
                         {8'h30, 8'h31, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
                         {8'h31, 8'h30, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
                     }
-                    end
-                    VU_VALU1_VFADD_VF, VU_VALU1_VFSUB_VF, VU_VALU1_VFRSUB_VF, VU_VALU1_VFMUL_VF, VU_VALU1_VFMIN_VF, VU_VALU1_VFMAX_VF, VU_VALU1_VFREDUSUM_VS, VU_VALU1_VFREDMAX_VS, VU_VALU1_VFREDMIN_VS: begin
+                    }
+                    VU_VALU1_VFADD_VF, VU_VALU1_VFSUB_VF, VU_VALU1_VFRSUB_VF, VU_VALU1_VFMUL_VF, VU_VALU1_VFMIN_VF, VU_VALU1_VFMAX_VF, VU_VALU1_VFREDUSUM_VS, VU_VALU1_VFREDMAX_VS, VU_VALU1_VFREDMIN_VS: {
                     {valu1_op_src1_sel, valu1_op_src2_sel, valu1_op_src3_sel, mask_op_valu1_mask_sel} dist {
                         {8'h52, 8'h30, 8'h00, 8'h40} := inst_gen_cfg.sel_pair_weight,
                         {8'h52, 8'h31, 8'h00, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight
                     }
-                    end
+                    }
                     VU_VALU1_VFMV_V_F: valu1_op_src1_sel == 8'h52 && valu1_op_src2_sel == 8'h00 && valu1_op_src3_sel == 8'h00 && mask_op_valu1_mask_sel == 8'h00;
-                    VU_VALU1_VFMV_F_S: begin
+                    VU_VALU1_VFMV_F_S: {
                     {valu1_op_src1_sel, valu1_op_src3_sel, mask_op_valu1_mask_sel} dist {
                         {8'h30, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
                         {8'h31, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
                     }
-                    end
-                    VU_VALU1_VSORTMAX16_V, VU_VALU1_VSORTMIN16_V: begin
+                    }
+                    VU_VALU1_VSORTMAX16_V, VU_VALU1_VSORTMIN16_V: {
                     {valu1_op_src1_sel, valu1_op_src2_sel, valu1_op_src3_sel, mask_op_valu1_mask_sel} dist {
                         {8'h30, 8'h00, 8'h00, 8'h40} := inst_gen_cfg.sel_pair_weight,
                         {8'h31, 8'h00, 8'h00, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight
                     }
-                    end
-                    default: begin
+                    }
+                    default: {
                         valu1_op_src1_sel == 8'h00;
                         valu1_op_src2_sel == 8'h00;
                         valu1_op_src3_sel == 8'h00;
                         mask_op_valu1_mask_sel == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else begin
+            }
+            else {
                 valu1_op_src1_sel == 8'h00;
                 valu1_op_src2_sel == 8'h00;
                 valu1_op_src3_sel == 8'h00;
                 mask_op_valu1_mask_sel == 8'h00;
-            end
-        end
+            }
+        }
     }
 
     constraint valu2_src_mask_sel_c {
         if (!inst_gen_cfg.fix_valu2_op_src1_sel_en &&
             !inst_gen_cfg.fix_valu2_op_src2_sel_en &&
             !inst_gen_cfg.fix_valu2_op_src3_sel_en &&
-            !inst_gen_cfg.fix_mask_op_valu2_mask_sel_en) begin
-            if (cross_inst_1_op == VU_VALU2) begin
+            !inst_gen_cfg.fix_mask_op_valu2_mask_sel_en) {
+            if (cross_inst_1_op == VU_VALU2) {
                 unique case (cross_inst_1_valu2_type)
-                    VU_VALU2_VFADD_VV, VU_VALU2_VFSUB_VV, VU_VALU2_VFMUL_VV, VU_VALU2_VFMIN_VV, VU_VALU2_VFMAX_VV: begin
+                    VU_VALU2_VFADD_VV, VU_VALU2_VFSUB_VV, VU_VALU2_VFMUL_VV, VU_VALU2_VFMIN_VV, VU_VALU2_VFMAX_VV: {
                     {valu2_op_src1_sel, valu2_op_src2_sel, valu2_op_src3_sel, mask_op_valu2_mask_sel} dist {
                         {8'h30, 8'h31, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
                         {8'h31, 8'h30, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
                     }
-                    end
-                    VU_VALU2_VFADD_VF, VU_VALU2_VFSUB_VF, VU_VALU2_VFRSUB_VF, VU_VALU2_VFMUL_VF, VU_VALU2_VFMIN_VF, VU_VALU2_VFMAX_VF: begin
+                    }
+                    VU_VALU2_VFADD_VF, VU_VALU2_VFSUB_VF, VU_VALU2_VFRSUB_VF, VU_VALU2_VFMUL_VF, VU_VALU2_VFMIN_VF, VU_VALU2_VFMAX_VF: {
                     {valu2_op_src1_sel, valu2_op_src2_sel, valu2_op_src3_sel, mask_op_valu2_mask_sel} dist {
                         {8'h53, 8'h30, 8'h00, 8'h40} := inst_gen_cfg.sel_pair_weight,
                         {8'h53, 8'h31, 8'h00, 8'h41} := 100 - inst_gen_cfg.sel_pair_weight
                     }
-                    end
+                    }
                     VU_VALU2_VFMV_V_F: valu2_op_src1_sel == 8'h53 && valu2_op_src2_sel == 8'h00 && valu2_op_src3_sel == 8'h00 && mask_op_valu2_mask_sel == 8'h00;
-                    VU_VALU2_VMV_V_V, VU_VALU2_VSWAP2_V: begin
+                    VU_VALU2_VMV_V_V, VU_VALU2_VSWAP2_V: {
                     {valu2_op_src1_sel, valu2_op_src2_sel, valu2_op_src3_sel, mask_op_valu2_mask_sel} dist {
                         {8'h30, 8'h00, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
                         {8'h31, 8'h00, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
                     }
-                    end
-                    VU_VALU2_VFSLIDE1UP_VF, VU_VALU2_VFSLIDE1DOWN_VF: begin
+                    }
+                    VU_VALU2_VFSLIDE1UP_VF, VU_VALU2_VFSLIDE1DOWN_VF: {
                     {valu2_op_src1_sel, valu2_op_src2_sel, valu2_op_src3_sel, mask_op_valu2_mask_sel} dist {
                         {8'h53, 8'h30, 8'h00, 8'h00} := inst_gen_cfg.sel_pair_weight,
                         {8'h53, 8'h31, 8'h00, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
                     }
-                    end
-                    default: begin
+                    }
+                    default: {
                         valu2_op_src1_sel == 8'h00;
                         valu2_op_src2_sel == 8'h00;
                         valu2_op_src3_sel == 8'h00;
                         mask_op_valu2_mask_sel == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else begin
+            }
+            else {
                 valu2_op_src1_sel == 8'h00;
                 valu2_op_src2_sel == 8'h00;
                 valu2_op_src3_sel == 8'h00;
                 mask_op_valu2_mask_sel == 8'h00;
-            end
-        end
+            }
+        }
     }
 
     constraint vsfu0_src_sel_c {
-        if (!inst_gen_cfg.fix_vsfu_op_vsfu0_src1_sel_en) begin
-            if (cross_inst_1_op == VU_VSFU0) begin
+        if (!inst_gen_cfg.fix_vsfu_op_vsfu0_src1_sel_en) {
+            if (cross_inst_1_op == VU_VSFU0) {
                 unique case (cross_inst_1_vsfu0_type)
                     VU_VSFU_VFSIN_V, VU_VSFU_VFCOS_V, VU_VSFU_VFTANH_V, VU_VSFU_VFSIGMOID_V, VU_VSFU_VFEXP_V, VU_VSFU_VFEXP2_V, VU_VSFU_VFLN_V, VU_VSFU_VFLOG2_V, VU_VSFU_VFSQRT_V, VU_VSFU_VFRCP_V, VU_VSFU_VFRSQRT_V, VU_VSFU_CUSTOM_FIT: vsfu_op_vsfu0_src1_sel inside {[8'h30:8'h31]};
-                    default: begin
+                    default: {
                         vsfu_op_vsfu0_src1_sel == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else begin
+            }
+            else {
                 vsfu_op_vsfu0_src1_sel == 8'h00;
-            end
-        end
+            }
+        }
     }
 
     constraint vsfu1_src_sel_c {
-        if (!inst_gen_cfg.fix_vsfu_op_vsfu1_src1_sel_en) begin
-            if (cross_inst_1_op == VU_VSFU1) begin
+        if (!inst_gen_cfg.fix_vsfu_op_vsfu1_src1_sel_en) {
+            if (cross_inst_1_op == VU_VSFU1) {
                 unique case (cross_inst_1_vsfu1_type)
                     VU_VSFU_VFSIN_V, VU_VSFU_VFCOS_V, VU_VSFU_VFTANH_V, VU_VSFU_VFSIGMOID_V, VU_VSFU_VFEXP_V, VU_VSFU_VFEXP2_V, VU_VSFU_VFLN_V, VU_VSFU_VFLOG2_V, VU_VSFU_VFSQRT_V, VU_VSFU_VFRCP_V, VU_VSFU_VFRSQRT_V, VU_VSFU_CUSTOM_FIT: vsfu_op_vsfu1_src1_sel inside {[8'h30:8'h31]};
-                    default: begin
+                    default: {
                         vsfu_op_vsfu1_src1_sel == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else begin
+            }
+            else {
                 vsfu_op_vsfu1_src1_sel == 8'h00;
-            end
-        end
+            }
+        }
     }
 
     constraint mexe_src_sel_c {
         if (!inst_gen_cfg.fix_mexe_op_src1_sel_en &&
-            !inst_gen_cfg.fix_mexe_op_src2_sel_en) begin
-            if (cross_inst_1_op == VU_MEXE) begin
+            !inst_gen_cfg.fix_mexe_op_src2_sel_en) {
+            if (cross_inst_1_op == VU_MEXE) {
                 unique case (cross_inst_1_mexe_type)
-                    VU_MEXE_VMAND_MM, VU_MEXE_VMNAND_MM, VU_MEXE_VMANDN_MM, VU_MEXE_VMXOR_MM, VU_MEXE_VMOR_MM, VU_MEXE_VMNOR_MM, VU_MEXE_VMORN_MM, VU_MEXE_VMXNOR_MM: begin
+                    VU_MEXE_VMAND_MM, VU_MEXE_VMNAND_MM, VU_MEXE_VMANDN_MM, VU_MEXE_VMXOR_MM, VU_MEXE_VMOR_MM, VU_MEXE_VMNOR_MM, VU_MEXE_VMORN_MM, VU_MEXE_VMXNOR_MM: {
                     {mexe_op_src1_sel, mexe_op_src2_sel} dist {
                         {8'h40, 8'h41} := inst_gen_cfg.sel_pair_weight,
                         {8'h41, 8'h40} := 100 - inst_gen_cfg.sel_pair_weight
                     }
-                    end
-                    VU_MEXE_VCPOP_M, VU_MEXE_VFIRST_M, VU_MEXE_VMSBF_M, VU_MEXE_VMSIF_M, VU_MEXE_VMSOF_M: begin
+                    }
+                    VU_MEXE_VCPOP_M, VU_MEXE_VFIRST_M, VU_MEXE_VMSBF_M, VU_MEXE_VMSIF_M, VU_MEXE_VMSOF_M: {
                     {mexe_op_src1_sel, mexe_op_src2_sel} dist {
                         {8'h40, 8'h00} := inst_gen_cfg.sel_pair_weight,
                         {8'h41, 8'h00} := 100 - inst_gen_cfg.sel_pair_weight
                     }
-                    end
-                    VU_MEXE_VMIUSET_MV, VU_MEXE_VMISET_MV: begin
+                    }
+                    VU_MEXE_VMIUSET_MV, VU_MEXE_VMISET_MV: {
                     {mexe_op_src1_sel, mexe_op_src2_sel} dist {
                         {8'h40, 8'h30} := inst_gen_cfg.sel_pair_weight,
                         {8'h41, 8'h31} := 100 - inst_gen_cfg.sel_pair_weight
                     }
-                    end
-                    default: begin
+                    }
+                    default: {
                         mexe_op_src1_sel == 8'h00;
                         mexe_op_src2_sel == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else begin
+            }
+            else {
                 mexe_op_src1_sel == 8'h00;
                 mexe_op_src2_sel == 8'h00;
-            end
-        end
+            }
+        }
     }
 
     constraint sexe_src_sel_c {
         if (!inst_gen_cfg.fix_sexe0_op_src1_sel_en &&
-            !inst_gen_cfg.fix_sexe0_op_src2_sel_en) begin
-            if (cross_inst_1_op == VU_SEXE) begin
+            !inst_gen_cfg.fix_sexe0_op_src2_sel_en) {
+            if (cross_inst_1_op == VU_SEXE) {
                 unique case (cross_inst_1_sexe_type)
                     VU_SEXE_FADD_S, VU_SEXE_FSUB_S, VU_SEXE_FMUL_S, VU_SEXE_FDIV_S: sexe0_op_src1_sel == 8'h54 && sexe0_op_src2_sel == 8'h55;
                     VU_SEXE_FSQRT_S, VU_SEXE_FRSQRT_S, VU_SEXE_FRCP_S: sexe0_op_src1_sel == 8'h54 && sexe0_op_src2_sel == 8'h00;
-                    default: begin
+                    default: {
                         sexe0_op_src1_sel == 8'h00;
                         sexe0_op_src2_sel == 8'h00;
-                    end
+                    }
                 endcase
-            end
-            else begin
+            }
+            else {
                 sexe0_op_src1_sel == 8'h00;
                 sexe0_op_src2_sel == 8'h00;
-            end
-        end
+            }
+        }
     }
 
 endclass : cross_1_gen_seq_item
@@ -2503,7 +2503,7 @@ class vu_reg_read_seq_item extends uvm_sequence_item;
     constraint reg_read_addr_c {
         if (inst_gen_cfg.fix_reg_read_addr_en) {
             reg_read_addr == inst_gen_cfg.reg_read_addr;
-        end
+        }
         else if (reg_read_addr_cat == VU_REG_READ_CAT_ILLEGAL)
             !vu_reg_read_hi14_legal(reg_read_addr[15:2]);
         else if (reg_read_addr_cat == VU_REG_READ_CAT_DYN_PARAM)

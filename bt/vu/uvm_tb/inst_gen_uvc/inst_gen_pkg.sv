@@ -13,6 +13,7 @@ package inst_gen_pkg;
 `include "inst_gen_enum.sv"
 `include "inst_gen_config.sv"
 `include "inst_gen_seq_item.sv"
+`include "vu_inst_seq_item.sv"
 `include "inst_gen_sequencer.sv"
 `include "./seq/inst_gen_base_sequence.sv"
 `include "./seq/inst_gen_seq_lib.sv"
