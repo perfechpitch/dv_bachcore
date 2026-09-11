@@ -523,197 +523,197 @@ class vu_reg_creater extends uvm_component;
     m_my_block.create_field(32'h00004000, "profile_ctrl_CLEAR", 1, 1, REG_RW);
     m_my_block.create_field(32'h00004000, "profile_ctrl_RESERVED_31_2", 2, 31, REG_RO);
 
-    m_my_block.create_reg("prof_run_cycle", 32'h00004008, 32'h00000000, make_hdl_path("prof_run_cycle"));
-    m_my_block.create_field(32'h00004008, "prof_run_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("prof_run_cycle_lo", 32'h00004008, 32'h00000000, make_hdl_path("prof_run_cycle_lo"));
+    m_my_block.create_field(32'h00004008, "prof_run_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("prof_run_cycle", 32'h0000400C, 32'h00000000, make_hdl_path("prof_run_cycle"));
-    m_my_block.create_field(32'h0000400C, "prof_run_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("prof_run_cycle_hi", 32'h0000400C, 32'h00000000, make_hdl_path("prof_run_cycle_hi"));
+    m_my_block.create_field(32'h0000400C, "prof_run_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("total_busy_cycle", 32'h00004010, 32'h00000000, make_hdl_path("total_busy_cycle"));
-    m_my_block.create_field(32'h00004010, "total_busy_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("total_busy_cycle_lo", 32'h00004010, 32'h00000000, make_hdl_path("total_busy_cycle_lo"));
+    m_my_block.create_field(32'h00004010, "total_busy_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("total_busy_cycle", 32'h00004014, 32'h00000000, make_hdl_path("total_busy_cycle"));
-    m_my_block.create_field(32'h00004014, "total_busy_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("total_busy_cycle_hi", 32'h00004014, 32'h00000000, make_hdl_path("total_busy_cycle_hi"));
+    m_my_block.create_field(32'h00004014, "total_busy_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("cfg_wr_num", 32'h00004018, 32'h00000000, make_hdl_path("cfg_wr_num"));
-    m_my_block.create_field(32'h00004018, "cfg_wr_num_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("cfg_wr_num_lo", 32'h00004018, 32'h00000000, make_hdl_path("cfg_wr_num_lo"));
+    m_my_block.create_field(32'h00004018, "cfg_wr_num_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("cfg_wr_num", 32'h0000401C, 32'h00000000, make_hdl_path("cfg_wr_num"));
-    m_my_block.create_field(32'h0000401C, "cfg_wr_num_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("cfg_wr_num_hi", 32'h0000401C, 32'h00000000, make_hdl_path("cfg_wr_num_hi"));
+    m_my_block.create_field(32'h0000401C, "cfg_wr_num_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("cfg_wr_stall_cycle", 32'h00004020, 32'h00000000, make_hdl_path("cfg_wr_stall_cycle"));
-    m_my_block.create_field(32'h00004020, "cfg_wr_stall_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("cfg_wr_stall_cycle_lo", 32'h00004020, 32'h00000000, make_hdl_path("cfg_wr_stall_cycle_lo"));
+    m_my_block.create_field(32'h00004020, "cfg_wr_stall_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("cfg_wr_stall_cycle", 32'h00004024, 32'h00000000, make_hdl_path("cfg_wr_stall_cycle"));
-    m_my_block.create_field(32'h00004024, "cfg_wr_stall_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("cfg_wr_stall_cycle_hi", 32'h00004024, 32'h00000000, make_hdl_path("cfg_wr_stall_cycle_hi"));
+    m_my_block.create_field(32'h00004024, "cfg_wr_stall_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("macro_inst_total_num", 32'h00004028, 32'h00000000, make_hdl_path("macro_inst_total_num"));
-    m_my_block.create_field(32'h00004028, "macro_inst_total_num_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("macro_inst_total_num_lo", 32'h00004028, 32'h00000000, make_hdl_path("macro_inst_total_num_lo"));
+    m_my_block.create_field(32'h00004028, "macro_inst_total_num_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("macro_inst_total_num", 32'h0000402C, 32'h00000000, make_hdl_path("macro_inst_total_num"));
-    m_my_block.create_field(32'h0000402C, "macro_inst_total_num_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("macro_inst_total_num_hi", 32'h0000402C, 32'h00000000, make_hdl_path("macro_inst_total_num_hi"));
+    m_my_block.create_field(32'h0000402C, "macro_inst_total_num_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("macro_inst_retire_num", 32'h00004030, 32'h00000000, make_hdl_path("macro_inst_retire_num"));
-    m_my_block.create_field(32'h00004030, "macro_inst_retire_num_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("macro_inst_retire_num_lo", 32'h00004030, 32'h00000000, make_hdl_path("macro_inst_retire_num_lo"));
+    m_my_block.create_field(32'h00004030, "macro_inst_retire_num_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("macro_inst_retire_num", 32'h00004034, 32'h00000000, make_hdl_path("macro_inst_retire_num"));
-    m_my_block.create_field(32'h00004034, "macro_inst_retire_num_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("macro_inst_retire_num_hi", 32'h00004034, 32'h00000000, make_hdl_path("macro_inst_retire_num_hi"));
+    m_my_block.create_field(32'h00004034, "macro_inst_retire_num_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("isq_full_cycle", 32'h00004038, 32'h00000000, make_hdl_path("isq_full_cycle"));
-    m_my_block.create_field(32'h00004038, "isq_full_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("isq_full_cycle_lo", 32'h00004038, 32'h00000000, make_hdl_path("isq_full_cycle_lo"));
+    m_my_block.create_field(32'h00004038, "isq_full_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("isq_full_cycle", 32'h0000403C, 32'h00000000, make_hdl_path("isq_full_cycle"));
-    m_my_block.create_field(32'h0000403C, "isq_full_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("isq_full_cycle_hi", 32'h0000403C, 32'h00000000, make_hdl_path("isq_full_cycle_hi"));
+    m_my_block.create_field(32'h0000403C, "isq_full_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("issue_stall_fence_cycle", 32'h00004040, 32'h00000000, make_hdl_path("issue_stall_fence_cycle"));
-    m_my_block.create_field(32'h00004040, "issue_stall_fence_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("issue_stall_fence_cycle_lo", 32'h00004040, 32'h00000000, make_hdl_path("issue_stall_fence_cycle_lo"));
+    m_my_block.create_field(32'h00004040, "issue_stall_fence_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("issue_stall_fence_cycle", 32'h00004044, 32'h00000000, make_hdl_path("issue_stall_fence_cycle"));
-    m_my_block.create_field(32'h00004044, "issue_stall_fence_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("issue_stall_fence_cycle_hi", 32'h00004044, 32'h00000000, make_hdl_path("issue_stall_fence_cycle_hi"));
+    m_my_block.create_field(32'h00004044, "issue_stall_fence_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("issue_stall_bcast_cycle", 32'h00004048, 32'h00000000, make_hdl_path("issue_stall_bcast_cycle"));
-    m_my_block.create_field(32'h00004048, "issue_stall_bcast_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("issue_stall_bcast_cycle_lo", 32'h00004048, 32'h00000000, make_hdl_path("issue_stall_bcast_cycle_lo"));
+    m_my_block.create_field(32'h00004048, "issue_stall_bcast_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("issue_stall_bcast_cycle", 32'h0000404C, 32'h00000000, make_hdl_path("issue_stall_bcast_cycle"));
-    m_my_block.create_field(32'h0000404C, "issue_stall_bcast_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("issue_stall_bcast_cycle_hi", 32'h0000404C, 32'h00000000, make_hdl_path("issue_stall_bcast_cycle_hi"));
+    m_my_block.create_field(32'h0000404C, "issue_stall_bcast_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("issue_stall_dep_cycle", 32'h00004050, 32'h00000000, make_hdl_path("issue_stall_dep_cycle"));
-    m_my_block.create_field(32'h00004050, "issue_stall_dep_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("issue_stall_dep_cycle_lo", 32'h00004050, 32'h00000000, make_hdl_path("issue_stall_dep_cycle_lo"));
+    m_my_block.create_field(32'h00004050, "issue_stall_dep_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("issue_stall_dep_cycle", 32'h00004054, 32'h00000000, make_hdl_path("issue_stall_dep_cycle"));
-    m_my_block.create_field(32'h00004054, "issue_stall_dep_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("issue_stall_dep_cycle_hi", 32'h00004054, 32'h00000000, make_hdl_path("issue_stall_dep_cycle_hi"));
+    m_my_block.create_field(32'h00004054, "issue_stall_dep_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("issue_stall_eu_cycle", 32'h00004058, 32'h00000000, make_hdl_path("issue_stall_eu_cycle"));
-    m_my_block.create_field(32'h00004058, "issue_stall_eu_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("issue_stall_eu_cycle_lo", 32'h00004058, 32'h00000000, make_hdl_path("issue_stall_eu_cycle_lo"));
+    m_my_block.create_field(32'h00004058, "issue_stall_eu_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("issue_stall_eu_cycle", 32'h0000405C, 32'h00000000, make_hdl_path("issue_stall_eu_cycle"));
-    m_my_block.create_field(32'h0000405C, "issue_stall_eu_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("issue_stall_eu_cycle_hi", 32'h0000405C, 32'h00000000, make_hdl_path("issue_stall_eu_cycle_hi"));
+    m_my_block.create_field(32'h0000405C, "issue_stall_eu_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("issue_starve_cycle", 32'h00004060, 32'h00000000, make_hdl_path("issue_starve_cycle"));
-    m_my_block.create_field(32'h00004060, "issue_starve_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("issue_starve_cycle_lo", 32'h00004060, 32'h00000000, make_hdl_path("issue_starve_cycle_lo"));
+    m_my_block.create_field(32'h00004060, "issue_starve_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("issue_starve_cycle", 32'h00004064, 32'h00000000, make_hdl_path("issue_starve_cycle"));
-    m_my_block.create_field(32'h00004064, "issue_starve_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("issue_starve_cycle_hi", 32'h00004064, 32'h00000000, make_hdl_path("issue_starve_cycle_hi"));
+    m_my_block.create_field(32'h00004064, "issue_starve_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("lu_busy_cycle", 32'h00004068, 32'h00000000, make_hdl_path("lu_busy_cycle"));
-    m_my_block.create_field(32'h00004068, "lu_busy_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("lu_busy_cycle_lo", 32'h00004068, 32'h00000000, make_hdl_path("lu_busy_cycle_lo"));
+    m_my_block.create_field(32'h00004068, "lu_busy_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("lu_busy_cycle", 32'h0000406C, 32'h00000000, make_hdl_path("lu_busy_cycle"));
-    m_my_block.create_field(32'h0000406C, "lu_busy_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("lu_busy_cycle_hi", 32'h0000406C, 32'h00000000, make_hdl_path("lu_busy_cycle_hi"));
+    m_my_block.create_field(32'h0000406C, "lu_busy_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("cm_ld_req_num", 32'h00004070, 32'h00000000, make_hdl_path("cm_ld_req_num"));
-    m_my_block.create_field(32'h00004070, "cm_ld_req_num_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("cm_ld_req_num_lo", 32'h00004070, 32'h00000000, make_hdl_path("cm_ld_req_num_lo"));
+    m_my_block.create_field(32'h00004070, "cm_ld_req_num_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("cm_ld_req_num", 32'h00004074, 32'h00000000, make_hdl_path("cm_ld_req_num"));
-    m_my_block.create_field(32'h00004074, "cm_ld_req_num_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("cm_ld_req_num_hi", 32'h00004074, 32'h00000000, make_hdl_path("cm_ld_req_num_hi"));
+    m_my_block.create_field(32'h00004074, "cm_ld_req_num_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("cm_ld_stall_cycle", 32'h00004078, 32'h00000000, make_hdl_path("cm_ld_stall_cycle"));
-    m_my_block.create_field(32'h00004078, "cm_ld_stall_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("cm_ld_stall_cycle_lo", 32'h00004078, 32'h00000000, make_hdl_path("cm_ld_stall_cycle_lo"));
+    m_my_block.create_field(32'h00004078, "cm_ld_stall_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("cm_ld_stall_cycle", 32'h0000407C, 32'h00000000, make_hdl_path("cm_ld_stall_cycle"));
-    m_my_block.create_field(32'h0000407C, "cm_ld_stall_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("cm_ld_stall_cycle_hi", 32'h0000407C, 32'h00000000, make_hdl_path("cm_ld_stall_cycle_hi"));
+    m_my_block.create_field(32'h0000407C, "cm_ld_stall_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("su_busy_cycle", 32'h00004080, 32'h00000000, make_hdl_path("su_busy_cycle"));
-    m_my_block.create_field(32'h00004080, "su_busy_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("su_busy_cycle_lo", 32'h00004080, 32'h00000000, make_hdl_path("su_busy_cycle_lo"));
+    m_my_block.create_field(32'h00004080, "su_busy_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("su_busy_cycle", 32'h00004084, 32'h00000000, make_hdl_path("su_busy_cycle"));
-    m_my_block.create_field(32'h00004084, "su_busy_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("su_busy_cycle_hi", 32'h00004084, 32'h00000000, make_hdl_path("su_busy_cycle_hi"));
+    m_my_block.create_field(32'h00004084, "su_busy_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("cm_st_req_num", 32'h00004088, 32'h00000000, make_hdl_path("cm_st_req_num"));
-    m_my_block.create_field(32'h00004088, "cm_st_req_num_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("cm_st_req_num_lo", 32'h00004088, 32'h00000000, make_hdl_path("cm_st_req_num_lo"));
+    m_my_block.create_field(32'h00004088, "cm_st_req_num_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("cm_st_req_num", 32'h0000408C, 32'h00000000, make_hdl_path("cm_st_req_num"));
-    m_my_block.create_field(32'h0000408C, "cm_st_req_num_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("cm_st_req_num_hi", 32'h0000408C, 32'h00000000, make_hdl_path("cm_st_req_num_hi"));
+    m_my_block.create_field(32'h0000408C, "cm_st_req_num_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("cm_st_stall_cycle", 32'h00004090, 32'h00000000, make_hdl_path("cm_st_stall_cycle"));
-    m_my_block.create_field(32'h00004090, "cm_st_stall_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("cm_st_stall_cycle_lo", 32'h00004090, 32'h00000000, make_hdl_path("cm_st_stall_cycle_lo"));
+    m_my_block.create_field(32'h00004090, "cm_st_stall_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("cm_st_stall_cycle", 32'h00004094, 32'h00000000, make_hdl_path("cm_st_stall_cycle"));
-    m_my_block.create_field(32'h00004094, "cm_st_stall_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("cm_st_stall_cycle_hi", 32'h00004094, 32'h00000000, make_hdl_path("cm_st_stall_cycle_hi"));
+    m_my_block.create_field(32'h00004094, "cm_st_stall_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("valu0_busy_cycle", 32'h00004098, 32'h00000000, make_hdl_path("valu0_busy_cycle"));
-    m_my_block.create_field(32'h00004098, "valu0_busy_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("valu0_busy_cycle_lo", 32'h00004098, 32'h00000000, make_hdl_path("valu0_busy_cycle_lo"));
+    m_my_block.create_field(32'h00004098, "valu0_busy_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("valu0_busy_cycle", 32'h0000409C, 32'h00000000, make_hdl_path("valu0_busy_cycle"));
-    m_my_block.create_field(32'h0000409C, "valu0_busy_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("valu0_busy_cycle_hi", 32'h0000409C, 32'h00000000, make_hdl_path("valu0_busy_cycle_hi"));
+    m_my_block.create_field(32'h0000409C, "valu0_busy_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("valu1_busy_cycle", 32'h000040A0, 32'h00000000, make_hdl_path("valu1_busy_cycle"));
-    m_my_block.create_field(32'h000040A0, "valu1_busy_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("valu1_busy_cycle_lo", 32'h000040A0, 32'h00000000, make_hdl_path("valu1_busy_cycle_lo"));
+    m_my_block.create_field(32'h000040A0, "valu1_busy_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("valu1_busy_cycle", 32'h000040A4, 32'h00000000, make_hdl_path("valu1_busy_cycle"));
-    m_my_block.create_field(32'h000040A4, "valu1_busy_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("valu1_busy_cycle_hi", 32'h000040A4, 32'h00000000, make_hdl_path("valu1_busy_cycle_hi"));
+    m_my_block.create_field(32'h000040A4, "valu1_busy_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("valu2_busy_cycle", 32'h000040A8, 32'h00000000, make_hdl_path("valu2_busy_cycle"));
-    m_my_block.create_field(32'h000040A8, "valu2_busy_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("valu2_busy_cycle_lo", 32'h000040A8, 32'h00000000, make_hdl_path("valu2_busy_cycle_lo"));
+    m_my_block.create_field(32'h000040A8, "valu2_busy_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("valu2_busy_cycle", 32'h000040AC, 32'h00000000, make_hdl_path("valu2_busy_cycle"));
-    m_my_block.create_field(32'h000040AC, "valu2_busy_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("valu2_busy_cycle_hi", 32'h000040AC, 32'h00000000, make_hdl_path("valu2_busy_cycle_hi"));
+    m_my_block.create_field(32'h000040AC, "valu2_busy_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("vsfu0_busy_cycle", 32'h000040B0, 32'h00000000, make_hdl_path("vsfu0_busy_cycle"));
-    m_my_block.create_field(32'h000040B0, "vsfu0_busy_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("vsfu0_busy_cycle_lo", 32'h000040B0, 32'h00000000, make_hdl_path("vsfu0_busy_cycle_lo"));
+    m_my_block.create_field(32'h000040B0, "vsfu0_busy_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("vsfu0_busy_cycle", 32'h000040B4, 32'h00000000, make_hdl_path("vsfu0_busy_cycle"));
-    m_my_block.create_field(32'h000040B4, "vsfu0_busy_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("vsfu0_busy_cycle_hi", 32'h000040B4, 32'h00000000, make_hdl_path("vsfu0_busy_cycle_hi"));
+    m_my_block.create_field(32'h000040B4, "vsfu0_busy_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("vsfu1_busy_cycle", 32'h000040B8, 32'h00000000, make_hdl_path("vsfu1_busy_cycle"));
-    m_my_block.create_field(32'h000040B8, "vsfu1_busy_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("vsfu1_busy_cycle_lo", 32'h000040B8, 32'h00000000, make_hdl_path("vsfu1_busy_cycle_lo"));
+    m_my_block.create_field(32'h000040B8, "vsfu1_busy_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("vsfu1_busy_cycle", 32'h000040BC, 32'h00000000, make_hdl_path("vsfu1_busy_cycle"));
-    m_my_block.create_field(32'h000040BC, "vsfu1_busy_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("vsfu1_busy_cycle_hi", 32'h000040BC, 32'h00000000, make_hdl_path("vsfu1_busy_cycle_hi"));
+    m_my_block.create_field(32'h000040BC, "vsfu1_busy_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("mexe_busy_cycle", 32'h000040C0, 32'h00000000, make_hdl_path("mexe_busy_cycle"));
-    m_my_block.create_field(32'h000040C0, "mexe_busy_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("mexe_busy_cycle_lo", 32'h000040C0, 32'h00000000, make_hdl_path("mexe_busy_cycle_lo"));
+    m_my_block.create_field(32'h000040C0, "mexe_busy_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("mexe_busy_cycle", 32'h000040C4, 32'h00000000, make_hdl_path("mexe_busy_cycle"));
-    m_my_block.create_field(32'h000040C4, "mexe_busy_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("mexe_busy_cycle_hi", 32'h000040C4, 32'h00000000, make_hdl_path("mexe_busy_cycle_hi"));
+    m_my_block.create_field(32'h000040C4, "mexe_busy_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("sexe_busy_cycle", 32'h000040C8, 32'h00000000, make_hdl_path("sexe_busy_cycle"));
-    m_my_block.create_field(32'h000040C8, "sexe_busy_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("sexe_busy_cycle_lo", 32'h000040C8, 32'h00000000, make_hdl_path("sexe_busy_cycle_lo"));
+    m_my_block.create_field(32'h000040C8, "sexe_busy_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("sexe_busy_cycle", 32'h000040CC, 32'h00000000, make_hdl_path("sexe_busy_cycle"));
-    m_my_block.create_field(32'h000040CC, "sexe_busy_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("sexe_busy_cycle_hi", 32'h000040CC, 32'h00000000, make_hdl_path("sexe_busy_cycle_hi"));
+    m_my_block.create_field(32'h000040CC, "sexe_busy_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("vrf_rd_p0_busy_cycle", 32'h000040D0, 32'h00000000, make_hdl_path("vrf_rd_p0_busy_cycle"));
-    m_my_block.create_field(32'h000040D0, "vrf_rd_p0_busy_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("vrf_rd_p0_busy_cycle_lo", 32'h000040D0, 32'h00000000, make_hdl_path("vrf_rd_p0_busy_cycle_lo"));
+    m_my_block.create_field(32'h000040D0, "vrf_rd_p0_busy_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("vrf_rd_p0_busy_cycle", 32'h000040D4, 32'h00000000, make_hdl_path("vrf_rd_p0_busy_cycle"));
-    m_my_block.create_field(32'h000040D4, "vrf_rd_p0_busy_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("vrf_rd_p0_busy_cycle_hi", 32'h000040D4, 32'h00000000, make_hdl_path("vrf_rd_p0_busy_cycle_hi"));
+    m_my_block.create_field(32'h000040D4, "vrf_rd_p0_busy_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("vrf_rd_p1_busy_cycle", 32'h000040D8, 32'h00000000, make_hdl_path("vrf_rd_p1_busy_cycle"));
-    m_my_block.create_field(32'h000040D8, "vrf_rd_p1_busy_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("vrf_rd_p1_busy_cycle_lo", 32'h000040D8, 32'h00000000, make_hdl_path("vrf_rd_p1_busy_cycle_lo"));
+    m_my_block.create_field(32'h000040D8, "vrf_rd_p1_busy_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("vrf_rd_p1_busy_cycle", 32'h000040DC, 32'h00000000, make_hdl_path("vrf_rd_p1_busy_cycle"));
-    m_my_block.create_field(32'h000040DC, "vrf_rd_p1_busy_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("vrf_rd_p1_busy_cycle_hi", 32'h000040DC, 32'h00000000, make_hdl_path("vrf_rd_p1_busy_cycle_hi"));
+    m_my_block.create_field(32'h000040DC, "vrf_rd_p1_busy_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("vrf_wt_p0_busy_cycle", 32'h000040E0, 32'h00000000, make_hdl_path("vrf_wt_p0_busy_cycle"));
-    m_my_block.create_field(32'h000040E0, "vrf_wt_p0_busy_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("vrf_wt_p0_busy_cycle_lo", 32'h000040E0, 32'h00000000, make_hdl_path("vrf_wt_p0_busy_cycle_lo"));
+    m_my_block.create_field(32'h000040E0, "vrf_wt_p0_busy_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("vrf_wt_p0_busy_cycle", 32'h000040E4, 32'h00000000, make_hdl_path("vrf_wt_p0_busy_cycle"));
-    m_my_block.create_field(32'h000040E4, "vrf_wt_p0_busy_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("vrf_wt_p0_busy_cycle_hi", 32'h000040E4, 32'h00000000, make_hdl_path("vrf_wt_p0_busy_cycle_hi"));
+    m_my_block.create_field(32'h000040E4, "vrf_wt_p0_busy_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("vrf_wt_p1_busy_cycle", 32'h000040E8, 32'h00000000, make_hdl_path("vrf_wt_p1_busy_cycle"));
-    m_my_block.create_field(32'h000040E8, "vrf_wt_p1_busy_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("vrf_wt_p1_busy_cycle_lo", 32'h000040E8, 32'h00000000, make_hdl_path("vrf_wt_p1_busy_cycle_lo"));
+    m_my_block.create_field(32'h000040E8, "vrf_wt_p1_busy_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("vrf_wt_p1_busy_cycle", 32'h000040EC, 32'h00000000, make_hdl_path("vrf_wt_p1_busy_cycle"));
-    m_my_block.create_field(32'h000040EC, "vrf_wt_p1_busy_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("vrf_wt_p1_busy_cycle_hi", 32'h000040EC, 32'h00000000, make_hdl_path("vrf_wt_p1_busy_cycle_hi"));
+    m_my_block.create_field(32'h000040EC, "vrf_wt_p1_busy_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("mrf_wt_busy_cycle", 32'h000040F0, 32'h00000000, make_hdl_path("mrf_wt_busy_cycle"));
-    m_my_block.create_field(32'h000040F0, "mrf_wt_busy_cycle_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("mrf_wt_busy_cycle_lo", 32'h000040F0, 32'h00000000, make_hdl_path("mrf_wt_busy_cycle_lo"));
+    m_my_block.create_field(32'h000040F0, "mrf_wt_busy_cycle_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("mrf_wt_busy_cycle", 32'h000040F4, 32'h00000000, make_hdl_path("mrf_wt_busy_cycle"));
-    m_my_block.create_field(32'h000040F4, "mrf_wt_busy_cycle_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("mrf_wt_busy_cycle_hi", 32'h000040F4, 32'h00000000, make_hdl_path("mrf_wt_busy_cycle_hi"));
+    m_my_block.create_field(32'h000040F4, "mrf_wt_busy_cycle_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("nan_replace_cnt", 32'h000040F8, 32'h00000000, make_hdl_path("nan_replace_cnt"));
-    m_my_block.create_field(32'h000040F8, "nan_replace_cnt_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("nan_replace_cnt_lo", 32'h000040F8, 32'h00000000, make_hdl_path("nan_replace_cnt_lo"));
+    m_my_block.create_field(32'h000040F8, "nan_replace_cnt_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("nan_replace_cnt", 32'h000040FC, 32'h00000000, make_hdl_path("nan_replace_cnt"));
-    m_my_block.create_field(32'h000040FC, "nan_replace_cnt_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("nan_replace_cnt_hi", 32'h000040FC, 32'h00000000, make_hdl_path("nan_replace_cnt_hi"));
+    m_my_block.create_field(32'h000040FC, "nan_replace_cnt_hi_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("inf_replace_cnt", 32'h00004100, 32'h00000000, make_hdl_path("inf_replace_cnt"));
-    m_my_block.create_field(32'h00004100, "inf_replace_cnt_COUNT", 0, 31, REG_RO);
+    m_my_block.create_reg("inf_replace_cnt_lo", 32'h00004100, 32'h00000000, make_hdl_path("inf_replace_cnt_lo"));
+    m_my_block.create_field(32'h00004100, "inf_replace_cnt_lo_COUNT", 0, 31, REG_RO);
 
-    m_my_block.create_reg("inf_replace_cnt", 32'h00004104, 32'h00000000, make_hdl_path("inf_replace_cnt"));
-    m_my_block.create_field(32'h00004104, "inf_replace_cnt_COUNT_31_0", 0, 31, REG_RO);
+    m_my_block.create_reg("inf_replace_cnt_hi", 32'h00004104, 32'h00000000, make_hdl_path("inf_replace_cnt_hi"));
+    m_my_block.create_field(32'h00004104, "inf_replace_cnt_hi_COUNT", 0, 31, REG_RO);
 
   endfunction
 
