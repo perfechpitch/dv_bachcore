@@ -9,6 +9,6 @@ class random_scenario_test extends rand_inst_test;
         super.build_phase(phase);
         uvm_config_db#(uvm_object_wrapper)::set(
             this, "env.inst_gen_vsqr.main_phase", "default_sequence",
-            random_scenario_vsequence::type_id::get());
+            scenario_base_vsequence::type_id::get());
     endfunction
 endclass

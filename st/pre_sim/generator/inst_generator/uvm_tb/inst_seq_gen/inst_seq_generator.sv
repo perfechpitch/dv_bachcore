@@ -9,7 +9,7 @@ class inst_seq_generator extends uvm_component;
     except_inst_sequence    except_inst_seq;
     branch_inst_sequence    branch_inst_seq;
     ls_inst_sequence        ls_inst_seq;
-    wfi_inst_sequence       wfi_inst_seq;
+    c_inst_sequence         c_inst_seq;
     pass_quit_sequence      pass_quit_seq;
 
     safe_seq_config     safe_seq_cfg;
@@ -32,7 +32,7 @@ function new (string name, uvm_component parent);
         except_inst_seq   = new();
         branch_inst_seq   = new();
         ls_inst_seq       = new();
-        wfi_inst_seq      = new();
+        c_inst_seq        = new();
         pass_quit_seq     = new();
 
     endfunction : new
@@ -57,22 +57,21 @@ task pre_main_phase(uvm_phase phase);
         except_inst_seq.inst_gen   = inst_gen;
         branch_inst_seq.inst_gen   = inst_gen;
         ls_inst_seq.inst_gen       = inst_gen;
-        wfi_inst_seq.inst_gen      = inst_gen;
+        c_inst_seq.inst_gen        = inst_gen;
         safe_inst_seq.reg_pool     = reg_pool;
         flush_inst_seq.reg_pool    = reg_pool;
         except_inst_seq.reg_pool   = reg_pool;
         branch_inst_seq.reg_pool   = reg_pool;
         ls_inst_seq.reg_pool       = reg_pool;
-        wfi_inst_seq.reg_pool      = reg_pool;
         safe_inst_seq.addr_space_gen     = addr_space_gen;
         flush_inst_seq.addr_space_gen    = addr_space_gen;
         except_inst_seq.addr_space_gen   = addr_space_gen;
         branch_inst_seq.addr_space_gen   = addr_space_gen;
         ls_inst_seq.addr_space_gen       = addr_space_gen;
-        wfi_inst_seq.addr_space_gen      = addr_space_gen;
 
         branch_inst_seq.branch_seq_cfg  = this.branch_seq_cfg;
         ls_inst_seq.ls_seq_cfg          = this.ls_seq_cfg;
+        c_inst_seq.c_seq_cfg            = this.safe_seq_cfg;
         safe_inst_seq.safe_seq_cfg      = this.safe_seq_cfg;
         flush_inst_seq.flush_seq_cfg    = this.flush_seq_cfg;
         except_inst_seq.except_seq_cfg  = this.except_seq_cfg;
@@ -93,7 +92,7 @@ task pre_main_phase(uvm_phase phase);
             EXCEPT_INST_SEQ : inst_seq_info = except_inst_seq.seq_gen();
             BRANCH_INST_SEQ : inst_seq_info = branch_inst_seq.seq_gen();
             LS_INST_SEQ     : inst_seq_info = ls_inst_seq.seq_gen();
-            WFI_INST_SEQ    : inst_seq_info = wfi_inst_seq.seq_gen();
+            C_INST_SEQ      : inst_seq_info = c_inst_seq.seq_gen();
         endcase
         //$fwrite(gen_file,"/*\n");
         //$fwrite(gen_file,"%s\n",inst_seq_info.sprint());

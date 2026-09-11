@@ -20,6 +20,7 @@ class safe_inst_sequence extends base_inst_sequence;
         inst_gen.safe_inst_gen.safe_float_cal_dist    = safe_seq_cfg.safe_float_cal_dist    ;
         inst_gen.safe_inst_gen.safe_branch_dist       = safe_seq_cfg.safe_branch_dist       ;
         inst_gen.safe_inst_gen.safe_int_ls_dist       = safe_seq_cfg.safe_int_ls_dist       ;
+        inst_gen.safe_inst_gen.safe_custom_dsa_dist   = safe_seq_cfg.safe_custom_dsa_dist   ;
 
 
         $fwrite(inst_gen.gen_file,("// --------------  SAFE INST SEQ with %d safe insts\n"),seq_length);

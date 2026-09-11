@@ -26,9 +26,9 @@ class except_seq_config extends inst_seq_config;
     }
 
     constraint except_inst_dist_c{
-        except_inst_dist.size() == 6;
+        except_inst_dist.size() == 5;
         foreach(except_inst_dist[i]){
-            if(disable_misalign_branch && i==3 || ls_inst_disable && i==4)
+            if(disable_misalign_branch && i==2 || ls_inst_disable && i==3)
                 except_inst_dist[i] ==0;
             else
                 except_inst_dist[i] inside{[0:100]};

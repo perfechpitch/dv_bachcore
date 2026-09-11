@@ -5,7 +5,6 @@ class ls_seq_config extends inst_seq_config;
     
     bit flush_inst_enable=0;
     bit except_inst_enable=0;
-    bit wfi_inst_enable=0;
     
     //default every seq gen new base
     bit base_confirm=0;
@@ -41,7 +40,6 @@ class ls_seq_config extends inst_seq_config;
         `uvm_field_int(float_en, UVM_DEFAULT|UVM_DEC)
         `uvm_field_int(flush_inst_enable, UVM_DEFAULT|UVM_DEC)
         `uvm_field_int(except_inst_enable, UVM_DEFAULT|UVM_DEC)
-        `uvm_field_int(wfi_inst_enable, UVM_DEFAULT|UVM_DEC)
         `uvm_field_int(int_ls_dist, UVM_DEFAULT|UVM_DEC)
         `uvm_field_int(fp_ls_dist, UVM_DEFAULT|UVM_DEC)
 
@@ -83,7 +81,7 @@ class ls_seq_config extends inst_seq_config;
 
     constraint ls_seq_type_dist_c{
 //    TODO: add ls seq type num
-        ls_seq_type_dist.size() == 4;
+        ls_seq_type_dist.size() == 3;
         foreach(ls_seq_type_dist[i]){
             ls_seq_type_dist[i] inside{[0:100]};
         }

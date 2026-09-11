@@ -7,7 +7,8 @@ class pass_quit_sequence extends uvm_object;
     endfunction : new
 
     //virtual function seq_gen(csr_config csr_cfg);
-    function seq_gen(inst_generator inst_gen);
-        `add(0,0,0);
+    function seq_gen(inst_generator inst_gen, bit notify_ts = 1'b1);
+        // TASK_DONE is the architectural end marker for a generated task.
+        inst_gen.get_specified_inst(TASK_DONE, 0, 0, 0, notify_ts);
     endfunction
 endclass

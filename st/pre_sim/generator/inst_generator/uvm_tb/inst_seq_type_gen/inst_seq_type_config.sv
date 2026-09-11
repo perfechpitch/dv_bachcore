@@ -6,14 +6,14 @@ class inst_seq_type_config extends uvm_object;
     bit branch_seq_disable = 0;
     bit flush_seq_enable   = 0;
     bit except_seq_enable  = 0;
-    bit wfi_seq_enable     = 0;
 
     rand int unsigned safe_seq_dist;
     rand int unsigned ls_seq_dist;
     rand int unsigned branch_seq_dist;
     rand int unsigned flush_seq_dist;
     rand int unsigned except_seq_dist;
-    rand int unsigned wfi_seq_dist;
+    // AUTO keeps C disabled. Scenario PLAN may set this runtime weight.
+    int unsigned c_seq_dist = 0;
 
     `uvm_object_utils_begin(inst_seq_type_config)
         `uvm_field_int(safe_seq_disable,   UVM_DEFAULT)
@@ -21,13 +21,12 @@ class inst_seq_type_config extends uvm_object;
         `uvm_field_int(branch_seq_disable, UVM_DEFAULT)
         `uvm_field_int(flush_seq_enable,   UVM_DEFAULT)
         `uvm_field_int(except_seq_enable,  UVM_DEFAULT)
-        `uvm_field_int(wfi_seq_enable,     UVM_DEFAULT)
         `uvm_field_int(safe_seq_dist,      UVM_DEFAULT | UVM_DEC)
         `uvm_field_int(ls_seq_dist,        UVM_DEFAULT | UVM_DEC)
         `uvm_field_int(branch_seq_dist,    UVM_DEFAULT | UVM_DEC)
         `uvm_field_int(flush_seq_dist,     UVM_DEFAULT | UVM_DEC)
         `uvm_field_int(except_seq_dist,    UVM_DEFAULT | UVM_DEC)
-        `uvm_field_int(wfi_seq_dist,       UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int(c_seq_dist,         UVM_DEFAULT | UVM_DEC)
     `uvm_object_utils_end
 
     function new (string name = "inst_seq_type_config");
@@ -45,10 +44,7 @@ class inst_seq_type_config extends uvm_object;
         else                   {flush_seq_dist  inside {[0:100]};}
         if(!except_seq_enable) {except_seq_dist == 0;}
         else                   {except_seq_dist inside {[0:100]};}
-        if(!wfi_seq_enable)    {wfi_seq_dist    == 0;}
-        else                   {wfi_seq_dist    inside {[0:100]};}
-
         (safe_seq_dist + ls_seq_dist + branch_seq_dist
-         + flush_seq_dist + except_seq_dist + wfi_seq_dist) == 100;
+         + flush_seq_dist + except_seq_dist) == 100;
     }
 endclass

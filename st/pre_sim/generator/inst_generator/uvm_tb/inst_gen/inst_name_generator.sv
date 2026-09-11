@@ -14,7 +14,8 @@ class inst_name_generator extends uvm_object;
 endclass 
 class safe_inst_generator extends inst_name_generator;
 //safe branch, safe ls
-typedef enum {SAFE_INT_CAL,SAFE_FLOAT_CAL,SAFE_VECTOR_INT,SAFE_VECTOR_FLOAT,SAFE_BRANCH,SAFE_INT_LS} safe_inst_type_e;
+typedef enum {SAFE_INT_CAL,SAFE_FLOAT_CAL,SAFE_VECTOR_INT,SAFE_VECTOR_FLOAT,
+              SAFE_BRANCH,SAFE_INT_LS,SAFE_CUSTOM_DSA} safe_inst_type_e;
 //    inst_gen_config 
     csr_config      csr_cfg;
     rand safe_inst_type_e   safe_inst_type;
@@ -23,11 +24,13 @@ typedef enum {SAFE_INT_CAL,SAFE_FLOAT_CAL,SAFE_VECTOR_INT,SAFE_VECTOR_FLOAT,SAFE
     int unsigned safe_float_cal_dist = 1;
     int unsigned safe_branch_dist=1;
     int unsigned safe_int_ls_dist=1;
+    int unsigned safe_custom_dsa_dist=1;
     `uvm_object_utils_begin(safe_inst_generator)
         `uvm_field_int(safe_int_cal_dist,   UVM_DEFAULT)
         `uvm_field_int(safe_float_cal_dist,   UVM_DEFAULT)
         `uvm_field_int(safe_branch_dist,   UVM_DEFAULT)
         `uvm_field_int(safe_int_ls_dist,   UVM_DEFAULT)
+        `uvm_field_int(safe_custom_dsa_dist, UVM_DEFAULT)
         `uvm_field_enum(inst_e,inst_name,               UVM_DEFAULT)
         `uvm_field_enum(safe_inst_type_e,safe_inst_type,UVM_DEFAULT)
     `uvm_object_utils_end
@@ -46,7 +49,9 @@ typedef enum {SAFE_INT_CAL,SAFE_FLOAT_CAL,SAFE_VECTOR_INT,SAFE_VECTOR_FLOAT,SAFE
         SAFE_INT_CAL    := safe_int_cal_dist,
         SAFE_FLOAT_CAL  := ((csr_cfg.fs == 0 || !inst_gen_cfg.float_en) ? 0:safe_float_cal_dist),
         SAFE_INT_LS     := safe_int_ls_dist,
-        SAFE_BRANCH     := safe_branch_dist
+        SAFE_BRANCH     := safe_branch_dist,
+        SAFE_CUSTOM_DSA := ((CUSTOM inside inst_gen_cfg.support_inst_set) ?
+                            safe_custom_dsa_dist : 0)
         };
     }
     constraint solve_c{
@@ -74,6 +79,10 @@ typedef enum {SAFE_INT_CAL,SAFE_FLOAT_CAL,SAFE_VECTOR_INT,SAFE_VECTOR_FLOAT,SAFE
         BNE,BLT,BGE,BLTU,BGEU
         };
 
+        (safe_inst_type == SAFE_CUSTOM_DSA) -> inst_name inside{
+        DSAR,DSARI,DSAW,DSAWI
+        };
+
         (safe_inst_type == SAFE_FLOAT_CAL)-> inst_name inside{
         FMADD_D,FMADD_S,FMSUB_D,FMSUB_S,FNMADD_D,FNMADD_S,
         FNMSUB_D,FNMSUB_S,FADD_D,FADD_S,FSUB_D,FSUB_S,FMUL_D,FMUL_S,
@@ -86,22 +95,31 @@ typedef enum {SAFE_INT_CAL,SAFE_FLOAT_CAL,SAFE_VECTOR_INT,SAFE_VECTOR_FLOAT,SAFE
 endclass
 class branch_inst_generator extends inst_name_generator;
     bit branch_is_jump;
+    bit loop_context;
+    bit loop_use_custom;
     bit signed [31:0] branch_delta;
     `uvm_object_utils_begin(branch_inst_generator)
         `uvm_field_enum(inst_e,inst_name, UVM_DEFAULT)
         `uvm_field_int(branch_is_jump, UVM_DEFAULT)
+        `uvm_field_int(loop_context, UVM_DEFAULT)
+        `uvm_field_int(loop_use_custom, UVM_DEFAULT)
         `uvm_field_int(branch_delta, UVM_DEFAULT)
     `uvm_object_utils_end
     function new (string name = "branch_inst_generator");
       super.new(name);
     endfunction : new
     constraint branch_inst_name_c{
-        (branch_is_jump == 0 && (RVC inside inst_gen_cfg.support_inst_set) &&
+        (branch_is_jump == 0 && !loop_context && (RVC inside inst_gen_cfg.support_inst_set) &&
          branch_delta[0] == 0 && branch_delta >= -256 && branch_delta <= 254)
             -> inst_name inside{BEQ,BNE,BLT,BGE,BLTU,BGEU,C_BEQZ,C_BNEZ};
-        (branch_is_jump == 0 && (!(RVC inside inst_gen_cfg.support_inst_set) ||
+        (branch_is_jump == 0 && !loop_context && (!(RVC inside inst_gen_cfg.support_inst_set) ||
          branch_delta[0] != 0 || branch_delta < -256 || branch_delta > 254))
             -> inst_name inside{BEQ,BNE,BLT,BGE,BLTU,BGEU};
+        (branch_is_jump == 0 && loop_context && loop_use_custom &&
+         (CUSTOM inside inst_gen_cfg.support_inst_set)) -> inst_name == LOOP;
+        (branch_is_jump == 0 && loop_context &&
+         (!loop_use_custom || !(CUSTOM inside inst_gen_cfg.support_inst_set)))
+            -> inst_name == BLT;
         (branch_is_jump == 1 && (RVC inside inst_gen_cfg.support_inst_set) &&
          inst_gen_cfg.xlen == 32 && branch_delta[0] == 0 &&
          branch_delta >= -2048 && branch_delta <= 2046)
@@ -153,12 +171,10 @@ typedef enum {LS_LOAD,LS_STORE,LS_AMO,LS_PREF,LS_FENCE,
         (ls_inst_type == LS_STORE) -> inst_name inside{SB,SH,SW,SD,C_SW,C_SWSP};
         (ls_inst_type == LS_FP_LOAD ) -> inst_name inside{FLW,FLD};
         (ls_inst_type == LS_FP_STORE) -> inst_name inside{FSW,FSD};
-        (ls_inst_type == LS_AMO && inst_gen_cfg.xlen == 32) -> inst_name inside{LR_W,SC_W,
-                                                     AMOSWAP_W,AMOADD_W,AMOXOR_W,
+        (ls_inst_type == LS_AMO && inst_gen_cfg.xlen == 32) -> inst_name inside{AMOSWAP_W,AMOADD_W,AMOXOR_W,
                                                      AMOOR_W,AMOAND_W,AMOMIN_W,
                                                      AMOMAX_W,AMOMINU_W,AMOMAXU_W};
-        (ls_inst_type == LS_AMO && inst_gen_cfg.xlen == 64) -> inst_name inside{LR_W,LR_D,SC_W,SC_D,
-                                                     AMOSWAP_W,AMOADD_W,AMOXOR_W,
+        (ls_inst_type == LS_AMO && inst_gen_cfg.xlen == 64) -> inst_name inside{AMOSWAP_W,AMOADD_W,AMOXOR_W,
                                                      AMOOR_W,AMOAND_W,AMOMIN_W,
                                                      AMOMAX_W,AMOMINU_W,AMOMAXU_W,
                                                      AMOSWAP_D,AMOADD_D,AMOXOR_D,
@@ -189,14 +205,13 @@ class flush_inst_generator extends inst_name_generator;
 endclass
 //TODO: special inst dist add special inst name
 class except_inst_generator extends inst_name_generator;
-    typedef enum {EBREAK_INST,ECALL_INST,DRET_INST,
+    typedef enum {EBREAK_INST,ECALL_INST,
                   BRANCH_MISALIGN, JUMP_MISALIGN,
                   LS_EXCEPT_INST,RI_INST}except_inst_type_e;
 
     rand except_inst_type_e except_inst_type;
     int unsigned ebreak_inst_dist     = 1;
     int unsigned ecall_inst_dist      = 1;
-    int unsigned dret_inst_dist       = 1;
     int unsigned branch_misalign_dist = 1;
     int unsigned ls_except_inst_dist  = 1;
     int unsigned ri_inst_dist         = 1;
@@ -207,7 +222,6 @@ class except_inst_generator extends inst_name_generator;
         `uvm_field_enum (except_inst_type_e, except_inst_type, UVM_DEFAULT)
         `uvm_field_int  (ebreak_inst_dist     , UVM_DEFAULT)
         `uvm_field_int  (ecall_inst_dist      , UVM_DEFAULT)
-        `uvm_field_int  (dret_inst_dist       , UVM_DEFAULT)
         `uvm_field_int  (branch_misalign_dist , UVM_DEFAULT)
         `uvm_field_int  (ls_except_inst_dist  , UVM_DEFAULT)
         `uvm_field_int  (ri_inst_dist         , UVM_DEFAULT)
@@ -223,13 +237,11 @@ class except_inst_generator extends inst_name_generator;
         except_inst_type dist{
             EBREAK_INST     := ebreak_inst_dist     ,
             ECALL_INST      := ecall_inst_dist      ,
-            DRET_INST       := dret_inst_dist       ,
             BRANCH_MISALIGN := branch_misalign_dist ,
             LS_EXCEPT_INST  := ls_except_inst_dist  ,
             RI_INST         := ri_inst_dist
             //EBREAK_INST     := ebreak_dist,
             //ECALL_DIST      := ecall_dist,
-            //DRET_DIST       := dret_dist,
             //BRANCH_MISALIGN := branch_misalign_dist,
             //LS_EXCEPT_INST  := ls_except_dist,
             //RI_INST         := ri_dist
@@ -241,11 +253,9 @@ class except_inst_generator extends inst_name_generator;
         except_inst_type == EBREAK_INST && !(RVC inside inst_gen_cfg.support_inst_set)
             -> inst_name == EBREAK;
         except_inst_type == ECALL_INST -> inst_name == ECALL;
-        except_inst_type == DRET_INST -> inst_name == DRET;
         except_inst_type == BRANCH_MISALIGN -> inst_name inside{MISALIGN_BEQ,MISALIGN_BNE,MISALIGN_BGE,MISALIGN_BLT,MISALIGN_BLTU,MISALIGN_BGEU};
         except_inst_type == LS_EXCEPT_INST       -> inst_name inside{INVALID_LB,INVALID_LH,INVALID_LW,INVALID_LD,INVALID_LBU,INVALID_LHU,INVALID_LWU,INVALID_FLW,INVALID_FLD,    // invalid_load
                                                                 INVALID_FSW,INVALID_FSD,INVALID_SB ,INVALID_SH ,INVALID_SW ,INVALID_SD, //invalid_store
-                                                                INVALID_LR_W,INVALID_SC_W,INVALID_LR_D,INVALID_SC_D, // invalid lrsc
                                                                 INVALID_AMOSWAP_W,INVALID_AMOADD_W,INVALID_AMOXOR_W,
                                                                 INVALID_AMOOR_W,INVALID_AMOAND_W,INVALID_AMOMIN_W,
                                                                 INVALID_AMOMAX_W,INVALID_AMOMINU_W,INVALID_AMOMAXU_W,

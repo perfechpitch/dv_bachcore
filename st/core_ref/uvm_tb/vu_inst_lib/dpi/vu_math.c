@@ -2,6 +2,8 @@
 
 #include <float.h>
 #include <math.h>
+#include <mpfr.h>
+#include <stdlib.h>
 #include <string.h>
 
 static float vu_bits_to_fp32(uint32_t bits)
@@ -195,19 +197,202 @@ static uint32_t vu_value_to_fp32(uint32_t value, uint32_t data_type)
     return data_type ? vu_bf16_to_fp32(value) : value;
 }
 
-static float vu_value_to_float(uint32_t value, uint32_t data_type)
+static uint32_t vu_overflow_value(uint32_t data_type,
+                                  uint32_t round_mode, int negative)
 {
-    return vu_bits_to_fp32(vu_value_to_fp32(value, data_type));
+    uint32_t infinity = data_type ? 0x7f80U : 0x7f800000U;
+    uint32_t sign = negative ? (data_type ? 0x8000U : 0x80000000U) : 0U;
+    int finite = round_mode == 1U || (round_mode == 2U && !negative) ||
+                 (round_mode == 3U && negative);
+
+    return sign | (finite ? infinity - 1U : infinity);
 }
 
-static uint32_t vu_float_to_value(float value,
-                                  uint32_t data_type,
-                                  uint32_t round_mode)
+static uint32_t vu_mpfr_to_value(mpfr_srcptr value, uint32_t data_type,
+                                 uint32_t round_mode, int side)
 {
-    uint32_t bits;
+    mpfr_t scaled;
+    mpfr_exp_t exponent;
+    long shift;
+    unsigned int fraction_bits = data_type ? 7U : 23U;
+    unsigned long significand;
+    unsigned long hidden = 1UL << fraction_bits;
+    uint32_t sign;
+    int negative;
+    int magnitude_side;
+    int fraction_nonzero;
+    int halfway;
+    int increment;
 
-    bits = vu_fp32_to_bits(value);
-    return data_type ? vu_fp32_to_bf16(bits, round_mode) : bits;
+    if(mpfr_nan_p(value))
+        return data_type ? 0x7fc0U : 0x7fc00000U;
+    negative = mpfr_signbit(value) != 0;
+    if(mpfr_zero_p(value) && side != 0)
+        negative = side < 0;
+    sign = negative ? (data_type ? 0x8000U : 0x80000000U) : 0U;
+    if(mpfr_inf_p(value))
+        return sign | (data_type ? 0x7f80U : 0x7f800000U);
+    if(mpfr_zero_p(value)) {
+        increment = side != 0 && ((round_mode == 2U && negative) ||
+                                  (round_mode == 3U && !negative));
+        return sign | (uint32_t)increment;
+    }
+
+    mpfr_init2(scaled, mpfr_get_prec(value));
+    mpfr_abs(scaled, value, MPFR_RNDN);
+    magnitude_side = negative ? -side : side;
+    exponent = mpfr_get_exp(scaled);
+    if(magnitude_side < 0 &&
+       mpfr_cmp_ui_2exp(scaled, 1UL, exponent - 1) == 0)
+        exponent--;
+    if(exponent > 128) {
+        mpfr_clear(scaled);
+        return vu_overflow_value(data_type, round_mode, negative);
+    }
+    shift = (long)exponent - (long)fraction_bits - 1L;
+    if(shift < -126L - (long)fraction_bits)
+        shift = -126L - (long)fraction_bits;
+    mpfr_mul_2si(scaled, scaled, -shift, MPFR_RNDN);
+    significand = mpfr_get_ui(scaled, MPFR_RNDD);
+    mpfr_sub_ui(scaled, scaled, significand, MPFR_RNDN);
+    fraction_nonzero = !mpfr_zero_p(scaled);
+    halfway = mpfr_cmp_d(scaled, 0.5);
+    if(!fraction_nonzero && magnitude_side != 0) {
+        fraction_nonzero = 1;
+        if(magnitude_side < 0) {
+            significand--;
+            halfway = 1;
+        }
+    } else if(halfway == 0) {
+        halfway = magnitude_side;
+    }
+    switch(round_mode) {
+    case 1: increment = 0; break;
+    case 2: increment = negative && fraction_nonzero; break;
+    case 3: increment = !negative && fraction_nonzero; break;
+    case 4: increment = halfway >= 0; break;
+    case 5:
+        increment = halfway > 0 || (halfway == 0 && !(significand & 1UL));
+        break;
+    default:
+        increment = halfway > 0 || (halfway == 0 && (significand & 1UL));
+        break;
+    }
+    significand += (unsigned long)increment;
+    mpfr_clear(scaled);
+    if(significand < hidden)
+        return sign | (uint32_t)significand;
+    if(significand >= 2UL * hidden) {
+        significand >>= 1;
+        shift++;
+    }
+    exponent = shift + (long)fraction_bits + 127L;
+    if(exponent >= 255)
+        return sign | (data_type ? 0x7f80U : 0x7f800000U);
+    return sign | ((uint32_t)exponent << fraction_bits) |
+           (uint32_t)(significand - hidden);
+}
+
+enum vu_math_operation {
+    VU_ADD, VU_SUB, VU_MUL, VU_DIV, VU_FMA,
+    VU_SIN, VU_COS, VU_TANH, VU_SIGMOID, VU_EXP, VU_EXP2,
+    VU_LOG, VU_LOG2, VU_SQRT, VU_RCP, VU_RSQRT
+};
+
+static int vu_mpfr_evaluate(mpfr_ptr result, enum vu_math_operation operation,
+                            mpfr_srcptr a, mpfr_srcptr b, mpfr_srcptr c,
+                            mpfr_rnd_t rounding)
+{
+    mpfr_t temporary;
+    mpfr_rnd_t inverse;
+    int inexact;
+
+    switch(operation) {
+    case VU_ADD: return mpfr_add(result, a, b, rounding);
+    case VU_SUB: return mpfr_sub(result, a, b, rounding);
+    case VU_MUL: return mpfr_mul(result, a, b, rounding);
+    case VU_DIV: return mpfr_div(result, a, b, rounding);
+    case VU_FMA: return mpfr_fma(result, a, b, c, rounding);
+    case VU_SIN: return mpfr_sin(result, a, rounding);
+    case VU_COS: return mpfr_cos(result, a, rounding);
+    case VU_TANH: return mpfr_tanh(result, a, rounding);
+    case VU_EXP: return mpfr_exp(result, a, rounding);
+    case VU_EXP2: return mpfr_exp2(result, a, rounding);
+    case VU_LOG: return mpfr_log(result, a, rounding);
+    case VU_LOG2: return mpfr_log2(result, a, rounding);
+    case VU_SQRT: return mpfr_sqrt(result, a, rounding);
+    case VU_RCP: return mpfr_ui_div(result, 1UL, a, rounding);
+    case VU_RSQRT: return mpfr_rec_sqrt(result, a, rounding);
+    case VU_SIGMOID:
+        mpfr_init2(temporary, mpfr_get_prec(result));
+        inverse = rounding == MPFR_RNDD ? MPFR_RNDU : MPFR_RNDD;
+        mpfr_neg(temporary, a, MPFR_RNDN);
+        inexact = mpfr_exp(temporary, temporary, inverse) != 0;
+        inexact |= mpfr_add_ui(temporary, temporary, 1UL, inverse) != 0;
+        inexact |= mpfr_ui_div(result, 1UL, temporary, rounding) != 0;
+        mpfr_clear(temporary);
+        return inexact;
+    }
+    abort();
+}
+
+static uint32_t vu_math_result(enum vu_math_operation operation,
+                               uint32_t a_bits, uint32_t b_bits,
+                               uint32_t c_bits, uint32_t data_type,
+                               uint32_t round_mode)
+{
+    mpfr_t a, b, c, lower, upper;
+    mpfr_prec_t precision = 64;
+    uint32_t low_bits, high_bits;
+    int low_inexact, high_inexact;
+
+    mpfr_inits2(precision, a, b, c, lower, upper, (mpfr_ptr)0);
+    mpfr_set_d(a, (double)vu_bits_to_fp32(a_bits), MPFR_RNDN);
+    mpfr_set_d(b, (double)vu_bits_to_fp32(b_bits), MPFR_RNDN);
+    mpfr_set_d(c, (double)vu_bits_to_fp32(c_bits), MPFR_RNDN);
+    if(mpfr_number_p(a) &&
+       (operation == VU_EXP || operation == VU_EXP2 ||
+        operation == VU_SIGMOID || operation == VU_TANH) &&
+       (mpfr_cmp_si(a, 256L) > 0 || mpfr_cmp_si(a, -256L) < 0)) {
+        if(operation == VU_TANH) {
+            int negative = mpfr_sgn(a) < 0;
+            mpfr_set_si(lower, negative ? -1L : 1L, MPFR_RNDN);
+            low_bits = vu_mpfr_to_value(lower, data_type, round_mode,
+                                        negative ? 1 : -1);
+        } else if(operation == VU_SIGMOID && mpfr_sgn(a) > 0) {
+            mpfr_set_ui(lower, 1UL, MPFR_RNDN);
+            low_bits = vu_mpfr_to_value(lower, data_type, round_mode, -1);
+        } else {
+            mpfr_set_ui_2exp(lower, 1UL, mpfr_sgn(a) > 0 ? 512 : -512,
+                             MPFR_RNDN);
+            low_bits = vu_mpfr_to_value(lower, data_type, round_mode, 0);
+        }
+    } else {
+        for(;;) {
+            mpfr_set_prec(lower, precision);
+            mpfr_set_prec(upper, precision);
+            low_inexact = vu_mpfr_evaluate(lower, operation, a, b, c,
+                                            MPFR_RNDD);
+            high_inexact = vu_mpfr_evaluate(upper, operation, a, b, c,
+                                             MPFR_RNDU);
+            if(mpfr_zero_p(lower) && mpfr_zero_p(upper) &&
+               !low_inexact && !high_inexact) {
+                low_bits = vu_mpfr_to_value(round_mode == 2U ? lower : upper,
+                                             data_type, round_mode, 0);
+                break;
+            }
+            /* Inexact bounds are open, including when an endpoint is a rounding tie. */
+            low_bits = vu_mpfr_to_value(lower, data_type, round_mode,
+                                         low_inexact ? 1 : 0);
+            high_bits = vu_mpfr_to_value(upper, data_type, round_mode,
+                                          high_inexact ? -1 : 0);
+            if(low_bits == high_bits)
+                break;
+            precision *= 2;
+        }
+    }
+    mpfr_clears(a, b, c, lower, upper, (mpfr_ptr)0);
+    return low_bits;
 }
 
 static uint32_t vu_minmax(uint32_t src1,
@@ -256,36 +441,29 @@ uint32_t vu_fp_alu(uint32_t opcode,
                    uint32_t data_type,
                    uint32_t round_mode)
 {
-    float a;
-    float b;
-    float c;
-    float result;
+    uint32_t a = vu_value_to_fp32(src1, data_type);
+    uint32_t b = vu_value_to_fp32(src2, data_type);
+    uint32_t c = vu_value_to_fp32(src3, data_type);
     uint32_t sign_mask;
-
-    a = vu_value_to_float(src1, data_type);
-    b = vu_value_to_float(src2, data_type);
-    c = vu_value_to_float(src3, data_type);
-    result = 0.0f;
+    enum vu_math_operation operation;
 
     switch(opcode & 0xffU) {
     case 0x01:
     case 0x02:
-        result = b + a;
+        operation = VU_ADD;
         break;
     case 0x03:
     case 0x04:
-        result = b - a;
-        break;
+        return vu_math_result(VU_SUB, b, a, 0U, data_type, round_mode);
     case 0x05:
-        result = a - b;
+        operation = VU_SUB;
         break;
     case 0x06:
     case 0x07:
-        result = b * a;
+        operation = VU_MUL;
         break;
     case 0x08:
-        result = b / a;
-        break;
+        return vu_math_result(VU_DIV, b, a, 0U, data_type, round_mode);
     case 0x10:
     case 0x11:
         return vu_minmax(src1, src2, data_type, 0U, round_mode);
@@ -294,19 +472,23 @@ uint32_t vu_fp_alu(uint32_t opcode,
         return vu_minmax(src1, src2, data_type, 1U, round_mode);
     case 0x30:
     case 0x31:
-        result = fmaf(a, b, c);
+        operation = VU_FMA;
         break;
     case 0x32:
     case 0x33:
-        result = fmaf(-a, b, -c);
+        operation = VU_FMA;
+        a ^= 0x80000000U;
+        c ^= 0x80000000U;
         break;
     case 0x34:
     case 0x35:
-        result = fmaf(a, b, -c);
+        operation = VU_FMA;
+        c ^= 0x80000000U;
         break;
     case 0x36:
     case 0x37:
-        result = fmaf(-a, b, c);
+        operation = VU_FMA;
+        a ^= 0x80000000U;
         break;
     case 0x40:
     case 0x41:
@@ -324,7 +506,7 @@ uint32_t vu_fp_alu(uint32_t opcode,
         return src2;
     }
 
-    return vu_float_to_value(result, data_type, round_mode);
+    return vu_math_result(operation, a, b, c, data_type, round_mode);
 }
 
 uint32_t vu_fp_compare(uint32_t opcode,
@@ -414,53 +596,88 @@ uint32_t vu_fp_vsfu(uint32_t opcode,
                     uint32_t data_type,
                     uint32_t round_mode)
 {
-    float value;
-    float result;
+    enum vu_math_operation operation;
 
-    value = vu_value_to_float(src, data_type);
     switch(opcode & 0xffU) {
-    case 0x01: result = sinf(value); break;
-    case 0x02: result = cosf(value); break;
-    case 0x03: result = tanhf(value); break;
-    case 0x04: result = 1.0f / (1.0f + expf(-value)); break;
-    case 0x05: result = expf(value); break;
-    case 0x06: result = exp2f(value); break;
-    case 0x07: result = logf(value); break;
-    case 0x08: result = log2f(value); break;
-    case 0x09: result = sqrtf(value); break;
-    case 0x0a: result = 1.0f / value; break;
-    case 0x0b: result = 1.0f / sqrtf(value); break;
+    case 0x01: operation = VU_SIN; break;
+    case 0x02: operation = VU_COS; break;
+    case 0x03: operation = VU_TANH; break;
+    case 0x04: operation = VU_SIGMOID; break;
+    case 0x05: operation = VU_EXP; break;
+    case 0x06: operation = VU_EXP2; break;
+    case 0x07: operation = VU_LOG; break;
+    case 0x08: operation = VU_LOG2; break;
+    case 0x09: operation = VU_SQRT; break;
+    case 0x0a: operation = VU_RCP; break;
+    case 0x0b: operation = VU_RSQRT; break;
     case 0x0c:
-        /* The architecture document does not define coefficient registers.
-         * Identity is the deterministic fallback until that interface exists. */
-        result = value;
-        break;
+        /* The coefficient interface is unspecified; this remains an identity placeholder. */
+        return src;
     default:
-        result = value;
-        break;
+        return src;
     }
-    return vu_float_to_value(result, data_type, round_mode);
+    return vu_math_result(operation, vu_value_to_fp32(src, data_type),
+                           0U, 0U, data_type, round_mode);
 }
 
 uint32_t vu_fp_sexe(uint32_t opcode, uint32_t src1, uint32_t src2)
 {
-    float a;
-    float b;
-    float result;
+    enum vu_math_operation operation;
 
-    a = vu_bits_to_fp32(src1);
-    b = vu_bits_to_fp32(src2);
     switch(opcode & 0xffU) {
-    case 0x01: result = a + b; break;
-    case 0x02: result = a - b; break;
-    case 0x03: result = a * b; break;
-    case 0x04: result = a / b; break;
-    case 0x05: result = sqrtf(a); break;
-    case 0x06: result = 1.0f / sqrtf(a); break;
-    case 0x07: result = 1.0f / a; break;
+    case 0x01: operation = VU_ADD; break;
+    case 0x02: operation = VU_SUB; break;
+    case 0x03: operation = VU_MUL; break;
+    case 0x04: operation = VU_DIV; break;
+    case 0x05: operation = VU_SQRT; break;
+    case 0x06: operation = VU_RSQRT; break;
+    case 0x07: operation = VU_RCP; break;
     default: return src1;
     }
-    return vu_fp32_to_bits(result);
+    return vu_math_result(operation, src1, src2, 0U, 0U, 0U);
+}
+
+struct vu_sum {
+    mpfr_t value;
+    int all_negative_zero;
+};
+
+void *vu_sum_create(uint32_t initial_fp32)
+{
+    struct vu_sum *sum = (struct vu_sum *)malloc(sizeof(*sum));
+
+    if(sum == NULL)
+        abort();
+    /* 512 bits hold an exact sum of 16384 finite FP32 values across their full exponent range. */
+    mpfr_init2(sum->value, 512);
+    mpfr_set_d(sum->value, (double)vu_bits_to_fp32(initial_fp32), MPFR_RNDN);
+    sum->all_negative_zero = initial_fp32 == 0x80000000U;
+    return sum;
+}
+
+void vu_sum_add(void *context, uint32_t fp32_bits)
+{
+    struct vu_sum *sum = (struct vu_sum *)context;
+    mpfr_t term;
+
+    mpfr_init2(term, 24);
+    mpfr_set_d(term, (double)vu_bits_to_fp32(fp32_bits), MPFR_RNDN);
+    mpfr_add(sum->value, sum->value, term, MPFR_RNDD);
+    sum->all_negative_zero &= fp32_bits == 0x80000000U;
+    mpfr_clear(term);
+}
+
+uint32_t vu_sum_finish(void *context, uint32_t round_mode)
+{
+    struct vu_sum *sum = (struct vu_sum *)context;
+    uint32_t result;
+
+    if(mpfr_zero_p(sum->value) && round_mode != 2U && !sum->all_negative_zero)
+        mpfr_set_zero(sum->value, 1);
+    result = vu_mpfr_to_value(sum->value, 0U, round_mode, 0);
+    mpfr_clear(sum->value);
+    free(sum);
+    return result;
 }
 
 uint32_t vu_load_convert(uint32_t opcode,
@@ -507,6 +724,83 @@ uint32_t vu_store_convert(uint32_t opcode,
     default:
         return value;
     }
+}
+
+/* MXFP8 block-shared ScaleFactor support. The e8m0 scale byte encodes a
+ * power of two: 2^(e8m0 - 127); 0xff is the e8m0 NaN encoding. The CM-side
+ * data<->scale address mapping is handled by the caller. */
+static float vu_e8m0_to_float(uint32_t scale)
+{
+    if((scale & 0xffU) == 0xffU)
+        return NAN;
+
+    return exp2f((float)((int)(scale & 0xffU) - 127));
+}
+
+/* Derive the block-shared e8m0 scale from the block's max |element| (FP32
+ * bits): scale = 2^(log2(max) - E4M3_EMAX(=8)) so the largest element lands
+ * inside the e4m3 range. round_up selects ceil(log2) instead of floor(log2)
+ * for a non-power-of-two max, mirroring SU_op.MXFP8_SCALE_ROUND. An
+ * all-zero or NaN block keeps the neutral scale 2^0. */
+uint32_t vu_mxfp8_scale_encode(uint32_t max_abs_bits, uint32_t round_up)
+{
+    int exponent;
+    uint32_t fraction;
+    int log2_max;
+    int scale_biased;
+
+    max_abs_bits &= UINT32_C(0x7fffffff);
+    if(max_abs_bits == 0U || vu_fp32_is_nan_bits(max_abs_bits))
+        return 127U;
+
+    exponent = (int)((max_abs_bits >> 23) & 0xffU);
+    fraction = max_abs_bits & UINT32_C(0x007fffff);
+    if(exponent == 0) {
+        /* Subnormal max: value = fraction * 2^-149. */
+        int msb = 22;
+
+        while(msb > 0 && !((fraction >> msb) & 1U))
+            msb--;
+        log2_max = msb - 149;
+        if(round_up && fraction != (UINT32_C(1) << msb))
+            log2_max++;
+    } else {
+        log2_max = exponent - 127;
+        if(round_up && fraction != 0U)
+            log2_max++;
+    }
+
+    scale_biased = log2_max - 8 + 127;
+    if(scale_biased < 0)
+        scale_biased = 0;
+    if(scale_biased > 254)
+        scale_biased = 254;
+    return (uint32_t)scale_biased;
+}
+
+uint32_t vu_mxfp8_load_convert(uint32_t raw,
+                               uint32_t scale,
+                               uint32_t data_type,
+                               uint32_t round_mode)
+{
+    float value;
+    uint32_t fp32_bits;
+
+    value = vu_bits_to_fp32(vu_fp8e4m3_to_fp32(raw)) * vu_e8m0_to_float(scale);
+    fp32_bits = vu_fp32_to_bits(value);
+    return data_type ? vu_fp32_to_bf16(fp32_bits, round_mode) : fp32_bits;
+}
+
+uint32_t vu_mxfp8_store_convert(uint32_t value,
+                                uint32_t scale,
+                                uint32_t data_type,
+                                uint32_t round_mode)
+{
+    float scaled;
+
+    scaled = vu_bits_to_fp32(vu_value_to_fp32(value, data_type)) /
+             vu_e8m0_to_float(scale);
+    return vu_fp32_to_fp8e4m3(vu_fp32_to_bits(scaled), round_mode);
 }
 
 /* Compatibility entry points for earlier focused vfadd/vfmin tests. */

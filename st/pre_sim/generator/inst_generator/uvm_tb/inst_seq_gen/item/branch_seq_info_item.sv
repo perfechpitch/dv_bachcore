@@ -73,7 +73,6 @@ typedef enum{DWORD_INSIDE,CACHELINE_INSIDE,CACHELINE_BEYOND}target_inst_num_type
     rand int unsigned flush_inst_dist;
     rand int unsigned except_inst_dist;
     rand int unsigned ls_inst_dist;
-    rand int unsigned wfi_inst_dist;
     bit [20:0] imm;
     `uvm_object_utils_begin(branch_seq_info_item)
         `uvm_field_enum(target_inst_num_type_e ,target_inst_num_type,UVM_DEFAULT)
@@ -85,7 +84,6 @@ typedef enum{DWORD_INSIDE,CACHELINE_INSIDE,CACHELINE_BEYOND}target_inst_num_type
         `uvm_field_int(flush_inst_dist,UVM_DEFAULT)
         `uvm_field_int(except_inst_dist,UVM_DEFAULT)
         `uvm_field_int(ls_inst_dist,UVM_DEFAULT)
-        `uvm_field_int(wfi_inst_dist,UVM_DEFAULT)
     `uvm_object_utils_end
     // new - constructor
     function new (string name = "branch_seq_info_item");
@@ -128,10 +126,7 @@ typedef enum{DWORD_INSIDE,CACHELINE_INSIDE,CACHELINE_BEYOND}target_inst_num_type
         if(!inst_seq_cfg.except_inst_enable){except_inst_dist == 'd0;}
         else{
         except_inst_dist inside{[0:100]};}
-        if(!inst_seq_cfg.wfi_inst_enable){wfi_inst_dist == 'd0;}
-        else{
-        wfi_inst_dist inside{[0:100]};}
-        safe_inst_dist + ls_inst_dist + flush_inst_dist + except_inst_dist + wfi_inst_dist == 100;
+        safe_inst_dist + ls_inst_dist + flush_inst_dist + except_inst_dist == 100;
     }
     constraint seq_length_type_c{
         seq_length_type dist{

@@ -18,7 +18,7 @@ class inst_seq_type_item extends uvm_object;
             BRANCH_INST_SEQ := inst_seq_type_cfg.branch_seq_dist,
             FLUSH_INST_SEQ  := inst_seq_type_cfg.flush_seq_dist,
             EXCEPT_INST_SEQ := inst_seq_type_cfg.except_seq_dist,
-            WFI_INST_SEQ    := inst_seq_type_cfg.wfi_seq_dist
+            C_INST_SEQ      := inst_seq_type_cfg.c_seq_dist
         };
     }
 endclass

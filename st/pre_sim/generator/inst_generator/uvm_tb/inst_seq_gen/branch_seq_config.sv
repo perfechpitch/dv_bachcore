@@ -3,7 +3,6 @@ class branch_seq_config extends inst_seq_config;
     //test cfg
     bit flush_inst_enable=0;
     bit except_inst_enable=0;
-    bit wfi_inst_enable=0;
     bit ls_inst_disable=0;
     
     rand int unsigned branch_forward_dist;
@@ -12,6 +11,8 @@ class branch_seq_config extends inst_seq_config;
     
     rand int unsigned branch_seq_type_dist[$];
     rand int unsigned jalr_target_gen_type_dist[$];
+    int unsigned loop_blt_weight = 50;
+    int unsigned loop_custom_weight = 50;
 
     mode_e  program_mode;
     
@@ -19,13 +20,14 @@ class branch_seq_config extends inst_seq_config;
         `uvm_field_enum(mode_e,program_mode, UVM_DEFAULT)
         `uvm_field_int(flush_inst_enable, UVM_DEFAULT|UVM_DEC)
         `uvm_field_int(except_inst_enable, UVM_DEFAULT|UVM_DEC)
-        `uvm_field_int(wfi_inst_enable, UVM_DEFAULT|UVM_DEC)
         `uvm_field_int(ls_inst_disable, UVM_DEFAULT|UVM_DEC)
         `uvm_field_int(branch_forward_dist, UVM_DEFAULT|UVM_DEC)
         `uvm_field_int(branch_is_jump_dist, UVM_DEFAULT|UVM_DEC)
         `uvm_field_sarray_int(target_inst_num_dist, UVM_DEFAULT|UVM_DEC)
         `uvm_field_sarray_int(branch_seq_type_dist, UVM_DEFAULT|UVM_DEC)
         `uvm_field_sarray_int(jalr_target_gen_type_dist, UVM_DEFAULT|UVM_DEC)
+        `uvm_field_int(loop_blt_weight, UVM_DEFAULT|UVM_DEC)
+        `uvm_field_int(loop_custom_weight, UVM_DEFAULT|UVM_DEC)
     `uvm_object_utils_end
     // new - constructor
     function new (string name = "branch_seq_config");

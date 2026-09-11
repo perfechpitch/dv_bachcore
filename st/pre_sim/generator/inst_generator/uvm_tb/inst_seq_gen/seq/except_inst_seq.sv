@@ -27,10 +27,9 @@ class except_inst_sequence extends base_inst_sequence;
             SINGLE_EXCEPT_INST   :begin
                 inst_gen.except_inst_gen.ebreak_inst_dist     = except_seq_info.except_inst_dist[0];
                 inst_gen.except_inst_gen.ecall_inst_dist      = except_seq_info.except_inst_dist[1];
-                inst_gen.except_inst_gen.dret_inst_dist       = except_seq_info.except_inst_dist[2];
-                inst_gen.except_inst_gen.branch_misalign_dist = except_seq_info.except_inst_dist[3];
-                inst_gen.except_inst_gen.ls_except_inst_dist  = except_seq_info.except_inst_dist[4];
-                inst_gen.except_inst_gen.ri_inst_dist         = except_seq_info.except_inst_dist[5];
+                inst_gen.except_inst_gen.branch_misalign_dist = except_seq_info.except_inst_dist[2];
+                inst_gen.except_inst_gen.ls_except_inst_dist  = except_seq_info.except_inst_dist[3];
+                inst_gen.except_inst_gen.ri_inst_dist         = except_seq_info.except_inst_dist[4];
                 inst_gen.insert_inst(seq_length,EXCEPT_INST);
             end
             JALR_EXCEPT_SEQ     :begin

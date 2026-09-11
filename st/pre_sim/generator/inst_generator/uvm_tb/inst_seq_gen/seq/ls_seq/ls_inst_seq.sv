@@ -6,7 +6,6 @@ class ls_inst_sequence extends base_inst_sequence;
     ls_rand_seq     rand_ls_seq;
     ls_linear_seq   linear_ls_seq;
     ls_memcpy_seq   memcpy_ls_seq;
-    lrsc_seq        lrsc_seq;
 
     inst_generator  inst_gen;
     addr_space_generator    addr_space_gen;
@@ -21,7 +20,6 @@ class ls_inst_sequence extends base_inst_sequence;
 
       rand_ls_seq = new();
       linear_ls_seq = new();
-      lrsc_seq = new();
       memcpy_ls_seq = new();
 
 
@@ -55,10 +53,6 @@ class ls_inst_sequence extends base_inst_sequence;
             end
             LINEAR_LS   : begin
                 linear_ls_seq.sub_seq_gen(ls_seq_info, inst_gen);
-            end
-            LRSC_LS     : begin
-                ls_seq_info.seq_length = 2;
-                lrsc_seq.sub_seq_gen(inst_gen);
             end
             MEMCPY_LS     : begin
                 memcpy_ls_seq.sub_seq_gen(ls_seq_info,inst_gen);

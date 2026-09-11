@@ -651,32 +651,20 @@
       "fields": [
         {
           "name": "VALU0_MASK_SEL",
-          "msb": 1,
+          "msb": 7,
           "lsb": 0,
           "access": "RW"
         },
         {
           "name": "VALU1_MASK_SEL",
-          "msb": 3,
-          "lsb": 2,
+          "msb": 15,
+          "lsb": 8,
           "access": "RW"
         },
         {
           "name": "VALU2_MASK_SEL",
-          "msb": 5,
-          "lsb": 4,
-          "access": "RW"
-        },
-        {
-          "name": "VSFU0_MASK_SEL",
-          "msb": 7,
-          "lsb": 6,
-          "access": "RW"
-        },
-        {
-          "name": "VSFU1_MASK_SEL",
-          "msb": 9,
-          "lsb": 8,
+          "msb": 23,
+          "lsb": 16,
           "access": "RW"
         }
       ]
@@ -999,7 +987,8 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true
     },
     {
       "name": "STATUS",
@@ -1030,7 +1019,8 @@
           "lsb": 3,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true
     },
     {
       "name": "ERROR_CODE",
@@ -1073,7 +1063,8 @@
           "lsb": 6,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true
     },
     {
       "name": "ERROR_INFO",
@@ -1110,7 +1101,8 @@
           "lsb": 19,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true
     },
     {
       "name": "SNAPSHOT_ADDR",
@@ -1142,7 +1134,8 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true
     },
     {
       "name": "PROFILE_CTRL",
@@ -1174,7 +1167,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "PROF_RUN_CYCLE_HI",
@@ -1187,7 +1182,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "TOTAL_BUSY_CYCLE_LO",
@@ -1200,7 +1197,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "TOTAL_BUSY_CYCLE_HI",
@@ -1213,7 +1212,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "CFG_WR_NUM_LO",
@@ -1226,7 +1227,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "CFG_WR_NUM_HI",
@@ -1239,7 +1242,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "CFG_WR_STALL_CYCLE_LO",
@@ -1252,7 +1257,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "CFG_WR_STALL_CYCLE_HI",
@@ -1265,7 +1272,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "MACRO_INST_TOTAL_NUM_LO",
@@ -1278,7 +1287,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "MACRO_INST_TOTAL_NUM_HI",
@@ -1291,7 +1302,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "MACRO_INST_RETIRE_NUM_LO",
@@ -1304,7 +1317,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "MACRO_INST_RETIRE_NUM_HI",
@@ -1317,7 +1332,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "ISQ_FULL_CYCLE_LO",
@@ -1330,7 +1347,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "ISQ_FULL_CYCLE_HI",
@@ -1343,7 +1362,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "ISSUE_STALL_FENCE_CYCLE_LO",
@@ -1356,7 +1377,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "ISSUE_STALL_FENCE_CYCLE_HI",
@@ -1369,7 +1392,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "ISSUE_STALL_BCAST_CYCLE_LO",
@@ -1382,7 +1407,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "ISSUE_STALL_BCAST_CYCLE_HI",
@@ -1395,7 +1422,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "ISSUE_STALL_DEP_CYCLE_LO",
@@ -1408,7 +1437,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "ISSUE_STALL_DEP_CYCLE_HI",
@@ -1421,7 +1452,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "ISSUE_STALL_EU_CYCLE_LO",
@@ -1434,7 +1467,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "ISSUE_STALL_EU_CYCLE_HI",
@@ -1447,7 +1482,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "ISSUE_STARVE_CYCLE_LO",
@@ -1460,7 +1497,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "ISSUE_STARVE_CYCLE_HI",
@@ -1473,7 +1512,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "LU_BUSY_CYCLE_LO",
@@ -1486,7 +1527,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "LU_BUSY_CYCLE_HI",
@@ -1499,7 +1542,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "CM_LD_REQ_NUM_LO",
@@ -1512,7 +1557,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "CM_LD_REQ_NUM_HI",
@@ -1525,7 +1572,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "CM_LD_STALL_CYCLE_LO",
@@ -1538,7 +1587,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "CM_LD_STALL_CYCLE_HI",
@@ -1551,7 +1602,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "SU_BUSY_CYCLE_LO",
@@ -1564,7 +1617,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "SU_BUSY_CYCLE_HI",
@@ -1577,7 +1632,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "CM_ST_REQ_NUM_LO",
@@ -1590,7 +1647,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "CM_ST_REQ_NUM_HI",
@@ -1603,7 +1662,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "CM_ST_STALL_CYCLE_LO",
@@ -1616,7 +1677,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "CM_ST_STALL_CYCLE_HI",
@@ -1629,7 +1692,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VALU0_BUSY_CYCLE_LO",
@@ -1642,7 +1707,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VALU0_BUSY_CYCLE_HI",
@@ -1655,7 +1722,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VALU1_BUSY_CYCLE_LO",
@@ -1668,7 +1737,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VALU1_BUSY_CYCLE_HI",
@@ -1681,7 +1752,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VALU2_BUSY_CYCLE_LO",
@@ -1694,7 +1767,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VALU2_BUSY_CYCLE_HI",
@@ -1707,7 +1782,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VSFU0_BUSY_CYCLE_LO",
@@ -1720,7 +1797,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VSFU0_BUSY_CYCLE_HI",
@@ -1733,7 +1812,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VSFU1_BUSY_CYCLE_LO",
@@ -1746,7 +1827,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VSFU1_BUSY_CYCLE_HI",
@@ -1759,7 +1842,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "MEXE_BUSY_CYCLE_LO",
@@ -1772,7 +1857,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "MEXE_BUSY_CYCLE_HI",
@@ -1785,7 +1872,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "SEXE_BUSY_CYCLE_LO",
@@ -1798,7 +1887,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "SEXE_BUSY_CYCLE_HI",
@@ -1811,7 +1902,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VRF_RD_P0_BUSY_CYCLE_LO",
@@ -1824,7 +1917,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VRF_RD_P0_BUSY_CYCLE_HI",
@@ -1837,7 +1932,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VRF_RD_P1_BUSY_CYCLE_LO",
@@ -1850,7 +1947,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VRF_RD_P1_BUSY_CYCLE_HI",
@@ -1863,7 +1962,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VRF_WT_P0_BUSY_CYCLE_LO",
@@ -1876,7 +1977,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VRF_WT_P0_BUSY_CYCLE_HI",
@@ -1889,7 +1992,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VRF_WT_P1_BUSY_CYCLE_LO",
@@ -1902,7 +2007,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "VRF_WT_P1_BUSY_CYCLE_HI",
@@ -1915,7 +2022,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "MRF_WT_BUSY_CYCLE_LO",
@@ -1928,7 +2037,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     },
     {
       "name": "MRF_WT_BUSY_CYCLE_HI",
@@ -1941,7 +2052,9 @@
           "lsb": 0,
           "access": "RW"
         }
-      ]
+      ],
+      "software_write_ignore": true,
+      "profile_counter": true
     }
   ],
   "param_groups": [
@@ -2061,5 +2174,6 @@
       "name": "PRF_OP",
       "register": "PRF_OP"
     }
-  ]
+  ],
+  "reserved_zero": true
 }

@@ -10,6 +10,7 @@ class safe_seq_config extends inst_seq_config;
     rand int unsigned safe_float_cal_dist;
     rand int unsigned safe_branch_dist;
     rand int unsigned safe_int_ls_dist;
+    int unsigned safe_custom_dsa_dist = 1;
     
     `uvm_object_utils_begin(safe_seq_config)
     //    `uvm_field_int(vreg_size, UVM_DEFAULT|UVM_DEC)
@@ -21,6 +22,7 @@ class safe_seq_config extends inst_seq_config;
         `uvm_field_int(safe_float_cal_dist,UVM_DEFAULT|UVM_DEC)
         `uvm_field_int(safe_branch_dist,UVM_DEFAULT|UVM_DEC)
         `uvm_field_int(safe_int_ls_dist,UVM_DEFAULT|UVM_DEC)
+        `uvm_field_int(safe_custom_dsa_dist,UVM_DEFAULT|UVM_DEC)
     `uvm_object_utils_end
     // new - constructor
     function new (string name = "safe_seq_config");

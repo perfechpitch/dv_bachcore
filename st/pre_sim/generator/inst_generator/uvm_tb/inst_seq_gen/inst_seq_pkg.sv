@@ -45,7 +45,6 @@ package inst_seq_pkg;
 `include "./seq/ls_seq/ls_base_config_seq.sv"
 `include "./seq/ls_seq/ls_rand_seq.sv"
 `include "./seq/ls_seq/ls_linear_seq.sv"
-`include "./seq/ls_seq/lrsc_seq.sv"
 `include "./seq/ls_seq/ls_memcpy_seq.sv"
 
 `include "./seq/ls_seq/ls_inst_seq.sv"
@@ -54,7 +53,6 @@ package inst_seq_pkg;
 `include "./seq/flush_inst_seq.sv"
 `include "./seq/safe_inst_seq.sv"
 `include "./seq/c_inst_seq.sv"
-`include "./seq/wfi_inst_seq.sv"
 
 `include "./seq/asm_seq/base_asm_seq.sv"
 

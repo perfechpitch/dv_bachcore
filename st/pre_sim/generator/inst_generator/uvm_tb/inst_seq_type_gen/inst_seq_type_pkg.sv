@@ -11,7 +11,7 @@ package inst_seq_type_pkg;
         BRANCH_INST_SEQ,
         FLUSH_INST_SEQ,
         EXCEPT_INST_SEQ,
-        WFI_INST_SEQ
+        C_INST_SEQ
     } inst_seq_type_e;
 
 `include "inst_seq_type_config.sv"

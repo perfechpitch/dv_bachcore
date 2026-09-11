@@ -1,1 +1,5 @@
 `include "random/mu/mu_random_scenario_seq.sv"
+`include "random/mu/mu_safe_random_scenario_seq.sv"
+`include "random/mu/mu_branch_random_scenario_seq.sv"
+`include "random/mu/mu_c_random_scenario_seq.sv"
+`include "random/mu/mu_ls_random_scenario_seq.sv"

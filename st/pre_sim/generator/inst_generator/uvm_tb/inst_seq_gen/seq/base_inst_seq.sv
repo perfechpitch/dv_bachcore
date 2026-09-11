@@ -13,7 +13,7 @@ class base_inst_sequence extends uvm_object;
     virtual function inst_seq_info_item seq_gen();
 
     endfunction
-    function void gen_rand_inst(inst_generator inst_gen,int inst_num,a,b,c,d,e,f);
+    function void gen_rand_inst(inst_generator inst_gen,int inst_num,a,b,c,d,e);
         for(int i=0;i<inst_num;i++)begin
             randcase
                 a:inst_gen.get_rand_inst(LS_INST);
@@ -21,7 +21,6 @@ class base_inst_sequence extends uvm_object;
                 c:inst_gen.get_rand_inst(FLUSH_INST);
                 d:inst_gen.get_rand_inst(EXCEPT_INST);
                 e:inst_gen.get_rand_inst(BRANCH_INST);
-                f:inst_gen.get_specified_rand_inst(WFI);
             endcase
         end
     endfunction

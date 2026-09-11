@@ -17,15 +17,22 @@ class multicore_directed_scenario_seq extends scenario_base_seq;
                                         inst_seq_type_generator inst_seq_type_gen);
         case(task_info.rv_core)
             HART_MU: begin
-                inst_gen.get_specified_rand_inst(C_ADDI);
-                inst_gen.get_specified_rand_inst(C_ADDI);
+                `c_addi;
+                `c_addi;
+                // Cover all DSA custom encodings with explicit operands.
+                `dsaw(5, 6);
+                `dsawi(5, 32'h0000_1234);
+                `dsar(7, 5);
+                `dsari(8, 32'h0000_abcd);
+                // The public LOOP macro accepts a byte displacement.
+                `loop(5, 6, 'h8);
             end
             HART_VU: begin
-                inst_gen.get_specified_rand_inst(C_LI);
+                `c_li;
             end
             HART_DTE: begin
-                inst_gen.get_specified_rand_inst(C_NOP);
-                inst_gen.get_specified_rand_inst(C_ADDI);
+                `c_nop;
+                `c_addi;
             end
         endcase
     endfunction

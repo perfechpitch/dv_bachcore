@@ -46,10 +46,19 @@ class dsa_mem_library extends uvm_object;
     endfunction : matrix_local_to_global
 
     function bit [31:0] core_scale_to_global(bit [31:0] core_local_addr);
+        // Until the system-level scale base is defined, scale accesses are
+        // modeled as offsets in the local scale address space (same policy
+        // as core_local_to_global).
+        if($isunknown(CORE_SCALE_MEM_BASE))
+            return core_local_addr >> 5;
+
         return CORE_SCALE_MEM_BASE + (core_local_addr >> 5);
     endfunction : core_scale_to_global
 
     function bit [31:0] matrix_scale_to_global(bit [31:0] matrix_local_addr);
+        if($isunknown(MATRIX_SCALE_MEM_BASE))
+            return matrix_local_addr >> 3;
+
         return MATRIX_SCALE_MEM_BASE + (matrix_local_addr >> 3);
     endfunction : matrix_scale_to_global
 

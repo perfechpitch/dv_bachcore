@@ -111,10 +111,10 @@ class ls_memcpy_seq extends base_inst_sequence;
         for(int i=0; i<cpy_inst_num; i++)begin
         //    `sub(0,0,0);
         //old inst use rand inst
-        gen_rand_inst(inst_gen,cpy_inst_num,ls_seq_info.ls_inst_dist,ls_seq_info.safe_inst_dist,ls_seq_info.flush_inst_dist,ls_seq_info.except_inst_dist,'d0,ls_seq_info.wfi_inst_dist);
+        gen_rand_inst(inst_gen,cpy_inst_num,ls_seq_info.ls_inst_dist,ls_seq_info.safe_inst_dist,ls_seq_info.flush_inst_dist,ls_seq_info.except_inst_dist,'d0);
         end
         //new inst
-        gen_rand_inst(inst_gen,(cpy_inst_num-1),ls_seq_info.ls_inst_dist,ls_seq_info.safe_inst_dist,ls_seq_info.flush_inst_dist,ls_seq_info.except_inst_dist,'d0,ls_seq_info.wfi_inst_dist);
+        gen_rand_inst(inst_gen,(cpy_inst_num-1),ls_seq_info.ls_inst_dist,ls_seq_info.safe_inst_dist,ls_seq_info.flush_inst_dist,ls_seq_info.except_inst_dist,'d0);
         `jal(temp0_reg,4);
 
         `asm_log(inst_gen.gen_file,"// memcpy ls seq end\n")

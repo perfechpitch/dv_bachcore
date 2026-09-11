@@ -1,5 +1,5 @@
  #---------------------multi-core directed scenario
  - case_name      = multicore_directed_test
    uvm_tc         = directed_inst_test
-   vcs_tb_args    = +directed_seq_name=multicore_directed+xlen=32
+   vcs_tb_args    = +directed_seq_name=multicore_directed
    batch_times    = 1

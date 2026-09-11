@@ -24,13 +24,6 @@ class rand_inst_test extends uvm_test;
 
     uvm_config_db#(inst_gen_case_config)::set(this, "env", "inst_gen_case_cfg", inst_gen_case_cfg);
 
-    // 在 env.vseqr 的 main_phase 自动启动 my_vseq
-    uvm_config_db#(uvm_object_wrapper)::set(
-      this,
-      "env.inst_gen_vsqr.main_phase",
-      "default_sequence",
-      inst_gen_base_vsequence::type_id::get()
-    );
   endfunction
 
 endclass
