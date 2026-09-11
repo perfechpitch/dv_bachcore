@@ -61,7 +61,7 @@ def parse_field(reg_name, item):
     }
 
 
-def parse_register(item):
+def parse_register(item, reserved_zero=False):
     name = item.get("name")
     if not isinstance(name, str) or not name:
         die("register missing name")
@@ -74,6 +74,8 @@ def parse_register(item):
         "count": to_int(item.get("count", 1), "%s.count" % name),
         "stride": to_int(item.get("stride", 4), "%s.stride" % name),
         "trigger": bool(item.get("trigger", False)),
+        "software_write_ignore": bool(item.get("software_write_ignore", False)),
+        "profile_counter": bool(item.get("profile_counter", False)),
         "fields": [parse_field(name, x) for x in item.get("fields", [])]
     }
 
@@ -92,6 +94,9 @@ def parse_register(item):
             die("%s has overlapping fields" % name)
         used |= mask
 
+    reg["value_mask"] = used if reserved_zero else 0xffffffff
+    if reg["profile_counter"] and (reg["count"] != 1 or not reg["software_write_ignore"]):
+        die("%s profile counter must be a scalar hardware-maintained register" % name)
     return reg
 
 
@@ -419,15 +424,18 @@ def emit_write(registers):
     for reg in registers:
         out.append("if(!mmio_hit && (%s)) begin" % reg_match(reg))
 
-        if reg["count"] == 1:
-            out.append("    %s_val = data;" % reg["lower"])
-            out.append("    %s = data;" % reg["lower"])
+        value = "data" if reg["value_mask"] == 0xffffffff else "data & %s" % hex32(reg["value_mask"])
+        if reg["software_write_ignore"]:
+            pass
+        elif reg["count"] == 1:
+            out.append("    %s_val = %s;" % (reg["lower"], value))
+            out.append("    %s = %s;" % (reg["lower"], value))
         else:
             out.append("    int unsigned reg_idx;")
             out.append("    reg_idx = (addr - %s_BASE_ADDR) / %s_STRIDE;" %
                        (reg["name"], reg["name"]))
-            out.append("    %s_val[reg_idx] = data;" % reg["lower"])
-            out.append("    %s[reg_idx] = data;" % reg["lower"])
+            out.append("    %s_val[reg_idx] = %s;" % (reg["lower"], value))
+            out.append("    %s[reg_idx] = %s;" % (reg["lower"], value))
 
         if reg["trigger"]:
             out.append("    inst_trigger = 1'b1;")
@@ -452,9 +460,20 @@ def emit_read(registers):
                        (reg["name"], reg["name"]))
             out.append("    data = %s_val[reg_idx];" % reg["lower"])
 
+        if reg["value_mask"] != 0xffffffff:
+            out.append("    data &= %s;" % hex32(reg["value_mask"]))
         out.append("    mmio_hit = 1'b1;")
         out.append("end")
 
+    return out
+
+
+def emit_profile_clear(registers):
+    out = []
+    for reg in registers:
+        if reg["profile_counter"]:
+            out.append("%s_val = '0;" % reg["lower"])
+            out.append("%s = '0;" % reg["lower"])
     return out
 
 
@@ -586,7 +605,8 @@ def main():
     desc = load_desc(args.desc)
     dsa = desc["dsa"].lower()
 
-    registers = [parse_register(x) for x in desc.get("registers", [])]
+    registers = [parse_register(x, desc.get("reserved_zero", False))
+                 for x in desc.get("registers", [])]
     custom_windows = [parse_custom_window(x) for x in desc.get("custom_windows", [])]
     state_arrays = [parse_state_array(x) for x in desc.get("state_arrays", [])]
     internal_states = [parse_internal_state(x) for x in desc.get("internal_states", [])]
@@ -632,6 +652,9 @@ def main():
         "semantic": emit_semantic(dsa, registers, custom_windows),
         "resolve": emit_resolve(param_groups, static_params, exec_config)
     }
+
+    if any(reg["profile_counter"] for reg in registers):
+        outputs["profile_clear"] = emit_profile_clear(registers)
 
     for kind, lines in outputs.items():
         write_file(

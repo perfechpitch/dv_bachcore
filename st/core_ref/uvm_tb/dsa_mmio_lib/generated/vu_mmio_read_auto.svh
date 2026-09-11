@@ -2,10 +2,12 @@
 
 if(!mmio_hit && (addr == MACRO_INST_TRIGGER_BASE_ADDR)) begin
     data = macro_inst_trigger_val;
+    data &= 32'h033F07FF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && (addr == TYPE_VL_BASE_ADDR)) begin
     data = type_vl_val;
+    data &= 32'h000FFFFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && (addr == LD_ADDR_BASE_ADDR)) begin
@@ -30,6 +32,7 @@ if(!mmio_hit && (addr == MRF_RD_INDEX_BASE_ADDR)) begin
 end
 if(!mmio_hit && (addr == MRF_WT_INDEX_BASE_ADDR)) begin
     data = mrf_wt_index_val;
+    data &= 32'h0000FFFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && (addr == SRF_RD_INDEX_0_BASE_ADDR)) begin
@@ -46,18 +49,21 @@ if(!mmio_hit && (addr == SRF_WT_INDEX_0_BASE_ADDR)) begin
 end
 if(!mmio_hit && (addr == SRF_WT_INDEX_1_BASE_ADDR)) begin
     data = srf_wt_index_1_val;
+    data &= 32'h0000FFFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && ((addr >= LU_OP_BASE_ADDR) && (addr <= LU_OP_END_ADDR) && (((addr - LU_OP_BASE_ADDR) % LU_OP_STRIDE) == 0))) begin
     int unsigned reg_idx;
     reg_idx = (addr - LU_OP_BASE_ADDR) / LU_OP_STRIDE;
     data = lu_op_val[reg_idx];
+    data &= 32'h00FFFFFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && ((addr >= SU_OP_BASE_ADDR) && (addr <= SU_OP_END_ADDR) && (((addr - SU_OP_BASE_ADDR) % SU_OP_STRIDE) == 0))) begin
     int unsigned reg_idx;
     reg_idx = (addr - SU_OP_BASE_ADDR) / SU_OP_STRIDE;
     data = su_op_val[reg_idx];
+    data &= 32'h0001FFFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && ((addr >= VALU0_OP_BASE_ADDR) && (addr <= VALU0_OP_END_ADDR) && (((addr - VALU0_OP_BASE_ADDR) % VALU0_OP_STRIDE) == 0))) begin
@@ -88,30 +94,35 @@ if(!mmio_hit && ((addr >= MEXE_OP_BASE_ADDR) && (addr <= MEXE_OP_END_ADDR) && ((
     int unsigned reg_idx;
     reg_idx = (addr - MEXE_OP_BASE_ADDR) / MEXE_OP_STRIDE;
     data = mexe_op_val[reg_idx];
+    data &= 32'h00FFFFFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && ((addr >= SEXE0_OP_BASE_ADDR) && (addr <= SEXE0_OP_END_ADDR) && (((addr - SEXE0_OP_BASE_ADDR) % SEXE0_OP_STRIDE) == 0))) begin
     int unsigned reg_idx;
     reg_idx = (addr - SEXE0_OP_BASE_ADDR) / SEXE0_OP_STRIDE;
     data = sexe0_op_val[reg_idx];
+    data &= 32'h00FFFFFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && ((addr >= SEXE1_OP_BASE_ADDR) && (addr <= SEXE1_OP_END_ADDR) && (((addr - SEXE1_OP_BASE_ADDR) % SEXE1_OP_STRIDE) == 0))) begin
     int unsigned reg_idx;
     reg_idx = (addr - SEXE1_OP_BASE_ADDR) / SEXE1_OP_STRIDE;
     data = sexe1_op_val[reg_idx];
+    data &= 32'h00FFFFFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && ((addr >= SEXE2_OP_BASE_ADDR) && (addr <= SEXE2_OP_END_ADDR) && (((addr - SEXE2_OP_BASE_ADDR) % SEXE2_OP_STRIDE) == 0))) begin
     int unsigned reg_idx;
     reg_idx = (addr - SEXE2_OP_BASE_ADDR) / SEXE2_OP_STRIDE;
     data = sexe2_op_val[reg_idx];
+    data &= 32'h00FFFFFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && ((addr >= MASK_OP_BASE_ADDR) && (addr <= MASK_OP_END_ADDR) && (((addr - MASK_OP_BASE_ADDR) % MASK_OP_STRIDE) == 0))) begin
     int unsigned reg_idx;
     reg_idx = (addr - MASK_OP_BASE_ADDR) / MASK_OP_STRIDE;
     data = mask_op_val[reg_idx];
+    data &= 32'h00FFFFFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && ((addr >= PRF_OP_BASE_ADDR) && (addr <= PRF_OP_END_ADDR) && (((addr - PRF_OP_BASE_ADDR) % PRF_OP_STRIDE) == 0))) begin
@@ -124,6 +135,7 @@ if(!mmio_hit && ((addr >= STATIC_TYPE_VL_BASE_ADDR) && (addr <= STATIC_TYPE_VL_E
     int unsigned reg_idx;
     reg_idx = (addr - STATIC_TYPE_VL_BASE_ADDR) / STATIC_TYPE_VL_STRIDE;
     data = static_type_vl_val[reg_idx];
+    data &= 32'h000FFFFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && ((addr >= STATIC_LD_ADDR_BASE_ADDR) && (addr <= STATIC_LD_ADDR_END_ADDR) && (((addr - STATIC_LD_ADDR_BASE_ADDR) % STATIC_LD_ADDR_STRIDE) == 0))) begin
@@ -160,6 +172,7 @@ if(!mmio_hit && ((addr >= STATIC_MRF_WT_INDEX_BASE_ADDR) && (addr <= STATIC_MRF_
     int unsigned reg_idx;
     reg_idx = (addr - STATIC_MRF_WT_INDEX_BASE_ADDR) / STATIC_MRF_WT_INDEX_STRIDE;
     data = static_mrf_wt_index_val[reg_idx];
+    data &= 32'h0000FFFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && ((addr >= STATIC_SRF_RD_INDEX_0_BASE_ADDR) && (addr <= STATIC_SRF_RD_INDEX_0_END_ADDR) && (((addr - STATIC_SRF_RD_INDEX_0_BASE_ADDR) % STATIC_SRF_RD_INDEX_0_STRIDE) == 0))) begin
@@ -184,10 +197,12 @@ if(!mmio_hit && ((addr >= STATIC_SRF_WT_INDEX_1_BASE_ADDR) && (addr <= STATIC_SR
     int unsigned reg_idx;
     reg_idx = (addr - STATIC_SRF_WT_INDEX_1_BASE_ADDR) / STATIC_SRF_WT_INDEX_1_STRIDE;
     data = static_srf_wt_index_1_val[reg_idx];
+    data &= 32'h0000FFFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && (addr == REG_FILE_ADDR_BASE_ADDR)) begin
     data = reg_file_addr_val;
+    data &= 32'h0003FFFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && (addr == MACRO_INST_LEFT_BASE_ADDR)) begin
@@ -196,18 +211,22 @@ if(!mmio_hit && (addr == MACRO_INST_LEFT_BASE_ADDR)) begin
 end
 if(!mmio_hit && (addr == STATUS_BASE_ADDR)) begin
     data = status_val;
+    data &= 32'h0000000F;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && (addr == ERROR_CODE_BASE_ADDR)) begin
     data = error_code_val;
+    data &= 32'h0000007D;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && (addr == ERROR_INFO_BASE_ADDR)) begin
     data = error_info_val;
+    data &= 32'h000FF7FF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && (addr == SNAPSHOT_ADDR_BASE_ADDR)) begin
     data = snapshot_addr_val;
+    data &= 32'h00000FFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && (addr == SNAPSHOT_DATA_BASE_ADDR)) begin
@@ -216,6 +235,7 @@ if(!mmio_hit && (addr == SNAPSHOT_DATA_BASE_ADDR)) begin
 end
 if(!mmio_hit && (addr == PROFILE_CTRL_BASE_ADDR)) begin
     data = profile_ctrl_val;
+    data &= 32'h00000003;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && (addr == PROF_RUN_CYCLE_LO_BASE_ADDR)) begin

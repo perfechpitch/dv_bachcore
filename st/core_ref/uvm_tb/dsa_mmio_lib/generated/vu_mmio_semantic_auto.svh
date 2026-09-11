@@ -90,7 +90,7 @@ function string get_write_desc(bit [31:0] addr, bit [31:0] data);
     if((addr >= MASK_OP_BASE_ADDR) && (addr <= MASK_OP_END_ADDR) && (((addr - MASK_OP_BASE_ADDR) % MASK_OP_STRIDE) == 0)) begin
         int unsigned reg_idx;
         reg_idx = (addr - MASK_OP_BASE_ADDR) / MASK_OP_STRIDE;
-        return $sformatf("VU.MASK_OP[%0d][0x%08h] <= 0x%08h {VALU0_MASK_SEL=%0d, VALU1_MASK_SEL=%0d, VALU2_MASK_SEL=%0d, VSFU0_MASK_SEL=%0d, VSFU1_MASK_SEL=%0d}", reg_idx, addr, data, data[1:0], data[3:2], data[5:4], data[7:6], data[9:8]);
+        return $sformatf("VU.MASK_OP[%0d][0x%08h] <= 0x%08h {VALU0_MASK_SEL=%0d, VALU1_MASK_SEL=%0d, VALU2_MASK_SEL=%0d}", reg_idx, addr, data, data[7:0], data[15:8], data[23:16]);
     end
     if((addr >= PRF_OP_BASE_ADDR) && (addr <= PRF_OP_END_ADDR) && (((addr - PRF_OP_BASE_ADDR) % PRF_OP_STRIDE) == 0)) begin
         int unsigned reg_idx;
@@ -452,7 +452,7 @@ function string get_read_desc(bit [31:0] addr, bit [31:0] data);
     if((addr >= MASK_OP_BASE_ADDR) && (addr <= MASK_OP_END_ADDR) && (((addr - MASK_OP_BASE_ADDR) % MASK_OP_STRIDE) == 0)) begin
         int unsigned reg_idx;
         reg_idx = (addr - MASK_OP_BASE_ADDR) / MASK_OP_STRIDE;
-        return $sformatf("VU.MASK_OP[%0d][0x%08h] => 0x%08h {VALU0_MASK_SEL=%0d, VALU1_MASK_SEL=%0d, VALU2_MASK_SEL=%0d, VSFU0_MASK_SEL=%0d, VSFU1_MASK_SEL=%0d}", reg_idx, addr, data, data[1:0], data[3:2], data[5:4], data[7:6], data[9:8]);
+        return $sformatf("VU.MASK_OP[%0d][0x%08h] => 0x%08h {VALU0_MASK_SEL=%0d, VALU1_MASK_SEL=%0d, VALU2_MASK_SEL=%0d}", reg_idx, addr, data, data[7:0], data[15:8], data[23:16]);
     end
     if((addr >= PRF_OP_BASE_ADDR) && (addr <= PRF_OP_END_ADDR) && (((addr - PRF_OP_BASE_ADDR) % PRF_OP_STRIDE) == 0)) begin
         int unsigned reg_idx;
