@@ -1,5 +1,11 @@
 - case_name      = 1
-  uvm_tc         = vu_test
+  uvm_tc         = vu_1_inst_test
 #  batch_times    = xxx
 #  seed           = xxx
+################################################
+- case_name      = 2
+  uvm_tc         = vu_2_inst_test
+################################################
+- case_name      = 3
+  uvm_tc         = vu_2_bypass_test
 ################################################

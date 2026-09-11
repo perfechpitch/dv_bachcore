@@ -60,8 +60,6 @@ class inst_gen_seq_item extends inst_gen_base_seq_item;
     rand inst_type_e             inst_type;
     rand mu_inst_type_e          mu_inst_type;
     rand vu_inst_type_e          vu_inst_type;
-    rand logic [31:0]            vinst;
-    rand logic [31:0]            minst;
     rand int                    vld_delay;
     rand bit                    src_bypass;
 
@@ -69,8 +67,6 @@ class inst_gen_seq_item extends inst_gen_base_seq_item;
         `uvm_field_enum         (inst_type_e,           inst_type,          UVM_DEFAULT)
         `uvm_field_enum         (mu_inst_type_e,        mu_inst_type,       UVM_DEFAULT)
         `uvm_field_enum         (vu_inst_type_e,        vu_inst_type,       UVM_DEFAULT)
-        `uvm_field_int          (vinst,                                     UVM_DEFAULT)
-        `uvm_field_int          (minst,                                     UVM_DEFAULT)
         `uvm_field_int          (vld_delay,                                 UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (src_bypass,                                UVM_DEFAULT)
     `uvm_object_utils_end

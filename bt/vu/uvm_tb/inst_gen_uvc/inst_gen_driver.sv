@@ -44,9 +44,6 @@ endclass : inst_gen_driver
 task inst_gen_driver::driver_reset();
     inst_gen_vif.drv_cb.vld        <= 0;
     inst_gen_vif.drv_cb.inst_type  <= 0;
-    inst_gen_vif.drv_cb.vinst      <= 0;
-    inst_gen_vif.drv_cb.rdy        <= 1;
-    inst_gen_vif.drv_cb.minst      <= 0;
     inst_gen_vif.drv_cb.rs1_data   <= 0;
     inst_gen_vif.drv_cb.rs2_data   <= 0;
     inst_gen_vif.drv_cb.imm        <= 0;
@@ -84,7 +81,7 @@ task inst_gen_driver::get_and_drive();
         @(posedge inst_gen_vif.clk);
         if(!inst_gen_vif.reset) begin
             if(inst_gen_vif.drv_cb.vld && inst_gen_vif.drv_cb.rdy) begin
-                inst_gen_vif.drv_cb.rdy        <= 0;
+                inst_gen_vif.drv_cb.vld        <= 0;
                 if(inst_q.size==0)begin
                     `uvm_error("INST_Q_EMPTY",{"inst_q is empty when vld is 1 and rdy is 1"});
                 end
@@ -113,8 +110,6 @@ endtask : get_and_drive
 task inst_gen_driver::send_inst(inst_gen_seq_item tr);
     inst_gen_vif.drv_cb.vld        <= 1;
     inst_gen_vif.drv_cb.inst_type  <= tr.inst_type;
-    inst_gen_vif.drv_cb.vinst      <= tr.vinst;
-    inst_gen_vif.drv_cb.minst      <= tr.minst;
     inst_gen_vif.drv_cb.rs1_data   <= tr.rs1_data;
     inst_gen_vif.drv_cb.rs2_data   <= tr.rs2_data;
     inst_gen_vif.drv_cb.imm        <= tr.imm;

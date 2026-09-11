@@ -20,5 +20,19 @@ class vu_case_config extends uvm_object;
         assert(inst_gen_cfg.randomize());
     endfunction
 
+    function vu_1_inst_case();
+        random_case();
+        inst_gen_cfg.set_vu_scene(1, 0);
+    endfunction
+
+    function vu_2_inst_case();  
+        random_case();
+        inst_gen_cfg.set_vu_scene(2, 0);
+    endfunction
+
+    function vu_2_bypass_case();
+        random_case();
+        inst_gen_cfg.set_vu_scene(2, 1);
+    endfunction
 endclass
 `endif

@@ -500,7 +500,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
         inst_gen_base_seq_item item;
         while (inst_q.size() > 0) begin
             item = inst_gen_base_seq_item::type_id::create("item");
-            void'(item.copy(inst_q.pop_front()));
+            item.copy(inst_q.pop_front());
             `uvm_create(req)
             req.inst_gen_cfg = p_sequencer.inst_gen_cfg;
             if (!req.randomize()) begin

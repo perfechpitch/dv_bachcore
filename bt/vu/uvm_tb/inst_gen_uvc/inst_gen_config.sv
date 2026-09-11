@@ -405,9 +405,9 @@ endclass : cross_11_config
 
 class inst_gen_config extends uvm_object;
     uvm_active_passive_enum is_active = UVM_ACTIVE;
-    virtual inst_gen_if     inst_gen_vif;
     bit checks_enable   = 1;
     bit coverage_enable = 1;
+    virtual inst_gen_if inst_gen_vif;
     // ===================== 指令序列长度控制 =====================
     int unsigned        inst_seq_length=100;
     // ===================== 指令类型控制 =====================

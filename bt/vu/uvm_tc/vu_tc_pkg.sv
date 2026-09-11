@@ -14,5 +14,8 @@ package vu_tc_pkg;
 `include "uvm_macros.svh"
 `include "vu_base_test.sv"
 `include "vu_test.sv"
+`include "vu_1_inst_test.sv"
+`include "vu_2_inst_test.sv"
+`include "vu_2_bypass_test.sv"
 
 endpackage : vu_tc_pkg

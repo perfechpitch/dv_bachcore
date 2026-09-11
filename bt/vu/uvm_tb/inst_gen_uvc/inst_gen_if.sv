@@ -21,22 +21,18 @@ interface inst_gen_if(input bit clk,input bit reset);
     logic                       vld;
     logic                       rdy;
     logic [`INST_TYPE_WIDTH-1:0]inst_type;
-    logic [31:0]                vinst;
-    logic [31:0]                minst;
     logic [`REG_WIDTH-1:0]      rs1_data;
     logic [`REG_WIDTH-1:0]      rs2_data;
     logic [`IMM_WIDTH-1:0]      imm;
 
     clocking drv_cb@(posedge clk);
-        input                   reset;
-        input                   rdy;
-        input                   vld;
-        input                   inst_type;
-        input                   vinst;
-        input                   minst;
-        input                   rs1_data;
-        input                   rs2_data;
-        input                   imm;
+        input                  reset;
+        input                  rdy;
+        inout                  vld;
+        inout                  inst_type;
+        inout                  rs1_data;
+        inout                  rs2_data;
+        inout                  imm;
     endclocking
 
     clocking mon_cb@(posedge clk);
@@ -44,8 +40,6 @@ interface inst_gen_if(input bit clk,input bit reset);
         input                   rdy;
         input                   vld;
         input                   inst_type;
-        input                   vinst;
-        input                   minst;
         input                   rs1_data;
         input                   rs2_data;
         input                   imm;
@@ -54,21 +48,17 @@ interface inst_gen_if(input bit clk,input bit reset);
    
     modport DRV(
         output  rdy,
-        input   vld,
-        input   inst_type,
-        input   vinst,
-        input   minst,
-        input   rs1_data,
-        input   rs2_data,
-        input   imm
+        output  vld,
+        output  inst_type,
+        output  rs1_data,
+        output  rs2_data,
+        output  imm
     );
 
     modport MON(
         output  rdy,
         output  vld,
         output  inst_type,
-        output  vinst,
-        output  minst,
         output  rs1_data,
         output  rs2_data,
         output  imm
