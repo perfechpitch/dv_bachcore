@@ -366,7 +366,7 @@ class my_block extends uvm_component;
     // ==========================================================
     // 比较单个reg，后门读取 RTL 真实值与模型镜像比对
     // ==========================================================
-    function compare_reg(string name);
+    function void compare_reg(string name);
         if (!name_map.exists(name)) begin
             `uvm_error("COMP_REG_NOT_FOUND", $sformatf("Register '%s' not mapped for backdoor compare!", name))
             return;
