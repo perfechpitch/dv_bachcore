@@ -81,28 +81,32 @@ task inst_gen_driver::get_and_drive();
         @(posedge inst_gen_vif.clk);
         if(!inst_gen_vif.reset) begin
             if(inst_gen_vif.drv_cb.vld && inst_gen_vif.drv_cb.rdy) begin
-                inst_gen_vif.drv_cb.vld        <= 0;
-                if(inst_q.size==0)begin
+                if(inst_q.size()==0) begin
                     `uvm_error("INST_Q_EMPTY",{"inst_q is empty when vld is 1 and rdy is 1"});
+                    inst_gen_vif.drv_cb.vld <= 0;
+                end else begin
+                    inst_gen_vif.drv_cb.vld <= 0;
+                    if(inst_q[0].vld_delay!=0)
+                        vld_delay_q.push_back(inst_q[0].vld_delay);
+                    inst_q.pop_front();
                 end
-                if(inst_q[0].vld_delay!=0) begin
-                    vld_delay_q.push_back(inst_q[0].vld_delay); 
-                end
-                inst_q.pop_front();
             end
 
-            if(vld_delay_q.size==0 || (vld_delay_q.size>0 && vld_delay_q[0]==0)) begin
+            if(inst_q.size()==0 && (vld_delay_q.size()==0 || vld_delay_q[0]==0)) begin
+                if(vld_delay_q.size() > 0)
+                    vld_delay_q.delete(0);
                 seq_item_port.get_next_item(req);
                 seq_item_port.item_done();
                 inst_q.push_back(req);
-                vld_delay_q.delete(0);
             end
-            else if(vld_delay_q.size>0 && vld_delay_q[0]>0) begin
+            else if(vld_delay_q.size()>0 && vld_delay_q[0]>0) begin
                 vld_delay_q[0]--;
             end
-            if(inst_q.size>0)begin
+
+            if(inst_q.size()>0)
                 send_inst(inst_q[0]);
-            end
+            else
+                inst_gen_vif.drv_cb.vld <= 0;
         end
     end
 endtask : get_and_drive 
