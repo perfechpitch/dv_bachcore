@@ -9,13 +9,13 @@
 `ifndef INST_GEN_INTERFACE_SV
 `define INST_GEN_INTERFACE_SV
 `ifndef REG_WIDTH
-    `define REG_WIDTH 64
+    `define REG_WIDTH 32
 `endif
 `ifndef IMM_WIDTH
-    `define IMM_WIDTH 32
+    `define IMM_WIDTH 16
 `endif
 `ifndef INST_TYPE_WIDTH
-    `define INST_TYPE_WIDTH 1
+    `define INST_TYPE_WIDTH 2
 `endif
 interface inst_gen_if(input bit clk,input bit reset);
     logic                       vld;

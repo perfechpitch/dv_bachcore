@@ -18,6 +18,12 @@ class vu_case_config extends uvm_object;
     function random_case();
         assert(reset_cfg.randomize());
         assert(inst_gen_cfg.randomize());
+        inst_gen_cfg.fix_inst_type_en = 1;
+        inst_gen_cfg.inst_type = VU_INST;
+        foreach(inst_gen_cfg.case_type_dist[i]) begin
+            if(i == 0) inst_gen_cfg.case_type_dist[i] = 100;
+            else inst_gen_cfg.case_type_dist[i] = 0;
+        end
     endfunction
 
     function vu_1_inst_case();

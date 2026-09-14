@@ -423,17 +423,17 @@ class inst_gen_config extends uvm_object;
     rand vu_inst_type_e vu_inst_type;
     rand int unsigned   vu_inst_type_dist[];
     // ===================== cross_inst 1~11 分层配置对象 =====================
-    cross_1_config       cross_1_cfg;
-    cross_2_config       cross_2_cfg;
-    cross_3_config       cross_3_cfg;
-    cross_4_config       cross_4_cfg;
-    cross_5_config       cross_5_cfg;
-    cross_6_config       cross_6_cfg;
-    cross_7_config       cross_7_cfg;
-    cross_8_config       cross_8_cfg;
-    cross_9_config       cross_9_cfg;
-    cross_10_config      cross_10_cfg;
-    cross_11_config      cross_11_cfg;
+    rand cross_1_config       cross_1_cfg;
+    rand cross_2_config       cross_2_cfg;
+    rand cross_3_config       cross_3_cfg;
+    rand cross_4_config       cross_4_cfg;
+    rand cross_5_config       cross_5_cfg;
+    rand cross_6_config       cross_6_cfg;
+    rand cross_7_config       cross_7_cfg;
+    rand cross_8_config       cross_8_cfg;
+    rand cross_9_config       cross_9_cfg;
+    rand cross_10_config      cross_10_cfg;
+    rand cross_11_config      cross_11_cfg;
     // ===================== VU *_op.OPCODE 控制 =====================
     bit                 fix_lu_op_opcode_en=0;
     rand logic [7:0]    lu_op_opcode;
