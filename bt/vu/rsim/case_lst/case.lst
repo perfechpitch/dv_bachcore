@@ -1,7 +1,8 @@
 - case_name      = 1
   uvm_tc         = vu_1_inst_test
-#  batch_times    = xxx
-#  seed           = xxx
+  vcs_tb_args    = REG_COMPARE_DISABLE
+  batch_times    = 10
+  seed           = 1
 ################################################
 - case_name      = 2
   uvm_tc         = vu_2_inst_test

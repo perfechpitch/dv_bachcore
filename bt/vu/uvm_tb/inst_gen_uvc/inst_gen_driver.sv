@@ -75,11 +75,11 @@ endtask : main_phase
 
 task inst_gen_driver::get_and_drive();
     repeat(inst_gen_cfg.first_delay) begin
-        @(posedge inst_gen_vif.clk);
+        @(inst_gen_vif.drv_cb);
     end
     forever begin
-        @(posedge inst_gen_vif.clk);
-        if(inst_gen_vif.reset) begin
+        @(inst_gen_vif.drv_cb);
+        if(inst_gen_vif.drv_cb.reset) begin
             if(inst_gen_vif.drv_cb.vld && inst_gen_vif.drv_cb.rdy) begin
                 if(inst_q.size()==0) begin
                     `uvm_error("INST_Q_EMPTY",{"inst_q is empty when vld is 1 and rdy is 1"});
