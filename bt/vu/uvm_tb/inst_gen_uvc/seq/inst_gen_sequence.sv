@@ -546,7 +546,6 @@ class inst_gen_sequence extends inst_gen_case_base_sequence;
     endfunction
 
     virtual task body();
-        //$display("inst_gen_sequence");
         rand_send_tr();
     endtask
 endclass : inst_gen_sequence
@@ -561,7 +560,6 @@ class fix_moe_sequence extends inst_gen_case_base_sequence;
     endfunction
 
     virtual task body();//pending，continue when inst make sure
-        //$display("fix_moe_sequence");
         p_sequencer.inst_gen_cfg.fix_inst_type_en = 1;
         p_sequencer.inst_gen_cfg.inst_type = MU_INST;
         rand_send_tr();
@@ -580,7 +578,6 @@ class fix_moe_reduction_sequence extends inst_gen_case_base_sequence;
     endfunction
 
     virtual task body();//pending，continue when inst make sure
-        //$display("fix_moe_reduction_sequence");
         p_sequencer.inst_gen_cfg.fix_inst_type_en = 1;
         p_sequencer.inst_gen_cfg.inst_type = MU_INST;
         rand_send_tr();
@@ -600,7 +597,6 @@ class fix_fc0_sequence extends inst_gen_case_base_sequence;
     endfunction
 
     virtual task body();//pending，continue when inst make sure
-        //$display("fix_fc0_sequence");
         p_sequencer.inst_gen_cfg.fix_inst_type_en = 1;
         p_sequencer.inst_gen_cfg.inst_type = MU_INST;
         rand_send_tr();
