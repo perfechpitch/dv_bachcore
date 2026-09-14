@@ -540,6 +540,17 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_macro_inst_trigger_reg(input logic [31:0] data);
+        macro_inst_trigger_static_dynamic_mask = data[7:0];
+        macro_inst_trigger_config_idx = data[10:8];
+        macro_inst_trigger_event_en = data[16];
+        macro_inst_trigger_stream_id_override = data[17];
+        macro_inst_trigger_stream_id = data[21:18];
+        macro_inst_trigger_macro_inst_fence = data[24];
+        macro_inst_trigger_data_broadcast = data[25];
+    endfunction
+
     function automatic logic [31:0] pack_type_vl_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
@@ -550,6 +561,14 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_type_vl_reg(input logic [31:0] data);
+        type_vl_vl = data[15:0];
+        type_vl_data_type = data[16];
+        type_vl_round_mode = data[19:17];
+        type_vl_nan_inf_en = data[20];
+    endfunction
+
     function automatic logic [31:0] pack_ld_addr_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
@@ -557,11 +576,21 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_ld_addr_reg(input logic [31:0] data);
+        ld_addr_cm_addr = data[31:0];
+    endfunction
+
     function automatic logic [31:0] pack_st_addr_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
         word[31:0] = st_addr_cm_addr;
         return word;
+    endfunction
+
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_st_addr_reg(input logic [31:0] data);
+        st_addr_cm_addr = data[31:0];
     endfunction
 
     function automatic logic [31:0] pack_vrf_rd_index_reg(input logic [31:0] data);
@@ -572,12 +601,24 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_vrf_rd_index_reg(input logic [31:0] data);
+        vrf_rd_index_vrf_rd_p0_idx = data[15:0];
+        vrf_rd_index_vrf_rd_p1_idx = data[31:16];
+    endfunction
+
     function automatic logic [31:0] pack_vrf_wt_index_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
         word[15:0] = vrf_wt_index_vrf_wt_p0_idx;
         word[31:16] = vrf_wt_index_vrf_wt_p1_idx;
         return word;
+    endfunction
+
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_vrf_wt_index_reg(input logic [31:0] data);
+        vrf_wt_index_vrf_wt_p0_idx = data[15:0];
+        vrf_wt_index_vrf_wt_p1_idx = data[31:16];
     endfunction
 
     function automatic logic [31:0] pack_mrf_rd_index_reg(input logic [31:0] data);
@@ -588,11 +629,22 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_mrf_rd_index_reg(input logic [31:0] data);
+        mrf_rd_index_mrf_rd_p0_idx = data[15:0];
+        mrf_rd_index_mrf_rd_p1_idx = data[31:16];
+    endfunction
+
     function automatic logic [31:0] pack_mrf_wt_index_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
         word[15:0] = mrf_wt_index_mrf_wt_idx;
         return word;
+    endfunction
+
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_mrf_wt_index_reg(input logic [31:0] data);
+        mrf_wt_index_mrf_wt_idx = data[15:0];
     endfunction
 
     function automatic logic [31:0] pack_srf_rd_index_0_reg(input logic [31:0] data);
@@ -605,6 +657,14 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_srf_rd_index_0_reg(input logic [31:0] data);
+        srf_rd_index_0_srf_rd_p0_idx = data[7:0];
+        srf_rd_index_0_srf_rd_p1_idx = data[15:8];
+        srf_rd_index_0_srf_rd_p2_idx = data[23:16];
+        srf_rd_index_0_srf_rd_p3_idx = data[31:24];
+    endfunction
+
     function automatic logic [31:0] pack_srf_rd_index_1_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
@@ -613,6 +673,14 @@ class vu_inst_seq_item extends uvm_sequence_item;
         word[23:16] = srf_rd_index_1_srf_rd_p6_idx;
         word[31:24] = srf_rd_index_1_srf_rd_p7_idx;
         return word;
+    endfunction
+
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_srf_rd_index_1_reg(input logic [31:0] data);
+        srf_rd_index_1_srf_rd_p4_idx = data[7:0];
+        srf_rd_index_1_srf_rd_p5_idx = data[15:8];
+        srf_rd_index_1_srf_rd_p6_idx = data[23:16];
+        srf_rd_index_1_srf_rd_p7_idx = data[31:24];
     endfunction
 
     function automatic logic [31:0] pack_srf_wt_index_0_reg(input logic [31:0] data);
@@ -625,12 +693,26 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_srf_wt_index_0_reg(input logic [31:0] data);
+        srf_wt_index_0_srf_wt_p0_idx = data[7:0];
+        srf_wt_index_0_srf_wt_p1_idx = data[15:8];
+        srf_wt_index_0_srf_wt_p2_idx = data[23:16];
+        srf_wt_index_0_srf_wt_p3_idx = data[31:24];
+    endfunction
+
     function automatic logic [31:0] pack_srf_wt_index_1_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
         word[7:0] = srf_wt_index_1_srf_wt_p4_idx;
         word[15:8] = srf_wt_index_1_srf_wt_p5_idx;
         return word;
+    endfunction
+
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_srf_wt_index_1_reg(input logic [31:0] data);
+        srf_wt_index_1_srf_wt_p4_idx = data[7:0];
+        srf_wt_index_1_srf_wt_p5_idx = data[15:8];
     endfunction
 
     function automatic logic [31:0] pack_lu_op_reg(input logic [31:0] data);
@@ -642,6 +724,13 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_lu_op_reg(input logic [31:0] data);
+        lu_op_opcode = data[7:0];
+        lu_op_stride_run = data[15:8];
+        lu_op_stride_skip = data[23:16];
+    endfunction
+
     function automatic logic [31:0] pack_su_op_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
@@ -649,6 +738,13 @@ class vu_inst_seq_item extends uvm_sequence_item;
         word[15:8] = su_op_src_sel;
         word[16] = su_op_mxfp8_scale_round;
         return word;
+    endfunction
+
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_su_op_reg(input logic [31:0] data);
+        su_op_opcode = data[7:0];
+        su_op_src_sel = data[15:8];
+        su_op_mxfp8_scale_round = data[16];
     endfunction
 
     function automatic logic [31:0] pack_valu0_op_reg(input logic [31:0] data);
@@ -661,6 +757,14 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_valu0_op_reg(input logic [31:0] data);
+        valu0_op_opcode = data[7:0];
+        valu0_op_src1_sel = data[15:8];
+        valu0_op_src2_sel = data[23:16];
+        valu0_op_src3_sel = data[31:24];
+    endfunction
+
     function automatic logic [31:0] pack_valu1_op_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
@@ -669,6 +773,14 @@ class vu_inst_seq_item extends uvm_sequence_item;
         word[23:16] = valu1_op_src2_sel;
         word[31:24] = valu1_op_src3_sel;
         return word;
+    endfunction
+
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_valu1_op_reg(input logic [31:0] data);
+        valu1_op_opcode = data[7:0];
+        valu1_op_src1_sel = data[15:8];
+        valu1_op_src2_sel = data[23:16];
+        valu1_op_src3_sel = data[31:24];
     endfunction
 
     function automatic logic [31:0] pack_valu2_op_reg(input logic [31:0] data);
@@ -681,6 +793,14 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_valu2_op_reg(input logic [31:0] data);
+        valu2_op_opcode = data[7:0];
+        valu2_op_src1_sel = data[15:8];
+        valu2_op_src2_sel = data[23:16];
+        valu2_op_src3_sel = data[31:24];
+    endfunction
+
     function automatic logic [31:0] pack_vsfu_op_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
@@ -689,6 +809,14 @@ class vu_inst_seq_item extends uvm_sequence_item;
         word[23:16] = vsfu_op_vsfu1_opcode;
         word[31:24] = vsfu_op_vsfu1_src1_sel;
         return word;
+    endfunction
+
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_vsfu_op_reg(input logic [31:0] data);
+        vsfu_op_vsfu0_opcode = data[7:0];
+        vsfu_op_vsfu0_src1_sel = data[15:8];
+        vsfu_op_vsfu1_opcode = data[23:16];
+        vsfu_op_vsfu1_src1_sel = data[31:24];
     endfunction
 
     function automatic logic [31:0] pack_mexe_op_reg(input logic [31:0] data);
@@ -700,6 +828,13 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_mexe_op_reg(input logic [31:0] data);
+        mexe_op_opcode = data[7:0];
+        mexe_op_src1_sel = data[15:8];
+        mexe_op_src2_sel = data[23:16];
+    endfunction
+
     function automatic logic [31:0] pack_sexe0_op_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
@@ -707,6 +842,13 @@ class vu_inst_seq_item extends uvm_sequence_item;
         word[15:8] = sexe0_op_src1_sel;
         word[23:16] = sexe0_op_src2_sel;
         return word;
+    endfunction
+
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_sexe0_op_reg(input logic [31:0] data);
+        sexe0_op_opcode = data[7:0];
+        sexe0_op_src1_sel = data[15:8];
+        sexe0_op_src2_sel = data[23:16];
     endfunction
 
     function automatic logic [31:0] pack_sexe1_op_reg(input logic [31:0] data);
@@ -718,6 +860,13 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_sexe1_op_reg(input logic [31:0] data);
+        sexe1_op_opcode = data[7:0];
+        sexe1_op_src1_sel = data[15:8];
+        sexe1_op_src2_sel = data[23:16];
+    endfunction
+
     function automatic logic [31:0] pack_sexe2_op_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
@@ -727,6 +876,13 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_sexe2_op_reg(input logic [31:0] data);
+        sexe2_op_opcode = data[7:0];
+        sexe2_op_src1_sel = data[15:8];
+        sexe2_op_src2_sel = data[23:16];
+    endfunction
+
     function automatic logic [31:0] pack_mask_op_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
@@ -734,6 +890,13 @@ class vu_inst_seq_item extends uvm_sequence_item;
         word[15:8] = mask_op_valu1_mask_sel;
         word[23:16] = mask_op_valu2_mask_sel;
         return word;
+    endfunction
+
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_mask_op_reg(input logic [31:0] data);
+        mask_op_valu0_mask_sel = data[7:0];
+        mask_op_valu1_mask_sel = data[15:8];
+        mask_op_valu2_mask_sel = data[23:16];
     endfunction
 
     function automatic logic [31:0] pack_prf_op_reg(input logic [31:0] data);
@@ -746,6 +909,14 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_prf_op_reg(input logic [31:0] data);
+        prf_op_vrf_wt_p0_src = data[7:0];
+        prf_op_vrf_wt_p1_src = data[15:8];
+        prf_op_mrf_wt_src = data[23:16];
+        prf_op_srf_wt_en = data[31:24];
+    endfunction
+
     function automatic logic [31:0] pack_static_type_vl_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
@@ -755,6 +926,13 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_static_type_vl_reg(input logic [31:0] data);
+        static_type_vl_vl = data[15:0];
+        static_type_vl_data_type = data[16];
+        static_type_vl_round_mode = data[19:17];
+    endfunction
+
     function automatic logic [31:0] pack_static_ld_addr_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
@@ -762,11 +940,21 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_static_ld_addr_reg(input logic [31:0] data);
+        static_ld_addr_cm_addr = data[31:0];
+    endfunction
+
     function automatic logic [31:0] pack_static_st_addr_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
         word[31:0] = static_st_addr_cm_addr;
         return word;
+    endfunction
+
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_static_st_addr_reg(input logic [31:0] data);
+        static_st_addr_cm_addr = data[31:0];
     endfunction
 
     function automatic logic [31:0] pack_static_vrf_rd_index_reg(input logic [31:0] data);
@@ -777,12 +965,24 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_static_vrf_rd_index_reg(input logic [31:0] data);
+        static_vrf_rd_index_vrf_rd_p0_idx = data[15:0];
+        static_vrf_rd_index_vrf_rd_p1_idx = data[31:16];
+    endfunction
+
     function automatic logic [31:0] pack_static_vrf_wt_index_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
         word[15:0] = static_vrf_wt_index_vrf_wt_p0_idx;
         word[31:16] = static_vrf_wt_index_vrf_wt_p1_idx;
         return word;
+    endfunction
+
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_static_vrf_wt_index_reg(input logic [31:0] data);
+        static_vrf_wt_index_vrf_wt_p0_idx = data[15:0];
+        static_vrf_wt_index_vrf_wt_p1_idx = data[31:16];
     endfunction
 
     function automatic logic [31:0] pack_static_mrf_rd_index_reg(input logic [31:0] data);
@@ -793,11 +993,22 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_static_mrf_rd_index_reg(input logic [31:0] data);
+        static_mrf_rd_index_mrf_rd_p0_idx = data[15:0];
+        static_mrf_rd_index_mrf_rd_p1_idx = data[31:16];
+    endfunction
+
     function automatic logic [31:0] pack_static_mrf_wt_index_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
         word[15:0] = static_mrf_wt_index_mrf_wt_idx;
         return word;
+    endfunction
+
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_static_mrf_wt_index_reg(input logic [31:0] data);
+        static_mrf_wt_index_mrf_wt_idx = data[15:0];
     endfunction
 
     function automatic logic [31:0] pack_static_srf_rd_index_0_reg(input logic [31:0] data);
@@ -810,6 +1021,14 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_static_srf_rd_index_0_reg(input logic [31:0] data);
+        static_srf_rd_index_0_srf_rd_p0_idx = data[7:0];
+        static_srf_rd_index_0_srf_rd_p1_idx = data[15:8];
+        static_srf_rd_index_0_srf_rd_p2_idx = data[23:16];
+        static_srf_rd_index_0_srf_rd_p3_idx = data[31:24];
+    endfunction
+
     function automatic logic [31:0] pack_static_srf_rd_index_1_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
@@ -818,6 +1037,14 @@ class vu_inst_seq_item extends uvm_sequence_item;
         word[23:16] = static_srf_rd_index_1_srf_rd_p6_idx;
         word[31:24] = static_srf_rd_index_1_srf_rd_p7_idx;
         return word;
+    endfunction
+
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_static_srf_rd_index_1_reg(input logic [31:0] data);
+        static_srf_rd_index_1_srf_rd_p4_idx = data[7:0];
+        static_srf_rd_index_1_srf_rd_p5_idx = data[15:8];
+        static_srf_rd_index_1_srf_rd_p6_idx = data[23:16];
+        static_srf_rd_index_1_srf_rd_p7_idx = data[31:24];
     endfunction
 
     function automatic logic [31:0] pack_static_srf_wt_index_0_reg(input logic [31:0] data);
@@ -830,6 +1057,14 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_static_srf_wt_index_0_reg(input logic [31:0] data);
+        static_srf_wt_index_0_srf_wt_p0_idx = data[7:0];
+        static_srf_wt_index_0_srf_wt_p1_idx = data[15:8];
+        static_srf_wt_index_0_srf_wt_p2_idx = data[23:16];
+        static_srf_wt_index_0_srf_wt_p3_idx = data[31:24];
+    endfunction
+
     function automatic logic [31:0] pack_static_srf_wt_index_1_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
@@ -838,11 +1073,22 @@ class vu_inst_seq_item extends uvm_sequence_item;
         return word;
     endfunction
 
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_static_srf_wt_index_1_reg(input logic [31:0] data);
+        static_srf_wt_index_1_srf_wt_p4_idx = data[7:0];
+        static_srf_wt_index_1_srf_wt_p5_idx = data[15:8];
+    endfunction
+
     function automatic logic [31:0] pack_inf_replace_value_reg(input logic [31:0] data);
         logic [31:0] word;
         word = data;
         word[31:0] = inf_replace_value_inf_replace_value;
         return word;
+    endfunction
+
+    // 反向：用 data 更新本 tr 对应位域信号
+    function automatic void unpack_inf_replace_value_reg(input logic [31:0] data);
+        inf_replace_value_inf_replace_value = data[31:0];
     endfunction
 
 endclass : vu_inst_seq_item

@@ -410,7 +410,8 @@ class inst_gen_config extends uvm_object;
     virtual inst_gen_if inst_gen_vif;
     // ===================== 指令序列长度控制 =====================
     int unsigned        inst_seq_length=100;
-    int unsigned        exe_num=0;
+    int unsigned        exe_num;
+    int unsigned        exp_exe_num = 10000;
     // ===================== 指令类型控制 =====================
     bit                 fix_inst_type_en=0;
     rand inst_type_e    inst_type;
@@ -630,6 +631,7 @@ class inst_gen_config extends uvm_object;
         `uvm_field_int          (coverage_enable,                           UVM_DEFAULT)
         `uvm_field_int          (inst_seq_length,                           UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (exe_num,                                   UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (exp_exe_num,                               UVM_DEFAULT | UVM_DEC)
         `uvm_field_array_int    (case_type_dist,                            UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (fix_inst_type_en,                          UVM_DEFAULT)
         `uvm_field_enum         (inst_type_e,           inst_type,          UVM_DEFAULT)
