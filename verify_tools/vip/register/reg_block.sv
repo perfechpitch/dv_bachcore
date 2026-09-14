@@ -66,6 +66,7 @@ class my_block extends uvm_component;
     bit             ambiguous_field_name[string];
     
     reg_history_s   history[$];
+    bit             compare_enable = 1;
 
     function new(string name = "my_block", uvm_component parent = null);
         super.new(name, parent);
@@ -405,7 +406,8 @@ class my_block extends uvm_component;
     virtual function void check_phase(uvm_phase phase);
         super.check_phase(phase);
         // 整个测试激励发完、仿真即将挂起前的 check_phase，自动触发！
-        void'(this.compare_reg_block());
+        if (compare_enable)
+            void'(this.compare_reg_block());
     endfunction
 
     // 内部记录函数 
