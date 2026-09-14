@@ -32,6 +32,21 @@ class vu_reg_creater extends uvm_component;
     create_registers();
   endfunction
 
+  // VCS plusarg（仅传参时才改 compare_enable，未传保持默认）:
+  //   +REG_COMPARE_ENABLE=0|1
+  //   +REG_COMPARE_DISABLE
+  virtual function void connect_phase(uvm_phase phase);
+    int compare_en;
+    super.connect_phase(phase);
+    if ($value$plusargs("REG_COMPARE_ENABLE=%d", compare_en)) begin
+      m_my_block.compare_enable = (compare_en != 0);
+      `uvm_info(get_type_name(), $sformatf("m_my_block.compare_enable=%0d (+REG_COMPARE_ENABLE)", m_my_block.compare_enable), UVM_LOW)
+    end else if ($test$plusargs("REG_COMPARE_DISABLE")) begin
+      m_my_block.compare_enable = 1'b0;
+      `uvm_info(get_type_name(), "m_my_block.compare_enable=0 (+REG_COMPARE_DISABLE)", UVM_LOW)
+    end
+  endfunction
+
   // create_reg  : create_reg(string name, int addr, int data, string hdl_path="")
   // create_field: create_field(int addr, string name, int start_bit, int end_bit, field_attr_e field_attr)
   virtual function void create_registers();
