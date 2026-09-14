@@ -86,6 +86,7 @@ task inst_gen_driver::get_and_drive();
                     inst_gen_vif.drv_cb.vld <= 0;
                 end else begin
                     inst_gen_vif.drv_cb.vld <= 0;
+                    `uvm_info("INST_GEN_DRV", {"\n", inst_q[0].sprint()}, UVM_LOW)
                     if(inst_q[0].vld_delay!=0)
                         vld_delay_q.push_back(inst_q[0].vld_delay);
                     inst_q.pop_front();
