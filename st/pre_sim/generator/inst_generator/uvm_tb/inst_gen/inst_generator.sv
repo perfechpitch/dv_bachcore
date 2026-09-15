@@ -4,7 +4,7 @@ class inst_generator extends uvm_component;
     bit [31:0] branch_imm;
     int gen_file;
     int vmem_file;
-    bit[31:0]           mem_file[bit[39:0]];//TODO:if RV48 TODO
+    bit[31:0]           mem_file[bit[39:0]];
 
 
     inst_gen_config inst_gen_cfg;
@@ -22,17 +22,19 @@ class inst_generator extends uvm_component;
     register_pool       reg_pool;
     addr_space_generator    addr_space_gen;
     ls_addr_generator       ls_addr_gen;
-    bit[63:0]           task_start_pc;
-    bit[63:0]           inst_pc_history[$];
-    int unsigned         task_inst_history_start;
-    bit                  core_stream_initialized;
-
-    ri_inst_generator   ri_inst_gen;
-    int queue_size;
+    fetch_addr_generator    fetch_addr_gen;
+    bit[63:0]               task_start_pc;
+    bit[63:0]               inst_pc_history[$];
+    int unsigned            task_inst_history_start;
+    bit                     core_stream_initialized;
+    bit                     task_body_enable;
 
     int       inst_cnt;
     bit[63:0] inst_addr;
     bit[39:0] inst_paddr;
+
+    ri_inst_generator   ri_inst_gen;
+    int queue_size;
 
  `INST_GEN_DECLARATION(c_addi4spn_gen)
  `INST_GEN_DECLARATION(c_lw_gen)
@@ -303,7 +305,7 @@ class inst_generator extends uvm_component;
 
         ri_inst_gen = new();
         ls_addr_gen = new();
-
+        fetch_addr_gen = new();
         inst_cnt = 0;
         core_stream_initialized = 1'b0;
     endfunction : new
@@ -325,30 +327,45 @@ class inst_generator extends uvm_component;
     //   - inst_addr >  `ITCM_SIZE：BOOT/异常入口，不按 4KB 截断，返回 1。
     //------------------------------------------------------------------
     function bit fetch_space_avail();
-        if(inst_addr > `ITCM_SIZE) return 1'b1;
-        return (inst_addr + 'h8 <= `ITCM_SIZE);
+        if(fetch_addr_gen.exception_injected)
+            return 1'b0;
+        if(inst_addr > `ITCM_SIZE)
+            return 1'b1;
+        if(inst_addr + 'h8 <= `ITCM_SIZE)
+            return 1'b1;
+        if(fetch_addr_gen.allow_end_overflow(inst_addr)) begin
+            if(inst_addr < `ITCM_SIZE)
+                return 1'b1;
+            fetch_addr_gen.commit_end_fault(inst_addr, inst_addr);
+        end
+        return 1'b0;
     endfunction
 
     function bit fetch_space_avail_for(int unsigned inst_bytes);
-        if(inst_addr > `ITCM_SIZE) return 1'b1;
+        if(fetch_addr_gen.exception_injected)
+            return 1'b0;
+        if(inst_addr > `ITCM_SIZE)
+            return 1'b1;
+        if(fetch_addr_gen.end_fault_armed) begin
+            if(inst_addr + inst_bytes <= `ITCM_SIZE)
+                return 1'b1;
+            fetch_addr_gen.commit_end_fault(inst_addr, `ITCM_SIZE);
+            return 1'b0;
+        end
         return (inst_addr + inst_bytes + 'h4 <= `ITCM_SIZE);
     endfunction
 
-    // test.vmem stores 32-bit words at word addresses.  RVC instructions are
-    // halfword-addressed, so update the corresponding halfword then emit the
-    // complete word.  Re-emitting a word is intentional when its other
-    // halfword is generated later; the memory loader keeps the last value.
     function void vmem_write_word(bit [39:0] byte_addr);
         bit [39:0] word_idx;
         word_idx = byte_addr >> 2;
         if(!mem_file.exists(word_idx))
             mem_file[word_idx] = '0;
         if(inst_gen_cfg.vmem_file_gen)
-            $fwrite(inst_gen_cfg.vmem_file, "@%0h\n%8h\n",
-                    word_idx, mem_file[word_idx]);
+            $fwrite(vmem_file, "@%0h\n%8h\n", word_idx, mem_file[word_idx]);
     endfunction
 
-    function void vmem_write_halfword(bit [39:0] byte_addr, bit [15:0] data);
+    function void vmem_write_halfword(bit [39:0] byte_addr,
+                                      bit [15:0] data);
         bit [39:0] word_idx;
         word_idx = byte_addr >> 2;
         if(!mem_file.exists(word_idx))
@@ -359,31 +376,25 @@ class inst_generator extends uvm_component;
             mem_file[word_idx][15:0] = data;
     endfunction
 
-    function void vmem_write_inst(bit [31:0] data, int unsigned inst_bytes);
+    function void vmem_write_inst(bit [31:0] data,
+                                  int unsigned inst_bytes);
         bit [39:0] first_word_idx;
         bit [39:0] second_word_idx;
         first_word_idx  = inst_paddr >> 2;
         second_word_idx = (inst_paddr + 2) >> 2;
-
         vmem_write_halfword(inst_paddr, data[15:0]);
         if(inst_bytes == 4)
             vmem_write_halfword(inst_paddr + 2, data[31:16]);
-
         vmem_write_word(inst_paddr);
         if((inst_bytes == 4) && (second_word_idx != first_word_idx))
             vmem_write_word(inst_paddr + 2);
     endfunction
 
-    //------------------------------------------------------------------
-    // truncate_fetch_space
-    //   ITCM 写不下「当前指令 + quit」时调用：丢掉当前指令，在当前位置
-    //   写入 pass_quit（add x0,x0,x0），PC += 'h4。
-    //   再进来时 inst_addr 已到 `ITCM_SIZE，直接 return，避免重复写。
-    //------------------------------------------------------------------
     function void truncate_fetch_space();
-        if(inst_addr >= `ITCM_SIZE) return;
-        $fwrite(inst_gen_cfg.gen_file,
-                ("/*PC: %16h -> %10h*/ // Warning --- ITCM 4KB full, truncate with pass_quit\n"),
+        if(inst_addr >= `ITCM_SIZE)
+            return;
+        $fwrite(gen_file,
+                "/*PC: %16h -> %10h*/ // Warning --- ITCM 4KB full, truncate with pass_quit\n",
                 inst_addr, inst_paddr);
         vmem_write_inst(pass_quit_inst, 4);
         inst_addr  = inst_addr + 'h4;
@@ -407,13 +418,18 @@ class inst_generator extends uvm_component;
         inst_paddr              = '0;
         inst_cnt                = `ITCM_SIZE / 'h4;
         core_stream_initialized = 1'b1;
+        task_body_enable        = 1'b0;
         ls_addr_gen.hart        = core;
+        fetch_addr_gen.configure_core(
+            core, RVC inside inst_gen_cfg.support_inst_set);
     endfunction
 
-    function void switch_task(int       task_id,
-                              bit       use_configured_start_pc = 1'b0,
-                              bit[63:0] configured_start_pc     = '0);
-        if(gen_file == 0)begin
+    function void switch_task(int task_id,
+                              bit use_configured_start_pc = 1'b0,
+                              bit[63:0] configured_start_pc = '0,
+                              bit allow_fetch_exception = 1'b0);
+        bit[63:0] selected_start_pc;
+        if(gen_file == 0) begin
             gen_file  = inst_gen_cfg.gen_file;
             vmem_file = inst_gen_cfg.vmem_file;
         end
@@ -423,20 +439,27 @@ class inst_generator extends uvm_component;
             inst_cnt                = `ITCM_SIZE / 'h4;
             core_stream_initialized = 1'b1;
         end
+        fetch_addr_gen.begin_task(allow_fetch_exception);
+        task_body_enable = fetch_addr_gen.get_task_start_pc(
+                               use_configured_start_pc ? configured_start_pc :
+                               inst_addr,
+                               selected_start_pc);
+        task_start_pc = selected_start_pc;
+        task_inst_history_start = inst_pc_history.size();
+        if(!task_body_enable)
+            return;
         if(use_configured_start_pc) begin
             inst_addr  = configured_start_pc;
             inst_paddr = configured_start_pc[39:0];
         end
         task_start_pc = inst_addr;
-        task_inst_history_start = inst_pc_history.size();
-        // Mark every task boundary in vmem using word address (start_pc / 4).
-        $fwrite(vmem_file,("@%0h\n"), inst_paddr >> 'h2);
-        $fwrite(gen_file,("//========== TASK[%0d] start PC=%16h itcm_left=%0hB ==========\n"),
+        $fwrite(vmem_file, "@%0h\n", inst_paddr >> 'h2);
+        $fwrite(gen_file,
+                "//========== TASK[%0d] start PC=%16h itcm_left=%0hB ==========\n",
                 task_id, task_start_pc,
                 (inst_addr < `ITCM_SIZE) ? (`ITCM_SIZE - inst_addr) : 'h0);
     endfunction
-    // Choose only a real instruction boundary.  Mixed 16/32-bit streams
-    // cannot derive a valid PC from instruction_count * 4.
+
     function bit[63:0] rand_pc_in_current_task();
         int unsigned index;
         if(inst_pc_history.size() <= task_inst_history_start)
@@ -445,157 +468,154 @@ class inst_generator extends uvm_component;
                                task_inst_history_start);
         return inst_pc_history[index];
     endfunction
+
     function void get_specified_rand_inst(inst_e inst_name);
         bit find_inst;
+        find_inst = 1'b0;
         inst_addr_print();
-        for(int i=0; i<queue_size; i++)begin
-            if(inst_gen_queue[i].inst_match(inst_name))begin
+        for(int i=0; i<queue_size; i++) begin
+            if(inst_gen_queue[i].inst_match(inst_name)) begin
                 inst = inst_gen_queue[i].get_rand_inst(ops_gen_cfg);
                 find_inst = 1'b1;
                 break;
             end
         end
-
-        if(find_inst==1'b0)begin
-            ////TODO: get ri inst, but when generators done, there is no find_inst=0
-            $display("ERROR: rand inst=%0s, isn't in inst gen queue!!",inst_name);
-        end
+        if(!find_inst)
+            $display("ERROR: rand inst=%0s, isn't in inst gen queue!!", inst_name);
         inst_print();
     endfunction
- function void get_rand_branch_inst(bit[31:0] ops);
+
+    function void get_rand_branch_inst(bit[31:0] ops);
+        bit find_inst;
         inst_e inst_name;
+        find_inst = 1'b0;
         inst_addr_print();
         `RANDOMIZE_CHECK(branch_inst_gen,"ERROR: branch inst gen error!!")
         inst_name = branch_inst_gen.inst_name;
-        for(int i=0; i<queue_size; i++)begin
-            if(inst_gen_queue[i].inst_match(inst_name))begin
-                inst = inst_gen_queue[i].get_specified_inst(ops);
-            end
-        end
-        inst_print();
-    endfunction
-    function void get_rand_ls_with_imm(ref bit[31:0] ls_imm );
-        inst_e inst_name;
-        inst_addr_print();
-        `RANDOMIZE_CHECK(ls_inst_gen,"ERROR: ls inst gen error!!")
-        inst_name = ls_inst_gen.inst_name;
-        for(int i=0; i<queue_size; i++)begin
-            if(inst_gen_queue[i].inst_match(inst_name))begin
-                inst = inst_gen_queue[i].override_rand_inst(ops_gen_cfg,ls_imm);
-                break;
-            end
-        end
-        //$display("inst_name = %0s, inst=%0h, ls_imm = %0h", inst_name, inst,ls_imm);
-        inst_print();
-    endfunction
- function void get_rand_inst(inst_type_e inst_type);
-        bit find_inst;
-        inst_e inst_name;
-        inst_addr_print();
-
-        find_inst = 1'b0;
-        //inst_name = inst_name_gen.get_rand_inst_name(inst_type);
-        case(inst_type)
-            SAFE_INST  :begin
-                `RANDOMIZE_CHECK(safe_inst_gen,"ERROR: safe inst gen error!!")
-                inst_name = safe_inst_gen.inst_name;
-            end
-            FLUSH_INST :begin
-                `RANDOMIZE_CHECK(flush_inst_gen,"ERROR: flush inst gen error!!")
-                inst_name = flush_inst_gen.inst_name;
-            end
-            LS_INST    :begin
-                `RANDOMIZE_CHECK(ls_inst_gen,"ERROR: ls inst gen error!!")
-                inst_name = ls_inst_gen.inst_name;
-            end
-            BRANCH_INST:begin
-                `RANDOMIZE_CHECK(branch_inst_gen,"ERROR: branch inst gen error!!")
-                inst_name = branch_inst_gen.inst_name;
-            end
-            EXCEPT_INST:begin
-                `RANDOMIZE_CHECK(except_inst_gen,"ERROR: except inst gen error!!")
-                inst_name = except_inst_gen.inst_name;
-                //$display("except_inst_type = %0s,inst_addr = %0h, inst_name = %0s",except_inst_gen.except_inst_type,inst_addr,inst_name);
-            end
-        endcase
-
-  case(inst_type)
-            BRANCH_INST:begin
-                for(int i=0; i<queue_size; i++)begin
-                    if(inst_gen_queue[i].inst_match(inst_name))begin
-                        inst = inst_gen_queue[i].override_rand_inst(ops_gen_cfg,branch_imm);
-                        find_inst = 1'b1;
-                        break;
-                    end
-                end
-            end
-            default:begin
-                if(inst_type == EXCEPT_INST && inst_name == RI) begin
-                    inst = ri_inst_gen.get_rand_inst();
-                    find_inst = 1'b1;
-                end
-                else begin
-                for(int i=0; i<queue_size; i++)begin
-                    if(inst_gen_queue[i].inst_match(inst_name))begin
-                        inst = inst_gen_queue[i].get_rand_inst(ops_gen_cfg);
-                        find_inst = 1'b1;
-                        break;
-                    end
-                end
-                end
-            end
-        endcase
-        //$display("inst_type = %0s,inst=%h,inst_name=%0s, gpr size = %0d",inst_type,inst,inst_name,safe_inst_gen.safe_int_ls_dist,reg_pool.gpr_gen.regs.size());
-        inst_print();
- //in one instruction,reg num constraint with {rs1_eq_rs2,rs1_eq_rd,rs2_rq_rd}
-        //to make it correct. after every reg used. the rand reg be disabled stated.
-        //after instruction gen. all reg generator free disbaled reg
-        //reg_pool.free_reg();
-
-        //$display("inst_name=%0s, inst_type = %0s, inst = %0h",inst_name,safe_inst_gen.safe_inst_type,inst);
-        if(find_inst==1'b0)begin
-            $display("ERROR: rand inst=%0s, isn't in inst gen queue!!",inst_name);
-        end
-    endfunction
- function void get_specified_inst(inst_e inst_name, bit[4:0]rs1,bit[4:0]rs2,bit[4:0]rd,bit[31:0]imm);
-        bit find_inst;
-        bit [31:0] ops;
-
-        inst_addr_print();
-        find_inst = 1'b0;
-        ops = 0;
-        for(int i=0; i<queue_size; i++)begin
-            if(inst_gen_queue[i].inst_match(inst_name))begin
-            case(inst_gen_queue[i].inst_format)
-                R_TYPE  : ops = {7'b0,rs2,rs1, 3'b0,rd,7'b0};
-                I_TYPE  :begin
-                    ops = {imm[11:0],rs1, 3'b0,rd,7'b0};
-                    //$display("inst_name = %s, imm = %h, rd=%0h", inst_name,imm,rd);
-                end
-                S_TYPE  : ops = {imm[11:5],rs2,rs1,3'b0,imm[4:0],7'b0};
-                U_TYPE  : ops = {imm[19:0],rd,7'b0};
-                B_TYPE  : ops = {imm[11],imm[9:4],rs2,rs1,3'b0,imm[3:0],imm[10],7'b0};
-                J_TYPE  : ops = {imm[20],imm[10:1],imm[11],imm[19:12],rd,7'b0};
-                DSAR_TYPE  : ops = {12'b0,rs1,3'b0,rd,7'b0};
-                DSARI_TYPE : ops = {1'b0,imm[15:0],3'b0,rd,7'b0};
-                DSAW_TYPE  : ops = {7'b0,rs2,rs1,3'b0,5'b0,7'b0};
-                DSAWI_TYPE : ops = {1'b0,imm[15:5],rs1,3'b0,imm[4:0],7'b0};
-                TASK_DONE_TYPE : ops = {imm[0],31'b0};
-            endcase
+        for(int i=0; i<queue_size; i++) begin
+            if(inst_gen_queue[i].inst_match(inst_name)) begin
                 inst = inst_gen_queue[i].get_specified_inst(ops);
                 find_inst = 1'b1;
                 break;
             end
         end
+        inst_print();
+    endfunction
 
-        //$display("inst=%h,inst_name=%0s",inst,inst_name);
-        if(find_inst==1'b0)begin
-            $display("ERROR: special inst_name - %0s is not in inst_queue!!",inst_name);
-            $finish();
+    function void get_rand_ls_with_imm(ref bit[31:0] ls_imm);
+        bit find_inst;
+        inst_e inst_name;
+        find_inst = 1'b0;
+        inst_addr_print();
+        `RANDOMIZE_CHECK(ls_inst_gen,"ERROR: ls inst gen error!!")
+        inst_name = ls_inst_gen.inst_name;
+        for(int i=0; i<queue_size; i++) begin
+            if(inst_gen_queue[i].inst_match(inst_name)) begin
+                inst = inst_gen_queue[i].override_rand_inst(ops_gen_cfg, ls_imm);
+                find_inst = 1'b1;
+                break;
+            end
         end
         inst_print();
     endfunction
 
+    function void get_rand_inst(inst_type_e inst_type);
+        bit find_inst;
+        inst_e inst_name;
+        find_inst = 1'b0;
+        inst_addr_print();
+        case(inst_type)
+            SAFE_INST: begin
+                `RANDOMIZE_CHECK(safe_inst_gen,"ERROR: safe inst gen error!!")
+                inst_name = safe_inst_gen.inst_name;
+            end
+            FLUSH_INST: begin
+                `RANDOMIZE_CHECK(flush_inst_gen,"ERROR: flush inst gen error!!")
+                inst_name = flush_inst_gen.inst_name;
+            end
+            LS_INST: begin
+                `RANDOMIZE_CHECK(ls_inst_gen,"ERROR: ls inst gen error!!")
+                inst_name = ls_inst_gen.inst_name;
+            end
+            BRANCH_INST: begin
+                `RANDOMIZE_CHECK(branch_inst_gen,"ERROR: branch inst gen error!!")
+                inst_name = branch_inst_gen.inst_name;
+            end
+            EXCEPT_INST: begin
+                `RANDOMIZE_CHECK(except_inst_gen,"ERROR: except inst gen error!!")
+                inst_name = except_inst_gen.inst_name;
+            end
+        endcase
+        case(inst_type)
+            BRANCH_INST: begin
+                for(int i=0; i<queue_size; i++) begin
+                    if(inst_gen_queue[i].inst_match(inst_name)) begin
+                        inst = inst_gen_queue[i].override_rand_inst(
+                                   ops_gen_cfg, branch_imm);
+                        find_inst = 1'b1;
+                        break;
+                    end
+                end
+            end
+            default: begin
+                if(inst_type == EXCEPT_INST && inst_name == RI) begin
+                    inst = ri_inst_gen.get_rand_inst();
+                    find_inst = 1'b1;
+                end
+                else begin
+                    for(int i=0; i<queue_size; i++) begin
+                        if(inst_gen_queue[i].inst_match(inst_name)) begin
+                            inst = inst_gen_queue[i].get_rand_inst(ops_gen_cfg);
+                            find_inst = 1'b1;
+                            break;
+                        end
+                    end
+                end
+            end
+        endcase
+        if(!find_inst)
+            $display("ERROR: rand inst=%0s, isn't in inst gen queue!!", inst_name);
+        inst_print();
+    endfunction
+
+    function void get_specified_inst(
+                                      inst_e inst_name,
+                                      bit[4:0] rs1,
+                                      bit[4:0] rs2,
+                                      bit[4:0] rd,
+                                      bit[31:0] imm);
+        bit find_inst;
+        bit [31:0] ops;
+        find_inst = 1'b0;
+        ops = '0;
+        inst_addr_print();
+        for(int i=0; i<queue_size; i++) begin
+            if(inst_gen_queue[i].inst_match(inst_name)) begin
+                case(inst_gen_queue[i].inst_format)
+                    R_TYPE:         ops = {7'b0,rs2,rs1,3'b0,rd,7'b0};
+                    I_TYPE:         ops = {imm[11:0],rs1,3'b0,rd,7'b0};
+                    S_TYPE:         ops = {imm[11:5],rs2,rs1,3'b0,imm[4:0],7'b0};
+                    U_TYPE:         ops = {imm[19:0],rd,7'b0};
+                    B_TYPE:         ops = {imm[11],imm[9:4],rs2,rs1,3'b0,imm[3:0],imm[10],7'b0};
+                    J_TYPE:         ops = {imm[20],imm[10:1],imm[11],imm[19:12],rd,7'b0};
+                    DSAR_TYPE:      ops = {12'b0,rs1,3'b0,rd,7'b0};
+                    DSARI_TYPE:     ops = {1'b0,imm[15:0],3'b0,rd,7'b0};
+                    DSAW_TYPE:      ops = {7'b0,rs2,rs1,3'b0,5'b0,7'b0};
+                    DSAWI_TYPE:     ops = {1'b0,imm[15:5],rs1,3'b0,imm[4:0],7'b0};
+                    TASK_DONE_TYPE: ops = {imm[0],31'b0};
+                endcase
+                inst = inst_gen_queue[i].get_specified_inst(ops);
+                find_inst = 1'b1;
+                break;
+            end
+        end
+        if(!find_inst) begin
+            $display("ERROR: special inst_name - %0s is not in inst_queue!!",
+                     inst_name);
+            $finish();
+        end
+        inst_print();
+    endfunction
 
     function insert_inst(int insert_num, inst_type_e inst_type);
     if(insert_num >0)   //ls base config seq insert may random to be insert 0 inst
@@ -670,34 +690,27 @@ function void inst_queue_gen();
 //    foreach(inst_gen_queue[i]) $display("queue [%s] valid",inst_gen_queue[i].inst_name);
 endfunction
 function void inst_addr_print();
-    if(!fetch_space_avail()) return;
-    $fwrite(inst_gen_cfg.gen_file,"/*PC: %16h -> %10h*/",inst_addr,inst_paddr);
+    if(!fetch_space_avail())
+        return;
+    $fwrite(gen_file, "/*PC: %16h -> %10h*/", inst_addr, inst_paddr);
 endfunction
 function void inst_print();
-    addr_type_e temp_addr_type;
-    addr_structure_s fetch_s;
     int unsigned inst_bytes;
-
     inst_bytes = (inst[1:0] == 2'b11) ? 4 : 2;
-    if(!fetch_space_avail_for(inst_bytes))begin
-        truncate_fetch_space();
+    if(!fetch_space_avail_for(inst_bytes)) begin
+        if(!fetch_addr_gen.exception_injected)
+            truncate_fetch_space();
         return;
     end
-
-    if($test$plusargs("debug_print"))begin
-        $display(" inst_cnt = %0h,inst=%0h",inst_cnt,inst);
-    end
-
+    if($test$plusargs("debug_print"))
+        $display(" inst_cnt = %0h,inst=%0h", inst_cnt, inst);
     inst_pc_history.push_back(inst_addr);
     vmem_write_inst(inst, inst_bytes);
-    reg_pool.free_reg();
-
-    inst_addr  = inst_addr  + inst_bytes;
+    inst_addr  = inst_addr + inst_bytes;
     inst_paddr = inst_paddr + inst_bytes;
-    inst_cnt = inst_cnt - 1;
-
-    if(!fetch_space_avail())
+    inst_cnt   = inst_cnt - 1;
+    reg_pool.free_reg();
+    if(!fetch_space_avail() && !fetch_addr_gen.exception_injected)
         truncate_fetch_space();
-
 endfunction
 endclass

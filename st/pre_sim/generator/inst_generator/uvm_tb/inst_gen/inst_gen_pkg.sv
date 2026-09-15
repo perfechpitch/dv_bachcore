@@ -30,6 +30,7 @@ package inst_gen_pkg;
 
 `include "ls_addr_e.sv"
 `include "ls_addr_generator.sv"
+`include "fetch_addr_generator.sv"
 
 `include "register_pool.sv"
 

@@ -21,8 +21,8 @@ Directed generation is scenario based. A class derived from `scenario_base_seq` 
 
 - `uvm_tb/scenario_seq/scenario_base_seq.sv` — directed task/content callback API.
 - `uvm_tb/registry/directed_scenario_registry.sv` — name-to-factory registry and macro.
-- `scenario/directed/directed_scenario_list.svh` — directed scenario includes.
-- `scenario/directed/workload/multicore_directed_scenario_seq.sv` — current working example.
+- `st/pre_sim/input/scenario/directed/directed_scenario_list.svh` — directed scenario includes.
+- `st/pre_sim/input/scenario/directed/workload/multicore_directed_scenario_seq.sv` — current working example.
 - `uvm_tb/inst_gen/inst_generator.sv` — directed instruction entry points.
 - `uvm_tb/inst_gen/inst_gen_define.svh` — format helper macros.
 
@@ -74,8 +74,8 @@ Directed scenario files compile inside `directed_registry_pkg`, which imports sc
 Read:
 
 1. `uvm_tb/scenario_seq/scenario_base_seq.sv`
-2. `scenario/directed/workload/multicore_directed_scenario_seq.sv`
-3. `scenario/directed/directed_scenario_list.svh`
+2. `st/pre_sim/input/scenario/directed/workload/multicore_directed_scenario_seq.sv`
+3. `st/pre_sim/input/scenario/directed/directed_scenario_list.svh`
 4. Relevant instruction class only to verify operand meaning
 
 ### Add/modify a directed instruction API

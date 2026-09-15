@@ -55,6 +55,7 @@ class scenario_task_info extends uvm_object;
     scenario_task_kind_e kind;
     bit                  use_start_pc;
     bit[63:0]            start_pc;
+    bit                  fetch_exception_enable;
     int unsigned         seq_num;
     scenario_seq_select_mode_e seq_select_mode;
     scenario_seq_plan_item     seq_plan[$];
@@ -67,9 +68,11 @@ class scenario_task_info extends uvm_object;
         kind         = SCENARIO_DIRECTED_TASK;
         use_start_pc = 1'b1;
         start_pc     = '0;
+        fetch_exception_enable = 1'b0;
         seq_num      = SCENARIO_AUTO_SEQ_NUM;
         seq_select_mode = SCENARIO_SEQ_AUTO;
     endfunction
+
 endclass
 
 // Scenario is the only task planner. It describes task layout and directed
@@ -86,6 +89,21 @@ class scenario_base_seq extends uvm_object;
     endfunction
 
     virtual function void configure_tasks();
+    endfunction
+
+    // Scenario only gates whether fetch-address exceptions may participate in
+    // lower-level randomization.  It does not select source, type or address.
+    function void enable_task_fetch_exception(int unsigned task_id,
+                                              bit enable = 1'b1);
+        foreach(task_plan[i]) begin
+            if(task_plan[i].task_id == task_id) begin
+                task_plan[i].fetch_exception_enable = enable;
+                return;
+            end
+        end
+        `uvm_fatal("SCENARIO_FETCH_CFG",
+                   $sformatf("cannot configure fetch exception: task_id=%0d is not defined",
+                             task_id))
     endfunction
 
     function void add_directed_task(int unsigned task_id,

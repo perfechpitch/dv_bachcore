@@ -19,6 +19,9 @@ class jalr_sequence extends uvm_object;
         bit [4:0]           temp_reg;
         bit                 use_c_jalr;
         bit                 use_c_jalr_link;
+        bit                 inject_control_fault;
+        bit[63:0]           control_fault_target;
+        bit[63:0]           control_source_pc;
 
         target_reg = inst_gen.reg_pool.get_nonezero_gpr(1);
         temp_reg = inst_gen.reg_pool.get_nonezero_gpr(1);
@@ -26,7 +29,10 @@ class jalr_sequence extends uvm_object;
         fetch_s.addr_type = fetch_addr_type;
         fetch_s.mode = branch_seq_cfg.program_mode;
         if(fetch_addr_type == FETCH_VALID)begin
-            fetch_s.vaddr = inst_gen.rand_pc_in_current_task();
+            inject_control_fault = inst_gen.fetch_addr_gen.get_control_fault_target(
+                                       control_fault_target);
+            fetch_s.vaddr = inject_control_fault ? control_fault_target :
+                            inst_gen.rand_pc_in_current_task();
             fetch_s.paddr = fetch_s.vaddr[39:0];
         end
         else
@@ -84,6 +90,7 @@ class jalr_sequence extends uvm_object;
         endcase
 
 
+        control_source_pc = inst_gen.inst_addr;
         if(use_c_jalr) begin
             if(use_c_jalr_link)
                 inst_gen.get_specified_inst(C_JALR, target_reg, '0, '0, '0);
@@ -92,8 +99,12 @@ class jalr_sequence extends uvm_object;
         end
         else
             `jalr(temp_reg,target_reg,branch_seq_info.jalr_imm);
+        if(inject_control_fault)
+            inst_gen.fetch_addr_gen.commit_control_fault(control_source_pc,
+                                                         fetch_s.vaddr);
         if(fetch_addr_type == FETCH_INVALID)
-            inst_gen.addr_space_gen.fetch_invalid_vaddrs.push_back(inst_gen.inst_addr);
+            inst_gen.addr_space_gen.fetch_invalid_vaddrs.push_back(
+                inst_gen.inst_addr);
         // FETCH_VALID: keep sequential fetch layout; do not relocate inst_addr.
 
         $fwrite(inst_gen.gen_file,("//--- jalr seq end \n"));

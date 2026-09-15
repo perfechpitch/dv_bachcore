@@ -200,7 +200,7 @@ Task 规则：
 
 ## 6. 当前已有 Random Scenario
 
-当前 `scenario/random/random_scenario_list.svh`注册了：
+当前 `st/pre_sim/input/scenario/random/random_scenario_list.svh`注册了：
 
 | Registry 名称 | 文件 | 配置 |
 | --- | --- | --- |
@@ -212,10 +212,10 @@ Task 规则：
 
 ## 7. 新增并运行 Scenario
 
-1. 在 `scenario/random/<core>/`下创建扩展自 `scenario_base_seq`的类。
+1. 在 `st/pre_sim/input/scenario/random/<core>/`下创建扩展自 `scenario_base_seq`的类。
 2. 在 `configure_tasks()`中添加 task 和权重。
 3. 使用 `RANDOM_SCENARIO_REGISTER`注册名称。
-4. 在 `scenario/random/random_scenario_list.svh`中 include 新文件。
+4. 在 `st/pre_sim/input/scenario/random/random_scenario_list.svh`中 include 新文件。
 5. 在 `rsim/case_lst/random.lst`中增加 case。
 
 Case 示例：
