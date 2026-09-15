@@ -19,7 +19,7 @@ testcase (starts common executor)
     -> for core MU/VU/DTE
          -> bind core register pool and LS context
          -> for each task belonging to core
-              -> switch_task(task_id, start_pc)
+              -> inst_generator.switch_task(task_id, start_pc, exception_gate)
               -> random: AUTO/PLAN sequence execution
                  directed: scenario.generate_task(...)
               -> TASK_DONE termination
@@ -31,13 +31,13 @@ testcase (starts common executor)
 - `uvm_tb/scenario_seq/scenario_base_seq.sv` — task types and author API.
 - `uvm_tb/vseq/scenario_base_vsequence.sv` — selection/execution and outputs.
 - `uvm_tb/registry/{random,directed}_scenario_registry.sv` — scenario lookup.
-- `scenario/random/mu/mu_random_scenario_seq.sv` — random plan example.
-- `scenario/directed/workload/multicore_directed_scenario_seq.sv` — directed multi-core example.
-- `uvm_tb/inst_gen/inst_generator.sv` — core stream/task PC primitives.
+- `st/pre_sim/input/scenario/random/mu/mu_random_scenario_seq.sv` — random plan example.
+- `st/pre_sim/input/scenario/directed/workload/multicore_directed_scenario_seq.sv` — directed multi-core example.
+- `uvm_tb/inst_gen/inst_generator.sv` — instruction generation plus per-core task PC/history/ITCM/vmem/fetch state.
 
 ## Key Classes / Packages
 
-- `scenario_task_info`: `task_id`, `rv_core`, `kind`, `use_start_pc`, `start_pc`, `seq_num`, selection mode and plan.
+- `scenario_task_info`: `task_id`, `rv_core`, `kind`, `use_start_pc`, `start_pc`, `fetch_exception_enable`, `seq_num`, selection mode and plan.
 - `scenario_seq_plan_item`: allowed sequence category plus scenario-level preference enum.
 - `scenario_base_seq`: protected plan and public planning methods.
 - `scenario_base_vsequence`: common UVM executor.
@@ -49,13 +49,14 @@ testcase (starts common executor)
 - `add_directed_task(id, core, start_pc)`.
 - `add_random_task(id=SCENARIO_AUTO_TASK_ID, core=HART_MU, seq_num=SCENARIO_AUTO_SEQ_NUM, use_start_pc=0, start_pc=0)` — returns the resolved task ID. Omitted IDs are randomly allocated in `0..15` and kept unique within the current plan. Omitted sequence counts are resolved by the executor from the randomized `inst_gen_case_config.seq_num`; `+seq_num` overrides that config value.
 - `random_task_num()` — returns a random task count in `1..8`; `+scenario_task_num` overrides and is range-checked. All current MU random scenarios use this common helper.
+- `enable_task_fetch_exception(task_id, enable=1)` — allows the lower-level fetch address generator to sample faults for that task. It does not guarantee a fault or select its source/type/address; omission keeps the task exception-free.
 - `set_task_seq_weight(id, seq_type, preference)` — overrides one category with `WEIGHT_DISABLE/LOW/MEDIUM/HIGH` and changes the random task to PLAN mode. Unlisted categories keep their platform-randomized defaults; `seq_num` remains the total number of sequence calls.
 - `set_task_subseq_weight(id, seq_type, subseq_type, preference)` — configures the direct child selector of a SAFE, LS, or BRANCH category. Supported children are SAFE instruction groups, LS RAND/LINEAR/MEMCPY, and BRANCH SINGLE/LOOP/JALR. Unlisted siblings retain their platform-randomized defaults; only explicit entries override or disable a child for that task. A parent explicitly disabled by the task cannot have child overrides.
 - `inst_gen_case_config::apply_scenario_seq_weights(task_info)` — restores platform defaults, maps preferences to runtime weights `0/1/4/10`, validates capability gates, and updates the shared `inst_seq_type_cfg` handle.
 - `inst_gen_case_config::apply_scenario_subseq_weights(task_info)` — restores lower-level defaults, validates parent/capability relationships, and updates the shared SAFE/LS/BRANCH config handles for one task.
 - `generate_task(task_info, ...)` — directed content callback.
 - `build_task_plan(default_core)`, `get_task_count`, `get_task` — executor-facing API.
-- `begin_core_stream`, `switch_task`, `rand_pc_in_current_task` — generator execution primitives.
+- `inst_generator::begin_core_stream`, `switch_task`, and task state fields — task/program execution primitives used by the scenario executor.
 
 ## State and Address Rules
 
@@ -65,7 +66,8 @@ testcase (starts common executor)
 - Address-space overlap is the scenario author's responsibility.
 - A core has one register pool shared by its tasks; different cores use independent pools.
 - Normal LS addresses come from `ls_addr_generator`: per-core DTCMs are physically independent while using the same numeric window, and Share Memory uses a common window. The legacy shared `addr_space_generator` remains for PMA/PMP/PTE and exception/link data; LS generator hart/base context is switched per core.
-- Instruction boundaries are recorded in `inst_pc_history`; task instruction count is history-size based.
+- Instruction boundaries and current task history start are recorded by `inst_generator`; scenario derives each task's instruction count from them.
+- Fetch address state is owned by `inst_generator.fetch_addr_gen`. At task start, sequential ITCM end, and JALR target creation it may choose an invalid address only when the task gate is enabled. An invalid start PC emits no task body or vmem instruction data.
 
 ## Outputs
 
@@ -84,6 +86,7 @@ Scenario API depends on instruction and sequence packages. Registries compile sc
 - Scenario-local direct-child preferences use the same four weight levels. C, FLUSH and EXCEPT currently have no scenario-level child selector; deeper LS instruction mix and branch target/loop-opcode knobs remain platform configuration.
 - Directed task execution restores default sequence weights and does not apply scenario random preferences.
 - Current random examples target MU; current directed example spans MU/VU/DTE.
+- `mu_fetch_exception_random` is the random fetch-exception example; its regression case forces the start opportunity to 100 percent for deterministic checking while fault kind remains randomized.
 
 ## Future / Planned Architecture
 

@@ -220,9 +220,9 @@ endclass
 
 ### 3.8 注册和运行 Directed Scenario
 
-1. 文件放在 `scenario/directed/mu/`、`vu/`、`dte/` 或 `workload/`；
+1. 文件放在 `st/pre_sim/input/scenario/directed/mu/`、`vu/`、`dte/` 或 `workload/`；
 2. 文件末尾调用 `DIRECTED_SCENARIO_REGISTER`；
-3. 在 `scenario/directed/directed_scenario_list.svh` 中 include；
+3. 在 `st/pre_sim/input/scenario/directed/directed_scenario_list.svh` 中 include；
 4. 在 `rsim/case_lst/directed.lst` 增加 case。
 
 ```text
@@ -394,9 +394,9 @@ endclass
 
 ### 4.5 注册和运行 Random Scenario
 
-1. 文件放在 `scenario/random/mu/`、`vu/`、`dte/` 或 `workload/`；
+1. 文件放在 `st/pre_sim/input/scenario/random/mu/`、`vu/`、`dte/` 或 `workload/`；
 2. 文件末尾调用 `RANDOM_SCENARIO_REGISTER`；
-3. 在 `scenario/random/random_scenario_list.svh` 中 include；
+3. 在 `st/pre_sim/input/scenario/random/random_scenario_list.svh` 中 include；
 4. 在 `rsim/case_lst/random.lst` 增加 case。
 
 ```text

@@ -26,7 +26,7 @@ scenario random task
 
 ## Key Files
 
-- `uvm_tb/inst_gen/inst_generator.sv` — public APIs, queue, dispatch, PC/output.
+- `uvm_tb/inst_gen/inst_generator.sv` — instruction queue, name selection, operand generation, encoding, task stream state, PC/history and vmem output.
 - `uvm_tb/inst_gen/inst_gen_define.svh` — creation and directed helper macros.
 - `uvm_tb/inst_gen/inst_gen_config.sv` — XLEN and enabled instruction sets.
 - `uvm_tb/inst_gen/inst_name_generator.sv` — category/name constraints and weights.
@@ -36,20 +36,23 @@ scenario random task
 
 ## Key Classes / Packages
 
-- `inst_generator`: owns `inst_gen_queue`, category-specific name generators, current instruction and output state.
+- `inst_generator`: owns `inst_gen_queue`, category-specific name generators, current instruction encoding, task stream state, byte PC, physical PC, ITCM capacity, instruction-boundary history, mixed-width vmem packing and program output.
 - `base_inst`: combines constant opcode mask/value with generated operand bits.
 - `ops_gen_config`: operand equality, immediate, alignment and LS random knobs.
 - `inst_seq_type_generator`: randomizes the next sequence category.
 - `safe_inst_generator`, `ls_inst_generator`, `branch_inst_generator`: choose instruction names under category constraints.
+- `fetch_addr_generator`: owns fetch-address exception policy and per-task fault state; it is owned by `inst_generator` and sampled at real task-start, sequential-end, and JALR target-generation points.
 
 ## Important Interfaces
 
 - `inst_queue_gen()`: creates enabled objects once in `pre_main_phase`.
-- `get_rand_inst(inst_type_e)`: random category-name selection and encoding.
-- `get_specified_rand_inst(inst_e)`: fixed name, randomized operands.
-- `get_specified_inst(inst_e, rs1, rs2, rd, imm)`: fixed name and fields; packing depends on `inst_format`.
+- `get_rand_inst(inst_type_e)`: random category/name selection, encoding and emission.
+- `get_specified_rand_inst(inst_e)`: fixed name with randomized operands, followed by emission.
+- `get_specified_inst(inst_e, rs1, rs2, rd, imm)`: fixed name and fields; packing depends on `inst_format`, followed by emission.
 - `get_rand_ls_with_imm`, `get_rand_branch_inst`: sequence-controlled immediate paths.
-- `inst_print()`: derives length from `inst[1:0]`, writes output, tracks boundary, advances PC.
+- `begin_core_stream()` and `switch_task()`: reset/select the active per-core stream and task start PC.
+- `inst_print()`: performs the mixed-width vmem write, PC/history update and register release.
+- Fetch exception state is held in `inst_generator.fetch_addr_gen`; branch and scenario paths use that state directly.
 
 ## Instruction Queue and Capability Filtering
 
@@ -79,6 +82,12 @@ Each creation macro invokes `INST_GEN_CREATE`, which creates an object, appends 
 
 Branch sequences measure actual byte PCs. `single_branch_sequence` records target PC before generating the target block and computes `target - current PC`. `loop_sequence` records each loop target and measures the final delta; BLT/custom LOOP selection is weighted. `jalr_sequence` selects a real boundary from `inst_pc_history`; C.JR/C.JALR first initialize the target register.
 
+## Fetch Address Exception Generation
+
+`scenario_base_seq::enable_task_fetch_exception(task_id)` is only an allow gate and defaults off. The scenario does not choose a fault source, type, or address. `scenario_base_vsequence` passes the gate and start PC to `inst_generator::switch_task()`; the fetch generator then independently samples the real task-start, sequential-end, and existing JALR target-generation opportunities. A selected invalid start PC is the complete stimulus, so no instruction body, TASK_DONE, or invalid vmem entry is emitted for that task. Control and end faults emit only legal in-range instructions and record the first external fetch address at or beyond `ITCM_SIZE` as the expected fault.
+
+Default opportunity rates are 10 percent and may be overridden for verification with `+fetch_start_exception_pct`, `+fetch_control_exception_pct`, and `+fetch_end_exception_pct`; each accepts `0..100`.
+
 ## Dependencies
 
 Instruction classes depend on `cpu_set_pkg`, generator enums/macros, `register_pool`, and address helpers. Sequences depend on `inst_gen_pkg`; the environment connects their shared config/state. C-specific paths are detailed in `compressed_instruction.md`.
@@ -90,6 +99,8 @@ Instruction classes depend on `cpu_set_pkg`, generator enums/macros, `register_p
 - DSA custom instructions randomize in `SAFE_CUSTOM_DSA`; LOOP is selected only in loop context; TASK_DONE is emitted as task termination.
 - Random SAFE/LS/BRANCH/C scenario cases exist for MU.
 - Random tasks may configure the direct child selector of SAFE, LS and BRANCH with `set_task_subseq_weight`; defaults are restored at every task boundary and for directed execution, and only explicitly listed children are overridden.
+- Fetch-address exception generation is owned by `inst_generator`/`fetch_addr_generator`; normal tasks remain exception-free unless the scenario explicitly enables the capability.
+- PC/history/ITCM/vmem and task runtime state remain in `inst_generator`.
 
 ## Single-Instruction Macro API
 
@@ -109,6 +120,7 @@ the same halfword conversion used by the existing B-type helpers.
 
 - Some comments and enum names retain RV64-era terminology.
 - `fetch_space_avail()` reserves a fixed 4-byte terminator and uses legacy comments; instruction emission itself is mixed-width.
+- `inst_generator` intentionally still combines instruction generation with task/PC/output responsibilities; the attempted `program_generator` split and non-emitting result API were reverted.
 - Failed queue lookup prints an error string rather than consistently using a UVM fatal.
 - No generator-local coverage feedback was found.
 - F/D and privilege/MMU paths remain legacy and were not behaviorally revalidated during this context initialization.
@@ -172,8 +184,8 @@ For encoding/constraint work, do not read scenario registries, full environment,
 
 ## Last Verified
 
-Repository state: commit `4723233`, dirty working tree, analyzed 2026-09-10.
+Repository state: commit `4723233`, dirty working tree, verified 2026-09-14.
 
-Verified areas: queue creation/filtering, AUTO and scenario-local weighted PLAN selection, operand/encode API, LS address flow, branch target flow, mixed-width output.
+Verified areas: queue creation/filtering, AUTO and scenario-local weighted PLAN selection, combined generation/output API, LS address flow, branch target flow, mixed-width output, invalid fetch-start handling, and multicore directed output.
 
 Needs re-verification if ISA macros, instruction APIs, sequence categories, address helpers, or PC output change.

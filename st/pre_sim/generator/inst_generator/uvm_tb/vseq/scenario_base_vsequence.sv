@@ -124,7 +124,7 @@ class scenario_base_vsequence extends uvm_sequence;
     function void execute_scenario();
         scenario_task_info task_info;
         bit[63:0] task_pc;
-        int unsigned history_start;
+        bit[63:0] task_end_pc;
         int unsigned inst_num;
 
         scenario.build_task_plan(p_sequencer.inst_seq_gen.ls_seq_cfg.hart);
@@ -158,19 +158,41 @@ class scenario_base_vsequence extends uvm_sequence;
             p_sequencer.inst_seq_gen.ls_inst_seq.base_initial = 1'b0;
             p_sequencer.inst_gen.ls_addr_gen.hart = tcm_hart_e'(core_index);
             p_sequencer.inst_gen.ls_addr_gen.reset_bases();
-            p_sequencer.inst_gen.begin_core_stream(asm_file[core_index], vmem_file[core_index],
-                                                   tcm_hart_e'(core_index));
+            p_sequencer.inst_gen.begin_core_stream(
+                asm_file[core_index], vmem_file[core_index],
+                tcm_hart_e'(core_index));
             p_sequencer.inst_seq_gen.gen_file = asm_file[core_index];
 
             for(int i = 0; i < scenario.get_task_count(); i++) begin
                 task_info = scenario.get_task(i);
                 if(int'(task_info.rv_core) != core_index)
                     continue;
-                task_pc = task_info.use_start_pc ? task_info.start_pc : p_sequencer.inst_gen.inst_addr;
-                p_sequencer.inst_gen.switch_task(task_info.task_id, 1'b1, task_pc);
-                history_start = p_sequencer.inst_gen.inst_pc_history.size();
+                task_pc = task_info.use_start_pc ? task_info.start_pc :
+                          p_sequencer.inst_gen.inst_addr;
+                p_sequencer.inst_gen.switch_task(
+                    task_info.task_id, 1'b1, task_pc,
+                    task_info.fetch_exception_enable);
 
-                if(task_info.kind == SCENARIO_RANDOM_TASK) begin
+                if(!p_sequencer.inst_gen.task_body_enable) begin
+                    $fwrite(p_sequencer.inst_gen.gen_file,
+                            "//========== TASK[%0d] fetch start fault PC=%16h type=%s ==========\n",
+                            task_info.task_id,
+                            p_sequencer.inst_gen.task_start_pc,
+                            p_sequencer.inst_gen.fetch_addr_gen.fault_type.name());
+                    `uvm_info("FETCH_ADDR_EXCEPTION",
+                              $sformatf("core=%s task_id=%0d origin=%s type=%s fault_pc=0x%0h",
+                                        p_sequencer.inst_gen.fetch_addr_gen.rv_core.name(),
+                                        task_info.task_id,
+                                        p_sequencer.inst_gen.fetch_addr_gen.fault_origin.name(),
+                                        p_sequencer.inst_gen.fetch_addr_gen.fault_type.name(),
+                                        p_sequencer.inst_gen.task_start_pc), UVM_LOW)
+                end
+
+                if(!p_sequencer.inst_gen.task_body_enable) begin
+                    // Invalid task start is the complete stimulus.  Do not emit
+                    // a program image or TASK_DONE for an unfetchable task.
+                end
+                else if(task_info.kind == SCENARIO_RANDOM_TASK) begin
                     if(task_info.seq_num == SCENARIO_AUTO_SEQ_NUM)
                         task_info.seq_num = p_sequencer.inst_gen_case_cfg.seq_num;
                     run_random_task(task_info);
@@ -186,21 +208,41 @@ class scenario_base_vsequence extends uvm_sequence;
                                            p_sequencer.inst_seq_type_gen);
                 end
 
-                if(p_sequencer.inst_gen.fetch_space_avail())
+                if(p_sequencer.inst_gen.task_body_enable &&
+                   !p_sequencer.inst_gen.fetch_addr_gen.exception_injected &&
+                   p_sequencer.inst_gen.fetch_space_avail())
                     pass_quit_seq.seq_gen(p_sequencer.inst_gen);
-                inst_num = p_sequencer.inst_gen.inst_pc_history.size() - history_start;
+                task_end_pc = p_sequencer.inst_gen.task_body_enable ?
+                              p_sequencer.inst_gen.inst_addr :
+                              p_sequencer.inst_gen.task_start_pc;
+                inst_num = p_sequencer.inst_gen.inst_pc_history.size() -
+                           p_sequencer.inst_gen.task_inst_history_start;
                 $fwrite(task_log, "------------task_id : %0d----------\n", task_info.task_id);
                 $fwrite(task_log, "task_id: %0d\n", task_info.task_id);
                 $fwrite(task_log, "rv_core: %s\n", core_name(task_info.rv_core));
-                $fwrite(task_log, "start_pc: 0x%016h\n", task_pc);
+                $fwrite(task_log, "start_pc: 0x%016h\n",
+                        p_sequencer.inst_gen.task_start_pc);
+                $fwrite(task_log, "fetch_exception_enable: %0d\n",
+                        task_info.fetch_exception_enable);
+                $fwrite(task_log, "fetch_exception_injected: %0d\n",
+                        p_sequencer.inst_gen.fetch_addr_gen.exception_injected);
+                if(p_sequencer.inst_gen.fetch_addr_gen.exception_injected) begin
+                    $fwrite(task_log, "fetch_fault_origin: %s\n",
+                            p_sequencer.inst_gen.fetch_addr_gen.fault_origin.name());
+                    $fwrite(task_log, "fetch_fault_type: %s\n",
+                            p_sequencer.inst_gen.fetch_addr_gen.fault_type.name());
+                    $fwrite(task_log, "fetch_fault_pc: 0x%016h\n",
+                            p_sequencer.inst_gen.fetch_addr_gen.fault_pc);
+                end
                 if(task_info.kind == SCENARIO_RANDOM_TASK)
                     $fwrite(task_log, "seq_num: %0d\n", task_info.seq_num);
                 $fwrite(task_log, "inst_num: %0d\n", inst_num);
-                $fwrite(task_log, "end_pc: 0x%016h\n\n", p_sequencer.inst_gen.inst_addr);
+                $fwrite(task_log, "end_pc: 0x%016h\n\n", task_end_pc);
                 `uvm_info("SCENARIO_TASK",
                           $sformatf("core=%s task_id=%0d start_pc=0x%0h end_pc=0x%0h inst_num=%0d",
-                                    core_name(task_info.rv_core), task_info.task_id, task_pc,
-                                    p_sequencer.inst_gen.inst_addr, inst_num), UVM_LOW)
+                                    core_name(task_info.rv_core), task_info.task_id,
+                                    p_sequencer.inst_gen.task_start_pc,
+                                    task_end_pc, inst_num), UVM_LOW)
             end
         end
 
