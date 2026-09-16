@@ -2,8 +2,8 @@ class scenario_base_vsequence extends uvm_sequence;
     scenario_base_seq scenario;
     pass_quit_sequence pass_quit_seq;
     protected int task_log;
-    protected int asm_file[3];
-    protected int vmem_file[3];
+    protected int asm_file;
+    protected int vmem_file;
     protected bit core_used[3];
 
     `uvm_object_utils(scenario_base_vsequence)
@@ -21,6 +21,40 @@ class scenario_base_vsequence extends uvm_sequence;
             HART_DTE: return "dte";
             default : return "unknown";
         endcase
+    endfunction
+
+    function bit [31:0] core_itcm_rv_base(tcm_hart_e core);
+        case(core)
+            HART_MU : return `MU_ITCM_RV_BASE;
+            HART_VU : return `VU_ITCM_RV_BASE;
+            HART_DTE: return `DTE_ITCM_RV_BASE;
+            default : `uvm_fatal("SCENARIO_CORE", "invalid RV core for ITCM RV base")
+        endcase
+        return '0;
+    endfunction
+
+    function bit [31:0] core_itcm_global_base(tcm_hart_e core);
+        case(core)
+            HART_MU : return `MU_ITCM_GLOBAL_BASE;
+            HART_VU : return `VU_ITCM_GLOBAL_BASE;
+            HART_DTE: return `DTE_ITCM_GLOBAL_BASE;
+            default : `uvm_fatal("SCENARIO_CORE", "invalid RV core for ITCM global base")
+        endcase
+        return '0;
+    endfunction
+
+    function bit [31:0] core_global_pc(tcm_hart_e core, bit [63:0] rv_pc);
+        bit [31:0] rv_base;
+        rv_base = core_itcm_rv_base(core);
+        if(rv_pc[63:32] != '0)
+            `uvm_fatal("SCENARIO_CORE",
+                       $sformatf("core=%s RV PC 0x%016h exceeds 32-bit address space",
+                                 core_name(core), rv_pc))
+        if(rv_pc[31:0] < rv_base)
+            `uvm_fatal("SCENARIO_CORE",
+                       $sformatf("core=%s RV PC 0x%08h is below ITCM base 0x%08h",
+                                 core_name(core), rv_pc[31:0], rv_base))
+        return core_itcm_global_base(core) + (rv_pc[31:0] - rv_base);
     endfunction
 
     // Scenario selection belongs to the common scenario executor. Testcases
@@ -110,15 +144,15 @@ class scenario_base_vsequence extends uvm_sequence;
         task_log = $fopen("./log/task_info.log", "w");
         $fwrite(task_log, "# scenario task map; task IDs are globally unique\n");
 
-        // Truncate all fixed outputs so stale per-core files cannot be reused.
-        for(int core_index = 0; core_index < 3; core_index++) begin
-            asm_file[core_index] = $fopen($sformatf("./%s_test.S",
-                                                    core_name(tcm_hart_e'(core_index))), "w");
-            vmem_file[core_index] = $fopen($sformatf("./%s_test.vmem",
-                                                     core_name(tcm_hart_e'(core_index))), "w");
-            if(!asm_file[core_index] || !vmem_file[core_index])
-                `uvm_fatal("SCENARIO_FILE", "cannot open per-core output files")
-        end
+        // The testcase owns one assembly file and one memory image for the
+        // whole scenario. Core-local ITCM addresses are translated only while
+        // writing test.vmem.
+        asm_file  = p_sequencer.inst_gen_case_cfg.gen_file;
+        vmem_file = p_sequencer.inst_gen_case_cfg.vmem_file;
+        if(!asm_file ||
+           (p_sequencer.inst_gen.inst_gen_cfg.vmem_file_gen && !vmem_file))
+            `uvm_fatal("SCENARIO_FILE", "cannot open unified test.S/test.vmem")
+        p_sequencer.inst_gen.reset_output_stream();
 
         // Static generation is grouped by core. Register state persists
         // between tasks on one core and is replaced when the core changes.
@@ -139,9 +173,16 @@ class scenario_base_vsequence extends uvm_sequence;
             p_sequencer.inst_gen.ls_addr_gen.select_active_context();
             p_sequencer.inst_seq_gen.ls_inst_seq.base_initial = 1'b0;
             p_sequencer.inst_gen.ls_addr_gen.reset_bases();
+            $fwrite(asm_file,
+                    "\n//================ CORE[%s] rv_itcm=0x%08h global_itcm=0x%08h ================\n",
+                    core_name(tcm_hart_e'(core_index)),
+                    core_itcm_rv_base(tcm_hart_e'(core_index)),
+                    core_itcm_global_base(tcm_hart_e'(core_index)));
             p_sequencer.inst_gen.begin_core_stream(
-                asm_file[core_index], vmem_file[core_index]);
-            p_sequencer.inst_seq_gen.gen_file = asm_file[core_index];
+                asm_file, vmem_file,
+                core_itcm_rv_base(tcm_hart_e'(core_index)),
+                core_itcm_global_base(tcm_hart_e'(core_index)));
+            p_sequencer.inst_seq_gen.gen_file = asm_file;
 
             for(int i = 0; i < scenario.get_task_count(); i++) begin
                 task_info = scenario.get_task(i);
@@ -199,8 +240,11 @@ class scenario_base_vsequence extends uvm_sequence;
                 $fwrite(task_log, "------------task_id : %0d----------\n", task_info.task_id);
                 $fwrite(task_log, "task_id: %0d\n", task_info.task_id);
                 $fwrite(task_log, "rv_core: %s\n", core_name(task_info.rv_core));
-                $fwrite(task_log, "start_pc: 0x%016h\n",
-                        fetch_ctx.task_start_pc);
+                $fwrite(task_log, "start_pc: 0x%08h\n",
+                        fetch_ctx.task_start_pc[31:0]);
+                $fwrite(task_log, "global_start_pc: 0x%08h\n",
+                        core_global_pc(task_info.rv_core,
+                                       fetch_ctx.task_start_pc));
                 $fwrite(task_log, "fetch_exception_enable: %0d\n",
                         task_info.fetch_exception_enable);
                 $fwrite(task_log, "fetch_exception_injected: %0d\n",
@@ -210,13 +254,15 @@ class scenario_base_vsequence extends uvm_sequence;
                             fetch_ctx.fault_origin.name());
                     $fwrite(task_log, "fetch_fault_type: %s\n",
                             fetch_ctx.fault_type.name());
-                    $fwrite(task_log, "fetch_fault_pc: 0x%016h\n",
-                            fetch_ctx.fault_pc);
+                    $fwrite(task_log, "fetch_fault_pc: 0x%08h\n",
+                            fetch_ctx.fault_pc[31:0]);
                 end
                 if(task_info.kind == SCENARIO_RANDOM_TASK)
                     $fwrite(task_log, "seq_num: %0d\n", task_info.seq_num);
                 $fwrite(task_log, "inst_num: %0d\n", inst_num);
-                $fwrite(task_log, "end_pc: 0x%016h\n\n", task_end_pc);
+                $fwrite(task_log, "end_pc: 0x%08h\n", task_end_pc[31:0]);
+                $fwrite(task_log, "global_end_pc: 0x%08h\n\n",
+                        core_global_pc(task_info.rv_core, task_end_pc));
                 `uvm_info("SCENARIO_TASK",
                           $sformatf("core=%s task_id=%0d start_pc=0x%0h end_pc=0x%0h inst_num=%0d",
                                     core_name(task_info.rv_core), task_info.task_id,
@@ -226,12 +272,11 @@ class scenario_base_vsequence extends uvm_sequence;
             end
         end
 
-        for(int core_index = 0; core_index < 3; core_index++) begin
-            if(core_used[core_index])
-                p_sequencer.addr_space_gen.data_vmem_out(vmem_file[core_index]);
-            $fclose(asm_file[core_index]);
-            $fclose(vmem_file[core_index]);
-        end
+        if(p_sequencer.inst_gen.inst_gen_cfg.vmem_file_gen)
+            p_sequencer.addr_space_gen.data_vmem_out(vmem_file);
+        $fclose(asm_file);
+        if(vmem_file)
+            $fclose(vmem_file);
         $fwrite(task_log, "# done tasks=%0d\n", scenario.get_task_count());
         $fclose(task_log);
     endfunction

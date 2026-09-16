@@ -4,7 +4,9 @@ class inst_generator extends uvm_component;
     bit [31:0] branch_imm;
     int gen_file;
     int vmem_file;
-    bit[31:0]           mem_file[bit[39:0]];
+    bit[31:0]           mem_file[bit[31:0]];
+    bit[31:0]           active_itcm_rv_base;
+    bit[31:0]           active_itcm_global_base;
 
 
     inst_gen_config inst_gen_cfg;
@@ -317,8 +319,20 @@ class inst_generator extends uvm_component;
         return fetch_addr_gen.fetch_space_avail_for(inst_bytes);
     endfunction
 
-    function void vmem_write_word(bit [39:0] byte_addr);
-        bit [39:0] word_idx;
+    function bit [31:0] rv_to_global_paddr(bit [31:0] rv_addr);
+        if(rv_addr < active_itcm_rv_base)
+            `uvm_fatal("ITCM_MAP",
+                       $sformatf("RV address 0x%08h is below ITCM base 0x%08h",
+                                 rv_addr, active_itcm_rv_base))
+        return active_itcm_global_base + (rv_addr - active_itcm_rv_base);
+    endfunction
+
+    function void reset_output_stream();
+        mem_file.delete();
+    endfunction
+
+    function void vmem_write_word(bit [31:0] byte_addr);
+        bit [31:0] word_idx;
         word_idx = byte_addr >> 2;
         if(!mem_file.exists(word_idx))
             mem_file[word_idx] = '0;
@@ -326,9 +340,9 @@ class inst_generator extends uvm_component;
             $fwrite(vmem_file, "@%0h\n%8h\n", word_idx, mem_file[word_idx]);
     endfunction
 
-    function void vmem_write_halfword(bit [39:0] byte_addr,
+    function void vmem_write_halfword(bit [31:0] byte_addr,
                                       bit [15:0] data);
-        bit [39:0] word_idx;
+        bit [31:0] word_idx;
         word_idx = byte_addr >> 2;
         if(!mem_file.exists(word_idx))
             mem_file[word_idx] = '0;
@@ -340,16 +354,18 @@ class inst_generator extends uvm_component;
 
     function void vmem_write_inst(bit [31:0] data,
                                   int unsigned inst_bytes);
-        bit [39:0] first_word_idx;
-        bit [39:0] second_word_idx;
-        first_word_idx  = fetch_addr_gen.current_paddr() >> 2;
-        second_word_idx = (fetch_addr_gen.current_paddr() + 2) >> 2;
-        vmem_write_halfword(fetch_addr_gen.current_paddr(), data[15:0]);
+        bit [31:0] global_paddr;
+        bit [31:0] first_word_idx;
+        bit [31:0] second_word_idx;
+        global_paddr    = rv_to_global_paddr(fetch_addr_gen.current_paddr());
+        first_word_idx  = global_paddr >> 2;
+        second_word_idx = (global_paddr + 2) >> 2;
+        vmem_write_halfword(global_paddr, data[15:0]);
         if(inst_bytes == 4)
-            vmem_write_halfword(fetch_addr_gen.current_paddr() + 2, data[31:16]);
-        vmem_write_word(fetch_addr_gen.current_paddr());
+            vmem_write_halfword(global_paddr + 2, data[31:16]);
+        vmem_write_word(global_paddr);
         if((inst_bytes == 4) && (second_word_idx != first_word_idx))
-            vmem_write_word(fetch_addr_gen.current_paddr() + 2);
+            vmem_write_word(global_paddr + 2);
     endfunction
 
     function void truncate_fetch_space();
@@ -364,13 +380,16 @@ class inst_generator extends uvm_component;
     endfunction
 
     function void begin_core_stream(int new_gen_file,
-                                    int new_vmem_file);
+                                    int new_vmem_file,
+                                    bit [31:0] itcm_rv_base,
+                                    bit [31:0] itcm_global_base);
         gen_file                = new_gen_file;
         vmem_file               = new_vmem_file;
         inst_gen_cfg.gen_file   = new_gen_file;
         inst_gen_cfg.vmem_file  = new_vmem_file;
         ri_inst_gen.gen_file    = new_gen_file;
-        mem_file.delete();
+        active_itcm_rv_base     = itcm_rv_base;
+        active_itcm_global_base = itcm_global_base;
         inst_cnt                = `ITCM_SIZE / 'h4;
         fetch_addr_gen.begin_core_stream();
     endfunction
@@ -393,10 +412,11 @@ class inst_generator extends uvm_component;
                                    selected_start_pc);
         if(!ctx.task_body_enable)
             return;
-        $fwrite(vmem_file, "@%0h\n", fetch_addr_gen.current_paddr() >> 'h2);
+        $fwrite(vmem_file, "@%0h\n",
+                rv_to_global_paddr(fetch_addr_gen.current_paddr()) >> 2);
         $fwrite(gen_file,
-                "//========== TASK[%0d] start PC=%16h itcm_left=%0hB ==========\n",
-                task_id, ctx.task_start_pc,
+                "//========== TASK[%0d] start PC=%08h itcm_left=%0hB ==========\n",
+                task_id, ctx.task_start_pc[31:0],
                 (ctx.current_pc < ctx.itcm_end) ?
                     (ctx.itcm_end - ctx.current_pc) : 'h0);
     endfunction
@@ -409,11 +429,15 @@ class inst_generator extends uvm_component;
         return fetch_addr_gen.current_pc();
     endfunction
 
-    function bit[39:0] get_inst_paddr();
+    function bit[31:0] get_inst_paddr();
         return fetch_addr_gen.current_paddr();
     endfunction
 
-    function void set_inst_addr(bit[63:0] vaddr, bit[39:0] paddr);
+    function bit[31:0] get_global_inst_paddr();
+        return rv_to_global_paddr(fetch_addr_gen.current_paddr());
+    endfunction
+
+    function void set_inst_addr(bit[63:0] vaddr, bit[31:0] paddr);
         fetch_addr_gen.set_current_pc(vaddr, paddr);
     endfunction
 
@@ -658,10 +682,12 @@ function void inst_queue_gen();
 //    foreach(inst_gen_queue[i]) $display("queue [%s] valid",inst_gen_queue[i].inst_name);
 endfunction
 function void inst_addr_print();
+    bit [31:0] rv_pc;
     if(!fetch_space_avail())
         return;
-    $fwrite(gen_file, "/*PC: %16h -> %10h*/",
-            fetch_addr_gen.current_pc(), fetch_addr_gen.current_paddr());
+    rv_pc = fetch_addr_gen.current_pc();
+    $fwrite(gen_file, "/*PC: %08h -> global: %08h*/",
+            rv_pc, get_global_inst_paddr());
 endfunction
 function void inst_print();
     int unsigned inst_bytes;

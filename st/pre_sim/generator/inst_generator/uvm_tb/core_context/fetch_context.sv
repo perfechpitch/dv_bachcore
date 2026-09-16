@@ -19,7 +19,7 @@ class fetch_context extends uvm_object;
     int unsigned              ialign_bytes;
 
     bit [63:0]                current_pc;
-    bit [39:0]                current_paddr;
+    bit [31:0]                current_paddr;
     bit [63:0]                task_start_pc;
     bit [63:0]                inst_pc_history[$];
     int unsigned              task_inst_history_start;

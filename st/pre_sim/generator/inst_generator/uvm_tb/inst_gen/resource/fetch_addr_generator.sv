@@ -91,6 +91,10 @@ class fetch_addr_generator extends uvm_object;
         begin_task(allow_exception);
         normal_start_pc = use_configured_start_pc ? configured_start_pc :
                           ctx.current_pc;
+        if(normal_start_pc[63:32] != '0)
+            `uvm_fatal("FETCH_ADDR_CFG",
+                       $sformatf("task start PC 0x%016h exceeds 32-bit address space",
+                                 normal_start_pc))
         ctx.task_body_enable = get_task_start_pc(normal_start_pc,
                                                  selected_start_pc);
         ctx.task_start_pc = selected_start_pc;
@@ -98,12 +102,12 @@ class fetch_addr_generator extends uvm_object;
         if(!ctx.task_body_enable)
             return 1'b0;
         if(use_configured_start_pc)
-            set_current_pc(configured_start_pc, configured_start_pc[39:0]);
+            set_current_pc(configured_start_pc, configured_start_pc[31:0]);
         ctx.task_start_pc = ctx.current_pc;
         return 1'b1;
     endfunction
 
-    function void set_current_pc(bit [63:0] vaddr, bit [39:0] paddr);
+    function void set_current_pc(bit [63:0] vaddr, bit [31:0] paddr);
         fetch_context ctx;
         ctx = get_context();
         ctx.current_pc    = vaddr;
@@ -114,7 +118,7 @@ class fetch_addr_generator extends uvm_object;
         return get_context().current_pc;
     endfunction
 
-    function bit [39:0] current_paddr();
+    function bit [31:0] current_paddr();
         return get_context().current_paddr;
     endfunction
 
