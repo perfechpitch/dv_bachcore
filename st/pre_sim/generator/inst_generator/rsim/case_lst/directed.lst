@@ -1,5 +1,45 @@
- #---------------------multi-core directed scenario
- - case_name      = multicore_directed_test
-   uvm_tc         = directed_inst_test
-   vcs_tb_args    = +directed_seq_name=multicore_directed
-   batch_times    = 1
+#---------------------multi-core directed scenario
+# PRE_SIM_SCENE_BEGIN multicore_directed_test
+# scene_id: 1
+# seq_file: directed/workload/multicore_directed_scenario_seq.sv
+# supported_plusargs: <none>
+- case_name      = multicore_directed_test
+  uvm_tc         = directed_inst_test
+  vcs_tb_args    = +directed_seq_name=multicore_directed
+  batch_times    = 1
+# PRE_SIM_SCENE_END multicore_directed_test
+
+- case_name      = directed_test
+  uvm_tc         = directed_inst_test
+  vcs_tb_args    = +directed_seq_name=multicore_directed
+  batch_times    = 1
+
+# PRE_SIM_SCENE_BEGIN reference_multi_core_multi_task
+# scene_id: 103
+# seq_file: directed/workload/reference_multi_core_multi_task_scenario_seq.sv
+# supported_plusargs: <none>
+- case_name      = reference_multi_core_multi_task
+  uvm_tc         = directed_inst_test
+  vcs_tb_args    = +directed_seq_name=reference_multi_core_multi_task
+  batch_times    = 1
+# PRE_SIM_SCENE_END reference_multi_core_multi_task
+
+# PRE_SIM_SCENE_BEGIN reference_single_core_multi_task
+# scene_id: 102
+# seq_file: directed/workload/reference_single_core_multi_task_scenario_seq.sv
+# supported_plusargs: <none>
+- case_name      = reference_single_core_multi_task
+  uvm_tc         = directed_inst_test
+  vcs_tb_args    = +directed_seq_name=reference_single_core_multi_task
+  batch_times    = 1
+# PRE_SIM_SCENE_END reference_single_core_multi_task
+
+# PRE_SIM_SCENE_BEGIN reference_single_task
+# scene_id: 101
+# seq_file: directed/workload/reference_single_task_scenario_seq.sv
+# supported_plusargs: <none>
+- case_name      = reference_single_task
+  uvm_tc         = directed_inst_test
+  vcs_tb_args    = +directed_seq_name=reference_single_task
+  batch_times    = 1
+# PRE_SIM_SCENE_END reference_single_task

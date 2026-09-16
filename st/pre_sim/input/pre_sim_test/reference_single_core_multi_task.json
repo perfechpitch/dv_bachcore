@@ -1,0 +1,44 @@
+{
+  "scenes": [
+    {
+      "scene_id": 102,
+      "scene_name": "reference_single_core_multi_task",
+      "scenario": {
+        "category": "workload",
+        "seq_file": "workload/reference_single_core_multi_task_scenario_seq.sv",
+        "seq_name": "reference_single_core_multi_task",
+        "args": {}
+      },
+      "task_chain": {
+        "self_start": false,
+        "task_num": 2,
+        "tasks": [
+          {
+            "task_id": 2,
+            "task_name": "reference_vu_task_2",
+            "task_type": "normal",
+            "execute_unit": "vu",
+            "execution_mode": "rvcore_only",
+            "start_pc": "0x00000040",
+            "stream_id": 2,
+            "uid": 2,
+            "pid": 2,
+            "vcid": 2
+          },
+          {
+            "task_id": 1,
+            "task_name": "reference_vu_task_1",
+            "task_type": "normal",
+            "execute_unit": "vu",
+            "execution_mode": "rvcore_only",
+            "start_pc": "0x00000000",
+            "stream_id": 1,
+            "uid": 1,
+            "pid": 1,
+            "vcid": 1
+          }
+        ]
+      }
+    }
+  ]
+}

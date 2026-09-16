@@ -26,4 +26,15 @@ class rand_inst_test extends uvm_test;
 
   endfunction
 
+  // verify_tools batch classifies a case from these canonical markers.
+  function void report_phase(uvm_phase phase);
+    uvm_report_server report_server;
+    super.report_phase(phase);
+    report_server = uvm_report_server::get_server();
+    if ((report_server.get_severity_count(UVM_ERROR) == 0) &&
+        (report_server.get_severity_count(UVM_FATAL) == 0))
+      $display("TEST PASS");
+    else
+      $display("TEST FAIL");
+  endfunction
 endclass

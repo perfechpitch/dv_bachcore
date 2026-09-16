@@ -1,0 +1,68 @@
+{
+  "scenes": [
+    {
+      "scene_id": 103,
+      "scene_name": "reference_multi_core_multi_task",
+      "scenario": {
+        "category": "workload",
+        "seq_file": "workload/reference_multi_core_multi_task_scenario_seq.sv",
+        "seq_name": "reference_multi_core_multi_task",
+        "args": {}
+      },
+      "task_chain": {
+        "self_start": false,
+        "task_num": 4,
+        "tasks": [
+          {
+            "task_id": 4,
+            "task_name": "reference_vu_task_4",
+            "task_type": "normal",
+            "execute_unit": "vu",
+            "execution_mode": "rvcore_only",
+            "start_pc": "0x00000040",
+            "stream_id": 4,
+            "uid": 4,
+            "pid": 4,
+            "vcid": 0
+          },
+          {
+            "task_id": 2,
+            "task_name": "reference_mu_task_2",
+            "task_type": "normal",
+            "execute_unit": "mu",
+            "execution_mode": "rvcore_only",
+            "start_pc": "0x00100000",
+            "stream_id": 2,
+            "uid": 2,
+            "pid": 2,
+            "vcid": 2
+          },
+          {
+            "task_id": 1,
+            "task_name": "reference_vu_task_1",
+            "task_type": "normal",
+            "execute_unit": "vu",
+            "execution_mode": "rvcore_only",
+            "start_pc": "0x00000000",
+            "stream_id": 1,
+            "uid": 1,
+            "pid": 1,
+            "vcid": 1
+          },
+          {
+            "task_id": 3,
+            "task_name": "reference_dte_task_3",
+            "task_type": "normal",
+            "execute_unit": "dte",
+            "execution_mode": "rvcore_only",
+            "start_pc": "0x00110000",
+            "stream_id": 3,
+            "uid": 3,
+            "pid": 3,
+            "vcid": 3
+          }
+        ]
+      }
+    }
+  ]
+}
