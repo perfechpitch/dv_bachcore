@@ -6,5 +6,5 @@ package ts_pkg;
   `include "ts_sequencer.sv"
   `include "ts_driver.sv"
   `include "ts_monitor.sv"
-  `include "ts_agent.sv"
+  `include "ts2rvcore_agent.sv"
 endpackage

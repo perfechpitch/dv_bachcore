@@ -1,5 +1,5 @@
-class ts_agent extends uvm_agent;
-  `uvm_component_utils(ts_agent)
+class ts2rvcore_agent extends uvm_agent;
+  `uvm_component_utils(ts2rvcore_agent)
   ts_cfg cfg; ts_sequencer sqr; ts_driver drv; ts_monitor mon;
   function new(string n,uvm_component p); super.new(n,p); endfunction
   function void build_phase(uvm_phase phase);

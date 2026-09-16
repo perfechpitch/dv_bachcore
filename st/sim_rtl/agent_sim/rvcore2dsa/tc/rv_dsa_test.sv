@@ -1,6 +1,6 @@
 class rv_dsa_test extends uvm_test;
   `uvm_component_utils(rv_dsa_test)
-  rv_dsa_agent agent; rv_dsa_cfg cfg; virtual rv_dsa_if vif;
+  rvcore2dsa_agent agent; rv_dsa_cfg cfg; virtual rv_dsa_if vif;
   uvm_analysis_imp_rv_dsa_mon #(rv_dsa_item,rv_dsa_test) mon_imp;
   rv_dsa_item expected[$]; bit matched[]; int observed;
   int case_id, expected_count;
@@ -32,7 +32,7 @@ class rv_dsa_test extends uvm_test;
     end
     parse_expected(req_file);
     uvm_config_db#(rv_dsa_cfg)::set(this,"agent","cfg",cfg);
-    agent=rv_dsa_agent::type_id::create("agent",this);
+    agent=rvcore2dsa_agent::type_id::create("agent",this);
   endfunction
   function void connect_phase(uvm_phase phase); agent.mon.ap.connect(mon_imp); endfunction
   function void write_rv_dsa_mon(rv_dsa_item t);

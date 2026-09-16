@@ -1,6 +1,6 @@
 class ts_scene_test extends uvm_test;
   `uvm_component_utils(ts_scene_test)
-  ts_agent agent; ts_cfg cfg; virtual ts_if vif; uvm_analysis_imp_ts_mon #(ts_item,ts_scene_test) mon_imp;
+  ts2rvcore_agent agent; ts_cfg cfg; virtual ts_if vif; uvm_analysis_imp_ts_mon #(ts_item,ts_scene_test) mon_imp;
   int observed;
   function new(string n,uvm_component p); super.new(n,p); mon_imp=new("mon_imp",this); endfunction
   function void build_phase(uvm_phase phase);
@@ -8,7 +8,7 @@ class ts_scene_test extends uvm_test;
     if(!uvm_config_db#(virtual ts_if)::get(this,"","ts_vif",vif)) `uvm_fatal("TS_TEST","missing vif")
     if(!$value$plusargs("TS_SEQ_FILE=%s",f)) `uvm_fatal("TS_TEST","TS_SEQ_FILE missing")
     cfg=ts_cfg::type_id::create("cfg"); cfg.vif=vif; cfg.sequence_file=f;
-    uvm_config_db#(ts_cfg)::set(this,"agent","cfg",cfg); agent=ts_agent::type_id::create("agent",this);
+    uvm_config_db#(ts_cfg)::set(this,"agent","cfg",cfg); agent=ts2rvcore_agent::type_id::create("agent",this);
   endfunction
   function void connect_phase(uvm_phase phase); agent.mon.ap.connect(mon_imp); endfunction
   function void write_ts_mon(ts_item t);

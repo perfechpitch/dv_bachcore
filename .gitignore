@@ -64,6 +64,15 @@ verify_tools/vip/formal/softvector/softfloat/install/
 # ==============================================================================
 
 /st/pre_sim/output/
-/st/sim_rtl/agent_sim/ts/rsim/case_lst/case.lst
+/st/sim_rtl/agent_sim/ts2rvcore/rsim/case_lst/case.lst
+**/rsim/case_lst/_pre_sim_*.lst
 **/rsim/flist_*.f
 **/rsim/uvm_home/
+
+# Core Reference generated runtime
+/st/core_ref/ref_sim/sim_single/
+/st/core_ref/ref_sim/flist_core_ref.f
+
+# Per-user Bug DB clones (separate Git repositories or symlinks)
+/st/core_ref/bug_db
+/st/sim_rtl/bug_db

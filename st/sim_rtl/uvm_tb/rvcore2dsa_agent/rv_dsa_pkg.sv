@@ -7,5 +7,5 @@ package rv_dsa_pkg;
   `include "rv_dsa_sequencer.sv"
   `include "rv_dsa_driver.sv"
   `include "rv_dsa_monitor.sv"
-  `include "rv_dsa_agent.sv"
+  `include "rvcore2dsa_agent.sv"
 endpackage

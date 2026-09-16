@@ -1,5 +1,5 @@
-class rv_dsa_agent extends uvm_agent;
-  `uvm_component_utils(rv_dsa_agent)
+class rvcore2dsa_agent extends uvm_agent;
+  `uvm_component_utils(rvcore2dsa_agent)
   rv_dsa_cfg cfg; rv_dsa_driver drv; rv_dsa_sequencer sqr; rv_dsa_monitor mon;
   function new(string name,uvm_component parent); super.new(name,parent); endfunction
   function void build_phase(uvm_phase phase);
