@@ -7,6 +7,8 @@ class core_ref_config extends uvm_object;
     //TODO: define other quit interface with software
     bit inst_quit = 1'b1;
     bit [31:0] quit_inst = 32'b0;
+    int unsigned core_id = 0;
+    dsa_mmio_type_e dsa_type = DSA_MMIO_VU;
 
 
     inst_set_e    support_inst_set[] = {RV32I,RV32M,RV32A,RV32C,CUSTOM,RI};
@@ -17,6 +19,8 @@ class core_ref_config extends uvm_object;
         `uvm_field_int(ref_only, UVM_DEFAULT)
         `uvm_field_int(inst_quit, UVM_DEFAULT)
         `uvm_field_int(quit_inst, UVM_DEFAULT)
+        `uvm_field_int(core_id, UVM_DEFAULT)
+        `uvm_field_enum(dsa_mmio_type_e, dsa_type, UVM_DEFAULT)
 
    `uvm_object_utils_end
 

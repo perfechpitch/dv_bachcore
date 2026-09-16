@@ -1,4 +1,5 @@
 `include "../ref_sim/test.sv"
+`include "../ref_sim/reference_execution_test.sv"
 `define BYPASS_DUT
 module test_top();
     import uvm_pkg::*;

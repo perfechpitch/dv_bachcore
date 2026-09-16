@@ -41,7 +41,7 @@ class core_reference extends uvm_component;
         inst_lib = new();
         csr_lib = new();
         mem_lib = new("mem_lib", log_en);
-        dsa_mem_lib = new("dsa_mem_lib", log_en);
+        dsa_mem_lib = null;
         dsa_mmio_lib = new();
         vu_inst_lib = new();
 
@@ -57,10 +57,15 @@ class core_reference extends uvm_component;
             `uvm_fatal("NOCFG", {"core_ref_cfg must be set for: ", get_full_name()})
 
         inst_lib.support_inst_set = core_ref_cfg.support_inst_set;
+        set_core_id(core_ref_cfg.core_id);
+        dsa_mmio_lib.set_type(core_ref_cfg.dsa_type);
+        mem_lib.set_tcm_base(core_itcm_base(core_ref_cfg.dsa_type),
+                              core_dtcm_base(core_ref_cfg.dsa_type));
     endfunction : build_phase
 
     extern virtual task reset_phase(uvm_phase phase);
     extern virtual function void set_core_id(int unsigned core_id);
+    extern virtual function void set_dsa_mem_lib(dsa_mem_library dsa_mem_lib);
     extern virtual function void set_task_info(task_info_s task_info);
     extern virtual function void open_log();
     extern virtual function void ref_reset();
@@ -74,14 +79,18 @@ endclass : core_reference
 function void core_reference::set_task_info(task_info_s task_info);
     string dsa_name;
 
+    if(task_info.dsa_type != core_ref_cfg.dsa_type) begin
+        `uvm_error(get_type_name(), $sformatf(
+            "Task DSA type mismatch: core%0d=%0s task=%0s",
+            core_id, core_ref_cfg.dsa_type.name, task_info.dsa_type.name))
+        return;
+    end
     core_state.pc = task_info.start_pc;
     csr_lib.stream_id.set_val(task_info.stream_id);
     csr_lib.task_id.set_val(task_info.task_id);
     csr_lib.user_id.set_val(task_info.user_id);
     csr_lib.path_id.set_val(task_info.path_id);
     csr_lib.vc_id.set_val(task_info.vc_id);
-    dsa_mmio_lib.set_type(task_info.dsa_type);
-    dsa_mem_lib.set_type(task_info.dsa_type);
 
     case(task_info.dsa_type)
         DSA_MMIO_VU:  dsa_name = "VU";
@@ -97,6 +106,14 @@ function void core_reference::set_task_info(task_info_s task_info);
             task_info.task_id, task_info.user_id, task_info.path_id,
             task_info.vc_id);
 endfunction : set_task_info
+
+function void core_reference::set_dsa_mem_lib(dsa_mem_library dsa_mem_lib);
+    if(dsa_mem_lib == null) begin
+        `uvm_error(get_type_name(), "set_dsa_mem_lib() gets null handle")
+        return;
+    end
+    this.dsa_mem_lib = dsa_mem_lib;
+endfunction : set_dsa_mem_lib
 
 function void core_reference::set_core_id(int unsigned core_id);
     if(core_id_valid) begin
@@ -120,10 +137,17 @@ function void core_reference::open_log();
         inst_exe_log = 0;
     end
 
-    if(core_id_valid)
-        inst_exe_log_name = $sformatf("log/core%0d_core_ref.log", core_id);
-    else
-        inst_exe_log_name = "log/core_ref.log";
+    case(core_ref_cfg.dsa_type)
+        DSA_MMIO_VU:  inst_exe_log_name = "log/vu_core_ref.log";
+        DSA_MMIO_MU:  inst_exe_log_name = "log/mu_core_ref.log";
+        DSA_MMIO_DTE: inst_exe_log_name = "log/dte_core_ref.log";
+        default: begin
+            `uvm_error(get_type_name(), $sformatf(
+                "Cannot select core_ref log for unknown DSA identity=%0d",
+                core_ref_cfg.dsa_type))
+            return;
+        end
+    endcase
 
     inst_exe_log = $fopen(inst_exe_log_name, "w");
 
@@ -148,8 +172,10 @@ task core_reference::reset_phase(uvm_phase phase);
 
     csr_lib.set_log(inst_exe_log);
     mem_lib.set_log(inst_exe_log);
-    dsa_mem_lib.set_log(inst_exe_log);
     dsa_mmio_lib.set_log(inst_exe_log);
+
+    if(dsa_mem_lib == null)
+        `uvm_fatal(get_type_name(), "Shared dsa_mem_lib was not injected")
 
     mem_lib.mem_lib_init();
 

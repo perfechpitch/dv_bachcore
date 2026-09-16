@@ -10,5 +10,5 @@
 +incdir+../uvm_tb/dsa_mem_lib/
 +incdir+../uvm_tb/public_typedef_pkg/
 +incdir+../uvm_tb/core_ref/
-../uvm_tb/vu_inst_lib/dpi/vu_math.c
+$PWD/../uvm_tb/vu_inst_lib/dpi/vu_math.c
 ../ref_sim/test_top.sv

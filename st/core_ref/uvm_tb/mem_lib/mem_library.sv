@@ -6,6 +6,8 @@ class mem_library extends uvm_object;
     base_mem #(ATOMIC_MEM_SIZE_KB, ATOMIC_MEM_BASE_ADDR) atomic_mem;
 
     bit log_en;
+    bit [31:0] itcm_global_base;
+    bit [31:0] dtcm_global_base;
 
     `uvm_object_utils(mem_library)
 
@@ -19,7 +21,44 @@ class mem_library extends uvm_object;
 
         sm = null;
         atomic_mem = null;
+        itcm_global_base = ITCM_BASE_ADDR;
+        dtcm_global_base = DTCM_BASE_ADDR;
     endfunction : new
+
+    function void set_tcm_base(bit [31:0] itcm_base, bit [31:0] dtcm_base);
+        itcm_global_base = itcm_base;
+        dtcm_global_base = dtcm_base;
+    endfunction : set_tcm_base
+
+    function bit owns_itcm_addr(bit [31:0] addr);
+        return addr >= itcm_global_base &&
+               addr < itcm_global_base + ITCM_SIZE_KB * 1024;
+    endfunction : owns_itcm_addr
+
+    function bit owns_dtcm_addr(bit [31:0] addr);
+        return addr >= dtcm_global_base &&
+               addr < dtcm_global_base + DTCM_SIZE_KB * 1024;
+    endfunction : owns_dtcm_addr
+
+    function bit [31:0] itcm_global_to_local(bit [31:0] addr);
+        return ITCM_BASE_ADDR + (addr - itcm_global_base);
+    endfunction : itcm_global_to_local
+
+    function bit [31:0] dtcm_global_to_local(bit [31:0] addr);
+        return DTCM_BASE_ADDR + (addr - dtcm_global_base);
+    endfunction : dtcm_global_to_local
+
+    function void init_itcm_data(bit [31:0] addr, bit [31:0] data);
+        itcm.init_data(itcm_global_to_local(addr), data);
+    endfunction : init_itcm_data
+
+    function void init_dtcm_data(bit [31:0] addr, bit [31:0] data);
+        dtcm.init_data(dtcm_global_to_local(addr), data);
+    endfunction : init_dtcm_data
+
+    function bit [31:0] peek_inst(bit [31:0] addr);
+        return itcm.read_mem(2'd2, itcm_global_to_local(addr), 1'b0);
+    endfunction : peek_inst
 
     function void set_log(integer log_fd);
         if(itcm != null)
@@ -63,11 +102,11 @@ class mem_library extends uvm_object;
     endfunction : mem_lib_init
 
     local function bit is_itcm_addr(bit [31:0] addr);
-        return addr >= ITCM_BASE_ADDR && addr <= ITCM_END_ADDR;
+        return owns_itcm_addr(addr);
     endfunction : is_itcm_addr
 
     local function bit is_dtcm_addr(bit [31:0] addr);
-        return addr >= DTCM_BASE_ADDR && addr <= DTCM_END_ADDR;
+        return owns_dtcm_addr(addr);
     endfunction : is_dtcm_addr
 
     local function bit is_sm_addr(bit [31:0] addr);
@@ -234,11 +273,13 @@ class mem_library extends uvm_object;
 
         case(addr_state.acc_type)
             FETCH:
-                return itcm.read_mem(addr_state.size, addr, 1'b0);
+                return itcm.read_mem(addr_state.size,
+                                     itcm_global_to_local(addr), 1'b0);
 
             LOAD: begin
                 if(is_dtcm_addr(addr))
-                    return dtcm.read_mem(addr_state.size, addr);
+                    return dtcm.read_mem(addr_state.size,
+                                         dtcm_global_to_local(addr));
                 else
                     return sm.read_mem(addr_state.size, addr);
             end
@@ -266,7 +307,8 @@ class mem_library extends uvm_object;
         case(addr_state.acc_type)
             STORE: begin
                 if(is_dtcm_addr(addr))
-                    dtcm.write_mem(addr_state.size, addr, wdata);
+                    dtcm.write_mem(addr_state.size,
+                                   dtcm_global_to_local(addr), wdata);
                 else
                     sm.write_mem(addr_state.size, addr, wdata);
             end
@@ -294,7 +336,7 @@ class mem_library extends uvm_object;
     function void read_check(mem_source_e source, bit [31:0] addr);
         case(source)
             MEM_DTCM:
-                dtcm.read_check(addr);
+                dtcm.read_check(dtcm_global_to_local(addr));
 
             MEM_SM:
                 sm.read_check(addr);
@@ -318,7 +360,7 @@ class mem_library extends uvm_object;
     );
         case(source)
             MEM_DTCM:
-                dtcm.write_check(addr, data, mask);
+                dtcm.write_check(dtcm_global_to_local(addr), data, mask);
 
             MEM_SM:
                 sm.write_check(addr, data, mask);

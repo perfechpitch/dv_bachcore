@@ -15,18 +15,14 @@ class dsa_mmio_library extends uvm_object;
 
     // Try-run default: select VU.
     dsa_mmio_type_e dsa_type = DSA_MMIO_VU;
-    int vu_req_log;
-    int mu_req_log;
-    int dte_req_log;
+    int req_log;
 
     function new(string name = "dsa_mmio_library");
         super.new(name);
         vu_mmio = vu_mmio_set::type_id::create("vu_mmio");
         mu_mmio = mu_mmio_set::type_id::create("mu_mmio");
         dte_mmio = dte_mmio_set::type_id::create("dte_mmio");
-        vu_req_log = 0;
-        mu_req_log = 0;
-        dte_req_log = 0;
+        req_log = 0;
     endfunction
 
     function void set_type(dsa_mmio_type_e t);
@@ -34,28 +30,28 @@ class dsa_mmio_library extends uvm_object;
     endfunction
 
     function void open_req_log();
-        if(vu_req_log)
-            $fclose(vu_req_log);
-        if(mu_req_log)
-            $fclose(mu_req_log);
-        if(dte_req_log)
-            $fclose(dte_req_log);
+        string req_log_name;
+        if(req_log)
+            $fclose(req_log);
 
-        vu_req_log = $fopen("log/vu_req.log", "w");
-        mu_req_log = $fopen("log/mu_req.log", "w");
-        dte_req_log = $fopen("log/dte_req.log", "w");
+        case(dsa_type)
+            DSA_MMIO_VU:  req_log_name = "log/vu_req.log";
+            DSA_MMIO_MU:  req_log_name = "log/mu_req.log";
+            DSA_MMIO_DTE: req_log_name = "log/dte_req.log";
+            default: begin
+                `uvm_error("DSA_MMIO",
+                    $sformatf("Cannot select request log for unknown dsa_type=%0d", dsa_type))
+                return;
+            end
+        endcase
+        req_log = $fopen(req_log_name, "w");
+        if(req_log == 0)
+            `uvm_error("DSA_MMIO", $sformatf(
+                "Cannot open request log file: %s", req_log_name))
     endfunction
 
     function void trace_req(dsa_req_s req);
-        int req_log;
         string rw_name;
-
-        case(dsa_type)
-            DSA_MMIO_VU:  req_log = vu_req_log;
-            DSA_MMIO_MU:  req_log = mu_req_log;
-            DSA_MMIO_DTE: req_log = dte_req_log;
-            default:      req_log = 0;
-        endcase
 
         rw_name = req.rw ? "W" : "R";
         if(req_log)

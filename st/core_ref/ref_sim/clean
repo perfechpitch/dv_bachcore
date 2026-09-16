@@ -1,3 +1,15 @@
-rm simv* csrc vc_* *.log -rf
-rm log -rf
-rm ucli.key -rf
+#!/bin/bash
+set -e
+REF_SIM_DIR=$(cd "$(dirname "$0")" && pwd)
+RUNTIME_DIR="$REF_SIM_DIR/sim_single"
+
+case "$RUNTIME_DIR" in
+    "$REF_SIM_DIR/sim_single") ;;
+    *) echo "refuse to clean unexpected path: $RUNTIME_DIR" >&2; exit 1 ;;
+esac
+
+if [ -f "$RUNTIME_DIR/Makefile" ]; then
+    make -C "$RUNTIME_DIR" clean
+fi
+rm -rf "$RUNTIME_DIR"
+rm -f "$REF_SIM_DIR/flist_core_ref.f"
