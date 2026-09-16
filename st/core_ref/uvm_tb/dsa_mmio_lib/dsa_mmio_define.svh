@@ -6,6 +6,17 @@
 // selector enum below is intentionally defined here. It is the single source
 // of truth for dsa_mmio_type_e and is shared by dsa_mmio_library (selector)
 // and the three mmio_set classes.
+// VU error_code bit assignments (0915 register specification).
+`define VU_ERR_REG_ADDR 32'h00000001
+`define VU_ERR_CFG      32'h00000002
+`define VU_ERR_RF_IDX   32'h00000004
+`define VU_ERR_CM_ADDR  32'h00000008
+`define VU_ERR_NAN      32'h00000010
+`define VU_ERR_VRF_ECC  32'h00000020
+`define VU_ERR_MRF_ECC  32'h00000040
+`define VU_ERR_SRF_ECC  32'h00000080
+`define VU_ERR_CM_ECC   32'h00000100
+
 typedef enum {
     DSA_MMIO_VU,
     DSA_MMIO_MU,

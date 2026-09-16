@@ -41,6 +41,43 @@ class dsa_mem_library extends uvm_object;
         return CORE_MEM_BASE + local_addr;
     endfunction : core_local_to_global
 
+    // VU addresses are local CM byte offsets. Check the entire access in a
+    // wider type BEFORE truncating an address or touching the memory model.
+    // CORE_MEM_SIZE remains the integration/model capacity, not an ISA limit.
+    function automatic bit core_range_valid(
+        input longint unsigned local_addr,
+        input longint unsigned byte_num
+    );
+        if(byte_num == 0 || local_addr >= 64'h1_0000_0000)
+            return 1'b0;
+        if(local_addr >= 64'(CORE_MEM_SIZE) ||
+           byte_num > 64'(CORE_MEM_SIZE) - local_addr)
+            return 1'b0;
+        if(!$isunknown(CORE_MEM_BASE) &&
+           64'(CORE_MEM_BASE) + local_addr + byte_num > 64'h1_0000_0000)
+            return 1'b0;
+        return 1'b1;
+    endfunction : core_range_valid
+
+    // Preserve the current implicit data/32 -> E8M0 scale mapping. Its physical
+    // system layout is still an integration choice; this only bounds storage.
+    function automatic bit core_scale_range_valid(
+        input longint unsigned data_addr,
+        input longint unsigned byte_num
+    );
+        longint unsigned scale_offset;
+        if(data_addr >= 64'h1_0000_0000 || byte_num == 0)
+            return 1'b0;
+        scale_offset = data_addr >> 5;
+        if(scale_offset >= 64'(CORE_SCALE_MEM_SIZE) ||
+           byte_num > 64'(CORE_SCALE_MEM_SIZE) - scale_offset)
+            return 1'b0;
+        if(!$isunknown(CORE_SCALE_MEM_BASE) &&
+           64'(CORE_SCALE_MEM_BASE) + scale_offset + byte_num > 64'h1_0000_0000)
+            return 1'b0;
+        return 1'b1;
+    endfunction : core_scale_range_valid
+
     function bit [31:0] matrix_local_to_global(bit [31:0] local_addr);
         return MATRIX_MEM_BASE + local_addr;
     endfunction : matrix_local_to_global

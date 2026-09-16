@@ -2,10 +2,10 @@
 
 function string get_write_desc(bit [31:0] addr, bit [31:0] data);
     if(addr == MACRO_INST_TRIGGER_BASE_ADDR) begin
-        return $sformatf("VU.MACRO_INST_TRIGGER[0x%08h] <= 0x%08h {STATIC_DYNAMIC_MASK=%0d, CONFIG_IDX=%0d, EVENT_EN=%0d, STREAM_ID_OVERRIDE=%0d, STREAM_ID=%0d, MACRO_INST_FENCE=%0d, DATA_BROADCAST=%0d}", addr, data, data[7:0], data[10:8], data[16], data[17], data[21:18], data[24], data[25]);
+        return $sformatf("VU.MACRO_INST_TRIGGER[0x%08h] <= 0x%08h {STATIC_DYNAMIC_MASK=%0d, CONFIG_IDX=%0d, EVENT_EN=%0d, STREAM_ID_OVERRIDE=%0d, STREAM_ID=%0d, MACRO_INST_FENCE=%0d, DATA_BROADCAST=%0d}", addr, data, data[6:0], data[10:8], data[16], data[17], data[21:18], data[24], data[25]);
     end
     if(addr == TYPE_VL_BASE_ADDR) begin
-        return $sformatf("VU.TYPE_VL[0x%08h] <= 0x%08h {VL=%0d, DATA_TYPE=%0d, ROUND_MODE=%0d}", addr, data, data[15:0], data[16], data[19:17]);
+        return $sformatf("VU.TYPE_VL[0x%08h] <= 0x%08h {VL=%0d, DATA_TYPE=%0d, ROUND_MODE=%0d, NAN_INF_REPLACE_EN=%0d}", addr, data, data[15:0], data[16], data[19:17], data[20]);
     end
     if(addr == LD_ADDR_BASE_ADDR) begin
         return $sformatf("VU.LD_ADDR[0x%08h] <= 0x%08h {CM_ADDR=%0d}", addr, data, data[31:0]);
@@ -100,7 +100,7 @@ function string get_write_desc(bit [31:0] addr, bit [31:0] data);
     if((addr >= STATIC_TYPE_VL_BASE_ADDR) && (addr <= STATIC_TYPE_VL_END_ADDR) && (((addr - STATIC_TYPE_VL_BASE_ADDR) % STATIC_TYPE_VL_STRIDE) == 0)) begin
         int unsigned reg_idx;
         reg_idx = (addr - STATIC_TYPE_VL_BASE_ADDR) / STATIC_TYPE_VL_STRIDE;
-        return $sformatf("VU.STATIC_TYPE_VL[%0d][0x%08h] <= 0x%08h {VL=%0d, DATA_TYPE=%0d, ROUND_MODE=%0d}", reg_idx, addr, data, data[15:0], data[16], data[19:17]);
+        return $sformatf("VU.STATIC_TYPE_VL[%0d][0x%08h] <= 0x%08h {VL=%0d, DATA_TYPE=%0d, ROUND_MODE=%0d, NAN_INF_REPLACE_EN=%0d}", reg_idx, addr, data, data[15:0], data[16], data[19:17], data[20]);
     end
     if((addr >= STATIC_LD_ADDR_BASE_ADDR) && (addr <= STATIC_LD_ADDR_END_ADDR) && (((addr - STATIC_LD_ADDR_BASE_ADDR) % STATIC_LD_ADDR_STRIDE) == 0)) begin
         int unsigned reg_idx;
@@ -152,6 +152,12 @@ function string get_write_desc(bit [31:0] addr, bit [31:0] data);
         reg_idx = (addr - STATIC_SRF_WT_INDEX_1_BASE_ADDR) / STATIC_SRF_WT_INDEX_1_STRIDE;
         return $sformatf("VU.STATIC_SRF_WT_INDEX_1[%0d][0x%08h] <= 0x%08h {SRF_WT_P4_IDX=%0d, SRF_WT_P5_IDX=%0d}", reg_idx, addr, data, data[7:0], data[15:8]);
     end
+    if(addr == INF_REPLACE_VALUE_BASE_ADDR) begin
+        return $sformatf("VU.INF_REPLACE_VALUE[0x%08h] <= 0x%08h {INF_REPLACE_VALUE=%0d}", addr, data, data[31:0]);
+    end
+    if(addr == NAN_REPLACE_VALUE_BASE_ADDR) begin
+        return $sformatf("VU.NAN_REPLACE_VALUE[0x%08h] <= 0x%08h {NAN_REPLACE_VALUE=%0d}", addr, data, data[31:0]);
+    end
     if(addr == REG_FILE_ADDR_BASE_ADDR) begin
         return $sformatf("VU.REG_FILE_ADDR[0x%08h] <= 0x%08h {RF_ADDR=%0d, RF_SEL=%0d}", addr, data, data[15:0], data[17:16]);
     end
@@ -162,16 +168,34 @@ function string get_write_desc(bit [31:0] addr, bit [31:0] data);
         return $sformatf("VU.STATUS[0x%08h] <= 0x%08h {BUSY=%0d, ISQ_FULL=%0d, ISQ_EMPTY=%0d, ERROR_FLAG=%0d}", addr, data, data[0], data[1], data[2], data[3]);
     end
     if(addr == ERROR_CODE_BASE_ADDR) begin
-        return $sformatf("VU.ERROR_CODE[0x%08h] <= 0x%08h {REG_ADDR_ERROR=%0d, CFG_ERROR=%0d, RF_IDX_ERROR=%0d, CM_ADDR_ERROR=%0d, CM_RESP_ERROR=%0d, DATA_CVT_ERROR=%0d}", addr, data, data[0], data[2], data[3], data[4], data[5], data[6]);
+        return $sformatf("VU.ERROR_CODE[0x%08h] <= 0x%08h {REG_ADDR_ERROR=%0d, CFG_ERROR=%0d, RF_IDX_ERROR=%0d, CM_ADDR_ERROR=%0d, NAN_ERROR=%0d, VRF_ECC_ERROR=%0d, MRF_ECC_ERROR=%0d, SRF_ECC_ERROR=%0d, CM_ECC_ERROR=%0d}", addr, data, data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
     end
     if(addr == ERROR_INFO_BASE_ADDR) begin
-        return $sformatf("VU.ERROR_INFO[0x%08h] <= 0x%08h {STATIC_DYNAMIC_MASK=%0d, CONFIG_IDX=%0d, ERR_UNIT=%0d, FIRST_ERR=%0d, VALID=%0d}", addr, data, data[7:0], data[10:8], data[15:12], data[18:16], data[19]);
+        return $sformatf("VU.ERROR_INFO[0x%08h] <= 0x%08h {USER_ID=%0d, STREAM_ID=%0d, CONFIG_IDX=%0d, ERR_UNIT=%0d, FIRST_ERR=%0d, VALID=%0d}", addr, data, data[15:0], data[19:16], data[22:20], data[26:23], data[30:27], data[31]);
     end
     if(addr == SNAPSHOT_ADDR_BASE_ADDR) begin
         return $sformatf("VU.SNAPSHOT_ADDR[0x%08h] <= 0x%08h {SNAP_IDX=%0d, SNAP_SEL=%0d}", addr, data, data[3:0], data[11:4]);
     end
     if(addr == SNAPSHOT_DATA_BASE_ADDR) begin
         return $sformatf("VU.SNAPSHOT_DATA[0x%08h] <= 0x%08h {SNAP_DATA=%0d}", addr, data, data[31:0]);
+    end
+    if(addr == VRF_ERR_INFO_BASE_ADDR) begin
+        return $sformatf("VU.VRF_ERR_INFO[0x%08h] <= 0x%08h {USER_ID=%0d, RF_ERR_IDX=%0d, VALID=%0d}", addr, data, data[15:0], data[24:16], data[31]);
+    end
+    if(addr == MRF_ERR_INFO_BASE_ADDR) begin
+        return $sformatf("VU.MRF_ERR_INFO[0x%08h] <= 0x%08h {USER_ID=%0d, RF_ERR_IDX=%0d, VALID=%0d}", addr, data, data[15:0], data[24:16], data[31]);
+    end
+    if(addr == SRF_ERR_INFO_BASE_ADDR) begin
+        return $sformatf("VU.SRF_ERR_INFO[0x%08h] <= 0x%08h {USER_ID=%0d, RF_ERR_IDX=%0d, VALID=%0d}", addr, data, data[15:0], data[24:16], data[31]);
+    end
+    if(addr == CM_ERR_INFO_BASE_ADDR) begin
+        return $sformatf("VU.CM_ERR_INFO[0x%08h] <= 0x%08h {USER_ID=%0d, DIR=%0d, VALID=%0d}", addr, data, data[15:0], data[16], data[31]);
+    end
+    if(addr == CM_ERR_ADDR_BASE_ADDR) begin
+        return $sformatf("VU.CM_ERR_ADDR[0x%08h] <= 0x%08h {CM_ERR_ADDR=%0d}", addr, data, data[31:0]);
+    end
+    if(addr == NAN_ERR_INFO_BASE_ADDR) begin
+        return $sformatf("VU.NAN_ERR_INFO[0x%08h] <= 0x%08h {USER_ID=%0d, VALID=%0d}", addr, data, data[15:0], data[31]);
     end
     if(addr == PROFILE_CTRL_BASE_ADDR) begin
         return $sformatf("VU.PROFILE_CTRL[0x%08h] <= 0x%08h {RUN=%0d, CLEAR=%0d}", addr, data, data[0], data[1]);
@@ -356,6 +380,18 @@ function string get_write_desc(bit [31:0] addr, bit [31:0] data);
     if(addr == MRF_WT_BUSY_CYCLE_HI_BASE_ADDR) begin
         return $sformatf("VU.MRF_WT_BUSY_CYCLE_HI[0x%08h] <= 0x%08h {COUNT=%0d}", addr, data, data[31:0]);
     end
+    if(addr == NAN_REPLACE_CNT_LO_BASE_ADDR) begin
+        return $sformatf("VU.NAN_REPLACE_CNT_LO[0x%08h] <= 0x%08h {COUNT=%0d}", addr, data, data[31:0]);
+    end
+    if(addr == NAN_REPLACE_CNT_HI_BASE_ADDR) begin
+        return $sformatf("VU.NAN_REPLACE_CNT_HI[0x%08h] <= 0x%08h {COUNT=%0d}", addr, data, data[31:0]);
+    end
+    if(addr == INF_REPLACE_CNT_LO_BASE_ADDR) begin
+        return $sformatf("VU.INF_REPLACE_CNT_LO[0x%08h] <= 0x%08h {COUNT=%0d}", addr, data, data[31:0]);
+    end
+    if(addr == INF_REPLACE_CNT_HI_BASE_ADDR) begin
+        return $sformatf("VU.INF_REPLACE_CNT_HI[0x%08h] <= 0x%08h {COUNT=%0d}", addr, data, data[31:0]);
+    end
     if(addr == REG_FILE_DATA_BASE_ADDR) begin
         return $sformatf("VU.REG_FILE_DATA[0x%08h] <= 0x%08h", addr, data);
     end
@@ -364,10 +400,10 @@ endfunction : get_write_desc
 
 function string get_read_desc(bit [31:0] addr, bit [31:0] data);
     if(addr == MACRO_INST_TRIGGER_BASE_ADDR) begin
-        return $sformatf("VU.MACRO_INST_TRIGGER[0x%08h] => 0x%08h {STATIC_DYNAMIC_MASK=%0d, CONFIG_IDX=%0d, EVENT_EN=%0d, STREAM_ID_OVERRIDE=%0d, STREAM_ID=%0d, MACRO_INST_FENCE=%0d, DATA_BROADCAST=%0d}", addr, data, data[7:0], data[10:8], data[16], data[17], data[21:18], data[24], data[25]);
+        return $sformatf("VU.MACRO_INST_TRIGGER[0x%08h] => 0x%08h {STATIC_DYNAMIC_MASK=%0d, CONFIG_IDX=%0d, EVENT_EN=%0d, STREAM_ID_OVERRIDE=%0d, STREAM_ID=%0d, MACRO_INST_FENCE=%0d, DATA_BROADCAST=%0d}", addr, data, data[6:0], data[10:8], data[16], data[17], data[21:18], data[24], data[25]);
     end
     if(addr == TYPE_VL_BASE_ADDR) begin
-        return $sformatf("VU.TYPE_VL[0x%08h] => 0x%08h {VL=%0d, DATA_TYPE=%0d, ROUND_MODE=%0d}", addr, data, data[15:0], data[16], data[19:17]);
+        return $sformatf("VU.TYPE_VL[0x%08h] => 0x%08h {VL=%0d, DATA_TYPE=%0d, ROUND_MODE=%0d, NAN_INF_REPLACE_EN=%0d}", addr, data, data[15:0], data[16], data[19:17], data[20]);
     end
     if(addr == LD_ADDR_BASE_ADDR) begin
         return $sformatf("VU.LD_ADDR[0x%08h] => 0x%08h {CM_ADDR=%0d}", addr, data, data[31:0]);
@@ -462,7 +498,7 @@ function string get_read_desc(bit [31:0] addr, bit [31:0] data);
     if((addr >= STATIC_TYPE_VL_BASE_ADDR) && (addr <= STATIC_TYPE_VL_END_ADDR) && (((addr - STATIC_TYPE_VL_BASE_ADDR) % STATIC_TYPE_VL_STRIDE) == 0)) begin
         int unsigned reg_idx;
         reg_idx = (addr - STATIC_TYPE_VL_BASE_ADDR) / STATIC_TYPE_VL_STRIDE;
-        return $sformatf("VU.STATIC_TYPE_VL[%0d][0x%08h] => 0x%08h {VL=%0d, DATA_TYPE=%0d, ROUND_MODE=%0d}", reg_idx, addr, data, data[15:0], data[16], data[19:17]);
+        return $sformatf("VU.STATIC_TYPE_VL[%0d][0x%08h] => 0x%08h {VL=%0d, DATA_TYPE=%0d, ROUND_MODE=%0d, NAN_INF_REPLACE_EN=%0d}", reg_idx, addr, data, data[15:0], data[16], data[19:17], data[20]);
     end
     if((addr >= STATIC_LD_ADDR_BASE_ADDR) && (addr <= STATIC_LD_ADDR_END_ADDR) && (((addr - STATIC_LD_ADDR_BASE_ADDR) % STATIC_LD_ADDR_STRIDE) == 0)) begin
         int unsigned reg_idx;
@@ -514,6 +550,12 @@ function string get_read_desc(bit [31:0] addr, bit [31:0] data);
         reg_idx = (addr - STATIC_SRF_WT_INDEX_1_BASE_ADDR) / STATIC_SRF_WT_INDEX_1_STRIDE;
         return $sformatf("VU.STATIC_SRF_WT_INDEX_1[%0d][0x%08h] => 0x%08h {SRF_WT_P4_IDX=%0d, SRF_WT_P5_IDX=%0d}", reg_idx, addr, data, data[7:0], data[15:8]);
     end
+    if(addr == INF_REPLACE_VALUE_BASE_ADDR) begin
+        return $sformatf("VU.INF_REPLACE_VALUE[0x%08h] => 0x%08h {INF_REPLACE_VALUE=%0d}", addr, data, data[31:0]);
+    end
+    if(addr == NAN_REPLACE_VALUE_BASE_ADDR) begin
+        return $sformatf("VU.NAN_REPLACE_VALUE[0x%08h] => 0x%08h {NAN_REPLACE_VALUE=%0d}", addr, data, data[31:0]);
+    end
     if(addr == REG_FILE_ADDR_BASE_ADDR) begin
         return $sformatf("VU.REG_FILE_ADDR[0x%08h] => 0x%08h {RF_ADDR=%0d, RF_SEL=%0d}", addr, data, data[15:0], data[17:16]);
     end
@@ -524,16 +566,34 @@ function string get_read_desc(bit [31:0] addr, bit [31:0] data);
         return $sformatf("VU.STATUS[0x%08h] => 0x%08h {BUSY=%0d, ISQ_FULL=%0d, ISQ_EMPTY=%0d, ERROR_FLAG=%0d}", addr, data, data[0], data[1], data[2], data[3]);
     end
     if(addr == ERROR_CODE_BASE_ADDR) begin
-        return $sformatf("VU.ERROR_CODE[0x%08h] => 0x%08h {REG_ADDR_ERROR=%0d, CFG_ERROR=%0d, RF_IDX_ERROR=%0d, CM_ADDR_ERROR=%0d, CM_RESP_ERROR=%0d, DATA_CVT_ERROR=%0d}", addr, data, data[0], data[2], data[3], data[4], data[5], data[6]);
+        return $sformatf("VU.ERROR_CODE[0x%08h] => 0x%08h {REG_ADDR_ERROR=%0d, CFG_ERROR=%0d, RF_IDX_ERROR=%0d, CM_ADDR_ERROR=%0d, NAN_ERROR=%0d, VRF_ECC_ERROR=%0d, MRF_ECC_ERROR=%0d, SRF_ECC_ERROR=%0d, CM_ECC_ERROR=%0d}", addr, data, data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
     end
     if(addr == ERROR_INFO_BASE_ADDR) begin
-        return $sformatf("VU.ERROR_INFO[0x%08h] => 0x%08h {STATIC_DYNAMIC_MASK=%0d, CONFIG_IDX=%0d, ERR_UNIT=%0d, FIRST_ERR=%0d, VALID=%0d}", addr, data, data[7:0], data[10:8], data[15:12], data[18:16], data[19]);
+        return $sformatf("VU.ERROR_INFO[0x%08h] => 0x%08h {USER_ID=%0d, STREAM_ID=%0d, CONFIG_IDX=%0d, ERR_UNIT=%0d, FIRST_ERR=%0d, VALID=%0d}", addr, data, data[15:0], data[19:16], data[22:20], data[26:23], data[30:27], data[31]);
     end
     if(addr == SNAPSHOT_ADDR_BASE_ADDR) begin
         return $sformatf("VU.SNAPSHOT_ADDR[0x%08h] => 0x%08h {SNAP_IDX=%0d, SNAP_SEL=%0d}", addr, data, data[3:0], data[11:4]);
     end
     if(addr == SNAPSHOT_DATA_BASE_ADDR) begin
         return $sformatf("VU.SNAPSHOT_DATA[0x%08h] => 0x%08h {SNAP_DATA=%0d}", addr, data, data[31:0]);
+    end
+    if(addr == VRF_ERR_INFO_BASE_ADDR) begin
+        return $sformatf("VU.VRF_ERR_INFO[0x%08h] => 0x%08h {USER_ID=%0d, RF_ERR_IDX=%0d, VALID=%0d}", addr, data, data[15:0], data[24:16], data[31]);
+    end
+    if(addr == MRF_ERR_INFO_BASE_ADDR) begin
+        return $sformatf("VU.MRF_ERR_INFO[0x%08h] => 0x%08h {USER_ID=%0d, RF_ERR_IDX=%0d, VALID=%0d}", addr, data, data[15:0], data[24:16], data[31]);
+    end
+    if(addr == SRF_ERR_INFO_BASE_ADDR) begin
+        return $sformatf("VU.SRF_ERR_INFO[0x%08h] => 0x%08h {USER_ID=%0d, RF_ERR_IDX=%0d, VALID=%0d}", addr, data, data[15:0], data[24:16], data[31]);
+    end
+    if(addr == CM_ERR_INFO_BASE_ADDR) begin
+        return $sformatf("VU.CM_ERR_INFO[0x%08h] => 0x%08h {USER_ID=%0d, DIR=%0d, VALID=%0d}", addr, data, data[15:0], data[16], data[31]);
+    end
+    if(addr == CM_ERR_ADDR_BASE_ADDR) begin
+        return $sformatf("VU.CM_ERR_ADDR[0x%08h] => 0x%08h {CM_ERR_ADDR=%0d}", addr, data, data[31:0]);
+    end
+    if(addr == NAN_ERR_INFO_BASE_ADDR) begin
+        return $sformatf("VU.NAN_ERR_INFO[0x%08h] => 0x%08h {USER_ID=%0d, VALID=%0d}", addr, data, data[15:0], data[31]);
     end
     if(addr == PROFILE_CTRL_BASE_ADDR) begin
         return $sformatf("VU.PROFILE_CTRL[0x%08h] => 0x%08h {RUN=%0d, CLEAR=%0d}", addr, data, data[0], data[1]);
@@ -717,6 +777,18 @@ function string get_read_desc(bit [31:0] addr, bit [31:0] data);
     end
     if(addr == MRF_WT_BUSY_CYCLE_HI_BASE_ADDR) begin
         return $sformatf("VU.MRF_WT_BUSY_CYCLE_HI[0x%08h] => 0x%08h {COUNT=%0d}", addr, data, data[31:0]);
+    end
+    if(addr == NAN_REPLACE_CNT_LO_BASE_ADDR) begin
+        return $sformatf("VU.NAN_REPLACE_CNT_LO[0x%08h] => 0x%08h {COUNT=%0d}", addr, data, data[31:0]);
+    end
+    if(addr == NAN_REPLACE_CNT_HI_BASE_ADDR) begin
+        return $sformatf("VU.NAN_REPLACE_CNT_HI[0x%08h] => 0x%08h {COUNT=%0d}", addr, data, data[31:0]);
+    end
+    if(addr == INF_REPLACE_CNT_LO_BASE_ADDR) begin
+        return $sformatf("VU.INF_REPLACE_CNT_LO[0x%08h] => 0x%08h {COUNT=%0d}", addr, data, data[31:0]);
+    end
+    if(addr == INF_REPLACE_CNT_HI_BASE_ADDR) begin
+        return $sformatf("VU.INF_REPLACE_CNT_HI[0x%08h] => 0x%08h {COUNT=%0d}", addr, data, data[31:0]);
     end
     if(addr == REG_FILE_DATA_BASE_ADDR) begin
         return $sformatf("VU.REG_FILE_DATA[0x%08h] => 0x%08h", addr, data);

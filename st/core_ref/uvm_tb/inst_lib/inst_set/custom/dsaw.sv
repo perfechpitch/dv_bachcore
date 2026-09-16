@@ -18,7 +18,8 @@ class custom_inst_dsaw extends riscv_inst;
         rs1_val = `GPR(inst[19:15]);
         rs2_val = `GPR(inst[24:20]);
 
-        dsa_mmio_lib.write(rs1_val, rs2_val);
+        dsa_mmio_lib.write(rs1_val, rs2_val,
+                           csr_lib.user_id.val[15:0], csr_lib.stream_id.val[3:0]);
         req = '{1'b1, rs1_val, rs2_val,
             csr_lib.stream_id.val[3:0], csr_lib.task_id.val[5:0],
             csr_lib.user_id.val[15:0], csr_lib.path_id.val[5:0],
@@ -53,7 +54,8 @@ class custom_inst_dsawi extends riscv_inst;
         rs1_val = `GPR(inst[19:15]);
         imm = {inst[30:20], inst[11:7]};
 
-        dsa_mmio_lib.write(rs1_val, {16'b0, imm});
+        dsa_mmio_lib.write(rs1_val, {16'b0, imm},
+                           csr_lib.user_id.val[15:0], csr_lib.stream_id.val[3:0]);
         req = '{1'b1, rs1_val, {16'b0, imm},
             csr_lib.stream_id.val[3:0], csr_lib.task_id.val[5:0],
             csr_lib.user_id.val[15:0], csr_lib.path_id.val[5:0],

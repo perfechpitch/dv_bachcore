@@ -5,12 +5,14 @@ if(macro_inst_trigger.static_dynamic_mask[0]) begin
     exec_param.type_vl.vl = type_vl.vl;
     exec_param.type_vl.data_type = type_vl.data_type;
     exec_param.type_vl.round_mode = type_vl.round_mode;
+    exec_param.type_vl.nan_inf_replace_en = type_vl.nan_inf_replace_en;
     exec_param.type_vl.src = PARAM_DYNAMIC;
 end
 else begin
     exec_param.type_vl.vl = static_type_vl[exec_param.config_idx].vl;
     exec_param.type_vl.data_type = static_type_vl[exec_param.config_idx].data_type;
     exec_param.type_vl.round_mode = static_type_vl[exec_param.config_idx].round_mode;
+    exec_param.type_vl.nan_inf_replace_en = static_type_vl[exec_param.config_idx].nan_inf_replace_en;
     exec_param.type_vl.src = PARAM_STATIC;
 end
 if(macro_inst_trigger.static_dynamic_mask[1]) begin
