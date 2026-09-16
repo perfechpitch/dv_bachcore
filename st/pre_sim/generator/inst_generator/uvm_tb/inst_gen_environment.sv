@@ -7,6 +7,9 @@
       register_pool       reg_pool;
       inst_seq_generator  inst_seq_gen;
       inst_seq_type_generator inst_seq_type_gen;
+      core_context_pool       core_ctx_pool;
+      fetch_addr_generator    fetch_addr_gen;
+      ls_addr_generator       ls_addr_gen;
   
       addr_space_generator    addr_space_gen;
       inst_gen_vsequencer  inst_gen_vsqr;
@@ -32,6 +35,9 @@
           inst_gen            = inst_generator::type_id::create("inst_gen",this);
           inst_seq_gen        = inst_seq_generator::type_id::create("inst_seq_gen",this);
           inst_seq_type_gen   = inst_seq_type_generator::type_id::create("inst_seq_type_gen",this);
+          core_ctx_pool       = core_context_pool::type_id::create("core_ctx_pool");
+          fetch_addr_gen      = fetch_addr_generator::type_id::create("fetch_addr_gen");
+          ls_addr_gen         = ls_addr_generator::type_id::create("ls_addr_gen");
           reg_pool            = register_pool::type_id::create("reg_pool",this);
           inst_gen_vsqr       = inst_gen_vsequencer::type_id::create("inst_gen_vsqr",this);
   
@@ -47,6 +53,7 @@
           inst_gen_vsqr.inst_seq_gen = inst_seq_gen;
           inst_gen_vsqr.inst_gen_case_cfg = inst_gen_case_cfg;
           inst_gen_vsqr.inst_gen  = inst_gen;
+          inst_gen_vsqr.core_ctx_pool = core_ctx_pool;
           inst_gen_vsqr.addr_space_gen  = addr_space_gen;
   
   
@@ -63,6 +70,25 @@
   
           inst_seq_type_gen.inst_seq_type_cfg = inst_gen_case_cfg.inst_seq_type_cfg;
           inst_gen.inst_gen_cfg = inst_gen_case_cfg.inst_gen_cfg;
+          fetch_addr_gen.context_pool = core_ctx_pool;
+          fetch_addr_gen.cfg = inst_gen_case_cfg.fetch_addr_cfg;
+          inst_gen.fetch_addr_gen = fetch_addr_gen;
+          ls_addr_gen.context_pool = core_ctx_pool;
+          ls_addr_gen.cfg = inst_gen_case_cfg.ls_addr_cfg;
+          inst_gen.ls_addr_gen = ls_addr_gen;
+          reg_pool.context_pool = core_ctx_pool;
+          reg_pool.csr_cfg = inst_gen_case_cfg.csr_cfg;
+          reg_pool.cfg = inst_gen_case_cfg.register_pool_cfg;
+          for(int core_index = 0; core_index < 3; core_index++) begin
+              core_ctx_pool.select_core(tcm_hart_e'(core_index));
+              fetch_addr_gen.configure_active_context();
+              ls_addr_gen.configure_active_context();
+          end
+          core_ctx_pool.select_core(inst_gen_case_cfg.default_core);
+          // Register contexts are initialized lazily. Unused cores must not
+          // consume random numbers and perturb the legacy seed behavior.
+          reg_pool.select_active_context();
+          ls_addr_gen.select_active_context();
           inst_gen.safe_inst_gen.inst_gen_cfg = inst_gen_case_cfg.inst_gen_cfg;
           inst_gen.flush_inst_gen.inst_gen_cfg = inst_gen_case_cfg.inst_gen_cfg;
           inst_gen.except_inst_gen.inst_gen_cfg = inst_gen_case_cfg.inst_gen_cfg;
@@ -72,16 +98,8 @@
      	  inst_gen.safe_inst_gen.csr_cfg      = inst_gen_case_cfg.csr_cfg;
           inst_gen.ls_inst_gen.csr_cfg      = inst_gen_case_cfg.csr_cfg;
           inst_gen.addr_space_gen = addr_space_gen;
-      inst_gen.ls_addr_gen.share_layout = inst_gen_case_cfg.ls_seq_cfg.share_layout;
-      inst_gen.ls_addr_gen.hart         = inst_gen_case_cfg.ls_seq_cfg.hart;
-      inst_gen.ls_addr_gen.dtcm_base    = inst_gen_case_cfg.ls_seq_cfg.dtcm_base;
-      inst_gen.ls_addr_gen.share_base   = inst_gen_case_cfg.ls_seq_cfg.share_base;
-  
           addr_space_gen.addr_space_cfg = inst_gen_case_cfg.addr_space_cfg;
   
-          reg_pool.csr_cfg = inst_gen_case_cfg.csr_cfg;
-          reg_pool.inst_gen_cfg = inst_gen_case_cfg.inst_gen_cfg;
-	  assert(reg_pool.randomize());
           inst_gen.reg_pool = reg_pool;
           inst_seq_gen.reg_pool = reg_pool;
       endfunction : connect_phase

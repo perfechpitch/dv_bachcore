@@ -43,7 +43,7 @@ class jalr_sequence extends uvm_object;
         branch_seq_info.inst_seq_cfg = branch_seq_cfg;
         branch_seq_info.randomize();
         use_c_jalr = (fetch_addr_type == FETCH_VALID) &&
-                     (RVC inside inst_gen.reg_pool.inst_gen_cfg.support_inst_set) &&
+                     inst_gen.reg_pool.cfg.support_rvc &&
                      $urandom_range(1);
         use_c_jalr_link = $urandom_range(1);
         if(use_c_jalr) begin
@@ -90,7 +90,7 @@ class jalr_sequence extends uvm_object;
         endcase
 
 
-        control_source_pc = inst_gen.inst_addr;
+        control_source_pc = inst_gen.get_inst_addr();
         if(use_c_jalr) begin
             if(use_c_jalr_link)
                 inst_gen.get_specified_inst(C_JALR, target_reg, '0, '0, '0);
@@ -104,7 +104,7 @@ class jalr_sequence extends uvm_object;
                                                          fetch_s.vaddr);
         if(fetch_addr_type == FETCH_INVALID)
             inst_gen.addr_space_gen.fetch_invalid_vaddrs.push_back(
-                inst_gen.inst_addr);
+                inst_gen.get_inst_addr());
         // FETCH_VALID: keep sequential fetch layout; do not relocate inst_addr.
 
         $fwrite(inst_gen.gen_file,("//--- jalr seq end \n"));

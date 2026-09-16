@@ -4,6 +4,7 @@ class inst_gen_vsequencer extends uvm_sequencer;
       addr_space_generator    addr_space_gen;
       inst_seq_generator      inst_seq_gen;
       inst_seq_type_generator inst_seq_type_gen;
+      core_context_pool       core_ctx_pool;
       
       inst_gen_case_config    inst_gen_case_cfg;
       

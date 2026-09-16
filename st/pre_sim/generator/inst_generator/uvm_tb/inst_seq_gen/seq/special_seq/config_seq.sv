@@ -52,8 +52,7 @@ class config_sequence extends uvm_object;
         inst_gen.addr_space_gen.get_addr(m_except_handle_s);
 //        `csrrw(0,0,`mtvec);
         //`csrrw(0,0,`stvec);
-        inst_gen.inst_addr  = m_except_handle_s.vaddr;
-        inst_gen.inst_paddr = m_except_handle_s.paddr;
+        inst_gen.set_inst_addr(m_except_handle_s.vaddr, m_except_handle_s.paddr);
         except_handle_seq.seq_gen(m_except_handle_s.paddr, inst_gen,except_disable,except_disable&int_ack_disable,M_MODE);
         inst_gen.addr_space_gen.m_except_handle_s = m_except_handle_s;
 
@@ -65,13 +64,11 @@ class config_sequence extends uvm_object;
         else
         s_except_handle_s.mode = M_MODE;
         inst_gen.addr_space_gen.get_addr(s_except_handle_s);
-        inst_gen.inst_addr  = s_except_handle_s.vaddr;
-        inst_gen.inst_paddr = s_except_handle_s.paddr;
+        inst_gen.set_inst_addr(s_except_handle_s.vaddr, s_except_handle_s.paddr);
         except_handle_seq.seq_gen(s_except_handle_s.paddr, inst_gen,except_disable,csr_cfg.s_except_handle_en,S_MODE);
         inst_gen.addr_space_gen.s_except_handle_s = s_except_handle_s;
 
-        inst_gen.inst_addr  = `BOOT_PC;
-        inst_gen.inst_paddr = `BOOT_PC;
+        inst_gen.set_inst_addr(`BOOT_PC, `BOOT_PC);
         inst_gen.inst_cnt   = 'h4000_0000;
         $fwrite(inst_gen.vmem_file,("@%0h\n"),`BOOT_PC>>2);
 

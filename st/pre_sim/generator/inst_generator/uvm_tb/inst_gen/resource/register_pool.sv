@@ -17,7 +17,7 @@ class reg_generator extends uvm_object;
     constraint reg_c{
         rand_reg inside{regs};
        !(rand_reg inside{disable_regs});
-    } 
+    }
 
     function void post_randomize();
         disable_regs.push_back(rand_reg);
@@ -26,7 +26,7 @@ class reg_generator extends uvm_object;
     function void free_reg();
         disable_regs.delete();
     endfunction
-endclass 
+endclass
 class vreg_generator extends reg_generator;
     bit [3:0] emul=1;// rand reg must align with align width,default 1
     bit vm;
@@ -80,6 +80,7 @@ class base_reg_generator extends reg_generator;
     endfunction
 
 endclass
+
 class register_pool extends uvm_object;
     rand bit [4:0] regs[$];
     rand bit [4:0] fregs[$];
@@ -98,7 +99,7 @@ class register_pool extends uvm_object;
     bit [4:0] imm_regs[$];
     bit [4:0] vector_imm_regs[$];
 
-    inst_gen_config inst_gen_cfg;
+    register_pool_config cfg;
 
     reg_generator   gpr_gen;
     reg_generator   fpr_gen;
@@ -110,6 +111,8 @@ class register_pool extends uvm_object;
 
     csr_config   csr_cfg;
     bit [4:0] reserved_regs[$];
+    core_context_pool context_pool;
+    protected register_context active_reg_context;
     `uvm_object_utils_begin(register_pool)
         `uvm_field_sarray_int (regs  ,               UVM_DEFAULT)
         `uvm_field_sarray_int (fregs  ,               UVM_DEFAULT)
@@ -127,9 +130,151 @@ class register_pool extends uvm_object;
       vector_imm_reg_gen = new();
     endfunction : new
 
+    function register_context get_context();
+        if(context_pool == null)
+            `uvm_fatal("REGISTER_CONTEXT", "register_pool has no core_context_pool")
+        return context_pool.get_register_context();
+    endfunction
+
+    // Save both the facade queues and the mutable state of the one shared set
+    // of register-selection algorithms into the active core context.
+    function void sync_active_context();
+        if(active_reg_context == null)
+            return;
+        active_reg_context.regs            = regs;
+        active_reg_context.fregs           = fregs;
+        active_reg_context.vregs           = vregs;
+        active_reg_context.branch_regs     = branch_regs;
+        active_reg_context.base_regs       = base_regs;
+        active_reg_context.sp_base_addr_info = sp_base_addr_info;
+        active_reg_context.sp_base_valid   = sp_base_valid;
+        active_reg_context.imm_regs        = imm_regs;
+        active_reg_context.vector_imm_regs = vector_imm_regs;
+        active_reg_context.reserved_regs   = reserved_regs;
+
+        active_reg_context.gpr_gen_ctx.regs         = gpr_gen.regs;
+        active_reg_context.gpr_gen_ctx.rand_reg     = gpr_gen.rand_reg;
+        active_reg_context.gpr_gen_ctx.disable_regs = gpr_gen.disable_regs;
+        active_reg_context.fpr_gen_ctx.regs         = fpr_gen.regs;
+        active_reg_context.fpr_gen_ctx.rand_reg     = fpr_gen.rand_reg;
+        active_reg_context.fpr_gen_ctx.disable_regs = fpr_gen.disable_regs;
+        active_reg_context.base_reg_gen_ctx.regs         = base_reg_gen.regs;
+        active_reg_context.base_reg_gen_ctx.rand_reg     = base_reg_gen.rand_reg;
+        active_reg_context.base_reg_gen_ctx.disable_regs = base_reg_gen.disable_regs;
+        active_reg_context.base_reg_gen_ctx.base_addr_info = base_reg_gen.base_addr_info;
+        active_reg_context.imm_reg_gen_ctx.regs         = imm_reg_gen.regs;
+        active_reg_context.imm_reg_gen_ctx.rand_reg     = imm_reg_gen.rand_reg;
+        active_reg_context.imm_reg_gen_ctx.disable_regs = imm_reg_gen.disable_regs;
+        active_reg_context.vpr_gen_ctx.regs         = vpr_gen.regs;
+        active_reg_context.vpr_gen_ctx.rand_reg     = vpr_gen.rand_reg;
+        active_reg_context.vpr_gen_ctx.disable_regs = vpr_gen.disable_regs;
+        active_reg_context.vpr_gen_ctx.emul         = vpr_gen.emul;
+        active_reg_context.vpr_gen_ctx.vm           = vpr_gen.vm;
+        active_reg_context.vpr_gen_ctx.vreg_group   = vpr_gen.vreg_group;
+        active_reg_context.vector_imm_reg_gen_ctx.regs         = vector_imm_reg_gen.regs;
+        active_reg_context.vector_imm_reg_gen_ctx.rand_reg     = vector_imm_reg_gen.rand_reg;
+        active_reg_context.vector_imm_reg_gen_ctx.disable_regs = vector_imm_reg_gen.disable_regs;
+        active_reg_context.vector_imm_reg_gen_ctx.emul         = vector_imm_reg_gen.emul;
+        active_reg_context.vector_imm_reg_gen_ctx.vm           = vector_imm_reg_gen.vm;
+        active_reg_context.vector_imm_reg_gen_ctx.vreg_group   = vector_imm_reg_gen.vreg_group;
+    endfunction
+
+    function void load_context(register_context reg_ctx);
+        active_reg_context = reg_ctx;
+
+        if(!reg_ctx.initialized) begin
+            regs.delete();
+            fregs.delete();
+            vregs.delete();
+            branch_regs.delete();
+            base_regs.delete();
+            imm_regs.delete();
+            vector_imm_regs.delete();
+            reserved_regs.delete();
+            sp_base_addr_info = '0;
+            sp_base_valid = 1'b0;
+            gpr_gen.regs.delete();
+            gpr_gen.disable_regs.delete();
+            gpr_gen.rand_reg = '0;
+            fpr_gen.regs.delete();
+            fpr_gen.disable_regs.delete();
+            fpr_gen.rand_reg = '0;
+            base_reg_gen.regs.delete();
+            base_reg_gen.disable_regs.delete();
+            base_reg_gen.base_addr_info.delete();
+            base_reg_gen.rand_reg = '0;
+            imm_reg_gen.regs.delete();
+            imm_reg_gen.disable_regs.delete();
+            imm_reg_gen.rand_reg = '0;
+            vpr_gen.regs.delete();
+            vpr_gen.disable_regs.delete();
+            vpr_gen.rand_reg = '0;
+            vpr_gen.emul = 1;
+            vpr_gen.vm = 0;
+            vpr_gen.vreg_group = 1;
+            vector_imm_reg_gen.regs.delete();
+            vector_imm_reg_gen.disable_regs.delete();
+            vector_imm_reg_gen.rand_reg = '0;
+            vector_imm_reg_gen.emul = 1;
+            vector_imm_reg_gen.vm = 0;
+            vector_imm_reg_gen.vreg_group = 1;
+            if(!this.randomize())
+                `uvm_fatal("REGISTER_CONTEXT", "core register context randomize failed")
+            reg_ctx.initialized = 1'b1;
+            sync_active_context();
+        end
+        else begin
+            regs              = reg_ctx.regs;
+            fregs             = reg_ctx.fregs;
+            vregs             = reg_ctx.vregs;
+            branch_regs       = reg_ctx.branch_regs;
+            base_regs         = reg_ctx.base_regs;
+            sp_base_addr_info = reg_ctx.sp_base_addr_info;
+            sp_base_valid     = reg_ctx.sp_base_valid;
+            imm_regs          = reg_ctx.imm_regs;
+            vector_imm_regs   = reg_ctx.vector_imm_regs;
+            reserved_regs     = reg_ctx.reserved_regs;
+
+            gpr_gen.regs         = reg_ctx.gpr_gen_ctx.regs;
+            gpr_gen.rand_reg     = reg_ctx.gpr_gen_ctx.rand_reg;
+            gpr_gen.disable_regs = reg_ctx.gpr_gen_ctx.disable_regs;
+            fpr_gen.regs         = reg_ctx.fpr_gen_ctx.regs;
+            fpr_gen.rand_reg     = reg_ctx.fpr_gen_ctx.rand_reg;
+            fpr_gen.disable_regs = reg_ctx.fpr_gen_ctx.disable_regs;
+            base_reg_gen.regs         = reg_ctx.base_reg_gen_ctx.regs;
+            base_reg_gen.rand_reg     = reg_ctx.base_reg_gen_ctx.rand_reg;
+            base_reg_gen.disable_regs = reg_ctx.base_reg_gen_ctx.disable_regs;
+            base_reg_gen.base_addr_info = reg_ctx.base_reg_gen_ctx.base_addr_info;
+            imm_reg_gen.regs         = reg_ctx.imm_reg_gen_ctx.regs;
+            imm_reg_gen.rand_reg     = reg_ctx.imm_reg_gen_ctx.rand_reg;
+            imm_reg_gen.disable_regs = reg_ctx.imm_reg_gen_ctx.disable_regs;
+            vpr_gen.regs         = reg_ctx.vpr_gen_ctx.regs;
+            vpr_gen.rand_reg     = reg_ctx.vpr_gen_ctx.rand_reg;
+            vpr_gen.disable_regs = reg_ctx.vpr_gen_ctx.disable_regs;
+            vpr_gen.emul         = reg_ctx.vpr_gen_ctx.emul;
+            vpr_gen.vm           = reg_ctx.vpr_gen_ctx.vm;
+            vpr_gen.vreg_group   = reg_ctx.vpr_gen_ctx.vreg_group;
+            vector_imm_reg_gen.regs         = reg_ctx.vector_imm_reg_gen_ctx.regs;
+            vector_imm_reg_gen.rand_reg     = reg_ctx.vector_imm_reg_gen_ctx.rand_reg;
+            vector_imm_reg_gen.disable_regs = reg_ctx.vector_imm_reg_gen_ctx.disable_regs;
+            vector_imm_reg_gen.emul         = reg_ctx.vector_imm_reg_gen_ctx.emul;
+            vector_imm_reg_gen.vm           = reg_ctx.vector_imm_reg_gen_ctx.vm;
+            vector_imm_reg_gen.vreg_group   = reg_ctx.vector_imm_reg_gen_ctx.vreg_group;
+        end
+    endfunction
+
+    function void select_active_context();
+        register_context next_context;
+        next_context = get_context();
+        if(next_context == active_reg_context)
+            return;
+        sync_active_context();
+        load_context(next_context);
+    endfunction
+
 
     constraint reg_c{
-        if(inst_gen_cfg.gpr_full_valid){regs.size() == 32;}
+        if(cfg.gpr_full_valid){regs.size() == 32;}
         else{
         regs.size() inside{[10:32]};}
         unique{regs};
@@ -139,7 +284,7 @@ class register_pool extends uvm_object;
     }
 
     constraint freg_c{
-        if(inst_gen_cfg.fpr_full_valid){fregs.size() == 32;}
+        if(cfg.fpr_full_valid){fregs.size() == 32;}
         else{
         fregs.size() inside{[8:32]};}
         unique{fregs};
@@ -181,7 +326,7 @@ class register_pool extends uvm_object;
             //regs[] need 3 reg at least for rs1, rs2, rd random
             if(regs.size()>3) begin
                 tmp = regs.pop_front();
-                //gpr0 is always zero, can not used for branch index 
+                //gpr0 is always zero, can not used for branch index
                 if(tmp !==0 )begin
                     branch_regs.push_back(tmp);
                     i=i+1;
@@ -212,7 +357,7 @@ function branch_reg_free();
         sp_base_valid = 1'b0;
         // RV32 C.JAL writes x1 implicitly. Keep the link register out of the
         // ordinary LS base pool so taking C.JAL cannot invalidate LS metadata.
-        if((RVC inside inst_gen_cfg.support_inst_set) && inst_gen_cfg.xlen == 32) begin
+        if(cfg.support_rvc && cfg.xlen == 32) begin
             foreach(regs[j]) begin
                 if(regs[j] == 5'd1) begin
                     regs.delete(j);
@@ -222,7 +367,7 @@ function branch_reg_free();
         end
         // x2 is maintained as the RVC stack base and must not be selected as
         // an ordinary destination register after LS base initialization.
-        if(RVC inside inst_gen_cfg.support_inst_set) begin
+        if(cfg.support_rvc) begin
             foreach(regs[j]) begin
                 if(regs[j] == 5'd2) begin
                     regs.delete(j);
@@ -233,7 +378,7 @@ function branch_reg_free();
         // When RVC is enabled, reserve one initialized LS base encodable by
         // C.LW/C.SW. If the randomized pool lacks x8..x15, inject x8 only
         // into this per-test pool before it is initialized by the LS sequence.
-        if(RVC inside inst_gen_cfg.support_inst_set) begin
+        if(cfg.support_rvc) begin
             c_base_index = -1;
             foreach(regs[j])
                 if((regs[j] inside {[5'd8:5'd15]}) && c_base_index == -1)

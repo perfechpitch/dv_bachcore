@@ -11,10 +11,7 @@ class ls_base_config_sequence extends uvm_object;
 
     virtual function void seq_gen(ls_seq_config ls_seq_cfg,inst_generator   inst_gen,addr_space_generator addr_space_gen);
         ls_base_info.inst_seq_cfg = ls_seq_cfg;
-        inst_gen.ls_addr_gen.share_layout = ls_seq_cfg.share_layout;
-        inst_gen.ls_addr_gen.hart         = ls_seq_cfg.hart;
-        inst_gen.ls_addr_gen.dtcm_base    = ls_seq_cfg.dtcm_base;
-        inst_gen.ls_addr_gen.share_base   = ls_seq_cfg.share_base;
+        inst_gen.ls_addr_gen.select_active_context();
         assert(ls_base_info.randomize());
         get_base_reg(ls_seq_cfg,inst_gen);
     endfunction
@@ -39,7 +36,7 @@ class ls_base_config_sequence extends uvm_object;
         ls_base_info.base_num = inst_gen.reg_pool.base_reg_get(ls_base_info.base_num,ls_s);
         for(int i=0; i<ls_base_info.base_num; i++)
             inst_gen.ls_addr_gen.bind_base(ls_a[i]);
-        if(RVC inside inst_gen.reg_pool.inst_gen_cfg.support_inst_set) begin
+        if(inst_gen.reg_pool.cfg.support_rvc) begin
             sp_a = inst_gen.ls_addr_gen.get_ls_addr(LS_VALID, 4, 4);
             sp_s.addr_type = LS_VALID;
             sp_s.mode      = ls_seq_cfg.ls_mode;
@@ -60,7 +57,7 @@ class ls_base_config_sequence extends uvm_object;
 
         // Write x2 before gen_ls_base_cfg_seq(): that routine may insert SAFE
         // instructions, including C.ADDI4SPN/C.ADDI16SP, while configuring bases.
-        if(RVC inside inst_gen.reg_pool.inst_gen_cfg.support_inst_set) begin
+        if(inst_gen.reg_pool.cfg.support_rvc) begin
             $fwrite(inst_gen.gen_file,
                     ("//--- write RVC stack base x2 = %0h win=[%0h,%0h)\n"),
                     sp_a.base_val, sp_a.win_lo, sp_a.win_hi);

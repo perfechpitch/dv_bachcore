@@ -2,6 +2,8 @@ package inst_gen_pkg;
 
     import  uvm_pkg::*;
     import  cpu_set_pkg::*;
+    import  core_context_types_pkg::*;
+    import  core_context_pkg::*;
     //  
     // If any files in this package need reference a class in other
     // package, user should import the package at here ,and explicitly
@@ -18,7 +20,10 @@ package inst_gen_pkg;
 `include "csr_config.sv"
 `include "ops_gen_config.sv"
 
-`include "addr_space_generator/addr_space_e.sv"
+`include "resource/config/fetch_addr_config.sv"
+`include "resource/config/ls_addr_config.sv"
+`include "resource/config/register_pool_config.sv"
+
 `include "addr_space_generator/addr_space_config.sv"
 `include "addr_space_generator/seg_generator.sv"
 `include "addr_space_generator/seg_pool.sv"
@@ -28,11 +33,10 @@ package inst_gen_pkg;
 `include "addr_space_generator/pte_generator.sv"
 `include "addr_space_generator/addr_space_generator.sv"
 
-`include "ls_addr_e.sv"
-`include "ls_addr_generator.sv"
-`include "fetch_addr_generator.sv"
+`include "resource/ls_addr_generator.sv"
+`include "resource/fetch_addr_generator.sv"
 
-`include "register_pool.sv"
+`include "resource/register_pool.sv"
 
 `include "inst_group/base_inst.sv"
 `include "inst_group/dsa_custom_inst.sv"

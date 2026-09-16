@@ -119,7 +119,7 @@ class loop_sequence extends base_inst_sequence;
             end
             $fwrite(inst_gen.gen_file,("//---------------li branch reg end\n"));
             $fwrite(inst_gen.gen_file,("loop_seq%0d_loop%0d:\n"),seq_num,i);
-            loop_target_pc[i] = inst_gen.inst_addr;
+            loop_target_pc[i] = inst_gen.get_inst_addr();
             gen_rand_inst(inst_gen,loop_seq_info.target_inst_num[i],loop_seq_info.ls_inst_dist,loop_seq_info.safe_inst_dist,loop_seq_info.flush_inst_dist,loop_seq_info.except_inst_dist,'d0);
 
             ops[i][31] = 1'b1;
@@ -132,7 +132,7 @@ class loop_sequence extends base_inst_sequence;
             `addi(i_reg_num[i],i_reg_num[i],loop_stride[i]);
             // B-type immediate is relative to this branch PC.  Measure the
             // actual target PC instead of reconstructing it from inst_count.
-            branch_delta = loop_target_pc[i] - inst_gen.inst_addr;
+            branch_delta = loop_target_pc[i] - inst_gen.get_inst_addr();
             {ops[i][7],ops[i][30:25],ops[i][11:8]} =
                 {branch_delta[12],branch_delta[10:5],
                  branch_delta[4:1],branch_delta[11]};
@@ -164,7 +164,7 @@ class loop_sequence extends base_inst_sequence;
             `uvm_info("LOOP_TAIL",
                       $sformatf("level=%0d inst=%0s target_pc=0x%0h branch_pc=0x%0h delta=%0d weights(blt=%0d,loop=%0d)",
                                 i, inst_gen.branch_inst_gen.inst_name, loop_target_pc[i],
-                                inst_gen.inst_pc_history[$], $signed(branch_delta),
+                                inst_gen.get_last_inst_pc(), $signed(branch_delta),
                                 branch_seq_cfg.loop_blt_weight,
                                 branch_seq_cfg.loop_custom_weight), UVM_LOW)
             inst_gen.branch_inst_gen.loop_context = 1'b0;

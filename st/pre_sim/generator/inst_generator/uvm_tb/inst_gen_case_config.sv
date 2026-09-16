@@ -7,6 +7,10 @@ typedef enum{SAFE_SEQ_DISABLE,LS_SEQ_DISABLE,BRANCH_SEQ_DISABLE,FLUSH_INST_ENABL
              }test_feature_e;
 typedef enum{SPIKE_SIM,RISCV_TESTS_SIM,RAND_SIM}sim_mode_e;
 class inst_gen_case_config extends uvm_object;
+    fetch_addr_config     fetch_addr_cfg;
+    ls_addr_config        ls_addr_cfg;
+    register_pool_config  register_pool_cfg;
+    tcm_hart_e             default_core = HART_MU;
     inst_gen_config    inst_gen_cfg;  //for inst_name
     inst_seq_type_config    inst_seq_type_cfg;  //for seq type gen
     inst_seq_config         flush_seq_cfg;       //for flush seq base info gen
@@ -61,6 +65,10 @@ class inst_gen_case_config extends uvm_object;
         `uvm_field_sarray_enum (test_feature_e,   test_feature,  UVM_DEFAULT)
         `uvm_field_int  (float_en,  UVM_DEFAULT)
         `uvm_field_int  (global_disable_ls,  UVM_DEFAULT)
+        `uvm_field_object(fetch_addr_cfg, UVM_DEFAULT)
+        `uvm_field_object(ls_addr_cfg, UVM_DEFAULT)
+        `uvm_field_object(register_pool_cfg, UVM_DEFAULT)
+        `uvm_field_enum(tcm_hart_e, default_core, UVM_DEFAULT)
 
         `uvm_field_object(csr_cfg, UVM_DEFAULT)
         `uvm_field_object(inst_seq_type_cfg, UVM_DEFAULT)
@@ -78,6 +86,9 @@ class inst_gen_case_config extends uvm_object;
         string test_name;
         super.new(name);
         inst_gen_cfg        = new();
+        fetch_addr_cfg      = new();
+        ls_addr_cfg         = new();
+        register_pool_cfg   = new();
         inst_seq_type_cfg   = new();
         safe_seq_cfg        = new();
         flush_seq_cfg       = new();
@@ -98,6 +109,7 @@ class inst_gen_case_config extends uvm_object;
         string test_mode_string;
         string test_name;
         int xlen_arg;
+        int fetch_pct_arg;
         int loop_blt_weight_arg;
         int loop_custom_weight_arg;
         if($value$plusargs("xlen=%d", xlen_arg)) begin
@@ -106,6 +118,16 @@ class inst_gen_case_config extends uvm_object;
         if(inst_gen_cfg.xlen != 32 && inst_gen_cfg.xlen != 64) begin
             `uvm_fatal("XLEN", $sformatf("Unsupported xlen=%0d; only 32 or 64 are legal", inst_gen_cfg.xlen))
         end
+        if($value$plusargs("fetch_start_exception_pct=%d", fetch_pct_arg))
+            fetch_addr_cfg.start_exception_pct = fetch_pct_arg;
+        if($value$plusargs("fetch_control_exception_pct=%d", fetch_pct_arg))
+            fetch_addr_cfg.control_exception_pct = fetch_pct_arg;
+        if($value$plusargs("fetch_end_exception_pct=%d", fetch_pct_arg))
+            fetch_addr_cfg.end_exception_pct = fetch_pct_arg;
+        fetch_addr_cfg.ialign_bytes =
+            (RVC inside support_inst_set) ? 2 : 4;
+        register_pool_cfg.support_rvc = RVC inside support_inst_set;
+        register_pool_cfg.xlen = inst_gen_cfg.xlen;
         if($test$plusargs("support_custom") && !(CUSTOM inside support_inst_set)) begin
             support_inst_set = new[support_inst_set.size()+1](support_inst_set);
             support_inst_set[support_inst_set.size()-1] = CUSTOM;
@@ -148,21 +170,23 @@ class inst_gen_case_config extends uvm_object;
             bit[63:0] base_h;
             if($value$plusargs("share_layout=%s",layout_s))begin
                 case(layout_s)
-                    "RAND_3CORE"  : ls_seq_cfg.share_layout = SHARE_RAND_3CORE;
-                    "SW_PARTITION": ls_seq_cfg.share_layout = SHARE_SW_PARTITION;
+                    "RAND_3CORE"  : ls_addr_cfg.share_layout = SHARE_RAND_3CORE;
+                    "SW_PARTITION": ls_addr_cfg.share_layout = SHARE_SW_PARTITION;
                 endcase
             end
             if($value$plusargs("hart=%s",hart_s))begin
                 case(hart_s)
-                    "MU" : ls_seq_cfg.hart = HART_MU;
-                    "VU" : ls_seq_cfg.hart = HART_VU;
-                    "DTE": ls_seq_cfg.hart = HART_DTE;
+                    "MU" : default_core = HART_MU;
+                    "VU" : default_core = HART_VU;
+                    "DTE": default_core = HART_DTE;
                 endcase
             end
-            if($value$plusargs("dtcm_base=%h",base_h))
-                ls_seq_cfg.dtcm_base = base_h;
+            if($value$plusargs("dtcm_base=%h",base_h)) begin
+                foreach(ls_addr_cfg.dtcm_base[i])
+                    ls_addr_cfg.dtcm_base[i] = base_h;
+            end
             if($value$plusargs("share_base=%h",base_h))
-                ls_seq_cfg.share_base = base_h;
+                ls_addr_cfg.share_base = base_h;
         end
         if(test_mode == INT_TEST) begin
             float_en = 0;
@@ -195,6 +219,9 @@ class inst_gen_case_config extends uvm_object;
         inst_gen_cfg.vmem_file = vmem_file;
         inst_gen_cfg.support_inst_set = support_inst_set;
         inst_gen_cfg.support_prv_mode = support_prv_mode;
+        fetch_addr_cfg.check();
+        ls_addr_cfg.check();
+        register_pool_cfg.check();
     endfunction
 
     function test_feature_convert();
@@ -219,8 +246,10 @@ class inst_gen_case_config extends uvm_object;
             end
             if (test_feature[i] == LS_BASE_INFO_CONFIRM)      ls_seq_cfg.base_confirm = 1'b1;
 
-            if (test_feature[i] == GPR_FULL_VALID)      inst_gen_cfg.gpr_full_valid = 1'b1;
-            if (test_feature[i] == FPR_FULL_VALID)      inst_gen_cfg.fpr_full_valid = 1'b1;
+            if (test_feature[i] == GPR_FULL_VALID)
+                register_pool_cfg.gpr_full_valid = 1'b1;
+            if (test_feature[i] == FPR_FULL_VALID)
+                register_pool_cfg.fpr_full_valid = 1'b1;
             if (test_feature[i] == DISABLE_4K_PAGE)     addr_space_cfg.page_size_dist[0] = 0;
             if (test_feature[i] == DISABLE_2M_PAGE)     addr_space_cfg.page_size_dist[0] = 0;
             if (test_feature[i] == DISABLE_1G_PAGE)     addr_space_cfg.page_size_dist[0] = 0;

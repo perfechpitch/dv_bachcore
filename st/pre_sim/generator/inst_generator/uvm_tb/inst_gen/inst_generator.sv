@@ -23,15 +23,8 @@ class inst_generator extends uvm_component;
     addr_space_generator    addr_space_gen;
     ls_addr_generator       ls_addr_gen;
     fetch_addr_generator    fetch_addr_gen;
-    bit[63:0]               task_start_pc;
-    bit[63:0]               inst_pc_history[$];
-    int unsigned            task_inst_history_start;
-    bit                     core_stream_initialized;
-    bit                     task_body_enable;
 
     int       inst_cnt;
-    bit[63:0] inst_addr;
-    bit[39:0] inst_paddr;
 
     ri_inst_generator   ri_inst_gen;
     int queue_size;
@@ -304,10 +297,7 @@ class inst_generator extends uvm_component;
         ops_gen_cfg = new();
 
         ri_inst_gen = new();
-        ls_addr_gen = new();
-        fetch_addr_gen = new();
         inst_cnt = 0;
-        core_stream_initialized = 1'b0;
     endfunction : new
 
     task pre_main_phase(uvm_phase phase);
@@ -316,43 +306,15 @@ class inst_generator extends uvm_component;
         inst_queue_gen();
     endtask
 
-    // Fetch PC is independent of addr_space_gen.
-    // task0 starts at 'h0; later tasks continue from the current inst_addr.
-    //------------------------------------------------------------------
-    // fetch_space_avail
-    //   判断 ITCM 线性区还能不能再铺指令。
-    //   - inst_addr 在 ['h0, `ITCM_SIZE) 内：至少还要留下当前指令 + pass_quit
-    //     （各 'h4 字节，合计 'h8）。不够则返回 0。
-    //   - inst_addr == `ITCM_SIZE：已经铺满，返回 0。
-    //   - inst_addr >  `ITCM_SIZE：BOOT/异常入口，不按 4KB 截断，返回 1。
-    //------------------------------------------------------------------
+    // Fetch-address generation and per-core PC state live in
+    // fetch_addr_generator/core_context.  inst_generator only consumes the
+    // selected context while emitting instructions.
     function bit fetch_space_avail();
-        if(fetch_addr_gen.exception_injected)
-            return 1'b0;
-        if(inst_addr > `ITCM_SIZE)
-            return 1'b1;
-        if(inst_addr + 'h8 <= `ITCM_SIZE)
-            return 1'b1;
-        if(fetch_addr_gen.allow_end_overflow(inst_addr)) begin
-            if(inst_addr < `ITCM_SIZE)
-                return 1'b1;
-            fetch_addr_gen.commit_end_fault(inst_addr, inst_addr);
-        end
-        return 1'b0;
+        return fetch_addr_gen.fetch_space_avail();
     endfunction
 
     function bit fetch_space_avail_for(int unsigned inst_bytes);
-        if(fetch_addr_gen.exception_injected)
-            return 1'b0;
-        if(inst_addr > `ITCM_SIZE)
-            return 1'b1;
-        if(fetch_addr_gen.end_fault_armed) begin
-            if(inst_addr + inst_bytes <= `ITCM_SIZE)
-                return 1'b1;
-            fetch_addr_gen.commit_end_fault(inst_addr, `ITCM_SIZE);
-            return 1'b0;
-        end
-        return (inst_addr + inst_bytes + 'h4 <= `ITCM_SIZE);
+        return fetch_addr_gen.fetch_space_avail_for(inst_bytes);
     endfunction
 
     function void vmem_write_word(bit [39:0] byte_addr);
@@ -380,48 +342,37 @@ class inst_generator extends uvm_component;
                                   int unsigned inst_bytes);
         bit [39:0] first_word_idx;
         bit [39:0] second_word_idx;
-        first_word_idx  = inst_paddr >> 2;
-        second_word_idx = (inst_paddr + 2) >> 2;
-        vmem_write_halfword(inst_paddr, data[15:0]);
+        first_word_idx  = fetch_addr_gen.current_paddr() >> 2;
+        second_word_idx = (fetch_addr_gen.current_paddr() + 2) >> 2;
+        vmem_write_halfword(fetch_addr_gen.current_paddr(), data[15:0]);
         if(inst_bytes == 4)
-            vmem_write_halfword(inst_paddr + 2, data[31:16]);
-        vmem_write_word(inst_paddr);
+            vmem_write_halfword(fetch_addr_gen.current_paddr() + 2, data[31:16]);
+        vmem_write_word(fetch_addr_gen.current_paddr());
         if((inst_bytes == 4) && (second_word_idx != first_word_idx))
-            vmem_write_word(inst_paddr + 2);
+            vmem_write_word(fetch_addr_gen.current_paddr() + 2);
     endfunction
 
     function void truncate_fetch_space();
-        if(inst_addr >= `ITCM_SIZE)
+        if(fetch_addr_gen.current_pc() >= `ITCM_SIZE)
             return;
         $fwrite(gen_file,
                 "/*PC: %16h -> %10h*/ // Warning --- ITCM 4KB full, truncate with pass_quit\n",
-                inst_addr, inst_paddr);
+                fetch_addr_gen.current_pc(), fetch_addr_gen.current_paddr());
         vmem_write_inst(pass_quit_inst, 4);
-        inst_addr  = inst_addr + 'h4;
-        inst_paddr = inst_paddr + 'h4;
+        fetch_addr_gen.force_advance(4);
         inst_cnt   = 'h0;
     endfunction
 
     function void begin_core_stream(int new_gen_file,
-                                    int new_vmem_file,
-                                    tcm_hart_e core);
+                                    int new_vmem_file);
         gen_file                = new_gen_file;
         vmem_file               = new_vmem_file;
         inst_gen_cfg.gen_file   = new_gen_file;
         inst_gen_cfg.vmem_file  = new_vmem_file;
         ri_inst_gen.gen_file    = new_gen_file;
         mem_file.delete();
-        inst_pc_history.delete();
-        task_start_pc           = '0;
-        task_inst_history_start = 0;
-        inst_addr               = '0;
-        inst_paddr              = '0;
         inst_cnt                = `ITCM_SIZE / 'h4;
-        core_stream_initialized = 1'b1;
-        task_body_enable        = 1'b0;
-        ls_addr_gen.hart        = core;
-        fetch_addr_gen.configure_core(
-            core, RVC inside inst_gen_cfg.support_inst_set);
+        fetch_addr_gen.begin_core_stream();
     endfunction
 
     function void switch_task(int task_id,
@@ -429,44 +380,61 @@ class inst_generator extends uvm_component;
                               bit[63:0] configured_start_pc = '0,
                               bit allow_fetch_exception = 1'b0);
         bit[63:0] selected_start_pc;
+        fetch_context ctx;
         if(gen_file == 0) begin
             gen_file  = inst_gen_cfg.gen_file;
             vmem_file = inst_gen_cfg.vmem_file;
         end
-        if(!core_stream_initialized) begin
-            inst_addr               = '0;
-            inst_paddr              = '0;
-            inst_cnt                = `ITCM_SIZE / 'h4;
-            core_stream_initialized = 1'b1;
-        end
-        fetch_addr_gen.begin_task(allow_fetch_exception);
-        task_body_enable = fetch_addr_gen.get_task_start_pc(
-                               use_configured_start_pc ? configured_start_pc :
-                               inst_addr,
-                               selected_start_pc);
-        task_start_pc = selected_start_pc;
-        task_inst_history_start = inst_pc_history.size();
-        if(!task_body_enable)
+        ctx = fetch_addr_gen.get_context();
+        ctx.task_body_enable = fetch_addr_gen.start_task(
+                                   use_configured_start_pc,
+                                   configured_start_pc,
+                                   allow_fetch_exception,
+                                   selected_start_pc);
+        if(!ctx.task_body_enable)
             return;
-        if(use_configured_start_pc) begin
-            inst_addr  = configured_start_pc;
-            inst_paddr = configured_start_pc[39:0];
-        end
-        task_start_pc = inst_addr;
-        $fwrite(vmem_file, "@%0h\n", inst_paddr >> 'h2);
+        $fwrite(vmem_file, "@%0h\n", fetch_addr_gen.current_paddr() >> 'h2);
         $fwrite(gen_file,
                 "//========== TASK[%0d] start PC=%16h itcm_left=%0hB ==========\n",
-                task_id, task_start_pc,
-                (inst_addr < `ITCM_SIZE) ? (`ITCM_SIZE - inst_addr) : 'h0);
+                task_id, ctx.task_start_pc,
+                (ctx.current_pc < ctx.itcm_end) ?
+                    (ctx.itcm_end - ctx.current_pc) : 'h0);
     endfunction
 
     function bit[63:0] rand_pc_in_current_task();
-        int unsigned index;
-        if(inst_pc_history.size() <= task_inst_history_start)
-            return task_start_pc;
-        index = $urandom_range(inst_pc_history.size() - 1,
-                               task_inst_history_start);
-        return inst_pc_history[index];
+        return fetch_addr_gen.random_pc_in_current_task();
+    endfunction
+
+    function bit[63:0] get_inst_addr();
+        return fetch_addr_gen.current_pc();
+    endfunction
+
+    function bit[39:0] get_inst_paddr();
+        return fetch_addr_gen.current_paddr();
+    endfunction
+
+    function void set_inst_addr(bit[63:0] vaddr, bit[39:0] paddr);
+        fetch_addr_gen.set_current_pc(vaddr, paddr);
+    endfunction
+
+    function bit[63:0] get_task_start_pc();
+        return fetch_addr_gen.get_context().task_start_pc;
+    endfunction
+
+    function bit task_body_enabled();
+        return fetch_addr_gen.get_context().task_body_enable;
+    endfunction
+
+    function bit fetch_exception_injected();
+        return fetch_addr_gen.get_context().exception_injected;
+    endfunction
+
+    function int unsigned get_task_inst_count();
+        return fetch_addr_gen.task_inst_count();
+    endfunction
+
+    function bit[63:0] get_last_inst_pc();
+        return fetch_addr_gen.last_inst_pc();
     endfunction
 
     function void get_specified_rand_inst(inst_e inst_name);
@@ -692,25 +660,24 @@ endfunction
 function void inst_addr_print();
     if(!fetch_space_avail())
         return;
-    $fwrite(gen_file, "/*PC: %16h -> %10h*/", inst_addr, inst_paddr);
+    $fwrite(gen_file, "/*PC: %16h -> %10h*/",
+            fetch_addr_gen.current_pc(), fetch_addr_gen.current_paddr());
 endfunction
 function void inst_print();
     int unsigned inst_bytes;
     inst_bytes = (inst[1:0] == 2'b11) ? 4 : 2;
     if(!fetch_space_avail_for(inst_bytes)) begin
-        if(!fetch_addr_gen.exception_injected)
+        if(!fetch_exception_injected())
             truncate_fetch_space();
         return;
     end
     if($test$plusargs("debug_print"))
         $display(" inst_cnt = %0h,inst=%0h", inst_cnt, inst);
-    inst_pc_history.push_back(inst_addr);
     vmem_write_inst(inst, inst_bytes);
-    inst_addr  = inst_addr + inst_bytes;
-    inst_paddr = inst_paddr + inst_bytes;
+    fetch_addr_gen.commit_inst(inst_bytes);
     inst_cnt   = inst_cnt - 1;
     reg_pool.free_reg();
-    if(!fetch_space_avail() && !fetch_addr_gen.exception_injected)
+    if(!fetch_space_avail() && !fetch_exception_injected())
         truncate_fetch_space();
 endfunction
 endclass

@@ -28,10 +28,6 @@ class ls_seq_config extends inst_seq_config;
     rand int unsigned ls_base_addr_type_dist[$];
 
     rand int unsigned base_change_dist;
-    share_layout_e  share_layout = SHARE_RAND_3CORE;
-    tcm_hart_e      hart = HART_MU;
-    bit[63:0]       dtcm_base  = `DTCM_BASE;
-    bit[63:0]       share_base = `SHARE_BASE;
  `uvm_object_utils_begin(ls_seq_config)
         `uvm_field_sarray_int(ls_base_addr_type_dist, UVM_DEFAULT | UVM_DEC)
         `uvm_field_sarray_int(ls_seq_type_dist, UVM_DEFAULT|UVM_DEC)
@@ -50,10 +46,6 @@ class ls_seq_config extends inst_seq_config;
         `uvm_field_int(other_dist, UVM_DEFAULT|UVM_DEC)
 
         `uvm_field_int(base_change_dist, UVM_DEFAULT|UVM_DEC)
-        `uvm_field_enum(share_layout_e, share_layout, UVM_DEFAULT)
-        `uvm_field_enum(tcm_hart_e, hart, UVM_DEFAULT)
-        `uvm_field_int(dtcm_base, UVM_DEFAULT|UVM_HEX)
-        `uvm_field_int(share_base, UVM_DEFAULT|UVM_HEX)
 
     `uvm_object_utils_end
     // new - constructor

@@ -1,4 +1,5 @@
 +incdir+.
++incdir+core_context
 +incdir+inst_gen
 +incdir+inst_seq_type_gen
 +incdir+inst_seq_gen
@@ -6,6 +7,8 @@
 +incdir+registry
 +incdir+../../../input/scenario
 ../bench/define/cpu_set_pkg.sv
+core_context/core_context_types_pkg.sv
+core_context/core_context_pkg.sv
 inst_gen/inst_gen_pkg.sv
 inst_seq_type_gen/inst_seq_type_pkg.sv
 inst_seq_gen/inst_seq_pkg.sv

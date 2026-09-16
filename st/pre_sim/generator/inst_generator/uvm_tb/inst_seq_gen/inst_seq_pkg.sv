@@ -2,6 +2,7 @@ package inst_seq_pkg;
     import  uvm_pkg::*;
     import  inst_seq_type_pkg::*;
     import  inst_gen_pkg::*;
+    import  core_context_types_pkg::*;
     import  cpu_set_pkg::*;
     //  
     // If any files in this package need reference a class in other

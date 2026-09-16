@@ -116,4 +116,3 @@ typedef struct {
     bit[63:0]       vaddr;
     bit[63:0]       paddr;
 }page_4K_pte_info_s;
-                          

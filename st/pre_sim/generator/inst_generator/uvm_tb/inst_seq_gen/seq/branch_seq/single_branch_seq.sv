@@ -26,9 +26,9 @@ class single_branch_sequence extends base_inst_sequence;
         // Generate the target block first, then place a backward branch whose
         // immediate is the measured byte distance.  This works for 16/32-bit
         // mixed instruction streams without output fixups.
-        branch_target_pc = inst_gen.inst_addr;
+        branch_target_pc = inst_gen.get_inst_addr();
         gen_rand_inst(inst_gen,branch_seq_info.target_inst_num,branch_seq_info.ls_inst_dist,branch_seq_info.safe_inst_dist,branch_seq_info.flush_inst_dist,branch_seq_info.except_inst_dist,'d0);
-        branch_delta = branch_target_pc - inst_gen.inst_addr;
+        branch_delta = branch_target_pc - inst_gen.get_inst_addr();
         inst_gen.branch_imm = branch_delta;
         inst_gen.branch_inst_gen.branch_is_jump = branch_seq_info.branch_is_jump;
         inst_gen.branch_inst_gen.branch_delta   = branch_delta;

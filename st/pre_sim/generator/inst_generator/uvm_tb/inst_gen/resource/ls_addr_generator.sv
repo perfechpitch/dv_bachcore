@@ -12,37 +12,54 @@
 // 不越界原则：先裁 EA，再反推 imm，而不是先随机 12bit 再碰运气。
 //----------------------------------------------------------------------
 class ls_addr_generator extends uvm_object;
-    share_layout_e  share_layout;
-    tcm_hart_e      hart;
-    bit[63:0]       dtcm_base;
-    bit[63:0]       share_base;
-    // 已写入 GPR 的 base：用 base_val 找回窗口，供 get_ls_imm / ls_imm_fix
-    ls_addr_s       bound_base[$];
+    ls_addr_config    cfg;
+    core_context_pool context_pool;
+    protected ls_context active_ls_context;
 
-    `uvm_object_utils_begin(ls_addr_generator)
-        `uvm_field_enum(share_layout_e, share_layout, UVM_DEFAULT)
-        `uvm_field_enum(tcm_hart_e, hart, UVM_DEFAULT)
-        `uvm_field_int(dtcm_base, UVM_DEFAULT | UVM_HEX)
-        `uvm_field_int(share_base, UVM_DEFAULT | UVM_HEX)
-    `uvm_object_utils_end
+    `uvm_object_utils(ls_addr_generator)
 
     function new (string name = "ls_addr_generator");
         super.new(name);
-        share_layout = SHARE_RAND_3CORE;
-        hart         = HART_MU;
-        dtcm_base    = `DTCM_BASE;
-        share_base   = `SHARE_BASE;
     endfunction : new
+
+    function ls_context get_context();
+        if(context_pool == null)
+            `uvm_fatal("LS_ADDR_CONTEXT", "ls_addr_generator has no core_context_pool")
+        return context_pool.get_ls_context();
+    endfunction
+
+    function void select_active_context();
+        active_ls_context = get_context();
+    endfunction
+
+    function ls_context get_active_context();
+        if(active_ls_context == null)
+            select_active_context();
+        return active_ls_context;
+    endfunction
+
+    function void configure_active_context();
+        ls_context ctx;
+        int unsigned core_index;
+        if(cfg == null)
+            `uvm_fatal("LS_ADDR_CFG", "ls_addr_config has not been bound")
+        ctx = get_context();
+        active_ls_context = ctx;
+        core_index = context_pool.get_active_context().core_index;
+        ctx.hart = tcm_hart_e'(core_index);
+        ctx.dtcm_base = cfg.dtcm_base[core_index];
+        ctx.initialized = 1'b1;
+    endfunction
 
     // 换一批 base 前清空绑定。ls_base_config_seq 每次配 base 都会调。
     function void reset_bases();
-        bound_base.delete();
+        get_active_context().bound_base.delete();
     endfunction
 
     // SW_PARTITION 下一 user 内三个 hart 槽的起始偏移（不含 share_base/user_id）。
     // MU='h0, VU=`HART_SLOT(='h2A0), DTE=`HART_SLOT*2(='h540)。槽长 `HART_SLOT。
     function bit[63:0] hart_slot_base();
-        case(hart)
+        case(get_active_context().hart)
             HART_MU : return 'h0;
             HART_VU : return `HART_SLOT;
             HART_DTE: return `HART_SLOT * 2;
@@ -68,17 +85,19 @@ class ls_addr_generator extends uvm_object;
     //     镜像里不含 share_base / user_id，运行时由各 user 自己加基址。
     //------------------------------------------------------------------
     function void get_window(ls_mem_type_e mem_type, output bit[63:0] win_lo, output bit[63:0] win_hi);
+        ls_context ctx;
+        ctx = get_active_context();
         if(mem_type == LS_MEM_DTCM)begin
-            win_lo = dtcm_base;
-            win_hi = dtcm_base + `DTCM_SIZE;
+            win_lo = ctx.dtcm_base;
+            win_hi = ctx.dtcm_base + cfg.dtcm_size[int'(ctx.hart)];
         end
-        else if(share_layout == SHARE_SW_PARTITION)begin
+        else if(cfg.share_layout == SHARE_SW_PARTITION)begin
             win_lo = hart_slot_base();
             win_hi = win_lo + `HART_SLOT;
         end
         else begin
-            win_lo = share_base;
-            win_hi = share_base + `SHARE_SIZE;
+            win_lo = cfg.share_base;
+            win_hi = cfg.share_base + cfg.share_size;
         end
     endfunction
 
@@ -163,7 +182,7 @@ class ls_addr_generator extends uvm_object;
     endfunction
 
     function void bind_base(ls_addr_s a);
-        bound_base.push_back(a);
+        get_active_context().bound_base.push_back(a);
     endfunction
 
     // ls_s.vaddr 存的是当时写入 GPR 的 base_val。按值找回窗口。
@@ -171,12 +190,14 @@ class ls_addr_generator extends uvm_object;
     // 避免 get_ls_imm 空指针，但窗口可能不准（正常路径都会 bind）。
     function ls_addr_s find_bound(bit[63:0] base_val);
         ls_addr_s a;
-        foreach(bound_base[i])begin
-            if(bound_base[i].base_val == base_val)
-                return bound_base[i];
+        ls_context ctx;
+        ctx = get_active_context();
+        foreach(ctx.bound_base[i])begin
+            if(ctx.bound_base[i].base_val == base_val)
+                return ctx.bound_base[i];
         end
-        if(bound_base.size() != 0)
-            return bound_base[0];
+        if(ctx.bound_base.size() != 0)
+            return ctx.bound_base[0];
         a.base_val = base_val;
         a.win_lo   = base_val;
         a.win_hi   = base_val + 'h800;
@@ -309,11 +330,13 @@ class ls_addr_generator extends uvm_object;
     // window, then move the bound-base metadata with the architectural state.
     function bit signed [9:0] get_c_addi16sp_imm(ref addr_structure_s sp_s);
         ls_addr_s      b;
+        ls_context ctx;
         int signed     legal_imm[$];
         int signed     selected_imm;
         longint signed next_base;
         bit             found;
 
+        ctx = get_active_context();
         b = find_bound(sp_s.vaddr);
         for(int signed imm = -512; imm <= 496; imm += 16) begin
             if(imm != 0) begin
@@ -332,9 +355,9 @@ class ls_addr_generator extends uvm_object;
 
         next_base = $signed(b.base_val) + selected_imm;
         found = 1'b0;
-        foreach(bound_base[i]) begin
-            if(!found && bound_base[i].base_val == sp_s.vaddr) begin
-                bound_base[i].base_val = next_base;
+        foreach(ctx.bound_base[i]) begin
+            if(!found && ctx.bound_base[i].base_val == sp_s.vaddr) begin
+                ctx.bound_base[i].base_val = next_base;
                 found = 1'b1;
             end
         end
