@@ -310,15 +310,8 @@ def create_batch_process():
     except IOError as exc:
         die("[python] cannot open %s\n:%s" % (log_abs, exc))
 
-    zombie = [0]
     proc_num = 0
-
-    def _on_chld(signum, frame):
-        zombie[0] += 1
-
-    import signal
-
-    signal.signal(signal.SIGCHLD, _on_chld)
+    child_pids = []
 
     for i in range(int(cfg_info["PROC"])):
         pid = os.fork()
@@ -328,16 +321,18 @@ def create_batch_process():
         if pid == 0:
             sub_batch_process("tmp%d" % i, case_sum)
             os._exit(0)
+        child_pids.append(pid)
 
-    while zombie[0] < int(cfg_info["PROC"]):
-        time.sleep(5)
-
-    while zombie[0] > 0:
-        try:
-            os.waitpid(-1, os.WNOHANG)
-        except OSError:
-            pass
-        zombie[0] -= 1
+    # SIGCHLD is not queued: several workers exiting together may produce only
+    # one handler call.  Wait for every PID explicitly so parallel fast cases
+    # cannot leave the regression parent waiting forever.
+    for child_pid in child_pids:
+        while True:
+            try:
+                os.waitpid(child_pid, 0)
+                break
+            except InterruptedError:
+                continue
 
 
 def sub_batch_process(tmp_name, total_case_num):
@@ -409,46 +404,29 @@ def create_recheck_process():
     except IOError as exc:
         die("[python] cannot open %s\n:%s" % (log_abs, exc))
 
-    zombies = [0]
-    num_proc = [0]
-    num_collect = 0
+    active_pids = set()
+    max_proc = int(cfg_info["PROC"])
 
-    def _on_chld(signum, frame):
-        zombies[0] += 1
-        num_proc[0] -= 1
-
-    import signal
-
-    signal.signal(signal.SIGCHLD, _on_chld)
+    def wait_for_one_child():
+        while True:
+            try:
+                child_pid, _ = os.wait()
+                active_pids.discard(child_pid)
+                return
+            except InterruptedError:
+                continue
 
     for key in batch_keys:
+        while len(active_pids) >= max_proc:
+            wait_for_one_child()
         pid = os.fork()
         if pid == 0:
             sub_recheck_process(key)
             os._exit(0)
-        num_proc[0] += 1
-        while num_proc[0] >= int(cfg_info["PROC"]):
-            time.sleep(5)
-        if zombies[0] > 0:
-            while True:
-                try:
-                    collect = os.waitpid(-1, os.WNOHANG)
-                except OSError:
-                    break
-                if collect[0] <= 0:
-                    break
-                num_collect += 1
+        active_pids.add(pid)
 
-    while (fail_case_sum - num_collect) > 0:
-        try:
-            collect = os.waitpid(-1, os.WNOHANG)
-        except OSError:
-            time.sleep(0.1)
-            continue
-        if collect[0] > 0:
-            num_collect += 1
-        else:
-            time.sleep(0.1)
+    while active_pids:
+        wait_for_one_child()
 
 
 def get_recheck_info(batch_key):
