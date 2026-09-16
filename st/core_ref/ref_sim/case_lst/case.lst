@@ -1,0 +1,18 @@
+- case_name      = single_vu
+  uvm_tc         = test
+  batch_times    = 1
+
+- case_name      = single_mu
+  uvm_tc         = test
+  vcs_tb_args    = +CORE_DSA_TYPE=MU
+  batch_times    = 1
+
+- case_name      = single_dte
+  uvm_tc         = test
+  vcs_tb_args    = +CORE_DSA_TYPE=DTE
+  batch_times    = 1
+
+- case_name      = multi_core
+  uvm_tc         = test
+  vcs_tb_args    = +CORE_NUM=3
+  batch_times    = 1

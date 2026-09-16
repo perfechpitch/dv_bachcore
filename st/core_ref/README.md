@@ -4,14 +4,22 @@
 
 ## 运行
 
-推荐从 Pre-Sim 入口执行一个场景：
+Core Ref 固定自测定义在 `ref_sim/case_lst/case.lst`。在该目录直接选择 case：
+
+```sh
+cd st/core_ref/ref_sim
+python3 ../../../verify_tools/script/regression \
+  cmd=single lst=case.lst case=single_vu
+```
+
+当前固定 case 包括 `single_vu`、`single_mu`、`single_dte` 和 `multi_core`。正式 Pre-Sim demo 仍从场景入口执行，因为其 VMEM 和 `task_info.json` 是动态产物：
 
 ```sh
 python3 st/pre_sim/generator/scene_generator/generate.py \
   --scene <scene_name> --mode full
 ```
 
-只生成程序时使用 `--mode inst-gen`；仅校验并更新 `directed.lst` 使用 `--mode sync`。需要独立调试 Core Ref 时，可自行提供包含 `reference_execution_test` 的临时 case list，再调用 `verify_tools/script/regression cmd=single`。`ref_sim/clean` 清理 `sim_single/` 和 generated flist。
+只生成程序时使用 `--mode inst-gen`；仅校验并更新 `directed.lst` 使用 `--mode sync`。`ref_sim/clean` 清理 `sim_single/` 和 generated flist。
 
 ## Core identity
 
