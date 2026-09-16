@@ -70,10 +70,14 @@ class dsa_mmio_library extends uvm_object;
         dte_mmio.reset_mmio();
     endfunction
 
-    function void write(bit [31:0] addr, bit [31:0] data);
+    // Optional request metadata preserves compatibility with legacy addr/data calls.
+    // Core callers pass the request IDs; NOC/debug callers use the zero defaults.
+    function void write(bit [31:0] addr, bit [31:0] data,
+                        bit [15:0] user_id = 16'h0000,
+                        bit [3:0] stream_id = 4'h0);
         case(dsa_type)
             DSA_MMIO_VU:
-                vu_mmio.write(addr, data);
+                vu_mmio.write(addr, data, user_id, stream_id);
             DSA_MMIO_MU:
                 mu_mmio.write(addr, data);
             DSA_MMIO_DTE:

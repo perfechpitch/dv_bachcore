@@ -1,34 +1,132 @@
-class vu_inst_library;
+// Execution-unit split functional reference model.
+// Include through the existing vu_inst_lib_pkg, after definitions/DPI/vu_vv_inst.
+`ifndef VU_INST_LIBRARY_FULL_SPLIT_SV
+`define VU_INST_LIBRARY_FULL_SPLIT_SV
+`ifndef VU_EXECUTION_CONTEXT_SV
+`define VU_EXECUTION_CONTEXT_SV
 
-    protected int log_fd = 0;
+// Shared transient results, source routing and feature metadata.
+// No instruction execution kernels live here. Not a macro queue or timing model.
+class vu_execution_context;
+    int log_fd = 0;
 
-    protected vu_vec_chunk_t lu_vec_result[`VU_MAX_VEC_CHUNKS];
-    protected bit lu_mask_result[`VU_MAX_VL];
-    protected bit [31:0] lu_scalar_result;
-    protected bit lu_vec_valid;
-    protected bit lu_mask_valid;
-    protected bit lu_scalar_valid;
+    // LU results share the same lifetime and routing context as other producers.
+    vu_vec_chunk_t lu_vector_result[`VU_MAX_VEC_CHUNKS];
+    bit lu_mask_result[`VU_MAX_VL];
+    bit [31:0] lu_scalar_result;
+    bit lu_vector_valid;
+    bit lu_mask_valid;
+    bit lu_scalar_valid;
+
+    // Instruction features, populated from LU's catalogue during registration.
+    // These describe the installed instruction objects and survive state clear.
+    typedef struct packed {
+        bit enabled;
+        bit [7:0] src_sel;
+    } lu_mask_feature_s;
+    protected lu_mask_feature_s lu_mask_features[bit [7:0]];
+
+    function void register_lu_mask_feature(
+        input bit [7:0] opcode,
+        input bit enabled,
+        input bit [7:0] src_sel
+    );
+        lu_mask_features[opcode] = {enabled, src_sel};
+    endfunction : register_lu_mask_feature
+
+    function bit lu_uses_mask(input bit [7:0] opcode);
+        if(!lu_mask_features.exists(opcode))
+            return 1'b0;
+        return lu_mask_features[opcode].enabled;
+    endfunction : lu_uses_mask
+
+    function bit [7:0] lu_mask_source(input bit [7:0] opcode);
+        if(!lu_uses_mask(opcode))
+            return 8'h00;
+        return lu_mask_features[opcode].src_sel;
+    endfunction : lu_mask_source
+
+    function bit lu_mask_config_valid(input bit [7:0] opcode);
+        return !lu_uses_mask(opcode) ||
+               lu_mask_source(opcode) inside {`VU_SRC_MRF_P0, `VU_SRC_MRF_P1};
+    endfunction : lu_mask_config_valid
 
     // VEXE slots: 0/1/2=VALU0/1/2, 3/4=VSFU0/1.
-    protected vu_vec_chunk_t vexe_vec_result[5][`VU_MAX_VEC_CHUNKS];
-    protected bit vexe_done[5];
-    protected bit vexe_vec_valid[5];
-    protected bit vexe_scalar_valid[5];
-    protected bit [31:0] vexe_scalar_result[5];
-    protected bit valu0_mask_result[`VU_MAX_VL];
-    protected bit valu0_mask_valid;
+    vu_vec_chunk_t vexe_vec_result[5][`VU_MAX_VEC_CHUNKS];
+    bit vexe_done[5];
+    bit vexe_vec_valid[5];
+    bit vexe_scalar_valid[5];
+    bit [31:0] vexe_scalar_result[5];
+    bit valu0_mask_result[`VU_MAX_VL];
+    bit valu0_mask_valid;
 
-    protected bit mexe_mask_result[`VU_MAX_VL];
-    protected bit mexe_mask_valid;
-    protected bit [31:0] mexe_scalar_result;
-    protected bit mexe_scalar_valid;
+    bit mexe_mask_result[`VU_MAX_VL];
+    bit mexe_mask_valid;
+    bit [31:0] mexe_scalar_result;
+    bit mexe_scalar_valid;
 
-    protected bit [31:0] sexe_result[3];
-    protected bit sexe_valid[3];
+    bit [31:0] sexe_result[3];
+    bit sexe_valid[3];
 
     function void set_log(int fd);
         log_fd = fd;
     endfunction : set_log
+
+    // Classify exactly once at a semantic output/input boundary. Callers omit
+    // this helper for masked passthrough, moves, comparisons and empty reduce.
+    // Scalars are always FP32; a BF16 vector element occupies value[15:0].
+    function automatic bit [31:0] process_fp_result(
+        input vu_mmio_set mmio,
+        input vu_mmio_set::vu_exec_param_s param,
+        input bit [31:0] value,
+        input bit data_type,
+        input int unsigned unit,
+        input bit report_nan,
+        input bit allow_replace,
+        input int replacement_data_type = -1
+    );
+        bit is_nan;
+        bit is_inf;
+        bit negative;
+        bit replacement_bf16;
+        bit [31:0] replacement;
+
+        if(data_type) begin
+            is_nan = value[14:7] == 8'hff && value[6:0] != 0;
+            is_inf = value[14:0] == 15'h7f80;
+            negative = value[15];
+        end else begin
+            is_nan = value[30:23] == 8'hff && value[22:0] != 0;
+            is_inf = value[30:0] == 31'h7f800000;
+            negative = value[31];
+        end
+        if(!param.type_vl.nan_inf_replace_en) begin
+            if(report_nan && is_nan)
+                mmio.report_error(`VU_ERR_NAN, unit);
+            return value;
+        end
+        if(!allow_replace || !(is_nan || is_inf))
+            return value;
+
+        // Normally replacement bits use the actual output precision. A BF16
+        // reduction instead reads the programmed low-16 BF16 pattern and then
+        // expands it to its always-FP32 fd. The call site selects this explicitly.
+        // Scalar SU keeps the default FP32 format, independent of TYPE_VL.
+        replacement_bf16 = replacement_data_type < 0 ? data_type :
+                           (replacement_data_type != 0);
+        replacement = is_nan ? mmio.nan_replace_value_val : mmio.inf_replace_value_val;
+        if(replacement_bf16)
+            replacement = {16'h0, replacement[15:0]};
+        if(is_inf && negative)
+            replacement ^= replacement_bf16 ? 32'h00008000 : 32'h80000000;
+        if(replacement_bf16 && !data_type)
+            replacement = vu_bf16_to_fp32(replacement);
+        else if(!replacement_bf16 && data_type)
+            replacement = vu_fp32_to_bf16(replacement, param.type_vl.round_mode);
+        // A programmed NaN/Inf replacement is not recursively reprocessed.
+        mmio.note_replacement(is_nan);
+        return replacement;
+    endfunction : process_fp_result
 
     static function automatic int unsigned elem_count_per_entry(input bit data_type);
         return vu_vv_inst::elems_per_entry(data_type);
@@ -86,6 +184,30 @@ class vu_inst_library;
         return opcode inside {[`VU_OPCODE_VFMACC_VV:`VU_OPCODE_VFNMSAC_VF]};
     endfunction : is_macc_opcode
 
+    // Result kinds: 0=none, 1=vector, 2=mask, 3=scalar.
+    static function automatic int lu_result_kind(input bit [7:0] opcode);
+        case(opcode)
+            `VU_OPCODE_LDST_FP8E4M3, `VU_OPCODE_LDST_MXFP8,
+            `VU_OPCODE_LDST_BF16, `VU_OPCODE_LDST_FP32: return 1;
+            `VU_OPCODE_LDST_MASK: return 2;
+            `VU_OPCODE_LDST_SCALAR: return 3;
+            default: return 0;
+        endcase
+    endfunction : lu_result_kind
+
+    // Query only: the top-level checker reports CFG errors before execution.
+    // Mask/scalar and reserved opcodes impose no LU VL/stride constraints.
+    static function automatic bit lu_check_config(
+        input vu_mmio_set::vu_exec_param_s param,
+        input int unsigned vl
+    );
+        if(param.lu_op.opcode == `VU_OPCODE_LDST_MXFP8 && vl % 32 != 0)
+            return 1'b0;
+        return !(lu_result_kind(param.lu_op.opcode) == 1 &&
+                 param.lu_op.stride_run != 0 &&
+                 param.lu_op.stride_skip != 0 && vl % 32 != 0);
+    endfunction : lu_check_config
+
     static function automatic bit valu_opcode_supported(
         input int unsigned id,
         input bit [7:0] opcode
@@ -136,7 +258,7 @@ class vu_inst_library;
         int id;
 
         case(src_sel)
-            `VU_SRC_LU: return lu_vec_valid;
+            `VU_SRC_LU: return lu_vector_valid;
             `VU_SRC_VRF_P0, `VU_SRC_VRF_P1: return 1'b1;
             default: begin
                 id = vexe_src_id(src_sel);
@@ -178,9 +300,9 @@ class vu_inst_library;
         data = '0;
         case(src_sel)
             `VU_SRC_LU: begin
-                if(!lu_vec_valid)
+                if(!lu_vector_valid)
                     return 1'b0;
-                data = lu_vec_result[chunk];
+                data = lu_vector_result[chunk];
                 return 1'b1;
             end
             `VU_SRC_VRF_P0: begin
@@ -300,65 +422,18 @@ class vu_inst_library;
         endcase
     endfunction : valu_mask_sel
 
-    static function automatic int unsigned load_physical_elem(
-        input int unsigned logical_elem,
-        input bit [7:0] stride_run,
-        input bit [7:0] stride_skip
-    );
-        int unsigned block;
-        int unsigned in_block;
-        int unsigned physical_block;
-
-        if(stride_run == 0 || stride_skip == 0)
-            return logical_elem;
-
-        block = logical_elem / 32;
-        in_block = logical_elem % 32;
-        physical_block = (block / stride_run) * (stride_run + stride_skip) +
-                         (block % stride_run);
-        return physical_block * 32 + in_block;
-    endfunction : load_physical_elem
-
-    function automatic bit [31:0] read_cm(
-        input dsa_mem_library dsa_mem,
-        input bit [31:0] addr,
-        input bit [1:0] size
-    );
-        return dsa_mem.read_core(size, addr);
-    endfunction : read_cm
-
-    function automatic void write_cm(
-        input dsa_mem_library dsa_mem,
-        input bit [31:0] addr,
-        input bit [1:0] size,
-        input bit [31:0] data
-    );
-        dsa_mem.write_core(size, addr, data);
-    endfunction : write_cm
-
-    // MXFP8 data<->scale mapping: one e8m0 scale byte per 32-element block;
-    // the scale byte address is derived from the block's data byte address
-    // (dsa_mem_library applies the >>5 data-to-scale address mapping).
-    function automatic bit [7:0] read_cm_scale(
-        input dsa_mem_library dsa_mem,
-        input bit [31:0] data_addr
-    );
-        return dsa_mem.read_core_scale(2'd0, data_addr);
-    endfunction : read_cm_scale
-
-    function automatic void write_cm_scale(
-        input dsa_mem_library dsa_mem,
-        input bit [31:0] data_addr,
-        input bit [7:0] scale
-    );
-        dsa_mem.write_core_scale(2'd0, data_addr, {24'h0, scale});
-    endfunction : write_cm_scale
-
-    function automatic void clear_execution_state(input int unsigned vl);
-        lu_vec_valid = 1'b0;
+    // Preserve LU's active-range mask clearing and retained vector storage.
+    function automatic void clear_lu_execution_state(input int unsigned vl);
+        lu_vector_valid = 1'b0;
         lu_mask_valid = 1'b0;
         lu_scalar_valid = 1'b0;
         lu_scalar_result = '0;
+        for(int unsigned elem = 0; elem < vl; elem++)
+            lu_mask_result[elem] = 1'b0;
+    endfunction : clear_lu_execution_state
+
+    function automatic void clear_execution_state(input int unsigned vl);
+        clear_lu_execution_state(vl);
         valu0_mask_valid = 1'b0;
         mexe_mask_valid = 1'b0;
         mexe_scalar_valid = 1'b0;
@@ -373,135 +448,10 @@ class vu_inst_library;
             sexe_result[id] = '0;
         end
         for(int unsigned elem = 0; elem < vl; elem++) begin
-            lu_mask_result[elem] = 1'b0;
             valu0_mask_result[elem] = 1'b0;
             mexe_mask_result[elem] = 1'b0;
         end
     endfunction : clear_execution_state
-
-    function automatic void execute_lu(
-        input vu_mmio_set mmio,
-        input dsa_mem_library dsa_mem,
-        input vu_mmio_set::vu_exec_param_s param,
-        input int unsigned vl
-    );
-        int unsigned chunks;
-        int unsigned elems_per_chunk;
-        int unsigned physical_elem;
-        int unsigned bytes;
-        bit [31:0] raw;
-        bit [31:0] value;
-        bit [31:0] addr;
-        bit [7:0] scale;
-
-        if(param.lu_op.opcode == 8'h00)
-            return;
-        if(param.lu_op.opcode inside {[8'h01:8'h06]} &&
-           (param.lu_op.opcode == `VU_OPCODE_LDST_SCALAR ?
-            param.ld_addr.cm_addr[1:0] != 0 : param.ld_addr.cm_addr[4:0] != 0)) begin
-            mmio.report_error(32'h00000010, 1);
-            return;
-        end
-
-        elems_per_chunk = elem_count_per_entry(param.type_vl.data_type);
-        chunks = vector_chunk_count(vl, param.type_vl.data_type);
-        for(int unsigned chunk = 0; chunk < chunks; chunk++)
-            lu_vec_result[chunk] = '0;
-
-        case(param.lu_op.opcode)
-            `VU_OPCODE_LDST_FP8E4M3,
-            `VU_OPCODE_LDST_MXFP8,
-            `VU_OPCODE_LDST_BF16,
-            `VU_OPCODE_LDST_FP32: begin
-                for(int unsigned elem = 0; elem < vl; elem++) begin
-                    physical_elem = load_physical_elem(
-                        elem,
-                        param.lu_op.stride_run,
-                        param.lu_op.stride_skip
-                    );
-                    case(param.lu_op.opcode)
-                        `VU_OPCODE_LDST_FP8E4M3: begin
-                            addr = param.ld_addr.cm_addr + physical_elem;
-                            raw = read_cm(dsa_mem, addr, 2'd0);
-                        end
-                        `VU_OPCODE_LDST_MXFP8: begin
-                            // Data byte plus the block-shared e8m0 scale
-                            // implicitly resolved from the data address.
-                            addr = param.ld_addr.cm_addr + physical_elem;
-                            raw = read_cm(dsa_mem, addr, 2'd0);
-                            scale = read_cm_scale(dsa_mem, addr);
-                        end
-                        `VU_OPCODE_LDST_BF16: begin
-                            addr = param.ld_addr.cm_addr + physical_elem * 2;
-                            raw = read_cm(dsa_mem, addr, 2'd1);
-                        end
-                        default: begin
-                            addr = param.ld_addr.cm_addr + physical_elem * 4;
-                            raw = read_cm(dsa_mem, addr, 2'd2);
-                        end
-                    endcase
-                    if(param.lu_op.opcode == `VU_OPCODE_LDST_MXFP8)
-                        value = vu_mxfp8_load_convert(
-                            raw, scale,
-                            param.type_vl.data_type,
-                            param.type_vl.round_mode);
-                    else
-                        value = vu_load_convert(param.lu_op.opcode, raw,
-                                                param.type_vl.data_type,
-                                                param.type_vl.round_mode);
-                    if(param.lu_op.opcode == `VU_OPCODE_LDST_FP32 &&
-                       param.type_vl.data_type &&
-                       value[14:7] == 8'hff && value[6:0] != 0)
-                        mmio.report_error(32'h00000040, 1);
-                    vu_vv_inst::set_elem(
-                        lu_vec_result[elem / elems_per_chunk],
-                        param.type_vl.data_type,
-                        elem % elems_per_chunk,
-                        value
-                    );
-                end
-                lu_vec_valid = 1'b1;
-                mmio.set_lu_bypass(lu_vec_result[0]);
-                if(log_fd != 0)
-                    $fwrite(log_fd,
-                        "[VU_INST] LU opcode=%02h vl=%0d vector-loaded%s\n",
-                        param.lu_op.opcode, vl,
-                        param.lu_op.opcode == `VU_OPCODE_LDST_MXFP8 ?
-                            " (MXFP8 block scale applied)" : "");
-            end
-
-            `VU_OPCODE_LDST_MASK: begin
-                bytes = (vl + 7) / 8;
-                for(int unsigned byte_idx = 0; byte_idx < bytes; byte_idx++) begin
-                    raw = read_cm(dsa_mem,
-                                  param.ld_addr.cm_addr + byte_idx, 2'd0);
-                    for(int unsigned bit_idx = 0; bit_idx < 8; bit_idx++)
-                        if(byte_idx * 8 + bit_idx < vl)
-                            lu_mask_result[byte_idx * 8 + bit_idx] = raw[bit_idx];
-                end
-                lu_mask_valid = 1'b1;
-                if(log_fd != 0)
-                    $fwrite(log_fd, "[VU_INST] LU ld.mask vl=%0d\n", vl);
-            end
-
-            `VU_OPCODE_LDST_SCALAR: begin
-                lu_scalar_result = read_cm(dsa_mem,
-                                           param.ld_addr.cm_addr, 2'd2);
-                lu_scalar_valid = 1'b1;
-                if(log_fd != 0)
-                    $fwrite(log_fd,
-                        "[VU_INST] LU ld.s.fp32 result=%08h\n",
-                        lu_scalar_result);
-            end
-
-            default: begin
-                if(log_fd != 0)
-                    $fwrite(log_fd,
-                        "[VU_INST] LU opcode=%02h reserved: NOP\n",
-                        param.lu_op.opcode);
-            end
-        endcase
-    endfunction : execute_lu
 
     function automatic vu_valu_op_s get_valu_op(
         input vu_mmio_set::vu_exec_param_s param,
@@ -532,555 +482,6 @@ class vu_inst_library;
         endcase
         return op;
     endfunction : get_valu_op
-
-    function automatic bit can_execute_valu(
-        input vu_mmio_set::vu_exec_param_s param,
-        input int unsigned id
-    );
-        vu_valu_op_s op;
-
-        op = get_valu_op(param, id);
-        if(op.opcode == 8'h00 || !valu_opcode_supported(id, op.opcode))
-            return 1'b1;
-
-        case(op.opcode)
-            `VU_OPCODE_VFMV_V_F,
-            `VU_OPCODE_VFMV_S_F:
-                return scalar_source_ready(op.src1_sel);
-            `VU_OPCODE_VFMV_F_S,
-            `VU_OPCODE_VMV_V_V,
-            `VU_OPCODE_VSWAP2_V:
-                return vector_source_ready(op.src1_sel);
-            `VU_OPCODE_VFCLASS_MV,
-            `VU_OPCODE_VSORTMAX16_V,
-            `VU_OPCODE_VSORTMIN16_V:
-                return vector_source_ready(op.src1_sel);
-            default: begin
-                if(!operand_source_ready(op.src1_sel) ||
-                   !vector_source_ready(op.src2_sel))
-                    return 1'b0;
-                if(is_macc_opcode(op.opcode) &&
-                   !vector_source_ready(op.src3_sel))
-                    return 1'b0;
-                return 1'b1;
-            end
-        endcase
-    endfunction : can_execute_valu
-
-    function automatic void execute_reduction(
-        input vu_mmio_set mmio,
-        input vu_mmio_set::vu_exec_param_s param,
-        input vu_valu_op_s op,
-        input int unsigned vl
-    );
-        vu_vec_chunk_t src2;
-        bit [31:0] accum;
-        bit [31:0] value;
-        chandle sum;
-        bit any_active;
-        int unsigned elems;
-        int unsigned chunks;
-        int unsigned active;
-
-        elems = elem_count_per_entry(param.type_vl.data_type);
-        chunks = vector_chunk_count(vl, param.type_vl.data_type);
-        void'(resolve_scalar_source(mmio, param, op.src1_sel, accum));
-        any_active = 1'b0;
-        if(op.opcode == `VU_OPCODE_VFREDUSUM_VS)
-            sum = vu_sum_create(accum);
-
-        for(int unsigned chunk = 0; chunk < chunks; chunk++) begin
-            void'(resolve_vector_source(mmio, param, op.src2_sel, chunk, src2));
-            active = vl - chunk * elems;
-            if(active > elems)
-                active = elems;
-            for(int unsigned elem = 0; elem < active; elem++) begin
-                if(!predicate_bit(mmio, param,
-                                  param.mask_op.valu1_mask_sel,
-                                  chunk * elems + elem))
-                    continue;
-                value = vu_vv_inst::get_elem(src2, param.type_vl.data_type, elem);
-                if(param.type_vl.data_type)
-                    value = vu_bf16_to_fp32(value);
-                any_active = 1'b1;
-                case(op.opcode)
-                    `VU_OPCODE_VFREDUSUM_VS:
-                        vu_sum_add(sum, value);
-                    `VU_OPCODE_VFREDMAX_VS:
-                        accum = vu_fp_alu(`VU_OPCODE_VFMAX_VV,
-                                          accum, value, 0, 0, 0);
-                    default:
-                        accum = vu_fp_alu(`VU_OPCODE_VFMIN_VV,
-                                          accum, value, 0, 0, 0);
-                endcase
-            end
-        end
-        if(op.opcode == `VU_OPCODE_VFREDUSUM_VS) begin
-            value = vu_sum_finish(sum, param.type_vl.round_mode);
-            if(any_active)
-                accum = value;
-        end
-        vexe_scalar_result[1] = accum;
-        vexe_scalar_valid[1] = 1'b1;
-        if(log_fd != 0)
-            $fwrite(log_fd,
-                "[VU_INST] VALU1 reduction opcode=%02h vl=%0d result=%08h\n",
-                op.opcode, vl, accum);
-    endfunction : execute_reduction
-
-    function automatic void execute_topk(
-        input vu_mmio_set mmio,
-        input vu_mmio_set::vu_exec_param_s param,
-        input vu_valu_op_s op,
-        input int unsigned vl
-    );
-        vu_vec_chunk_t src;
-        bit [31:0] best_value[16];
-        int best_index[16];
-        bit best_valid[16];
-        bit [31:0] candidate;
-        int insert_at;
-        int unsigned elems;
-        int unsigned chunks;
-        int unsigned active;
-        bit better;
-
-        elems = elem_count_per_entry(param.type_vl.data_type);
-        chunks = vector_chunk_count(vl, param.type_vl.data_type);
-        vexe_vec_result[1][0] = '0;
-        for(int slot = 0; slot < 16; slot++) begin
-            best_value[slot] = '0;
-            best_index[slot] = -1;
-            best_valid[slot] = 1'b0;
-        end
-
-        for(int unsigned chunk = 0; chunk < chunks; chunk++) begin
-            void'(resolve_vector_source(mmio, param, op.src1_sel, chunk, src));
-            active = vl - chunk * elems;
-            if(active > elems)
-                active = elems;
-            for(int unsigned elem = 0; elem < active; elem++) begin
-                if(!predicate_bit(mmio, param,
-                                  param.mask_op.valu1_mask_sel,
-                                  chunk * elems + elem))
-                    continue;
-                candidate = vu_vv_inst::get_elem(src, param.type_vl.data_type, elem);
-                insert_at = -1;
-                for(int slot = 0; slot < 16; slot++) begin
-                    if(!best_valid[slot])
-                        better = 1'b1;
-                    else if(op.opcode == `VU_OPCODE_VSORTMAX16_V)
-                        better = vu_fp_compare(`VU_OPCODE_VMFGT_VF,
-                                               best_value[slot], candidate,
-                                               param.type_vl.data_type) != 0;
-                    else
-                        better = vu_fp_compare(`VU_OPCODE_VMFLT_VV,
-                                               best_value[slot], candidate,
-                                               param.type_vl.data_type) != 0;
-                    if(better) begin
-                        insert_at = slot;
-                        break;
-                    end
-                end
-                if(insert_at >= 0) begin
-                    for(int slot = 15; slot > insert_at; slot--) begin
-                        best_value[slot] = best_value[slot-1];
-                        best_index[slot] = best_index[slot-1];
-                        best_valid[slot] = best_valid[slot-1];
-                    end
-                    best_value[insert_at] = candidate;
-                    best_index[insert_at] = int'(chunk * elems + elem);
-                    best_valid[insert_at] = 1'b1;
-                end
-            end
-        end
-
-        for(int slot = 0; slot < 16; slot++) begin
-            if(best_valid[slot]) begin
-                vu_vv_inst::set_elem(vexe_vec_result[1][0],
-                                     param.type_vl.data_type,
-                                     slot, best_value[slot]);
-                vexe_vec_result[1][0][512 + slot*16 +: 16] =
-                    best_index[slot][15:0];
-            end else begin
-                vexe_vec_result[1][0][512 + slot*16 +: 16] = 16'hffff;
-            end
-        end
-        vexe_vec_valid[1] = 1'b1;
-        if(log_fd != 0)
-            $fwrite(log_fd,
-                "[VU_INST] VALU1 top16 opcode=%02h candidates=%0d\n",
-                op.opcode, vl);
-    endfunction : execute_topk
-
-    function automatic void execute_element_move(
-        input vu_mmio_set mmio,
-        input vu_mmio_set::vu_exec_param_s param,
-        input vu_valu_op_s op,
-        input int unsigned id,
-        input int unsigned vl
-    );
-        vu_vec_chunk_t src;
-        vu_vec_chunk_t scalar_vec;
-        int unsigned elems;
-        int unsigned source_elem;
-        bit [31:0] value;
-        bit [31:0] scalar;
-        bit fill;
-
-        elems = elem_count_per_entry(param.type_vl.data_type);
-        if(op.opcode inside {`VU_OPCODE_VFSLIDE1UP_VF,
-                             `VU_OPCODE_VFSLIDE1DOWN_VF,
-                             `VU_OPCODE_VFMV_S_F}) begin
-            void'(resolve_valu_operand(mmio, param, op.src1_sel, 0, scalar_vec));
-            scalar = vu_vv_inst::get_elem(scalar_vec, param.type_vl.data_type, 0);
-        end
-        if(op.opcode == `VU_OPCODE_VFMV_S_F) begin
-            if(param.prf_op.vrf_wt_p0_src == vexe_src_code(id))
-                src = mmio.read_vrf_entry(param.vrf_wt_index.vrf_wt_p0_idx);
-            else if(param.prf_op.vrf_wt_p1_src == vexe_src_code(id))
-                src = mmio.read_vrf_entry(param.vrf_wt_index.vrf_wt_p1_idx);
-            else
-                src = '0;
-            source_elem = param.type_vl.data_type ? op.src2_sel[5:0] :
-                                                   op.src2_sel[4:0];
-            vu_vv_inst::set_elem(src, param.type_vl.data_type, source_elem, scalar);
-            vexe_vec_result[id][0] = src;
-        end else begin
-            for(int unsigned chunk = 0; chunk < vector_chunk_count(vl, param.type_vl.data_type); chunk++)
-                vexe_vec_result[id][chunk] = '0;
-            for(int unsigned elem = 0; elem < vl; elem++) begin
-                fill = 1'b0;
-                case(op.opcode)
-                    `VU_OPCODE_VSWAP2_V: source_elem = elem ^ 1;
-                    `VU_OPCODE_VFSLIDE1UP_VF: begin
-                        fill = elem == 0;
-                        source_elem = fill ? 0 : elem - 1;
-                    end
-                    `VU_OPCODE_VFSLIDE1DOWN_VF: begin
-                        fill = elem == vl - 1;
-                        source_elem = fill ? 0 : elem + 1;
-                    end
-                    default: source_elem = elem;
-                endcase
-                if(fill)
-                    value = scalar;
-                else begin
-                    void'(resolve_vector_source(mmio, param,
-                        op.opcode inside {`VU_OPCODE_VSWAP2_V, `VU_OPCODE_VMV_V_V} ?
-                        op.src1_sel : op.src2_sel,
-                        source_elem / elems, src));
-                    value = vu_vv_inst::get_elem(src, param.type_vl.data_type,
-                                                source_elem % elems);
-                end
-                vu_vv_inst::set_elem(vexe_vec_result[id][elem / elems],
-                                     param.type_vl.data_type, elem % elems, value);
-            end
-        end
-        vexe_vec_valid[id] = 1'b1;
-    endfunction : execute_element_move
-
-    function automatic void execute_valu(
-        input vu_mmio_set mmio,
-        input vu_mmio_set::vu_exec_param_s param,
-        input int unsigned id,
-        input int unsigned vl
-    );
-        vu_valu_op_s op;
-        vu_vec_chunk_t src1;
-        vu_vec_chunk_t src2;
-        vu_vec_chunk_t src3;
-        bit [31:0] value1;
-        bit [31:0] value2;
-        bit [31:0] value3;
-        bit [31:0] result;
-        bit [9:0] class_imm;
-        bit pred;
-        int unsigned elems;
-        int unsigned chunks;
-        int unsigned active;
-        int unsigned global_elem;
-        int unsigned elem_imm;
-
-        op = get_valu_op(param, id);
-        vexe_done[id] = 1'b1;
-
-        if(op.opcode == 8'h00) begin
-            if(log_fd != 0)
-                $fwrite(log_fd, "[VU_INST] VALU%0d opcode=00 NOP\n", id);
-            return;
-        end
-        if(!valu_opcode_supported(id, op.opcode)) begin
-            if(log_fd != 0)
-                $fwrite(log_fd,
-                    "[VU_INST] VALU%0d opcode=%02h unsupported/reserved: NOP\n",
-                    id, op.opcode);
-            return;
-        end
-
-        if(is_reduction_opcode(op.opcode)) begin
-            execute_reduction(mmio, param, op, vl);
-            return;
-        end
-        if(is_topk_opcode(op.opcode)) begin
-            execute_topk(mmio, param, op, vl);
-            return;
-        end
-        if(op.opcode == `VU_OPCODE_VFMV_F_S) begin
-            void'(resolve_vector_source(mmio, param, op.src1_sel, 0, src1));
-            elem_imm = param.type_vl.data_type ? op.src2_sel[5:0] :
-                                               op.src2_sel[4:0];
-            result = vu_vv_inst::get_elem(src1, param.type_vl.data_type,
-                                          elem_imm);
-            if(param.type_vl.data_type)
-                result = vu_bf16_to_fp32(result);
-            vexe_scalar_result[1] = result;
-            vexe_scalar_valid[1] = 1'b1;
-            if(log_fd != 0)
-                $fwrite(log_fd,
-                    "[VU_INST] VALU1 vfmv.f.s elem=%0d result=%08h\n",
-                    elem_imm, result);
-            return;
-        end
-
-        if(op.opcode inside {`VU_OPCODE_VFMV_S_F, `VU_OPCODE_VMV_V_V,
-                             `VU_OPCODE_VSWAP2_V, `VU_OPCODE_VFSLIDE1UP_VF,
-                             `VU_OPCODE_VFSLIDE1DOWN_VF}) begin
-            execute_element_move(mmio, param, op, id, vl);
-            return;
-        end
-
-        elems = elem_count_per_entry(param.type_vl.data_type);
-        chunks = vector_chunk_count(vl, param.type_vl.data_type);
-
-        if(is_compare_opcode(op.opcode) ||
-           op.opcode == `VU_OPCODE_VFCLASS_MV) begin
-            class_imm = {op.src3_sel[1:0], op.src2_sel};
-            for(int unsigned chunk = 0; chunk < chunks; chunk++) begin
-                if(op.opcode == `VU_OPCODE_VFCLASS_MV)
-                    void'(resolve_vector_source(mmio, param, op.src1_sel,
-                                                chunk, src1));
-                else begin
-                    void'(resolve_valu_operand(mmio, param, op.src1_sel,
-                                               chunk, src1));
-                    void'(resolve_vector_source(mmio, param, op.src2_sel,
-                                                chunk, src2));
-                end
-                active = vl - chunk * elems;
-                if(active > elems)
-                    active = elems;
-                for(int unsigned elem = 0; elem < active; elem++) begin
-                    global_elem = chunk * elems + elem;
-                    pred = predicate_bit(mmio, param,
-                                         param.mask_op.valu0_mask_sel,
-                                         global_elem);
-                    if(!pred)
-                        valu0_mask_result[global_elem] = 1'b0;
-                    else if(op.opcode == `VU_OPCODE_VFCLASS_MV)
-                        valu0_mask_result[global_elem] = vu_fp_class(
-                            vu_vv_inst::get_elem(src1, param.type_vl.data_type,
-                                                 elem),
-                            param.type_vl.data_type,
-                            class_imm
-                        ) != 0;
-                    else
-                        valu0_mask_result[global_elem] = vu_fp_compare(
-                            op.opcode,
-                            vu_vv_inst::get_elem(src1, param.type_vl.data_type,
-                                                 elem),
-                            vu_vv_inst::get_elem(src2, param.type_vl.data_type,
-                                                 elem),
-                            param.type_vl.data_type
-                        ) != 0;
-                end
-            end
-            valu0_mask_valid = 1'b1;
-            if(log_fd != 0)
-                $fwrite(log_fd,
-                    "[VU_INST] VALU0 mask-result opcode=%02h vl=%0d\n",
-                    op.opcode, vl);
-            return;
-        end
-
-        for(int unsigned chunk = 0; chunk < chunks; chunk++) begin
-            vexe_vec_result[id][chunk] = '0;
-
-            void'(resolve_valu_operand(mmio, param, op.src1_sel, chunk, src1));
-            if(op.opcode != `VU_OPCODE_VFMV_V_F)
-                void'(resolve_vector_source(mmio, param, op.src2_sel,
-                                            chunk, src2));
-            if(is_macc_opcode(op.opcode))
-                void'(resolve_vector_source(mmio, param, op.src3_sel,
-                                            chunk, src3));
-
-            active = vl - chunk * elems;
-            if(active > elems)
-                active = elems;
-            for(int unsigned elem = 0; elem < active; elem++) begin
-                global_elem = chunk * elems + elem;
-                value1 = vu_vv_inst::get_elem(src1,
-                                              param.type_vl.data_type, elem);
-                value2 = vu_vv_inst::get_elem(src2,
-                                              param.type_vl.data_type, elem);
-                value3 = vu_vv_inst::get_elem(src3,
-                                              param.type_vl.data_type, elem);
-
-                case(op.opcode)
-                    `VU_OPCODE_VFMV_V_F:
-                        result = value1;
-                    `VU_OPCODE_VFMERGE_VFM,
-                    `VU_OPCODE_VFMERGE_VVM: begin
-                        pred = param.mask_op.valu0_mask_sel != 0 &&
-                               predicate_bit(mmio, param,
-                                             param.mask_op.valu0_mask_sel,
-                                             global_elem);
-                        result = pred ? value1 : value2;
-                    end
-                    default: begin
-                        pred = predicate_bit(mmio, param,
-                                             valu_mask_sel(param, id),
-                                             global_elem);
-                        if(!pred)
-                            result = is_macc_opcode(op.opcode) ? value3 : value2;
-                        else
-                            result = vu_fp_alu(op.opcode, value1, value2,
-                                               value3,
-                                               param.type_vl.data_type,
-                                               param.type_vl.round_mode);
-                    end
-                endcase
-                vu_vv_inst::set_elem(vexe_vec_result[id][chunk],
-                                     param.type_vl.data_type, elem, result);
-            end
-            if(log_fd != 0)
-                $fwrite(log_fd,
-                    "[VU_INST] VALU%0d chunk=%0d opcode=%02h elems=%0d\n",
-                    id, chunk, op.opcode, active);
-        end
-        vexe_vec_valid[id] = 1'b1;
-    endfunction : execute_valu
-
-    function automatic bit can_execute_vsfu(
-        input vu_mmio_set::vu_exec_param_s param,
-        input int unsigned vsfu_id
-    );
-        bit [7:0] opcode;
-        bit [7:0] src_sel;
-
-        if(vsfu_id == 0) begin
-            opcode = param.vsfu_op.vsfu0_opcode;
-            src_sel = param.vsfu_op.vsfu0_src1_sel;
-        end else begin
-            opcode = param.vsfu_op.vsfu1_opcode;
-            src_sel = param.vsfu_op.vsfu1_src1_sel;
-        end
-        if(opcode == 0 || !vsfu_opcode_supported(opcode))
-            return 1'b1;
-        return vector_source_ready(src_sel);
-    endfunction : can_execute_vsfu
-
-    function automatic void execute_vsfu(
-        input vu_mmio_set mmio,
-        input vu_mmio_set::vu_exec_param_s param,
-        input int unsigned vsfu_id,
-        input int unsigned vl
-    );
-        vu_vec_chunk_t src;
-        bit [7:0] opcode;
-        bit [7:0] src_sel;
-        bit [31:0] value;
-        bit [31:0] result;
-        int unsigned id;
-        int unsigned elems;
-        int unsigned chunks;
-        int unsigned active;
-        int unsigned global_elem;
-
-        id = 3 + vsfu_id;
-        vexe_done[id] = 1'b1;
-        if(vsfu_id == 0) begin
-            opcode = param.vsfu_op.vsfu0_opcode;
-            src_sel = param.vsfu_op.vsfu0_src1_sel;
-        end else begin
-            if(param.type_vl.data_type)
-                return;
-            opcode = param.vsfu_op.vsfu1_opcode;
-            src_sel = param.vsfu_op.vsfu1_src1_sel;
-        end
-
-        if(opcode == 0) begin
-            if(log_fd != 0)
-                $fwrite(log_fd, "[VU_INST] VSFU%0d opcode=00 NOP\n", vsfu_id);
-            return;
-        end
-        if(!vsfu_opcode_supported(opcode)) begin
-            if(log_fd != 0)
-                $fwrite(log_fd,
-                    "[VU_INST] VSFU%0d opcode=%02h reserved: NOP\n",
-                    vsfu_id, opcode);
-            return;
-        end
-
-        elems = elem_count_per_entry(param.type_vl.data_type);
-        chunks = vector_chunk_count(vl, param.type_vl.data_type);
-        for(int unsigned chunk = 0; chunk < chunks; chunk++) begin
-            void'(resolve_vector_source(mmio, param, src_sel, chunk, src));
-            vexe_vec_result[id][chunk] = '0;
-            active = vl - chunk * elems;
-            if(active > elems)
-                active = elems;
-            for(int unsigned elem = 0; elem < active; elem++) begin
-                global_elem = chunk * elems + elem;
-                value = vu_vv_inst::get_elem(src, param.type_vl.data_type, elem);
-                result = vu_fp_vsfu(opcode, value,
-                                    param.type_vl.data_type,
-                                    param.type_vl.round_mode);
-                vu_vv_inst::set_elem(vexe_vec_result[id][chunk],
-                                     param.type_vl.data_type, elem, result);
-            end
-            if(log_fd != 0)
-                $fwrite(log_fd,
-                    "[VU_INST] VSFU%0d chunk=%0d opcode=%02h elems=%0d%s\n",
-                    vsfu_id, chunk, opcode, active,
-                    opcode == `VU_OPCODE_VFCUSTOM_V ?
-                        " (identity fallback: coefficients undefined)" : "");
-        end
-        vexe_vec_valid[id] = 1'b1;
-    endfunction : execute_vsfu
-
-    function automatic void execute_vexe(
-        input vu_mmio_set mmio,
-        input vu_mmio_set::vu_exec_param_s param,
-        input int unsigned vl
-    );
-        if(param.type_vl.data_type)
-            vexe_done[4] = 1'b1;
-        for(int pass = 0; pass < 5; pass++) begin
-            for(int id = 0; id < 3; id++)
-                if(!vexe_done[id] && can_execute_valu(param, id))
-                    execute_valu(mmio, param, id, vl);
-            for(int vsfu_id = 0; vsfu_id < 2; vsfu_id++)
-                if(!vexe_done[3+vsfu_id] &&
-                   can_execute_vsfu(param, vsfu_id))
-                    execute_vsfu(mmio, param, vsfu_id, vl);
-        end
-
-        for(int id = 0; id < 5; id++) begin
-            if(!vexe_done[id]) begin
-                vexe_done[id] = 1'b1;
-                if(log_fd != 0)
-                    $fwrite(log_fd,
-                        "[VU_INST] VEXE%0d not executed: unresolved source dependency\n",
-                        id);
-            end
-            if(vexe_vec_valid[id]) begin
-                if(id < 3)
-                    mmio.set_valu_bypass(id, vexe_vec_result[id][0]);
-                else
-                    mmio.set_vsfu_bypass(id-3, vexe_vec_result[id][0]);
-            end
-        end
-    endfunction : execute_vexe
 
     function automatic bit resolve_mask_source_bit(
         input vu_mmio_set mmio,
@@ -1126,126 +527,6 @@ class vu_inst_library;
         endcase
     endfunction : resolve_index_vector
 
-    function automatic void execute_mexe(
-        input vu_mmio_set mmio,
-        input vu_mmio_set::vu_exec_param_s param,
-        input int unsigned vl
-    );
-        bit src1;
-        bit src2;
-        bit [7:0] opcode;
-        bit [31:0] count;
-        int first;
-        vu_vec_chunk_t indices;
-        int index;
-
-        opcode = param.mexe_op.opcode;
-        if(opcode == 0) begin
-            if(log_fd != 0)
-                $fwrite(log_fd, "[VU_INST] MEXE opcode=00 NOP\n");
-            return;
-        end
-
-        count = 0;
-        first = -1;
-        for(int unsigned elem = 0; elem < vl; elem++) begin
-            src1 = resolve_mask_source_bit(mmio, param,
-                                           param.mexe_op.src1_sel, elem);
-            if(src1) begin
-                count++;
-                if(first < 0)
-                    first = elem;
-            end
-        end
-
-        case(opcode)
-            `VU_OPCODE_VCPOP_M: begin
-                mexe_scalar_result = count;
-                mexe_scalar_valid = 1'b1;
-            end
-            `VU_OPCODE_VFIRST_M: begin
-                mexe_scalar_result = first;
-                mexe_scalar_valid = 1'b1;
-            end
-            `VU_OPCODE_VMAND_MM,
-            `VU_OPCODE_VMNAND_MM,
-            `VU_OPCODE_VMANDN_MM,
-            `VU_OPCODE_VMXOR_MM,
-            `VU_OPCODE_VMOR_MM,
-            `VU_OPCODE_VMNOR_MM,
-            `VU_OPCODE_VMORN_MM,
-            `VU_OPCODE_VMXNOR_MM: begin
-                for(int unsigned elem = 0; elem < vl; elem++) begin
-                    src1 = resolve_mask_source_bit(mmio, param,
-                                                   param.mexe_op.src1_sel,
-                                                   elem);
-                    src2 = resolve_mask_source_bit(mmio, param,
-                                                   param.mexe_op.src2_sel,
-                                                   elem);
-                    case(opcode)
-                        `VU_OPCODE_VMAND_MM:  mexe_mask_result[elem] = src2 & src1;
-                        `VU_OPCODE_VMNAND_MM: mexe_mask_result[elem] = ~(src2 & src1);
-                        `VU_OPCODE_VMANDN_MM: mexe_mask_result[elem] = src2 & ~src1;
-                        `VU_OPCODE_VMXOR_MM:  mexe_mask_result[elem] = src2 ^ src1;
-                        `VU_OPCODE_VMOR_MM:   mexe_mask_result[elem] = src2 | src1;
-                        `VU_OPCODE_VMNOR_MM:  mexe_mask_result[elem] = ~(src2 | src1);
-                        `VU_OPCODE_VMORN_MM:  mexe_mask_result[elem] = src2 | ~src1;
-                        default:              mexe_mask_result[elem] = ~(src2 ^ src1);
-                    endcase
-                end
-                mexe_mask_valid = 1'b1;
-            end
-            `VU_OPCODE_VMSBF_M,
-            `VU_OPCODE_VMSIF_M,
-            `VU_OPCODE_VMSOF_M: begin
-                for(int unsigned elem = 0; elem < vl; elem++) begin
-                    case(opcode)
-                        `VU_OPCODE_VMSBF_M:
-                            mexe_mask_result[elem] = first < 0 || elem < first;
-                        `VU_OPCODE_VMSIF_M:
-                            mexe_mask_result[elem] = first < 0 || elem <= first;
-                        default:
-                            mexe_mask_result[elem] = first >= 0 && elem == first;
-                    endcase
-                end
-                mexe_mask_valid = 1'b1;
-            end
-            `VU_OPCODE_VMIUSET_MV,
-            `VU_OPCODE_VMISET_MV: begin
-                for(int unsigned elem = 0; elem < vl; elem++)
-                    mexe_mask_result[elem] = resolve_mask_source_bit(
-                        mmio, param, param.mexe_op.src1_sel, elem);
-                if(resolve_index_vector(mmio, param,
-                                        param.mexe_op.src2_sel, indices)) begin
-                    for(int slot = 0; slot < 16; slot++) begin
-                        index = $signed(indices[512 + slot*16 +: 16]);
-                        if(index >= 0 && index < vl)
-                            mexe_mask_result[index] =
-                                opcode == `VU_OPCODE_VMISET_MV;
-                    end
-                end
-                mexe_mask_valid = 1'b1;
-            end
-            default: begin
-                if(log_fd != 0)
-                    $fwrite(log_fd,
-                        "[VU_INST] MEXE opcode=%02h reserved: NOP\n", opcode);
-                return;
-            end
-        endcase
-
-        if(log_fd != 0) begin
-            if(mexe_scalar_valid)
-                $fwrite(log_fd,
-                    "[VU_INST] MEXE opcode=%02h scalar=%08h\n",
-                    opcode, mexe_scalar_result);
-            else
-                $fwrite(log_fd,
-                    "[VU_INST] MEXE opcode=%02h mask-result vl=%0d\n",
-                    opcode, vl);
-        end
-    endfunction : execute_mexe
-
     function automatic bit [7:0] sexe_opcode(
         input vu_mmio_set::vu_exec_param_s param,
         input int unsigned slot
@@ -1279,57 +560,6 @@ class vu_inst_library;
         endcase
     endfunction : sexe_src2
 
-    function automatic void execute_sexe(
-        input vu_mmio_set mmio,
-        input vu_mmio_set::vu_exec_param_s param
-    );
-        bit [7:0] opcode;
-        bit [7:0] src1_sel;
-        bit [7:0] src2_sel;
-        bit [31:0] src1;
-        bit [31:0] src2;
-
-        for(int slot = 0; slot < 3; slot++) begin
-            opcode = sexe_opcode(param, slot);
-            if(opcode == 0) begin
-                if(log_fd != 0)
-                    $fwrite(log_fd, "[VU_INST] SEXE%0d opcode=00 NOP\n", slot);
-                continue;
-            end
-            if(opcode > `VU_OPCODE_FRCP_S) begin
-                if(log_fd != 0)
-                    $fwrite(log_fd,
-                        "[VU_INST] SEXE%0d opcode=%02h reserved: NOP\n",
-                        slot, opcode);
-                continue;
-            end
-            src1_sel = sexe_src1(param, slot);
-            src2_sel = sexe_src2(param, slot);
-            if(!resolve_scalar_source(mmio, param, src1_sel, src1)) begin
-                if(log_fd != 0)
-                    $fwrite(log_fd,
-                        "[VU_INST] SEXE%0d not executed: invalid src1=%02h\n",
-                        slot, src1_sel);
-                continue;
-            end
-            src2 = '0;
-            if(opcode <= `VU_OPCODE_FDIV_S &&
-               !resolve_scalar_source(mmio, param, src2_sel, src2)) begin
-                if(log_fd != 0)
-                    $fwrite(log_fd,
-                        "[VU_INST] SEXE%0d not executed: invalid src2=%02h\n",
-                        slot, src2_sel);
-                continue;
-            end
-            sexe_result[slot] = vu_fp_sexe(opcode, src1, src2);
-            sexe_valid[slot] = 1'b1;
-            if(log_fd != 0)
-                $fwrite(log_fd,
-                    "[VU_INST] SEXE%0d opcode=%02h result=%08h\n",
-                    slot, opcode, sexe_result[slot]);
-        end
-    endfunction : execute_sexe
-
     function automatic bit resolve_su_vector(
         input vu_mmio_set mmio,
         input vu_mmio_set::vu_exec_param_s param,
@@ -1351,313 +581,6 @@ class vu_inst_library;
             default: return resolve_mask_source_bit(mmio, param, src_sel, elem);
         endcase
     endfunction : resolve_su_mask_bit
-
-    function automatic void execute_su(
-        input vu_mmio_set mmio,
-        input dsa_mem_library dsa_mem,
-        input vu_mmio_set::vu_exec_param_s param,
-        input int unsigned vl
-    );
-        vu_vec_chunk_t src;
-        bit [31:0] value;
-        bit [31:0] raw;
-        bit [31:0] scalar;
-        bit [31:0] addr;
-        int unsigned elems;
-        int unsigned chunks;
-        int unsigned bytes;
-
-        if(param.su_op.opcode == 0)
-            return;
-        if(param.su_op.opcode inside {[8'h01:8'h06]} &&
-           (param.su_op.opcode == `VU_OPCODE_LDST_SCALAR ?
-            param.st_addr.cm_addr[1:0] != 0 : param.st_addr.cm_addr[4:0] != 0)) begin
-            mmio.report_error(32'h00000010, 2);
-            return;
-        end
-
-        case(param.su_op.opcode)
-            `VU_OPCODE_LDST_MXFP8: begin
-                int unsigned blk_len;
-                int unsigned idx;
-                int cur_chunk;
-                bit [31:0] abs_bits;
-                bit [31:0] max_abs;
-                bit [7:0] scale;
-
-                elems = elem_count_per_entry(param.type_vl.data_type);
-                for(int unsigned base = 0; base < vl; base += 32) begin
-                    blk_len = (vl - base < 32) ? (vl - base) : 32;
-
-                    // Pass 1: block max |element|. FP32/BF16 magnitudes
-                    // order like their bit patterns with the sign masked.
-                    max_abs = '0;
-                    cur_chunk = -1;
-                    for(int unsigned i = 0; i < blk_len; i++) begin
-                        idx = base + i;
-                        if(int'(idx / elems) != cur_chunk) begin
-                            cur_chunk = idx / elems;
-                            if(!resolve_su_vector(mmio, param,
-                                                  param.su_op.src_sel,
-                                                  cur_chunk, src))
-                                return;
-                        end
-                        value = vu_vv_inst::get_elem(src,
-                                                     param.type_vl.data_type,
-                                                     idx % elems);
-                        abs_bits = param.type_vl.data_type ?
-                            {1'b0, value[14:0], 16'h0} :
-                            (value & 32'h7fff_ffff);
-                        if(abs_bits > max_abs)
-                            max_abs = abs_bits;
-                    end
-                    scale = vu_mxfp8_scale_encode(
-                        max_abs, param.su_op.mxfp8_scale_round);
-
-                    // Pass 2: quantize against the shared scale, write the
-                    // data bytes and the block's e8m0 scale byte.
-                    cur_chunk = -1;
-                    for(int unsigned i = 0; i < blk_len; i++) begin
-                        idx = base + i;
-                        if(int'(idx / elems) != cur_chunk) begin
-                            cur_chunk = idx / elems;
-                            if(!resolve_su_vector(mmio, param,
-                                                  param.su_op.src_sel,
-                                                  cur_chunk, src))
-                                return;
-                        end
-                        value = vu_vv_inst::get_elem(src,
-                                                     param.type_vl.data_type,
-                                                     idx % elems);
-                        raw = vu_mxfp8_store_convert(
-                            value, scale,
-                            param.type_vl.data_type,
-                            param.type_vl.round_mode);
-                        if(raw[6:0] == 7'h7f)
-                            mmio.report_error(32'h00000040, 2);
-                        write_cm(dsa_mem,
-                                 param.st_addr.cm_addr + idx, 2'd0, raw);
-                    end
-                    write_cm_scale(dsa_mem,
-                                   param.st_addr.cm_addr + base, scale);
-                end
-                if(log_fd != 0)
-                    $fwrite(log_fd,
-                        "[VU_INST] SU opcode=%02h vl=%0d vector-stored (MXFP8 block scale generated, round=%0d)\n",
-                        param.su_op.opcode, vl,
-                        param.su_op.mxfp8_scale_round);
-            end
-
-            `VU_OPCODE_LDST_FP8E4M3,
-            `VU_OPCODE_LDST_BF16,
-            `VU_OPCODE_LDST_FP32: begin
-                elems = elem_count_per_entry(param.type_vl.data_type);
-                chunks = vector_chunk_count(vl, param.type_vl.data_type);
-                for(int unsigned chunk = 0; chunk < chunks; chunk++) begin
-                    if(!resolve_su_vector(mmio, param, param.su_op.src_sel,
-                                          chunk, src))
-                        return;
-                    for(int unsigned elem = 0; elem < elems; elem++) begin
-                        if(chunk * elems + elem >= vl)
-                            break;
-                        value = vu_vv_inst::get_elem(src,
-                                                     param.type_vl.data_type,
-                                                     elem);
-                        raw = vu_store_convert(param.su_op.opcode, value,
-                                               param.type_vl.data_type,
-                                               param.type_vl.round_mode);
-                        if((param.su_op.opcode == `VU_OPCODE_LDST_FP8E4M3 && raw[6:0] == 7'h7f) ||
-                           (param.su_op.opcode == `VU_OPCODE_LDST_BF16 &&
-                            !param.type_vl.data_type && raw[14:7] == 8'hff && raw[6:0] != 0))
-                            mmio.report_error(32'h00000040, 2);
-                        case(param.su_op.opcode)
-                            `VU_OPCODE_LDST_FP8E4M3: begin
-                                addr = param.st_addr.cm_addr +
-                                       chunk * elems + elem;
-                                write_cm(dsa_mem, addr, 2'd0, raw);
-                            end
-                            `VU_OPCODE_LDST_BF16: begin
-                                addr = param.st_addr.cm_addr +
-                                       (chunk * elems + elem) * 2;
-                                write_cm(dsa_mem, addr, 2'd1, raw);
-                            end
-                            default: begin
-                                addr = param.st_addr.cm_addr +
-                                       (chunk * elems + elem) * 4;
-                                write_cm(dsa_mem, addr, 2'd2, raw);
-                            end
-                        endcase
-                    end
-                end
-                if(log_fd != 0)
-                    $fwrite(log_fd,
-                        "[VU_INST] SU opcode=%02h vl=%0d vector-stored\n",
-                        param.su_op.opcode, vl);
-            end
-
-            `VU_OPCODE_LDST_MASK: begin
-                bytes = vl / 8;
-                for(int unsigned byte_idx = 0; byte_idx < bytes; byte_idx++) begin
-                    raw = '0;
-                    for(int unsigned bit_idx = 0; bit_idx < 8; bit_idx++)
-                        raw[bit_idx] = resolve_su_mask_bit(
-                            mmio, param, param.su_op.src_sel,
-                            byte_idx * 8 + bit_idx);
-                    write_cm(dsa_mem,
-                             param.st_addr.cm_addr + byte_idx, 2'd0, raw);
-                end
-                if(log_fd != 0)
-                    $fwrite(log_fd, "[VU_INST] SU st.mask vl=%0d\n", vl);
-            end
-
-            `VU_OPCODE_LDST_SCALAR: begin
-                if(resolve_scalar_source(mmio, param,
-                                         param.su_op.src_sel, scalar))
-                    write_cm(dsa_mem, param.st_addr.cm_addr, 2'd2,
-                             scalar);
-                if(log_fd != 0)
-                    $fwrite(log_fd,
-                        "[VU_INST] SU st.s.fp32 value=%08h\n", scalar);
-            end
-
-            default: begin
-                if(log_fd != 0)
-                    $fwrite(log_fd,
-                        "[VU_INST] SU opcode=%02h reserved: NOP\n",
-                        param.su_op.opcode);
-            end
-        endcase
-    endfunction : execute_su
-
-    function automatic void write_vector_chunk(
-        input vu_mmio_set mmio,
-        input int unsigned start_idx,
-        input int unsigned chunk,
-        input vu_vec_chunk_t data,
-        input bit data_type,
-        input int unsigned active
-    );
-        vu_vec_chunk_t merged;
-        int unsigned entry_idx;
-
-        entry_idx = vu_vv_inst::wrap_vrf_index(start_idx, chunk);
-        merged = mmio.read_vrf_entry(entry_idx);
-        for(int unsigned elem = 0; elem < active; elem++)
-            vu_vv_inst::set_elem(merged, data_type, elem,
-                                 vu_vv_inst::get_elem(data, data_type, elem));
-        mmio.write_vrf_entry(entry_idx, merged);
-    endfunction : write_vector_chunk
-
-    function automatic void write_vector_result(
-        input vu_mmio_set mmio,
-        input int unsigned start_idx,
-        input int unsigned unit_id,
-        input int unsigned chunks,
-        input int unsigned vl,
-        input bit data_type,
-        input bit whole_entry
-    );
-        int unsigned elems;
-        int unsigned active;
-
-        elems = elem_count_per_entry(data_type);
-        for(int unsigned chunk = 0; chunk < chunks; chunk++) begin
-            active = whole_entry ? elems : vl - chunk * elems;
-            if(active > elems)
-                active = elems;
-            write_vector_chunk(mmio, start_idx, chunk,
-                               vexe_vec_result[unit_id][chunk], data_type, active);
-        end
-    endfunction : write_vector_result
-
-    function automatic void writebacks(
-        input vu_mmio_set mmio,
-        input vu_mmio_set::vu_exec_param_s param,
-        input int unsigned vl
-    );
-        int unsigned chunks;
-        int unsigned vector_chunks;
-        int unsigned elems;
-        int unsigned active;
-        bit whole_entry;
-        bit [7:0] src;
-
-        vector_chunks = vector_chunk_count(vl, param.type_vl.data_type);
-        elems = elem_count_per_entry(param.type_vl.data_type);
-
-        // VRF write ports.
-        for(int port = 0; port < 2; port++) begin
-            if(port == 0)
-                src = param.prf_op.vrf_wt_p0_src;
-            else
-                src = param.prf_op.vrf_wt_p1_src;
-
-            if(src == `VU_SRC_LU && lu_vec_valid) begin
-                for(int unsigned chunk = 0; chunk < vector_chunks; chunk++) begin
-                    active = vl - chunk * elems;
-                    if(active > elems)
-                        active = elems;
-                    write_vector_chunk(mmio,
-                        port == 0 ? param.vrf_wt_index.vrf_wt_p0_idx :
-                                    param.vrf_wt_index.vrf_wt_p1_idx,
-                        chunk, lu_vec_result[chunk], param.type_vl.data_type,
-                        active);
-                end
-            end else if(src inside {[`VU_SRC_VALU0:`VU_SRC_VSFU1]}) begin
-                int id;
-                id = vexe_src_id(src);
-                if(id >= 0 && vexe_vec_valid[id]) begin
-                    whole_entry = (id == 1 &&
-                                   is_topk_opcode(param.valu1_op.opcode)) ||
-                                  (id == 0 && param.valu0_op.opcode ==
-                                              `VU_OPCODE_VFMV_S_F);
-                    chunks = whole_entry ? 1 : vector_chunks;
-                    write_vector_result(
-                        mmio,
-                        port == 0 ? param.vrf_wt_index.vrf_wt_p0_idx :
-                                    param.vrf_wt_index.vrf_wt_p1_idx,
-                        id, chunks, vl, param.type_vl.data_type, whole_entry
-                    );
-                end
-            end
-        end
-
-        // MRF write port.
-        if(param.prf_op.mrf_wt_src == `VU_SRC_LU && lu_mask_valid)
-            for(int unsigned elem = 0; elem < vl; elem++)
-                mmio.write_mrf_bit(param.mrf_wt_index.mrf_wt_idx,
-                                   elem, lu_mask_result[elem], param.type_vl.data_type);
-        else if(param.prf_op.mrf_wt_src == `VU_SRC_VALU0 &&
-                valu0_mask_valid)
-            for(int unsigned elem = 0; elem < vl; elem++)
-                mmio.write_mrf_bit(param.mrf_wt_index.mrf_wt_idx,
-                                   elem, valu0_mask_result[elem], param.type_vl.data_type);
-        else if(param.prf_op.mrf_wt_src == `VU_SRC_MEXE &&
-                mexe_mask_valid)
-            for(int unsigned elem = 0; elem < vl; elem++)
-                mmio.write_mrf_bit(param.mrf_wt_index.mrf_wt_idx,
-                                   elem, mexe_mask_result[elem], param.type_vl.data_type);
-
-        // SRF virtual write ports p0..p5.
-        if(param.prf_op.srf_wt_en[0] && lu_scalar_valid)
-            mmio.write_srf_entry(param.srf_wt_index_0.srf_wt_p0_idx,
-                                 lu_scalar_result);
-        if(param.prf_op.srf_wt_en[1] && vexe_scalar_valid[1])
-            mmio.write_srf_entry(param.srf_wt_index_0.srf_wt_p1_idx,
-                                 vexe_scalar_result[1]);
-        if(param.prf_op.srf_wt_en[2] && mexe_scalar_valid)
-            mmio.write_srf_entry(param.srf_wt_index_0.srf_wt_p2_idx,
-                                 mexe_scalar_result);
-        if(param.prf_op.srf_wt_en[3] && sexe_valid[0])
-            mmio.write_srf_entry(param.srf_wt_index_0.srf_wt_p3_idx,
-                                 sexe_result[0]);
-        if(param.prf_op.srf_wt_en[4] && sexe_valid[1])
-            mmio.write_srf_entry(param.srf_wt_index_1.srf_wt_p4_idx,
-                                 sexe_result[1]);
-        if(param.prf_op.srf_wt_en[5] && sexe_valid[2])
-            mmio.write_srf_entry(param.srf_wt_index_1.srf_wt_p5_idx,
-                                 sexe_result[2]);
-    endfunction : writebacks
 
     static function automatic bit scalar_valu_opcode(input bit [7:0] opcode);
         return opcode inside {8'h02, 8'h04, 8'h05, 8'h07, 8'h11, 8'h13,
@@ -1689,12 +612,8 @@ class vu_inst_library;
             return 2;
         if(is_srf_src(src))
             return 3;
-        if(src == `VU_SRC_LU) begin
-            if(param.lu_op.opcode inside {[8'h01:8'h04]}) return 1;
-            if(param.lu_op.opcode == `VU_OPCODE_LDST_MASK) return 2;
-            if(param.lu_op.opcode == `VU_OPCODE_LDST_SCALAR) return 3;
-            return 0;
-        end
+        if(src == `VU_SRC_LU)
+            return lu_result_kind(param.lu_op.opcode);
         id = vexe_src_id(src);
         if(id >= 0 && id < 3) begin
             op = get_valu_op(param, id);
@@ -1734,6 +653,26 @@ class vu_inst_library;
                            `VU_SRC_VRF_P0, `VU_SRC_VRF_P1} &&
                (consumer < 0 || vexe_src_id(src) != consumer);
     endfunction : valid_vector_source
+endclass : vu_execution_context
+`endif // VU_EXECUTION_CONTEXT_SV
+`include "lu_library.sv"
+`include "valu_common_library.sv"
+`include "valu0_library.sv"
+`include "valu1_library.sv"
+`include "valu2_library.sv"
+`include "vsfu_library.sv"
+`include "mexe_library.sv"
+`include "sexe_library.sv"
+`include "su_library.sv"
+`ifndef VU_CONFIG_CHECKER_SV
+`define VU_CONFIG_CHECKER_SV
+
+// Cross-unit configuration/resource checks migrated without behavioral changes.
+class vu_config_checker;
+    protected vu_execution_context ctx;
+    function new(input vu_execution_context shared);
+        ctx = shared;
+    endfunction : new
 
     function automatic bit validate_config(
         input vu_mmio_set mmio,
@@ -1764,16 +703,23 @@ class vu_inst_library;
         int unsigned occupied;
 
         bad = param.type_vl.round_mode == 3'b111 || param.prf_op.srf_wt_en[7:6] != 0;
-        chunks = vector_chunk_count(vl, param.type_vl.data_type);
+        chunks = ctx.vector_chunk_count(vl, param.type_vl.data_type);
         foreach(sources[i,j]) begin sources[i][j] = 0; used[i][j] = 0; end
         foreach(edges[i,j]) edges[i][j] = 0;
         foreach(read_chunks[i]) begin read_chunks[i] = 0; mrf_read[i] = 0; end
         foreach(owner[i]) owner[i] = -1;
-        if((param.lu_op.opcode == `VU_OPCODE_LDST_MXFP8 ||
-            param.su_op.opcode == `VU_OPCODE_LDST_MXFP8 ||
-            (param.lu_op.opcode inside {[8'h01:8'h04]} &&
-             param.lu_op.stride_run != 0 && param.lu_op.stride_skip != 0)) &&
-           vl % 32 != 0)
+        // LU feature constraints use the shared metadata; report errors here.
+        if(!ctx.lu_check_config(param, vl))
+            bad = 1;
+        // LU executes first, so only existing MRF ports can supply its mask.
+        // Consumer 5 joins the same port-ownership/range checks used below.
+        if(!ctx.lu_mask_config_valid(param.lu_op.opcode))
+            bad = 1;
+        else if(ctx.lu_uses_mask(param.lu_op.opcode)) begin
+            masks.push_back(ctx.lu_mask_source(param.lu_op.opcode));
+            mask_owners.push_back(5);
+        end
+        if(param.su_op.opcode == `VU_OPCODE_LDST_MXFP8 && vl % 32 != 0)
             bad = 1;
         if(param.su_op.opcode == `VU_OPCODE_LDST_MASK && vl % 8 != 0)
             bad = 1;
@@ -1781,31 +727,31 @@ class vu_inst_library;
             bad = 1;
 
         for(int id = 0; id < 3; id++) begin
-            op[id] = get_valu_op(param, id);
-            if(op[id].opcode == 0 || !valu_opcode_supported(id, op[id].opcode))
+            op[id] = ctx.get_valu_op(param, id);
+            if(op[id].opcode == 0 || !ctx.valu_opcode_supported(id, op[id].opcode))
                 continue;
             sources[id][0] = op[id].src1_sel;
             used[id][0] = 1;
-            if(scalar_valu_opcode(op[id].opcode)) begin
+            if(ctx.scalar_valu_opcode(op[id].opcode)) begin
                 if(op[id].src1_sel != `VU_SRC_SRF_P1 + id)
                     bad = 1;
                 used[id][0] = 0;
-            end else if(!valid_vector_source(param, op[id].src1_sel, id))
+            end else if(!ctx.valid_vector_source(param, op[id].src1_sel, id))
                 bad = 1;
-            if(!single_valu_source(op[id].opcode)) begin
+            if(!ctx.single_valu_source(op[id].opcode)) begin
                 sources[id][1] = op[id].src2_sel;
                 used[id][1] = 1;
-                if(!valid_vector_source(param, op[id].src2_sel, id)) bad = 1;
+                if(!ctx.valid_vector_source(param, op[id].src2_sel, id)) bad = 1;
             end
-            if(is_macc_opcode(op[id].opcode)) begin
+            if(ctx.is_macc_opcode(op[id].opcode)) begin
                 sources[id][2] = op[id].src3_sel;
                 used[id][2] = 1;
-                if(!valid_vector_source(param, op[id].src3_sel, id)) bad = 1;
+                if(!ctx.valid_vector_source(param, op[id].src3_sel, id)) bad = 1;
             end
-            if(masked_valu_opcode(op[id].opcode) && valu_mask_sel(param, id) != 0) begin
-                src = valu_mask_sel(param, id);
+            if(ctx.masked_valu_opcode(op[id].opcode) && ctx.valu_mask_sel(param, id) != 0) begin
+                src = ctx.valu_mask_sel(param, id);
                 if(!(src inside {`VU_SRC_LU, `VU_SRC_MRF_P0, `VU_SRC_MRF_P1}) ||
-                   source_kind(param, src) != 2) bad = 1;
+                   ctx.source_kind(param, src) != 2) bad = 1;
                 masks.push_back(src);
                 mask_owners.push_back(id);
             end
@@ -1813,16 +759,16 @@ class vu_inst_library;
         for(int id = 3; id < 5; id++) begin
             if(id == 4 && param.type_vl.data_type) continue;
             opcode = id == 3 ? param.vsfu_op.vsfu0_opcode : param.vsfu_op.vsfu1_opcode;
-            if(opcode == 0 || !vsfu_opcode_supported(opcode)) continue;
+            if(opcode == 0 || !ctx.vsfu_opcode_supported(opcode)) continue;
             src = id == 3 ? param.vsfu_op.vsfu0_src1_sel : param.vsfu_op.vsfu1_src1_sel;
-            if(!valid_vector_source(param, src, id)) bad = 1;
+            if(!ctx.valid_vector_source(param, src, id)) bad = 1;
             sources[id][0] = src;
             used[id][0] = 1;
         end
         foreach(sources[id,port]) begin
             if(!used[id][port]) continue;
             src = sources[id][port];
-            producer = vexe_src_id(src);
+            producer = ctx.vexe_src_id(src);
             if(producer >= 0) edges[id][producer] = 1;
             if(src inside {`VU_SRC_VRF_P0, `VU_SRC_VRF_P1}) begin
                 occupied = id == 1 && op[1].opcode == `VU_OPCODE_VFMV_F_S ? 1 : chunks;
@@ -1841,16 +787,16 @@ class vu_inst_library;
         if(opcode inside {[8'h01:8'h08], [8'h10:8'h16]}) begin
             src = param.mexe_op.src1_sel;
             if(!(src inside {`VU_SRC_LU, `VU_SRC_VALU0, `VU_SRC_MRF_P0, `VU_SRC_MRF_P1}) ||
-               source_kind(param, src) != 2) bad = 1;
+               ctx.source_kind(param, src) != 2) bad = 1;
             masks.push_back(src); mask_owners.push_back(3);
             src = param.mexe_op.src2_sel;
             if(opcode inside {[8'h01:8'h08]}) begin
                 if(!(src inside {`VU_SRC_LU, `VU_SRC_VALU0, `VU_SRC_MRF_P0, `VU_SRC_MRF_P1}) ||
-                   source_kind(param, src) != 2) bad = 1;
+                   ctx.source_kind(param, src) != 2) bad = 1;
                 masks.push_back(src); mask_owners.push_back(3);
             end else if(opcode inside {8'h15, 8'h16}) begin
                 if(src == `VU_SRC_VALU1) begin
-                    if(!is_topk_opcode(param.valu1_op.opcode)) bad = 1;
+                    if(!ctx.is_topk_opcode(param.valu1_op.opcode)) bad = 1;
                 end else if(src inside {`VU_SRC_VRF_P0, `VU_SRC_VRF_P1}) begin
                     if(read_chunks[src - `VU_SRC_VRF_P0] == 0)
                         read_chunks[src - `VU_SRC_VRF_P0] = 1;
@@ -1858,10 +804,10 @@ class vu_inst_library;
             end
         end
         for(int slot = 0; slot < 3; slot++) begin
-            opcode = sexe_opcode(param, slot);
+            opcode = ctx.sexe_opcode(param, slot);
             if(!(opcode inside {[8'h01:8'h07]})) continue;
-            s1 = sexe_src1(param, slot);
-            s2 = sexe_src2(param, slot);
+            s1 = ctx.sexe_src1(param, slot);
+            s2 = ctx.sexe_src2(param, slot);
             unary = opcode >= `VU_OPCODE_FSQRT_S;
             if(slot == 0) begin
                 if(!(s1 inside {`VU_SRC_LU, `VU_SRC_VALU1, `VU_SRC_SRF_P4})) bad = 1;
@@ -1873,26 +819,26 @@ class vu_inst_library;
                                s2 == `VU_SRC_SRF_P5 + slot)) bad = 1;
                 if(s1 != `VU_SRC_SEXE0 + slot - 1 &&
                    (unary || s2 != `VU_SRC_SEXE0 + slot - 1)) bad = 1;
-                if(!unary && is_srf_src(s1) && is_srf_src(s2)) bad = 1;
+                if(!unary && ctx.is_srf_src(s1) && ctx.is_srf_src(s2)) bad = 1;
             end
-            if(source_kind(param, s1) != 3 || (!unary && source_kind(param, s2) != 3)) bad = 1;
+            if(ctx.source_kind(param, s1) != 3 || (!unary && ctx.source_kind(param, s2) != 3)) bad = 1;
         end
         opcode = param.su_op.opcode;
         src = param.su_op.src_sel;
         if(opcode inside {[8'h01:8'h06]}) begin
             if(src == `VU_SRC_LU && opcode != param.lu_op.opcode) bad = 1;
             if(opcode <= 4) begin
-                if(!valid_vector_source(param, src, -1)) bad = 1;
+                if(!ctx.valid_vector_source(param, src, -1)) bad = 1;
                 if(src inside {`VU_SRC_VRF_P0, `VU_SRC_VRF_P1})
                     read_chunks[src - `VU_SRC_VRF_P0] = chunks;
             end else if(opcode == `VU_OPCODE_LDST_MASK) begin
                 if(!(src inside {`VU_SRC_LU, `VU_SRC_VALU0, `VU_SRC_MEXE,
                                  `VU_SRC_MRF_P0, `VU_SRC_MRF_P1}) ||
-                   source_kind(param, src) != 2) bad = 1;
+                   ctx.source_kind(param, src) != 2) bad = 1;
                 masks.push_back(src); mask_owners.push_back(4);
             end else if(!(src inside {`VU_SRC_LU, `VU_SRC_VALU1, `VU_SRC_MEXE,
                                       [`VU_SRC_SEXE0:`VU_SRC_SEXE2], `VU_SRC_SRF_P0}) ||
-                        source_kind(param, src) != 3) bad = 1;
+                        ctx.source_kind(param, src) != 3) bad = 1;
         end
         foreach(masks[i]) begin
             mask_port = -1;
@@ -1911,9 +857,9 @@ class vu_inst_library;
                                           param.vrf_wt_index.vrf_wt_p1_idx[8:0];
             write_chunks[port] = 0;
             if(src == 0) continue;
-            if(!(src inside {[`VU_SRC_LU:`VU_SRC_VSFU1]}) || source_kind(param, src) != 1)
+            if(!(src inside {[`VU_SRC_LU:`VU_SRC_VSFU1]}) || ctx.source_kind(param, src) != 1)
                 bad = 1;
-            write_chunks[port] = ((src == `VU_SRC_VALU1 && is_topk_opcode(param.valu1_op.opcode)) ||
+            write_chunks[port] = ((src == `VU_SRC_VALU1 && ctx.is_topk_opcode(param.valu1_op.opcode)) ||
                                   (src == `VU_SRC_VALU0 && param.valu0_op.opcode == `VU_OPCODE_VFMV_S_F)) ?
                                  1 : chunks;
         end
@@ -1925,12 +871,12 @@ class vu_inst_library;
         end
         src = param.prf_op.mrf_wt_src;
         if(src != 0 && (!(src inside {`VU_SRC_LU, `VU_SRC_VALU0, `VU_SRC_MEXE}) ||
-                        source_kind(param, src) != 2)) bad = 1;
-        if(param.prf_op.srf_wt_en[0] && param.lu_op.opcode != `VU_OPCODE_LDST_SCALAR) bad = 1;
-        if(param.prf_op.srf_wt_en[1] && source_kind(param, `VU_SRC_VALU1) != 3) bad = 1;
-        if(param.prf_op.srf_wt_en[2] && source_kind(param, `VU_SRC_MEXE) != 3) bad = 1;
+                        ctx.source_kind(param, src) != 2)) bad = 1;
+        if(param.prf_op.srf_wt_en[0] && ctx.lu_result_kind(param.lu_op.opcode) != 3) bad = 1;
+        if(param.prf_op.srf_wt_en[1] && ctx.source_kind(param, `VU_SRC_VALU1) != 3) bad = 1;
+        if(param.prf_op.srf_wt_en[2] && ctx.source_kind(param, `VU_SRC_MEXE) != 3) bad = 1;
         for(int slot = 0; slot < 3; slot++)
-            if(param.prf_op.srf_wt_en[3 + slot] && source_kind(param, `VU_SRC_SEXE0 + slot) != 3)
+            if(param.prf_op.srf_wt_en[3 + slot] && ctx.source_kind(param, `VU_SRC_SEXE0 + slot) != 3)
                 bad = 1;
         srf_indices[0] = param.srf_wt_index_0.srf_wt_p0_idx[5:0];
         srf_indices[1] = param.srf_wt_index_0.srf_wt_p1_idx[5:0];
@@ -1943,7 +889,7 @@ class vu_inst_library;
                 if(param.prf_op.srf_wt_en[i] && param.prf_op.srf_wt_en[j] &&
                    srf_indices[i] == srf_indices[j]) bad = 1;
         if(bad) begin
-            mmio.report_error(32'h00000004, 0);
+            mmio.report_error(`VU_ERR_CFG, 0);
             return 1'b0;
         end
         for(int port = 0; port < 2; port++) begin
@@ -1951,17 +897,232 @@ class vu_inst_library;
                                    param.vrf_rd_index.vrf_rd_p1_idx[8:0];
             if(occupied + read_chunks[port] > `VU_VRF_ENTRY_NUM ||
                write_start[port] + write_chunks[port] > `VU_VRF_ENTRY_NUM)
-                mmio.report_error(32'h00000008, 0);
+                mmio.report_error(`VU_ERR_RF_IDX, 0);
             occupied = port == 0 ? param.mrf_rd_index.mrf_rd_p0_idx[8:0] :
                                    param.mrf_rd_index.mrf_rd_p1_idx[8:0];
             if(mrf_read[port] && occupied + chunks > `VU_MRF_ENTRY_NUM)
-                mmio.report_error(32'h00000008, 0);
+                mmio.report_error(`VU_ERR_RF_IDX, 0);
         end
         if(param.prf_op.mrf_wt_src != 0 &&
            int'(param.mrf_wt_index.mrf_wt_idx[8:0]) + chunks > `VU_MRF_ENTRY_NUM)
-            mmio.report_error(32'h00000008, 0);
+            mmio.report_error(`VU_ERR_RF_IDX, 0);
         return 1'b1;
     endfunction : validate_config
+endclass : vu_config_checker
+`endif
+`ifndef VU_WRITEBACK_LIBRARY_SV
+`define VU_WRITEBACK_LIBRARY_SV
+
+// Central PRF writeback, after SU; preserves masks, tails and wrapping.
+class vu_writeback_library;
+    protected vu_execution_context ctx;
+    function new(input vu_execution_context shared);
+        ctx = shared;
+    endfunction : new
+
+    function automatic void write_vector_chunk(
+        input vu_mmio_set mmio,
+        input int unsigned start_idx,
+        input int unsigned chunk,
+        input vu_vec_chunk_t data,
+        input bit data_type,
+        input int unsigned active
+    );
+        vu_vec_chunk_t merged;
+        int unsigned entry_idx;
+
+        entry_idx = vu_vv_inst::wrap_vrf_index(start_idx, chunk);
+        merged = mmio.read_vrf_entry(entry_idx);
+        for(int unsigned elem = 0; elem < active; elem++)
+            vu_vv_inst::set_elem(merged, data_type, elem,
+                                 vu_vv_inst::get_elem(data, data_type, elem));
+        mmio.write_vrf_entry(entry_idx, merged);
+    endfunction : write_vector_chunk
+
+    function automatic void write_vector_result(
+        input vu_mmio_set mmio,
+        input int unsigned start_idx,
+        input int unsigned unit_id,
+        input int unsigned chunks,
+        input int unsigned vl,
+        input bit data_type,
+        input bit whole_entry
+    );
+        int unsigned elems;
+        int unsigned active;
+
+        elems = ctx.elem_count_per_entry(data_type);
+        for(int unsigned chunk = 0; chunk < chunks; chunk++) begin
+            active = whole_entry ? elems : vl - chunk * elems;
+            if(active > elems)
+                active = elems;
+            write_vector_chunk(mmio, start_idx, chunk,
+                               ctx.vexe_vec_result[unit_id][chunk], data_type, active);
+        end
+    endfunction : write_vector_result
+
+    function automatic void writebacks(
+        input vu_mmio_set mmio,
+        input vu_mmio_set::vu_exec_param_s param,
+        input int unsigned vl
+    );
+        int unsigned chunks;
+        int unsigned vector_chunks;
+        int unsigned elems;
+        int unsigned active;
+        bit whole_entry;
+        bit [7:0] src;
+
+        vector_chunks = ctx.vector_chunk_count(vl, param.type_vl.data_type);
+        elems = ctx.elem_count_per_entry(param.type_vl.data_type);
+
+        // VRF write ports.
+        for(int port = 0; port < 2; port++) begin
+            if(port == 0)
+                src = param.prf_op.vrf_wt_p0_src;
+            else
+                src = param.prf_op.vrf_wt_p1_src;
+
+            if(src == `VU_SRC_LU && ctx.lu_vector_valid) begin
+                for(int unsigned chunk = 0; chunk < vector_chunks; chunk++) begin
+                    active = vl - chunk * elems;
+                    if(active > elems)
+                        active = elems;
+                    write_vector_chunk(mmio,
+                        port == 0 ? param.vrf_wt_index.vrf_wt_p0_idx :
+                                    param.vrf_wt_index.vrf_wt_p1_idx,
+                        chunk, ctx.lu_vector_result[chunk], param.type_vl.data_type,
+                        active);
+                end
+            end else if(src inside {[`VU_SRC_VALU0:`VU_SRC_VSFU1]}) begin
+                int id;
+                id = ctx.vexe_src_id(src);
+                if(id >= 0 && ctx.vexe_vec_valid[id]) begin
+                    whole_entry = (id == 1 &&
+                                   ctx.is_topk_opcode(param.valu1_op.opcode)) ||
+                                  (id == 0 && param.valu0_op.opcode ==
+                                              `VU_OPCODE_VFMV_S_F);
+                    chunks = whole_entry ? 1 : vector_chunks;
+                    write_vector_result(
+                        mmio,
+                        port == 0 ? param.vrf_wt_index.vrf_wt_p0_idx :
+                                    param.vrf_wt_index.vrf_wt_p1_idx,
+                        id, chunks, vl, param.type_vl.data_type, whole_entry
+                    );
+                end
+            end
+        end
+
+        // MRF write port.
+        if(param.prf_op.mrf_wt_src == `VU_SRC_LU && ctx.lu_mask_valid)
+            for(int unsigned elem = 0; elem < vl; elem++)
+                mmio.write_mrf_bit(param.mrf_wt_index.mrf_wt_idx,
+                                   elem, ctx.lu_mask_result[elem], param.type_vl.data_type);
+        else if(param.prf_op.mrf_wt_src == `VU_SRC_VALU0 &&
+                ctx.valu0_mask_valid)
+            for(int unsigned elem = 0; elem < vl; elem++)
+                mmio.write_mrf_bit(param.mrf_wt_index.mrf_wt_idx,
+                                   elem, ctx.valu0_mask_result[elem], param.type_vl.data_type);
+        else if(param.prf_op.mrf_wt_src == `VU_SRC_MEXE &&
+                ctx.mexe_mask_valid)
+            for(int unsigned elem = 0; elem < vl; elem++)
+                mmio.write_mrf_bit(param.mrf_wt_index.mrf_wt_idx,
+                                   elem, ctx.mexe_mask_result[elem], param.type_vl.data_type);
+
+        // SRF virtual write ports p0..p5.
+        if(param.prf_op.srf_wt_en[0] && ctx.lu_scalar_valid)
+            mmio.write_srf_entry(param.srf_wt_index_0.srf_wt_p0_idx,
+                                 ctx.lu_scalar_result);
+        if(param.prf_op.srf_wt_en[1] && ctx.vexe_scalar_valid[1])
+            mmio.write_srf_entry(param.srf_wt_index_0.srf_wt_p1_idx,
+                                 ctx.vexe_scalar_result[1]);
+        if(param.prf_op.srf_wt_en[2] && ctx.mexe_scalar_valid)
+            mmio.write_srf_entry(param.srf_wt_index_0.srf_wt_p2_idx,
+                                 ctx.mexe_scalar_result);
+        if(param.prf_op.srf_wt_en[3] && ctx.sexe_valid[0])
+            mmio.write_srf_entry(param.srf_wt_index_0.srf_wt_p3_idx,
+                                 ctx.sexe_result[0]);
+        if(param.prf_op.srf_wt_en[4] && ctx.sexe_valid[1])
+            mmio.write_srf_entry(param.srf_wt_index_1.srf_wt_p4_idx,
+                                 ctx.sexe_result[1]);
+        if(param.prf_op.srf_wt_en[5] && ctx.sexe_valid[2])
+            mmio.write_srf_entry(param.srf_wt_index_1.srf_wt_p5_idx,
+                                 ctx.sexe_result[2]);
+    endfunction : writebacks
+endclass : vu_writeback_library
+`endif
+
+// Top-level lifecycle and intra-macro dependency scheduling only.
+// Macros complete synchronously; this is not a cycle/ISQ/overlap model.
+// Individual instruction kernels belong to the corresponding unit libraries.
+class vu_inst_library;
+    protected vu_execution_context ctx;
+    protected lu_library lu_lib;
+    protected valu_common_library valu_lib[3];
+    protected vsfu_library vsfu_lib;
+    protected mexe_library mexe_lib;
+    protected sexe_library sexe_lib;
+    protected su_library su_lib;
+    protected vu_config_checker cfg_checker;
+    protected vu_writeback_library writeback_lib;
+
+    function new();
+        valu0_library valu0;
+        valu1_library valu1;
+        valu2_library valu2;
+        ctx = new();
+        lu_lib = new(ctx);
+        valu0 = new(ctx);
+        valu1 = new(ctx);
+        valu2 = new(ctx);
+        valu_lib[0] = valu0;
+        valu_lib[1] = valu1;
+        valu_lib[2] = valu2;
+        vsfu_lib = new(ctx);
+        mexe_lib = new(ctx);
+        sexe_lib = new(ctx);
+        su_lib = new(ctx);
+        cfg_checker = new(ctx);
+        writeback_lib = new(ctx);
+    endfunction : new
+
+    function void set_log(input int fd);
+        ctx.set_log(fd);
+    endfunction : set_log
+
+    function automatic void execute_vexe(
+        input vu_mmio_set mmio,
+        input vu_mmio_set::vu_exec_param_s param,
+        input int unsigned vl
+    );
+        if(param.type_vl.data_type)
+            ctx.vexe_done[4] = 1'b1;
+        for(int pass = 0; pass < 5; pass++) begin
+            for(int id = 0; id < 3; id++)
+                if(!ctx.vexe_done[id] && valu_lib[id].can_execute(param, id))
+                    valu_lib[id].execute(mmio, param, id, vl);
+            for(int vsfu_id = 0; vsfu_id < 2; vsfu_id++)
+                if(!ctx.vexe_done[3+vsfu_id] &&
+                   vsfu_lib.can_execute(param, vsfu_id))
+                    vsfu_lib.execute(mmio, param, vsfu_id, vl);
+        end
+
+        for(int id = 0; id < 5; id++) begin
+            if(!ctx.vexe_done[id]) begin
+                ctx.vexe_done[id] = 1'b1;
+                if(ctx.log_fd != 0)
+                    $fwrite(ctx.log_fd,
+                        "[VU_INST] VEXE%0d not executed: unresolved source dependency\n",
+                        id);
+            end
+            if(ctx.vexe_vec_valid[id]) begin
+                if(id < 3)
+                    mmio.set_valu_bypass(id, ctx.vexe_vec_result[id][0]);
+                else
+                    mmio.set_vsfu_bypass(id-3, ctx.vexe_vec_result[id][0]);
+            end
+        end
+    endfunction : execute_vexe
 
     function void execute(
         input vu_mmio_set mmio,
@@ -1969,7 +1130,6 @@ class vu_inst_library;
         input vu_mmio_set::vu_exec_param_s param
     );
         int unsigned vl;
-
         vl = param.type_vl.vl;
         if(vl == 0)
             vl = 1;
@@ -1977,19 +1137,20 @@ class vu_inst_library;
             vl = `VU_MAX_VL;
 
         mmio.begin_macro(param);
-        if(!validate_config(mmio, param, vl)) begin
+        if(!cfg_checker.validate_config(mmio, param, vl)) begin
             mmio.end_macro();
             return;
         end
-        clear_execution_state(vl);
-        execute_lu(mmio, dsa_mem, param, vl);
-        execute_vexe(mmio, param, vl);
-        execute_mexe(mmio, param, vl);
-        execute_sexe(mmio, param);
 
-        // SU reads the pre-writeback RF state or the current bypass results.
-        execute_su(mmio, dsa_mem, param, vl);
-        writebacks(mmio, param, vl);
+        ctx.clear_execution_state(vl);
+        lu_lib.execute(mmio, dsa_mem, param, vl);
+        execute_vexe(mmio, param, vl);
+        mexe_lib.execute(mmio, param, vl);
+        sexe_lib.execute(mmio, param);
+
+        // Preserve the original sequence: SU reads before RF writeback.
+        su_lib.execute(mmio, dsa_mem, param, vl);
+        writeback_lib.writebacks(mmio, param, vl);
         mmio.end_macro();
     endfunction : execute
 
@@ -1998,10 +1159,10 @@ class vu_inst_library;
         input dsa_mem_library dsa_mem
     );
         vu_mmio_set::vu_exec_param_s param;
-
         if(!mmio.pop_trigger(param))
             return;
         execute(mmio, dsa_mem, param);
     endfunction : do_trigger
-
 endclass : vu_inst_library
+
+`endif // VU_INST_LIBRARY_FULL_SPLIT_SV

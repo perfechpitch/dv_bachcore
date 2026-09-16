@@ -21,13 +21,15 @@ typedef struct packed {
     bit event_en;
     bit [4:0] reserved_15_11;
     bit [2:0] config_idx;
-    bit [7:0] static_dynamic_mask;
+    bit reserved_7_7;
+    bit [6:0] static_dynamic_mask;
 } macro_inst_trigger_field_s;
 macro_inst_trigger_field_s macro_inst_trigger;
 bit [31:0] macro_inst_trigger_val;
 localparam bit [31:0] TYPE_VL_BASE_ADDR = 32'h00000004;
 typedef struct packed {
-    bit [11:0] reserved_31_20;
+    bit [10:0] reserved_31_21;
+    bit nan_inf_replace_en;
     bit [2:0] round_mode;
     bit data_type;
     bit [15:0] vl;
@@ -258,7 +260,8 @@ localparam int STATIC_TYPE_VL_COUNT = 8;
 localparam bit [31:0] STATIC_TYPE_VL_STRIDE = 32'h00000100;
 localparam bit [31:0] STATIC_TYPE_VL_END_ADDR = 32'h00001730;
 typedef struct packed {
-    bit [11:0] reserved_31_20;
+    bit [10:0] reserved_31_21;
+    bit nan_inf_replace_en;
     bit [2:0] round_mode;
     bit data_type;
     bit [15:0] vl;
@@ -370,6 +373,18 @@ typedef struct packed {
 } static_srf_wt_index_1_field_s;
 static_srf_wt_index_1_field_s static_srf_wt_index_1[8];
 bit [31:0] static_srf_wt_index_1_val[8];
+localparam bit [31:0] INF_REPLACE_VALUE_BASE_ADDR = 32'h00001F00;
+typedef struct packed {
+    bit [31:0] inf_replace_value;
+} inf_replace_value_field_s;
+inf_replace_value_field_s inf_replace_value;
+bit [31:0] inf_replace_value_val;
+localparam bit [31:0] NAN_REPLACE_VALUE_BASE_ADDR = 32'h00001F04;
+typedef struct packed {
+    bit [31:0] nan_replace_value;
+} nan_replace_value_field_s;
+nan_replace_value_field_s nan_replace_value;
+bit [31:0] nan_replace_value_val;
 localparam bit [31:0] REG_FILE_ADDR_BASE_ADDR = 32'h00002000;
 typedef struct packed {
     bit [13:0] reserved_31_18;
@@ -396,26 +411,27 @@ status_field_s status;
 bit [31:0] status_val;
 localparam bit [31:0] ERROR_CODE_BASE_ADDR = 32'h00003008;
 typedef struct packed {
-    bit [24:0] reserved_31_7;
-    bit data_cvt_error;
-    bit cm_resp_error;
+    bit [22:0] reserved_31_9;
+    bit cm_ecc_error;
+    bit srf_ecc_error;
+    bit mrf_ecc_error;
+    bit vrf_ecc_error;
+    bit nan_error;
     bit cm_addr_error;
     bit rf_idx_error;
     bit cfg_error;
-    bit reserved_1_1;
     bit reg_addr_error;
 } error_code_field_s;
 error_code_field_s error_code;
 bit [31:0] error_code_val;
 localparam bit [31:0] ERROR_INFO_BASE_ADDR = 32'h0000300C;
 typedef struct packed {
-    bit [11:0] reserved_31_20;
     bit valid;
-    bit [2:0] first_err;
+    bit [3:0] first_err;
     bit [3:0] err_unit;
-    bit reserved_11_11;
     bit [2:0] config_idx;
-    bit [7:0] static_dynamic_mask;
+    bit [3:0] stream_id;
+    bit [15:0] user_id;
 } error_info_field_s;
 error_info_field_s error_info;
 bit [31:0] error_info_val;
@@ -433,6 +449,56 @@ typedef struct packed {
 } snapshot_data_field_s;
 snapshot_data_field_s snapshot_data;
 bit [31:0] snapshot_data_val;
+localparam bit [31:0] VRF_ERR_INFO_BASE_ADDR = 32'h00003018;
+typedef struct packed {
+    bit valid;
+    bit [5:0] reserved_30_25;
+    bit [8:0] rf_err_idx;
+    bit [15:0] user_id;
+} vrf_err_info_field_s;
+vrf_err_info_field_s vrf_err_info;
+bit [31:0] vrf_err_info_val;
+localparam bit [31:0] MRF_ERR_INFO_BASE_ADDR = 32'h0000301C;
+typedef struct packed {
+    bit valid;
+    bit [5:0] reserved_30_25;
+    bit [8:0] rf_err_idx;
+    bit [15:0] user_id;
+} mrf_err_info_field_s;
+mrf_err_info_field_s mrf_err_info;
+bit [31:0] mrf_err_info_val;
+localparam bit [31:0] SRF_ERR_INFO_BASE_ADDR = 32'h00003020;
+typedef struct packed {
+    bit valid;
+    bit [5:0] reserved_30_25;
+    bit [8:0] rf_err_idx;
+    bit [15:0] user_id;
+} srf_err_info_field_s;
+srf_err_info_field_s srf_err_info;
+bit [31:0] srf_err_info_val;
+localparam bit [31:0] CM_ERR_INFO_BASE_ADDR = 32'h00003024;
+typedef struct packed {
+    bit valid;
+    bit [13:0] reserved_30_17;
+    bit dir;
+    bit [15:0] user_id;
+} cm_err_info_field_s;
+cm_err_info_field_s cm_err_info;
+bit [31:0] cm_err_info_val;
+localparam bit [31:0] CM_ERR_ADDR_BASE_ADDR = 32'h00003028;
+typedef struct packed {
+    bit [31:0] cm_err_addr;
+} cm_err_addr_field_s;
+cm_err_addr_field_s cm_err_addr;
+bit [31:0] cm_err_addr_val;
+localparam bit [31:0] NAN_ERR_INFO_BASE_ADDR = 32'h0000302C;
+typedef struct packed {
+    bit valid;
+    bit [14:0] reserved_30_16;
+    bit [15:0] user_id;
+} nan_err_info_field_s;
+nan_err_info_field_s nan_err_info;
+bit [31:0] nan_err_info_val;
 localparam bit [31:0] PROFILE_CTRL_BASE_ADDR = 32'h00004000;
 typedef struct packed {
     bit [29:0] reserved_31_2;
@@ -801,11 +867,36 @@ typedef struct packed {
 } mrf_wt_busy_cycle_hi_field_s;
 mrf_wt_busy_cycle_hi_field_s mrf_wt_busy_cycle_hi;
 bit [31:0] mrf_wt_busy_cycle_hi_val;
+localparam bit [31:0] NAN_REPLACE_CNT_LO_BASE_ADDR = 32'h000040F8;
+typedef struct packed {
+    bit [31:0] count;
+} nan_replace_cnt_lo_field_s;
+nan_replace_cnt_lo_field_s nan_replace_cnt_lo;
+bit [31:0] nan_replace_cnt_lo_val;
+localparam bit [31:0] NAN_REPLACE_CNT_HI_BASE_ADDR = 32'h000040FC;
+typedef struct packed {
+    bit [31:0] count;
+} nan_replace_cnt_hi_field_s;
+nan_replace_cnt_hi_field_s nan_replace_cnt_hi;
+bit [31:0] nan_replace_cnt_hi_val;
+localparam bit [31:0] INF_REPLACE_CNT_LO_BASE_ADDR = 32'h00004100;
+typedef struct packed {
+    bit [31:0] count;
+} inf_replace_cnt_lo_field_s;
+inf_replace_cnt_lo_field_s inf_replace_cnt_lo;
+bit [31:0] inf_replace_cnt_lo_val;
+localparam bit [31:0] INF_REPLACE_CNT_HI_BASE_ADDR = 32'h00004104;
+typedef struct packed {
+    bit [31:0] count;
+} inf_replace_cnt_hi_field_s;
+inf_replace_cnt_hi_field_s inf_replace_cnt_hi;
+bit [31:0] inf_replace_cnt_hi_val;
 typedef enum bit {PARAM_STATIC, PARAM_DYNAMIC} param_src_e;
 typedef struct {
     bit [15:0] vl;
     bit data_type;
     bit [2:0] round_mode;
+    bit nan_inf_replace_en;
     param_src_e src;
 } type_vl_param_s;
 typedef struct {

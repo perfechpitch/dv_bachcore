@@ -79,6 +79,20 @@ uint32_t vu_fp32_to_bf16(uint32_t bits, uint32_t round_mode)
     return (upper + increment) & UINT32_C(0xffff);
 }
 
+/* Memory narrowing has a saturating finite-overflow boundary (0915 LU/SU
+ * specification). Keep the general converter IEEE-style for arithmetic and
+ * scalar operands. Subnormal/tininess behavior and the existing RS fallback
+ * are deliberately unchanged pending a precise specification. */
+static uint32_t vu_fp32_to_bf16_memory(uint32_t bits, uint32_t round_mode)
+{
+    uint32_t result = vu_fp32_to_bf16(bits, round_mode);
+
+    if((bits & UINT32_C(0x7f800000)) != UINT32_C(0x7f800000) &&
+       (result & UINT32_C(0x7fff)) == UINT32_C(0x7f80))
+        result = (result & UINT32_C(0x8000)) | UINT32_C(0x7f7f);
+    return result;
+}
+
 static float vu_round_magnitude(float value, uint32_t round_mode, int negative)
 {
     float floor_value;
@@ -697,6 +711,8 @@ uint32_t vu_load_convert(uint32_t opcode,
         break;
     case 0x04:
         fp32_bits = raw;
+        if(data_type)
+            return vu_fp32_to_bf16_memory(fp32_bits, round_mode);
         break;
     default:
         return raw;
@@ -718,7 +734,7 @@ uint32_t vu_store_convert(uint32_t opcode,
         return vu_fp32_to_fp8e4m3(fp32_bits, round_mode);
     case 0x03:
         return data_type ? (value & UINT32_C(0xffff)) :
-                           vu_fp32_to_bf16(fp32_bits, round_mode);
+                           vu_fp32_to_bf16_memory(fp32_bits, round_mode);
     case 0x04:
         return fp32_bits;
     default:

@@ -2,12 +2,12 @@
 
 if(!mmio_hit && (addr == MACRO_INST_TRIGGER_BASE_ADDR)) begin
     data = macro_inst_trigger_val;
-    data &= 32'h033F07FF;
+    data &= 32'h033F077F;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && (addr == TYPE_VL_BASE_ADDR)) begin
     data = type_vl_val;
-    data &= 32'h000FFFFF;
+    data &= 32'h001FFFFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && (addr == LD_ADDR_BASE_ADDR)) begin
@@ -135,7 +135,7 @@ if(!mmio_hit && ((addr >= STATIC_TYPE_VL_BASE_ADDR) && (addr <= STATIC_TYPE_VL_E
     int unsigned reg_idx;
     reg_idx = (addr - STATIC_TYPE_VL_BASE_ADDR) / STATIC_TYPE_VL_STRIDE;
     data = static_type_vl_val[reg_idx];
-    data &= 32'h000FFFFF;
+    data &= 32'h001FFFFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && ((addr >= STATIC_LD_ADDR_BASE_ADDR) && (addr <= STATIC_LD_ADDR_END_ADDR) && (((addr - STATIC_LD_ADDR_BASE_ADDR) % STATIC_LD_ADDR_STRIDE) == 0))) begin
@@ -200,6 +200,14 @@ if(!mmio_hit && ((addr >= STATIC_SRF_WT_INDEX_1_BASE_ADDR) && (addr <= STATIC_SR
     data &= 32'h0000FFFF;
     mmio_hit = 1'b1;
 end
+if(!mmio_hit && (addr == INF_REPLACE_VALUE_BASE_ADDR)) begin
+    data = inf_replace_value_val;
+    mmio_hit = 1'b1;
+end
+if(!mmio_hit && (addr == NAN_REPLACE_VALUE_BASE_ADDR)) begin
+    data = nan_replace_value_val;
+    mmio_hit = 1'b1;
+end
 if(!mmio_hit && (addr == REG_FILE_ADDR_BASE_ADDR)) begin
     data = reg_file_addr_val;
     data &= 32'h0003FFFF;
@@ -216,12 +224,11 @@ if(!mmio_hit && (addr == STATUS_BASE_ADDR)) begin
 end
 if(!mmio_hit && (addr == ERROR_CODE_BASE_ADDR)) begin
     data = error_code_val;
-    data &= 32'h0000007D;
+    data &= 32'h000001FF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && (addr == ERROR_INFO_BASE_ADDR)) begin
     data = error_info_val;
-    data &= 32'h000FF7FF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && (addr == SNAPSHOT_ADDR_BASE_ADDR)) begin
@@ -231,6 +238,35 @@ if(!mmio_hit && (addr == SNAPSHOT_ADDR_BASE_ADDR)) begin
 end
 if(!mmio_hit && (addr == SNAPSHOT_DATA_BASE_ADDR)) begin
     data = snapshot_data_val;
+    mmio_hit = 1'b1;
+end
+if(!mmio_hit && (addr == VRF_ERR_INFO_BASE_ADDR)) begin
+    data = vrf_err_info_val;
+    data &= 32'h81FFFFFF;
+    mmio_hit = 1'b1;
+end
+if(!mmio_hit && (addr == MRF_ERR_INFO_BASE_ADDR)) begin
+    data = mrf_err_info_val;
+    data &= 32'h81FFFFFF;
+    mmio_hit = 1'b1;
+end
+if(!mmio_hit && (addr == SRF_ERR_INFO_BASE_ADDR)) begin
+    data = srf_err_info_val;
+    data &= 32'h81FFFFFF;
+    mmio_hit = 1'b1;
+end
+if(!mmio_hit && (addr == CM_ERR_INFO_BASE_ADDR)) begin
+    data = cm_err_info_val;
+    data &= 32'h8001FFFF;
+    mmio_hit = 1'b1;
+end
+if(!mmio_hit && (addr == CM_ERR_ADDR_BASE_ADDR)) begin
+    data = cm_err_addr_val;
+    mmio_hit = 1'b1;
+end
+if(!mmio_hit && (addr == NAN_ERR_INFO_BASE_ADDR)) begin
+    data = nan_err_info_val;
+    data &= 32'h8000FFFF;
     mmio_hit = 1'b1;
 end
 if(!mmio_hit && (addr == PROFILE_CTRL_BASE_ADDR)) begin
@@ -476,5 +512,21 @@ if(!mmio_hit && (addr == MRF_WT_BUSY_CYCLE_LO_BASE_ADDR)) begin
 end
 if(!mmio_hit && (addr == MRF_WT_BUSY_CYCLE_HI_BASE_ADDR)) begin
     data = mrf_wt_busy_cycle_hi_val;
+    mmio_hit = 1'b1;
+end
+if(!mmio_hit && (addr == NAN_REPLACE_CNT_LO_BASE_ADDR)) begin
+    data = nan_replace_cnt_lo_val;
+    mmio_hit = 1'b1;
+end
+if(!mmio_hit && (addr == NAN_REPLACE_CNT_HI_BASE_ADDR)) begin
+    data = nan_replace_cnt_hi_val;
+    mmio_hit = 1'b1;
+end
+if(!mmio_hit && (addr == INF_REPLACE_CNT_LO_BASE_ADDR)) begin
+    data = inf_replace_cnt_lo_val;
+    mmio_hit = 1'b1;
+end
+if(!mmio_hit && (addr == INF_REPLACE_CNT_HI_BASE_ADDR)) begin
+    data = inf_replace_cnt_hi_val;
     mmio_hit = 1'b1;
 end

@@ -73,7 +73,7 @@
       "fields": [
         {
           "name": "STATIC_DYNAMIC_MASK",
-          "msb": 7,
+          "msb": 6,
           "lsb": 0,
           "access": "RW"
         },
@@ -136,6 +136,12 @@
           "name": "ROUND_MODE",
           "msb": 19,
           "lsb": 17,
+          "access": "RW"
+        },
+        {
+          "name": "NAN_INF_REPLACE_EN",
+          "msb": 20,
+          "lsb": 20,
           "access": "RW"
         }
       ]
@@ -726,6 +732,12 @@
           "msb": 19,
           "lsb": 17,
           "access": "RW"
+        },
+        {
+          "name": "NAN_INF_REPLACE_EN",
+          "msb": 20,
+          "lsb": 20,
+          "access": "RW"
         }
       ]
     },
@@ -958,6 +970,22 @@
       ]
     },
     {
+      "name": "INF_REPLACE_VALUE",
+      "addr": "0x00001F00",
+      "reset": "0x00000000",
+      "fields": [
+        {"name": "INF_REPLACE_VALUE", "msb": 31, "lsb": 0, "access": "RW"}
+      ]
+    },
+    {
+      "name": "NAN_REPLACE_VALUE",
+      "addr": "0x00001F04",
+      "reset": "0x00000000",
+      "fields": [
+        {"name": "NAN_REPLACE_VALUE", "msb": 31, "lsb": 0, "access": "RW"}
+      ]
+    },
+    {
       "name": "REG_FILE_ADDR",
       "addr": "0x00002000",
       "reset": "0x00000000",
@@ -1035,32 +1063,50 @@
         },
         {
           "name": "CFG_ERROR",
+          "msb": 1,
+          "lsb": 1,
+          "access": "RW"
+        },
+        {
+          "name": "RF_IDX_ERROR",
           "msb": 2,
           "lsb": 2,
           "access": "RW"
         },
         {
-          "name": "RF_IDX_ERROR",
+          "name": "CM_ADDR_ERROR",
           "msb": 3,
           "lsb": 3,
           "access": "RW"
         },
         {
-          "name": "CM_ADDR_ERROR",
+          "name": "NAN_ERROR",
           "msb": 4,
           "lsb": 4,
           "access": "RW"
         },
         {
-          "name": "CM_RESP_ERROR",
+          "name": "VRF_ECC_ERROR",
           "msb": 5,
           "lsb": 5,
           "access": "RW"
         },
         {
-          "name": "DATA_CVT_ERROR",
+          "name": "MRF_ECC_ERROR",
           "msb": 6,
           "lsb": 6,
+          "access": "RW"
+        },
+        {
+          "name": "SRF_ECC_ERROR",
+          "msb": 7,
+          "lsb": 7,
+          "access": "RW"
+        },
+        {
+          "name": "CM_ECC_ERROR",
+          "msb": 8,
+          "lsb": 8,
           "access": "RW"
         }
       ],
@@ -1072,33 +1118,39 @@
       "reset": "0x00000000",
       "fields": [
         {
-          "name": "STATIC_DYNAMIC_MASK",
-          "msb": 7,
+          "name": "USER_ID",
+          "msb": 15,
           "lsb": 0,
           "access": "RW"
         },
         {
-          "name": "CONFIG_IDX",
-          "msb": 10,
-          "lsb": 8,
-          "access": "RW"
-        },
-        {
-          "name": "ERR_UNIT",
-          "msb": 15,
-          "lsb": 12,
-          "access": "RW"
-        },
-        {
-          "name": "FIRST_ERR",
-          "msb": 18,
+          "name": "STREAM_ID",
+          "msb": 19,
           "lsb": 16,
           "access": "RW"
         },
         {
+          "name": "CONFIG_IDX",
+          "msb": 22,
+          "lsb": 20,
+          "access": "RW"
+        },
+        {
+          "name": "ERR_UNIT",
+          "msb": 26,
+          "lsb": 23,
+          "access": "RW"
+        },
+        {
+          "name": "FIRST_ERR",
+          "msb": 30,
+          "lsb": 27,
+          "access": "RW"
+        },
+        {
           "name": "VALID",
-          "msb": 19,
-          "lsb": 19,
+          "msb": 31,
+          "lsb": 31,
           "access": "RW"
         }
       ],
@@ -1136,6 +1188,69 @@
         }
       ],
       "software_write_ignore": true
+    },
+    {
+      "name": "VRF_ERR_INFO",
+      "addr": "0x00003018",
+      "reset": "0x00000000",
+      "software_write_ignore": true,
+      "fields": [
+        {"name": "USER_ID", "msb": 15, "lsb": 0, "access": "RW"},
+        {"name": "RF_ERR_IDX", "msb": 24, "lsb": 16, "access": "RW"},
+        {"name": "VALID", "msb": 31, "lsb": 31, "access": "RW"}
+      ]
+    },
+    {
+      "name": "MRF_ERR_INFO",
+      "addr": "0x0000301C",
+      "reset": "0x00000000",
+      "software_write_ignore": true,
+      "fields": [
+        {"name": "USER_ID", "msb": 15, "lsb": 0, "access": "RW"},
+        {"name": "RF_ERR_IDX", "msb": 24, "lsb": 16, "access": "RW"},
+        {"name": "VALID", "msb": 31, "lsb": 31, "access": "RW"}
+      ]
+    },
+    {
+      "name": "SRF_ERR_INFO",
+      "addr": "0x00003020",
+      "reset": "0x00000000",
+      "software_write_ignore": true,
+      "fields": [
+        {"name": "USER_ID", "msb": 15, "lsb": 0, "access": "RW"},
+        {"name": "RF_ERR_IDX", "msb": 24, "lsb": 16, "access": "RW"},
+        {"name": "VALID", "msb": 31, "lsb": 31, "access": "RW"}
+      ]
+    },
+    {
+      "name": "CM_ERR_INFO",
+      "addr": "0x00003024",
+      "reset": "0x00000000",
+      "software_write_ignore": true,
+      "fields": [
+        {"name": "USER_ID", "msb": 15, "lsb": 0, "access": "RW"},
+        {"name": "DIR", "msb": 16, "lsb": 16, "access": "RW"},
+        {"name": "VALID", "msb": 31, "lsb": 31, "access": "RW"}
+      ]
+    },
+    {
+      "name": "CM_ERR_ADDR",
+      "addr": "0x00003028",
+      "reset": "0x00000000",
+      "software_write_ignore": true,
+      "fields": [
+        {"name": "CM_ERR_ADDR", "msb": 31, "lsb": 0, "access": "RW"}
+      ]
+    },
+    {
+      "name": "NAN_ERR_INFO",
+      "addr": "0x0000302C",
+      "reset": "0x00000000",
+      "software_write_ignore": true,
+      "fields": [
+        {"name": "USER_ID", "msb": 15, "lsb": 0, "access": "RW"},
+        {"name": "VALID", "msb": 31, "lsb": 31, "access": "RW"}
+      ]
     },
     {
       "name": "PROFILE_CTRL",
@@ -2055,6 +2170,46 @@
       ],
       "software_write_ignore": true,
       "profile_counter": true
+    },
+    {
+      "name": "NAN_REPLACE_CNT_LO",
+      "addr": "0x000040F8",
+      "reset": "0x00000000",
+      "software_write_ignore": true,
+      "profile_counter": true,
+      "fields": [
+        {"name": "COUNT", "msb": 31, "lsb": 0, "access": "RW"}
+      ]
+    },
+    {
+      "name": "NAN_REPLACE_CNT_HI",
+      "addr": "0x000040FC",
+      "reset": "0x00000000",
+      "software_write_ignore": true,
+      "profile_counter": true,
+      "fields": [
+        {"name": "COUNT", "msb": 31, "lsb": 0, "access": "RW"}
+      ]
+    },
+    {
+      "name": "INF_REPLACE_CNT_LO",
+      "addr": "0x00004100",
+      "reset": "0x00000000",
+      "software_write_ignore": true,
+      "profile_counter": true,
+      "fields": [
+        {"name": "COUNT", "msb": 31, "lsb": 0, "access": "RW"}
+      ]
+    },
+    {
+      "name": "INF_REPLACE_CNT_HI",
+      "addr": "0x00004104",
+      "reset": "0x00000000",
+      "software_write_ignore": true,
+      "profile_counter": true,
+      "fields": [
+        {"name": "COUNT", "msb": 31, "lsb": 0, "access": "RW"}
+      ]
     }
   ],
   "param_groups": [

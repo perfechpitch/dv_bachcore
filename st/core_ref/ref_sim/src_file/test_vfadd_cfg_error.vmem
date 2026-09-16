@@ -1,4 +1,4 @@
-// CFG_ERROR negative test for the existing REF; no REF implementation changes.
+// CFG_ERROR negative test using the 0915 VU error/status register layout.
 // VALU0 vfadd.vv opcode=0x01, SRC1=0x51(SRF p1, illegal vector source), SRC2=0x30(VRF p0).
 // VL=2, FP32/RNE; config0; trigger=0x19; destination VRF entry2.
 // PASS means the expected error and no-writeback behavior were observed, not successful vfadd execution.
@@ -170,13 +170,13 @@
 // Assert [expect x5=0x00000000]
 00000313 // PC=0x01f0 addi x6, x0, 0
 1e629c63 // PC=0x01f4 bne x5, x6, FAIL
-// 5. ERROR_INFO: VALID=1, FIRST_ERR=2(CFG), unit=0, config=0, mask=0x19
+// 5. ERROR_INFO: VALID[31]=1, FIRST_ERR[30:27]=1(CFG), unit/config/stream/user=0
 000030b7 // PC=0x01f8 lui x1, 0x3
 00c08093 // PC=0x01fc addi x1, x1, 12
 0000828b // PC=0x0200 dsar x5, x1
-// Assert [expect x5=0x000a0019]
-000a0337 // PC=0x0204 lui x6, 0xa0
-01930313 // PC=0x0208 addi x6, x6, 25
+// Assert [expect x5=0x88000000]; source-selection mask remains in sticky snapshot word1
+88000337 // PC=0x0204 lui x6, 0x88000
+00030313 // PC=0x0208 addi x6, x6, 0
 1e629063 // PC=0x020c bne x5, x6, FAIL
 // 5. Select sticky snapshot word0 [MMIO 0x00003010 <- 0x00000ff0]
 000030b7 // PC=0x0210 lui x1, 0x3
@@ -296,12 +296,12 @@ ff610113 // PC=0x0294 addi x2, x2, -10
 // Assert [expect x5=0x42d20000]
 42d20337 // PC=0x0368 lui x6, 0x42d20
 08629063 // PC=0x036c bne x5, x6, FAIL
-// 7. First ERROR_CODE read: exactly CFG_ERROR(bit2); this read clears error state
+// 7. First ERROR_CODE read: exactly CFG_ERROR(bit1); this read clears error state
 000030b7 // PC=0x0370 lui x1, 0x3
 00808093 // PC=0x0374 addi x1, x1, 8
 0000850b // PC=0x0378 dsar x10, x1
-// Assert [expect x10=0x00000004]
-00400313 // PC=0x037c addi x6, x0, 4
+// Assert [expect x10=0x00000002]
+00200313 // PC=0x037c addi x6, x0, 2
 06651663 // PC=0x0380 bne x10, x6, FAIL
 // 8. STATUS after read-clear: ERROR_FLAG=0, ISQ_EMPTY=1
 000030b7 // PC=0x0384 lui x1, 0x3
