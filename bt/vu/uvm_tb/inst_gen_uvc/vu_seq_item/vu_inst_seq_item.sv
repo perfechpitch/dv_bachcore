@@ -1097,6 +1097,20 @@ class vu_drv_seq_item extends vu_inst_seq_item;
     rand vu_sexe1_class_e         sexe1_class;
     rand vu_sexe2_class_e         sexe2_class;
 
+    //----- RF 读写指针相等：信号个数=读指针数，宽度=写指针数；多个读口加序号后缀 -----
+    rand logic [1:0]              vrf_rw_eq_0;
+    rand logic [1:0]              vrf_rw_eq_1;
+    rand logic                    mrf_rw_eq_0;
+    rand logic                    mrf_rw_eq_1;
+    rand logic [5:0]              srf_rw_eq_0;
+    rand logic [5:0]              srf_rw_eq_1;
+    rand logic [5:0]              srf_rw_eq_2;
+    rand logic [5:0]              srf_rw_eq_3;
+    rand logic [5:0]              srf_rw_eq_4;
+    rand logic [5:0]              srf_rw_eq_5;
+    rand logic [5:0]              srf_rw_eq_6;
+    rand logic [5:0]              srf_rw_eq_7;
+
     `uvm_object_utils_begin(vu_drv_seq_item)
         `uvm_field_int          (active_exe,                               UVM_DEFAULT)
         `uvm_field_enum         (vu_lu_class_e,        lu_class,       UVM_DEFAULT)
@@ -1110,11 +1124,96 @@ class vu_drv_seq_item extends vu_inst_seq_item;
         `uvm_field_enum         (vu_sexe0_class_e,        sexe0_class,       UVM_DEFAULT)
         `uvm_field_enum         (vu_sexe1_class_e,        sexe1_class,       UVM_DEFAULT)
         `uvm_field_enum         (vu_sexe2_class_e,        sexe2_class,       UVM_DEFAULT)
+        `uvm_field_int          (vrf_rw_eq_0,                            UVM_DEFAULT)
+        `uvm_field_int          (vrf_rw_eq_1,                            UVM_DEFAULT)
+        `uvm_field_int          (mrf_rw_eq_0,                            UVM_DEFAULT)
+        `uvm_field_int          (mrf_rw_eq_1,                            UVM_DEFAULT)
+        `uvm_field_int          (srf_rw_eq_0,                            UVM_DEFAULT)
+        `uvm_field_int          (srf_rw_eq_1,                            UVM_DEFAULT)
+        `uvm_field_int          (srf_rw_eq_2,                            UVM_DEFAULT)
+        `uvm_field_int          (srf_rw_eq_3,                            UVM_DEFAULT)
+        `uvm_field_int          (srf_rw_eq_4,                            UVM_DEFAULT)
+        `uvm_field_int          (srf_rw_eq_5,                            UVM_DEFAULT)
+        `uvm_field_int          (srf_rw_eq_6,                            UVM_DEFAULT)
+        `uvm_field_int          (srf_rw_eq_7,                            UVM_DEFAULT)
     `uvm_object_utils_end
 
     function new (string name = "vu_drv_seq_item");
         super.new(name);
     endfunction : new
+
+    //----- RF rw_eq fix 约束（inst_gen_cfg 固定值） -----
+    constraint vrf_rw_eq_0_c {
+        if (inst_gen_cfg.fix_vrf_rw_eq_0_en) {
+            vrf_rw_eq_0 == inst_gen_cfg.vrf_rw_eq_0;
+        }
+    }
+
+    constraint vrf_rw_eq_1_c {
+        if (inst_gen_cfg.fix_vrf_rw_eq_1_en) {
+            vrf_rw_eq_1 == inst_gen_cfg.vrf_rw_eq_1;
+        }
+    }
+
+    constraint mrf_rw_eq_0_c {
+        if (inst_gen_cfg.fix_mrf_rw_eq_0_en) {
+            mrf_rw_eq_0 == inst_gen_cfg.mrf_rw_eq_0;
+        }
+    }
+
+    constraint mrf_rw_eq_1_c {
+        if (inst_gen_cfg.fix_mrf_rw_eq_1_en) {
+            mrf_rw_eq_1 == inst_gen_cfg.mrf_rw_eq_1;
+        }
+    }
+
+    constraint srf_rw_eq_0_c {
+        if (inst_gen_cfg.fix_srf_rw_eq_0_en) {
+            srf_rw_eq_0 == inst_gen_cfg.srf_rw_eq_0;
+        }
+    }
+
+    constraint srf_rw_eq_1_c {
+        if (inst_gen_cfg.fix_srf_rw_eq_1_en) {
+            srf_rw_eq_1 == inst_gen_cfg.srf_rw_eq_1;
+        }
+    }
+
+    constraint srf_rw_eq_2_c {
+        if (inst_gen_cfg.fix_srf_rw_eq_2_en) {
+            srf_rw_eq_2 == inst_gen_cfg.srf_rw_eq_2;
+        }
+    }
+
+    constraint srf_rw_eq_3_c {
+        if (inst_gen_cfg.fix_srf_rw_eq_3_en) {
+            srf_rw_eq_3 == inst_gen_cfg.srf_rw_eq_3;
+        }
+    }
+
+    constraint srf_rw_eq_4_c {
+        if (inst_gen_cfg.fix_srf_rw_eq_4_en) {
+            srf_rw_eq_4 == inst_gen_cfg.srf_rw_eq_4;
+        }
+    }
+
+    constraint srf_rw_eq_5_c {
+        if (inst_gen_cfg.fix_srf_rw_eq_5_en) {
+            srf_rw_eq_5 == inst_gen_cfg.srf_rw_eq_5;
+        }
+    }
+
+    constraint srf_rw_eq_6_c {
+        if (inst_gen_cfg.fix_srf_rw_eq_6_en) {
+            srf_rw_eq_6 == inst_gen_cfg.srf_rw_eq_6;
+        }
+    }
+
+    constraint srf_rw_eq_7_c {
+        if (inst_gen_cfg.fix_srf_rw_eq_7_en) {
+            srf_rw_eq_7 == inst_gen_cfg.srf_rw_eq_7;
+        }
+    }
 
     //----- 求解顺序：active_exe → class → opcode / type_vl_vl / ld_addr / st_addr / data_type -----
     constraint mac_solve_order_c {
@@ -1700,6 +1799,9 @@ class vu_drv_seq_item extends vu_inst_seq_item;
             }
         }
     }
+
+    virtual function void rerand();
+    endfunction
 
 endclass : vu_drv_seq_item
 

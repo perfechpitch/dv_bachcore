@@ -233,6 +233,31 @@ class inst_gen_config extends uvm_object;
     rand logic [7:0]      vsfu_op_vsfu0_src1_sel;
     bit                 fix_vsfu_op_vsfu1_src1_sel_en=0;
     rand logic [7:0]      vsfu_op_vsfu1_src1_sel;
+    // ===================== RF 读写指针相等 fix =====================
+    bit                 fix_vrf_rw_eq_0_en=0;
+    rand logic [1:0]      vrf_rw_eq_0;
+    bit                 fix_vrf_rw_eq_1_en=0;
+    rand logic [1:0]      vrf_rw_eq_1;
+    bit                 fix_mrf_rw_eq_0_en=0;
+    rand logic            mrf_rw_eq_0;
+    bit                 fix_mrf_rw_eq_1_en=0;
+    rand logic            mrf_rw_eq_1;
+    bit                 fix_srf_rw_eq_0_en=0;
+    rand logic [5:0]      srf_rw_eq_0;
+    bit                 fix_srf_rw_eq_1_en=0;
+    rand logic [5:0]      srf_rw_eq_1;
+    bit                 fix_srf_rw_eq_2_en=0;
+    rand logic [5:0]      srf_rw_eq_2;
+    bit                 fix_srf_rw_eq_3_en=0;
+    rand logic [5:0]      srf_rw_eq_3;
+    bit                 fix_srf_rw_eq_4_en=0;
+    rand logic [5:0]      srf_rw_eq_4;
+    bit                 fix_srf_rw_eq_5_en=0;
+    rand logic [5:0]      srf_rw_eq_5;
+    bit                 fix_srf_rw_eq_6_en=0;
+    rand logic [5:0]      srf_rw_eq_6;
+    bit                 fix_srf_rw_eq_7_en=0;
+    rand logic [5:0]      srf_rw_eq_7;
     // ===================== VRF_WT P0/P1 配对分布 =====================
     rand int unsigned   prf_op_vrf_wt_pair_weight;
     // ===================== SRC/MASK 各执行单元 vs/ms/vm 配对分布（VALU vs 按槽位） =====================
@@ -493,6 +518,30 @@ class inst_gen_config extends uvm_object;
         `uvm_field_int          (vsfu_op_vsfu0_src1_sel,                                  UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (fix_vsfu_op_vsfu1_src1_sel_en,                               UVM_DEFAULT)
         `uvm_field_int          (vsfu_op_vsfu1_src1_sel,                                  UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (fix_vrf_rw_eq_0_en,                               UVM_DEFAULT)
+        `uvm_field_int          (vrf_rw_eq_0,                                  UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (fix_vrf_rw_eq_1_en,                               UVM_DEFAULT)
+        `uvm_field_int          (vrf_rw_eq_1,                                  UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (fix_mrf_rw_eq_0_en,                               UVM_DEFAULT)
+        `uvm_field_int          (mrf_rw_eq_0,                                  UVM_DEFAULT)
+        `uvm_field_int          (fix_mrf_rw_eq_1_en,                               UVM_DEFAULT)
+        `uvm_field_int          (mrf_rw_eq_1,                                  UVM_DEFAULT)
+        `uvm_field_int          (fix_srf_rw_eq_0_en,                               UVM_DEFAULT)
+        `uvm_field_int          (srf_rw_eq_0,                                  UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (fix_srf_rw_eq_1_en,                               UVM_DEFAULT)
+        `uvm_field_int          (srf_rw_eq_1,                                  UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (fix_srf_rw_eq_2_en,                               UVM_DEFAULT)
+        `uvm_field_int          (srf_rw_eq_2,                                  UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (fix_srf_rw_eq_3_en,                               UVM_DEFAULT)
+        `uvm_field_int          (srf_rw_eq_3,                                  UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (fix_srf_rw_eq_4_en,                               UVM_DEFAULT)
+        `uvm_field_int          (srf_rw_eq_4,                                  UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (fix_srf_rw_eq_5_en,                               UVM_DEFAULT)
+        `uvm_field_int          (srf_rw_eq_5,                                  UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (fix_srf_rw_eq_6_en,                               UVM_DEFAULT)
+        `uvm_field_int          (srf_rw_eq_6,                                  UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (fix_srf_rw_eq_7_en,                               UVM_DEFAULT)
+        `uvm_field_int          (srf_rw_eq_7,                                  UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (prf_op_vrf_wt_pair_weight,                  UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (su_vs_sel_pair_weight,                            UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (su_ms_sel_pair_weight,                            UVM_DEFAULT | UVM_DEC)

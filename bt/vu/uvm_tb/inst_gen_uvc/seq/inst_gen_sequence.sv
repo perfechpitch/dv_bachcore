@@ -14,6 +14,7 @@
 class inst_gen_case_base_sequence extends inst_gen_base_sequence;
     int unsigned case_type_id;
     inst_gen_base_seq_item inst_q[$];
+    int vu_cross_log;
 
     function new(string name = "inst_gen_case_base_sequence");
         super.new(name);
@@ -251,6 +252,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                 if (!vu_cross.randomize()) begin
                     `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                 end
+                vu_cross.rerand();
                 vu_inst = vu_cross;
             end
             CROSS_INST_2: begin
@@ -261,6 +263,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end else begin
                     cross_2_gen_seq_item vu_cross;
@@ -269,6 +272,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end
             end
@@ -280,6 +284,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end else begin
                     cross_3_gen_seq_item vu_cross;
@@ -288,6 +293,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end
             end
@@ -299,6 +305,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end else begin
                     cross_4_gen_seq_item vu_cross;
@@ -307,6 +314,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end
             end
@@ -318,6 +326,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end else begin
                     cross_5_gen_seq_item vu_cross;
@@ -326,6 +335,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end
             end
@@ -337,6 +347,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end else begin
                     cross_6_gen_seq_item vu_cross;
@@ -345,6 +356,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end
             end
@@ -356,6 +368,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end else begin
                     cross_7_gen_seq_item vu_cross;
@@ -364,6 +377,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end
             end
@@ -375,6 +389,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end else begin
                     cross_8_gen_seq_item vu_cross;
@@ -383,6 +398,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end
             end
@@ -394,6 +410,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end else begin
                     cross_9_gen_seq_item vu_cross;
@@ -402,6 +419,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end
             end
@@ -413,6 +431,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end else begin
                     cross_10_gen_seq_item vu_cross;
@@ -421,6 +440,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     if (!vu_cross.randomize()) begin
                         `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                     end
+                    vu_cross.rerand();
                     vu_inst = vu_cross;
                 end
             end
@@ -431,6 +451,7 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                 if (!vu_cross.randomize()) begin
                     `uvm_fatal(get_type_name(), "vu_inst randomize failed")
                 end
+                vu_cross.rerand();
                 vu_inst = vu_cross;
             end
             default: begin
@@ -438,6 +459,17 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
                     $sformatf("unsupported vu_inst_type: %0s", req.vu_inst_type.name()))
             end
         endcase
+
+        if (vu_cross_log == 0) begin
+            vu_cross_log = $fopen("./log/vu_cross.log", "w");
+            if (vu_cross_log == 0) begin
+                `uvm_fatal(get_type_name(), "failed to open ./log/vu_cross.log")
+            end
+            p_sequencer.set_report_id_action("VU_CROSS", UVM_LOG);
+            p_sequencer.set_report_id_file("VU_CROSS", vu_cross_log);
+        end
+        `uvm_info("VU_CROSS", $sformatf("req.vu_inst_type=%0s req.src_bypass=%0b\n%s",
+            req.vu_inst_type.name(), req.src_bypass, vu_inst.sprint()), UVM_LOW)
 
         pack_vu_inst_to_tr(vu_inst);
     endfunction
