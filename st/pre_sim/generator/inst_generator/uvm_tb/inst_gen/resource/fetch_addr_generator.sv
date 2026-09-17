@@ -43,11 +43,15 @@ class fetch_addr_generator extends uvm_object;
         return ($urandom_range(99, 0) < percentage);
     endfunction
 
-    function void begin_task(bit allow_exception);
+    function void begin_task(fetch_exception_mode_e    exception_mode,
+                             fetch_addr_fault_origin_e requested_origin,
+                             fetch_addr_fault_e        requested_type);
         fetch_context ctx;
         ctx = get_context();
         ctx.reset_task();
-        ctx.exception_enable = allow_exception;
+        ctx.exception_mode         = exception_mode;
+        ctx.requested_fault_origin = requested_origin;
+        ctx.requested_fault_type   = requested_type;
     endfunction
 
     // Returns 0 when the task start PC is intentionally invalid.  In that
@@ -59,12 +63,21 @@ class fetch_addr_generator extends uvm_object;
         ctx = get_context();
         selected_start_pc    = normal_start_pc;
         ctx.effective_start_pc = normal_start_pc;
-        if(!cfg.allow_exception || !ctx.exception_enable ||
-           !random_hit(cfg.start_exception_pct))
+        if(!cfg.allow_exception || ctx.exception_mode == FETCH_EXCEPTION_DISABLE)
+            return 1'b1;
+
+        if(ctx.exception_mode == FETCH_EXCEPTION_DIRECTED) begin
+            if(ctx.requested_fault_origin != FETCH_ADDR_ORIGIN_TASK_START)
+                return 1'b1;
+        end
+        else if(!random_hit(cfg.weight_percent(
+                    cfg.start_exception_weight)))
             return 1'b1;
 
         ctx.fault_origin = FETCH_ADDR_ORIGIN_TASK_START;
-        if($urandom_range(1, 0)) begin
+        if((ctx.exception_mode == FETCH_EXCEPTION_DIRECTED &&
+            ctx.requested_fault_type == FETCH_ADDR_FAULT_OUT_OF_ITCM) ||
+           (ctx.exception_mode == FETCH_EXCEPTION_RANDOM && $urandom_range(1, 0))) begin
             selected_start_pc = ctx.itcm_end;
             ctx.fault_type = FETCH_ADDR_FAULT_OUT_OF_ITCM;
         end
@@ -81,14 +94,16 @@ class fetch_addr_generator extends uvm_object;
 
     function bit start_task(bit use_configured_start_pc,
                             bit [63:0] configured_start_pc,
-                            bit allow_exception,
+                            fetch_exception_mode_e    exception_mode,
+                            fetch_addr_fault_origin_e requested_origin,
+                            fetch_addr_fault_e        requested_type,
                             output bit [63:0] selected_start_pc);
         fetch_context ctx;
         bit [63:0] normal_start_pc;
         ctx = get_context();
         if(!ctx.stream_initialized)
             ctx.reset_stream();
-        begin_task(allow_exception);
+        begin_task(exception_mode, requested_origin, requested_type);
         normal_start_pc = use_configured_start_pc ? configured_start_pc :
                           ctx.current_pc;
         if(normal_start_pc[63:32] != '0)
@@ -200,8 +215,16 @@ class fetch_addr_generator extends uvm_object;
         fetch_context ctx;
         ctx = get_context();
         target_pc = ctx.itcm_end;
-        if(!ctx.exception_enable || ctx.exception_injected ||
-           ctx.control_fault_pending || !random_hit(cfg.control_exception_pct))
+        if(!cfg.allow_exception ||
+           ctx.exception_mode == FETCH_EXCEPTION_DISABLE ||
+           ctx.exception_injected || ctx.control_fault_pending)
+            return 1'b0;
+        if(ctx.exception_mode == FETCH_EXCEPTION_DIRECTED) begin
+            if(ctx.requested_fault_origin != FETCH_ADDR_ORIGIN_CONTROL_TARGET)
+                return 1'b0;
+        end
+        else if(!random_hit(cfg.weight_percent(
+                    cfg.control_exception_weight)))
             return 1'b0;
         ctx.control_fault_pending = 1'b1;
         return 1'b1;
@@ -226,8 +249,16 @@ class fetch_addr_generator extends uvm_object;
         ctx = get_context();
         if(ctx.end_fault_armed)
             return 1'b1;
-        if(!ctx.exception_enable || ctx.exception_injected ||
-           !random_hit(cfg.end_exception_pct))
+        if(!cfg.allow_exception ||
+           ctx.exception_mode == FETCH_EXCEPTION_DISABLE ||
+           ctx.exception_injected)
+            return 1'b0;
+        if(ctx.exception_mode == FETCH_EXCEPTION_DIRECTED) begin
+            if(ctx.requested_fault_origin != FETCH_ADDR_ORIGIN_TASK_END)
+                return 1'b0;
+        end
+        else if(!random_hit(cfg.weight_percent(
+                    cfg.end_exception_weight)))
             return 1'b0;
         ctx.end_fault_armed = 1'b1;
         return 1'b1;

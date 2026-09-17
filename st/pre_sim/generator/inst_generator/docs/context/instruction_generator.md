@@ -86,7 +86,7 @@ Branch sequences measure actual byte PCs. `single_branch_sequence` records targe
 
 `scenario_base_seq::enable_task_fetch_exception(task_id)` is only an allow gate and defaults off. The scenario does not choose a fault source, type, or address. `scenario_base_vsequence` passes the gate and start PC to `inst_generator::switch_task()`; the fetch generator then independently samples the real task-start, sequential-end, and existing JALR target-generation opportunities. A selected invalid start PC is the complete stimulus, so no instruction body, TASK_DONE, or invalid vmem entry is emitted for that task. Control and end faults emit only legal in-range instructions and record the first external fetch address at or beyond `ITCM_SIZE` as the expected fault.
 
-Default opportunity rates are 10 percent and may be overridden for verification with `+fetch_start_exception_pct`, `+fetch_control_exception_pct`, and `+fetch_end_exception_pct`; each accepts `0..100`.
+`fetch_addr_config` randomizes independent LOW/MEDIUM/HIGH preferences for task-start, control-target, and task-end opportunities. They map internally to 10/50/90 percent hit rates. There is no plusarg percentage override; deterministic exception testing uses the directed scenario API instead.
 
 ## Dependencies
 

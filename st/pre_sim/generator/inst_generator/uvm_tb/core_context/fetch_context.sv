@@ -11,6 +11,18 @@ typedef enum {
     FETCH_ADDR_ORIGIN_CONTROL_TARGET
 } fetch_addr_fault_origin_e;
 
+typedef enum {
+    FETCH_EXCEPTION_DISABLE,
+    FETCH_EXCEPTION_RANDOM,
+    FETCH_EXCEPTION_DIRECTED
+} fetch_exception_mode_e;
+
+typedef enum {
+    FETCH_EXCEPTION_WEIGHT_LOW,
+    FETCH_EXCEPTION_WEIGHT_MEDIUM,
+    FETCH_EXCEPTION_WEIGHT_HIGH
+} fetch_exception_weight_e;
+
 // Per-core fetch configuration and runtime state.  Address generation policy
 // lives in fetch_addr_generator; this object only preserves one core's state.
 class fetch_context extends uvm_object;
@@ -26,7 +38,9 @@ class fetch_context extends uvm_object;
     bit                       stream_initialized;
     bit                       task_body_enable;
 
-    bit                       exception_enable;
+    fetch_exception_mode_e    exception_mode;
+    fetch_addr_fault_origin_e requested_fault_origin;
+    fetch_addr_fault_e        requested_fault_type;
     bit                       exception_injected;
     bit                       control_fault_pending;
     bit                       end_fault_armed;
@@ -50,7 +64,9 @@ class fetch_context extends uvm_object;
 
     function void reset_task();
         task_body_enable      = 1'b0;
-        exception_enable      = 1'b0;
+        exception_mode        = FETCH_EXCEPTION_DISABLE;
+        requested_fault_origin = FETCH_ADDR_ORIGIN_NONE;
+        requested_fault_type   = FETCH_ADDR_FAULT_NONE;
         exception_injected    = 1'b0;
         control_fault_pending = 1'b0;
         end_fault_armed       = 1'b0;

@@ -65,7 +65,7 @@ testcase (starts common executor)
 - A random task without explicit PC begins at the current PC of its core stream.
 - Address-space overlap is the scenario author's responsibility.
 - A core has one register pool shared by its tasks; different cores use independent pools.
-- Normal LS addresses come from `ls_addr_generator`: per-core DTCMs are physically independent while using the same numeric window, and Share Memory uses a common window. The legacy shared `addr_space_generator` remains for PMA/PMP/PTE and exception/link data; LS generator hart/base context is switched per core.
+- Normal LS addresses come from `ls_addr_generator`: per-core DTCMs are physically independent while using the same numeric window, and Share Memory uses a common window. The LS generator hart/base context is switched per core. The random instruction generator does not generate exception handlers, PMA/PMP/PTE data, or legacy segment/link tables.
 - Instruction boundaries and current task history start are recorded by `inst_generator`; scenario derives each task's instruction count from them.
 - Fetch address state is owned by `inst_generator.fetch_addr_gen`. At task start, sequential ITCM end, and JALR target creation it may choose an invalid address only when the task gate is enabled. An invalid start PC emits no task body or vmem instruction data.
 

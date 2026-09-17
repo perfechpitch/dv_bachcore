@@ -2,7 +2,6 @@ typedef enum{INT_TEST,FP_TEST,VECTOR_TEST,RAND_TEST}test_mode_e;
 typedef enum{SAFE_SEQ_DISABLE,LS_SEQ_DISABLE,BRANCH_SEQ_DISABLE,FLUSH_INST_ENABLE,EXCEPT_INST_ENABLE,
              LS_BASE_INFO_CONFIRM,//default random in every ls seq
              GPR_FULL_VALID,FPR_FULL_VALID,
-             DISABLE_4K_PAGE,DISABLE_2M_PAGE,DISABLE_1G_PAGE,
              INT_ACK_DISABLE
              }test_feature_e;
 typedef enum{SPIKE_SIM,RISCV_TESTS_SIM,RAND_SIM}sim_mode_e;
@@ -22,7 +21,6 @@ class inst_gen_case_config extends uvm_object;
     ls_seq_config           ls_seq_cfg;         //for ls seq gen
     except_seq_config       except_seq_cfg;     //for except seq gen
 
-    addr_space_config       addr_space_cfg;
     task_info_config        task_info;
 
     inst_set_e    support_inst_set[] = `SUPPORT_INST_SET;
@@ -78,7 +76,6 @@ class inst_gen_case_config extends uvm_object;
         `uvm_field_object(branch_seq_cfg, UVM_DEFAULT)
         `uvm_field_object(ls_seq_cfg, UVM_DEFAULT)
         `uvm_field_object(except_seq_cfg, UVM_DEFAULT)
-        `uvm_field_object(addr_space_cfg, UVM_DEFAULT)
         `uvm_field_object(task_info, UVM_DEFAULT)
     `uvm_object_utils_end
 
@@ -100,7 +97,6 @@ class inst_gen_case_config extends uvm_object;
         ls_seq_cfg          = new();
         except_seq_cfg          = new();
 
-        addr_space_cfg      = new();
         task_info           = new();
         gen_file = $fopen(($psprintf("./test.S")),"w");
     endfunction : new
@@ -109,7 +105,6 @@ class inst_gen_case_config extends uvm_object;
         string test_mode_string;
         string test_name;
         int xlen_arg;
-        int fetch_pct_arg;
         int loop_blt_weight_arg;
         int loop_custom_weight_arg;
         if($value$plusargs("xlen=%d", xlen_arg)) begin
@@ -118,12 +113,6 @@ class inst_gen_case_config extends uvm_object;
         if(inst_gen_cfg.xlen != 32 && inst_gen_cfg.xlen != 64) begin
             `uvm_fatal("XLEN", $sformatf("Unsupported xlen=%0d; only 32 or 64 are legal", inst_gen_cfg.xlen))
         end
-        if($value$plusargs("fetch_start_exception_pct=%d", fetch_pct_arg))
-            fetch_addr_cfg.start_exception_pct = fetch_pct_arg;
-        if($value$plusargs("fetch_control_exception_pct=%d", fetch_pct_arg))
-            fetch_addr_cfg.control_exception_pct = fetch_pct_arg;
-        if($value$plusargs("fetch_end_exception_pct=%d", fetch_pct_arg))
-            fetch_addr_cfg.end_exception_pct = fetch_pct_arg;
         fetch_addr_cfg.ialign_bytes =
             (RVC inside support_inst_set) ? 2 : 4;
         register_pool_cfg.support_rvc = RVC inside support_inst_set;
@@ -250,10 +239,6 @@ class inst_gen_case_config extends uvm_object;
                 register_pool_cfg.gpr_full_valid = 1'b1;
             if (test_feature[i] == FPR_FULL_VALID)
                 register_pool_cfg.fpr_full_valid = 1'b1;
-            if (test_feature[i] == DISABLE_4K_PAGE)     addr_space_cfg.page_size_dist[0] = 0;
-            if (test_feature[i] == DISABLE_2M_PAGE)     addr_space_cfg.page_size_dist[0] = 0;
-            if (test_feature[i] == DISABLE_1G_PAGE)     addr_space_cfg.page_size_dist[0] = 0;
-
         end
     endfunction
 
@@ -499,6 +484,7 @@ class inst_gen_case_config extends uvm_object;
 
     function random_sub_config();
         assert(this.randomize(seq_num) with {seq_num inside {[1:100]};});
+        assert(fetch_addr_cfg.randomize());
         assert(csr_cfg.randomize());
 //        ls_seq_cfg.vlmul = csr_cfg.vlmul;// ls seq cfg vreg imm reg num depend on this, it should random first
 
@@ -509,11 +495,8 @@ class inst_gen_case_config extends uvm_object;
         assert(ls_seq_cfg.randomize());
         assert(inst_seq_type_cfg.randomize());
 
-        assert(addr_space_cfg.randomize());
         ls_seq_cfg.ls_mode = csr_cfg.ls_mode;
         branch_seq_cfg.program_mode = csr_cfg.program_mode;
-
-        addr_space_cfg.map_mode = csr_cfg.map_mode;
         csr_cfg.except_disable = except_disable;
         csr_cfg.int_ack_disable = int_ack_disable;
         begin

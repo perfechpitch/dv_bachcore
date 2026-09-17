@@ -11,7 +11,6 @@
       fetch_addr_generator    fetch_addr_gen;
       ls_addr_generator       ls_addr_gen;
   
-      addr_space_generator    addr_space_gen;
       inst_gen_vsequencer  inst_gen_vsqr;
   
   
@@ -31,7 +30,6 @@
           if(!uvm_config_db#(inst_gen_case_config)::get(this, "", "inst_gen_case_cfg", inst_gen_case_cfg))
              `uvm_fatal("NOCFG",{"inst_gen_case_cfg must be set for: ",get_full_name(),".inst_gen_case_cfg"});
   
-          addr_space_gen      = addr_space_generator::type_id::create("addr_space_gen",this);
           inst_gen            = inst_generator::type_id::create("inst_gen",this);
           inst_seq_gen        = inst_seq_generator::type_id::create("inst_seq_gen",this);
           inst_seq_type_gen   = inst_seq_type_generator::type_id::create("inst_seq_type_gen",this);
@@ -54,10 +52,6 @@
           inst_gen_vsqr.inst_gen_case_cfg = inst_gen_case_cfg;
           inst_gen_vsqr.inst_gen  = inst_gen;
           inst_gen_vsqr.core_ctx_pool = core_ctx_pool;
-          inst_gen_vsqr.addr_space_gen  = addr_space_gen;
-  
-  
-          inst_seq_gen.addr_space_gen = addr_space_gen;
           inst_seq_gen.inst_gen = inst_gen;
           inst_seq_gen.safe_seq_cfg   = inst_gen_case_cfg.safe_seq_cfg;
           inst_seq_gen.except_seq_cfg = inst_gen_case_cfg.except_seq_cfg;
@@ -97,9 +91,6 @@
   
      	  inst_gen.safe_inst_gen.csr_cfg      = inst_gen_case_cfg.csr_cfg;
           inst_gen.ls_inst_gen.csr_cfg      = inst_gen_case_cfg.csr_cfg;
-          inst_gen.addr_space_gen = addr_space_gen;
-          addr_space_gen.addr_space_cfg = inst_gen_case_cfg.addr_space_cfg;
-  
           inst_gen.reg_pool = reg_pool;
           inst_seq_gen.reg_pool = reg_pool;
       endfunction : connect_phase

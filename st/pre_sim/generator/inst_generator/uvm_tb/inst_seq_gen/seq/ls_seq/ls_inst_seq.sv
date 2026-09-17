@@ -8,7 +8,6 @@ class ls_inst_sequence extends base_inst_sequence;
     ls_memcpy_seq   memcpy_ls_seq;
 
     inst_generator  inst_gen;
-    addr_space_generator    addr_space_gen;
     bit base_initial;
     `uvm_object_utils_begin(ls_inst_sequence)
     `uvm_object_utils_end
@@ -27,14 +26,14 @@ class ls_inst_sequence extends base_inst_sequence;
     endfunction : new
 
     virtual function do_base_config();
-        ls_base_config_seq.seq_gen(ls_seq_cfg,inst_gen,addr_space_gen);
+        ls_base_config_seq.seq_gen(ls_seq_cfg, inst_gen);
         base_initial = 1;
     endfunction
     virtual function ls_seq_info_item seq_gen();
         ls_seq_info.inst_seq_cfg = ls_seq_cfg;
         assert(ls_seq_info.randomize());
         if(ls_seq_info.base_change)begin
-            ls_base_config_seq.seq_gen(ls_seq_cfg,inst_gen,addr_space_gen);
+            ls_base_config_seq.seq_gen(ls_seq_cfg, inst_gen);
         end
  inst_gen.ls_inst_gen.pref_dist  = ls_seq_info.pref_dist;
         inst_gen.ls_inst_gen.load_dist  = ls_seq_info.load_dist;

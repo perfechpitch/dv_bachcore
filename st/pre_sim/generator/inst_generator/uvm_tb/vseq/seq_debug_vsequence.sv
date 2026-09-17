@@ -1,7 +1,6 @@
 class seq_debug_vsequence extends uvm_sequence;
 
 
-    config_sequence             config_seq;
     ls_base_config_sequence     ls_base_config_seq;
 
     //debug seq 
@@ -13,20 +12,16 @@ class seq_debug_vsequence extends uvm_sequence;
 
     function new(string name = "seq_debug_vsequence");
         super.new(name);
-        config_seq = new();
         ls_base_config_seq = new();
         pass_quit_seq = new();
 
     endfunction
     virtual task pre_body();
-        //do csr cfg
-        config_seq.seq_gen(p_sequencer.inst_gen_case_cfg.csr_cfg, p_sequencer.inst_gen,p_sequencer.inst_gen_case_cfg.except_disable,p_sequencer.inst_gen_case_cfg.int_ack_disable);
-
         //get base reg value no need
         if(!p_sequencer.inst_gen_case_cfg.global_disable_ls)begin
             //for no except ls inst
             ls_base_config_seq = new();
-            ls_base_config_seq.seq_gen(p_sequencer.inst_gen_case_cfg.ls_seq_cfg,p_sequencer.inst_gen,p_sequencer.addr_space_gen);
+            ls_base_config_seq.seq_gen(p_sequencer.inst_gen_case_cfg.ls_seq_cfg, p_sequencer.inst_gen);
         end
     endtask
  virtual task body();
@@ -39,7 +34,8 @@ class seq_debug_vsequence extends uvm_sequence;
                     //branch seq
                     "jalr_seq"          : begin
                         jalr_seq = new();
-                        jalr_seq.sub_seq_gen(p_sequencer.inst_gen_case_cfg.branch_seq_cfg,p_sequencer.inst_gen,p_sequencer.addr_space_gen,FETCH_VALID);
+                        jalr_seq.sub_seq_gen(p_sequencer.inst_gen_case_cfg.branch_seq_cfg,
+                                             p_sequencer.inst_gen);
                     end
                     "branch_inst_seq"   : begin
                         p_sequencer.inst_seq_gen.branch_inst_seq.seq_gen();
@@ -48,7 +44,7 @@ class seq_debug_vsequence extends uvm_sequence;
                     //ls seq
                     "ls_base_config_seq": begin
                         ls_base_config_seq = new();
-                        ls_base_config_seq.seq_gen(p_sequencer.inst_gen_case_cfg.ls_seq_cfg,p_sequencer.inst_gen,p_sequencer.addr_space_gen);
+                        ls_base_config_seq.seq_gen(p_sequencer.inst_gen_case_cfg.ls_seq_cfg, p_sequencer.inst_gen);
                     end
 
                     "ls_inst_seq"   : begin
@@ -57,7 +53,7 @@ class seq_debug_vsequence extends uvm_sequence;
                     "except_inst_seq":begin
                         //maybe ls except is random generator
                         ls_base_config_seq = new();
-                        ls_base_config_seq.seq_gen(p_sequencer.inst_gen_case_cfg.ls_seq_cfg,p_sequencer.inst_gen,p_sequencer.addr_space_gen);
+                        ls_base_config_seq.seq_gen(p_sequencer.inst_gen_case_cfg.ls_seq_cfg, p_sequencer.inst_gen);
                     //$display("111111111111111");
                         p_sequencer.inst_seq_gen.except_inst_seq.seq_gen();
                     end
@@ -78,8 +74,6 @@ class seq_debug_vsequence extends uvm_sequence;
     virtual task post_body();
         if(p_sequencer.inst_gen.fetch_space_avail())
             pass_quit_seq.seq_gen(p_sequencer.inst_gen);
-
-        p_sequencer.addr_space_gen.data_vmem_out(p_sequencer.inst_gen.vmem_file);
     endtask
 
 endclass : seq_debug_vsequence

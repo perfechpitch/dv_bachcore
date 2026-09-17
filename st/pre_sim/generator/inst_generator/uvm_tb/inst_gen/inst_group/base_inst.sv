@@ -6,7 +6,6 @@ class base_inst extends uvm_object;
     exe_unit_e          exe_unit;
 //    ops_generator       ops_gen;
     register_pool       reg_pool;
-    addr_space_generator addr_space_gen;
     ls_addr_generator    ls_addr_gen;
 
     // decode varaible

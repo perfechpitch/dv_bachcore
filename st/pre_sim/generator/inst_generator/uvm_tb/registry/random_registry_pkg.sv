@@ -2,6 +2,7 @@ package random_registry_pkg;
     import uvm_pkg::*;
     import cpu_set_pkg::*;
     import core_context_types_pkg::*;
+    import core_context_pkg::*;
     import inst_gen_pkg::*;
     import inst_seq_type_pkg::*;
     import inst_seq_pkg::*;

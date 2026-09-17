@@ -31,11 +31,9 @@ package inst_seq_pkg;
 
 `include "item/except_seq_info_item.sv"
 
-`include "./seq/special_seq/except_handle_seq.sv"
 `include "./seq/special_seq/li_seq.sv"
 `include "./seq/special_seq/pass_quit_seq.sv"
 `include "./seq/special_seq/fail_quit_seq.sv"
-`include "./seq/special_seq/config_seq.sv"
 `include "./seq/base_inst_seq.sv"
 
 `include "./seq/branch_seq/single_branch_seq.sv"

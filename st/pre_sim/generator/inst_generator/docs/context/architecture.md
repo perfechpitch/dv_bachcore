@@ -31,7 +31,7 @@ flowchart TB
     SEQGEN --> INSTGEN[inst_generator<br/>queue · operands · encoding · PC/history]
     CFG[inst_gen_case_config<br/>platform defaults + preference mapping] --> SEQTYPE
     CFG --> SEQGEN
-    SHARE[Shared address services<br/>Share Memory + legacy PMA/PMP/PTE] --> INSTGEN
+    SHARE[Shared address service<br/>Share Memory window] --> INSTGEN
 
     INSTGEN --> MUOUT[mu_test.S / mu_test.vmem]
     INSTGEN --> VUOUT[vu_test.S / vu_test.vmem]

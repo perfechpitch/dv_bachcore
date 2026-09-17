@@ -24,15 +24,6 @@ package inst_gen_pkg;
 `include "resource/config/ls_addr_config.sv"
 `include "resource/config/register_pool_config.sv"
 
-`include "addr_space_generator/addr_space_config.sv"
-`include "addr_space_generator/seg_generator.sv"
-`include "addr_space_generator/seg_pool.sv"
-`include "addr_space_generator/ls_imm_generator.sv"
-`include "addr_space_generator/pma_config_generator.sv"
-`include "addr_space_generator/pmp_config_generator.sv"
-`include "addr_space_generator/pte_generator.sv"
-`include "addr_space_generator/addr_space_generator.sv"
-
 `include "resource/ls_addr_generator.sv"
 `include "resource/fetch_addr_generator.sv"
 

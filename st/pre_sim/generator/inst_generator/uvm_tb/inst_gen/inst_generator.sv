@@ -22,7 +22,6 @@ class inst_generator extends uvm_component;
     ops_gen_config         ops_gen_cfg;
 
     register_pool       reg_pool;
-    addr_space_generator    addr_space_gen;
     ls_addr_generator       ls_addr_gen;
     fetch_addr_generator    fetch_addr_gen;
 
@@ -397,7 +396,9 @@ class inst_generator extends uvm_component;
     function void switch_task(int task_id,
                               bit use_configured_start_pc = 1'b0,
                               bit[63:0] configured_start_pc = '0,
-                              bit allow_fetch_exception = 1'b0);
+                              fetch_exception_mode_e    exception_mode = FETCH_EXCEPTION_DISABLE,
+                              fetch_addr_fault_origin_e requested_origin = FETCH_ADDR_ORIGIN_NONE,
+                              fetch_addr_fault_e        requested_type = FETCH_ADDR_FAULT_NONE);
         bit[63:0] selected_start_pc;
         fetch_context ctx;
         if(gen_file == 0) begin
@@ -408,7 +409,9 @@ class inst_generator extends uvm_component;
         ctx.task_body_enable = fetch_addr_gen.start_task(
                                    use_configured_start_pc,
                                    configured_start_pc,
-                                   allow_fetch_exception,
+                                   exception_mode,
+                                   requested_origin,
+                                   requested_type,
                                    selected_start_pc);
         if(!ctx.task_body_enable)
             return;

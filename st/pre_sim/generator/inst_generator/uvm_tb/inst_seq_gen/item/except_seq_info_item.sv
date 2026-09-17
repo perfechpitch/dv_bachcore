@@ -1,4 +1,4 @@
-typedef enum{SINGLE_EXCEPT_INST,JALR_EXCEPT_SEQ}except_seq_type_e;
+typedef enum{SINGLE_EXCEPT_INST}except_seq_type_e;
 class except_seq_info_item extends inst_seq_info_item;
     //override inst_seq_cfg
     except_seq_config inst_seq_cfg;
@@ -18,8 +18,7 @@ class except_seq_info_item extends inst_seq_info_item;
 
     constraint except_seq_type_c{
         except_seq_type dist{
-        SINGLE_EXCEPT_INST := inst_seq_cfg.except_seq_type_dist[0],
-        JALR_EXCEPT_SEQ := inst_seq_cfg.except_seq_type_dist[1]
+        SINGLE_EXCEPT_INST := inst_seq_cfg.except_seq_type_dist[0]
         };
     }
     constraint dist_c{

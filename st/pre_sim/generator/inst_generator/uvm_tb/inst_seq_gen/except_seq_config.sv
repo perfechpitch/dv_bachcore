@@ -18,7 +18,7 @@ class except_seq_config extends inst_seq_config;
 
 
     constraint except_seq_type_dist_c{
-        except_seq_type_dist.size() == 2;
+        except_seq_type_dist.size() == 1;
         foreach(except_seq_type_dist[i]){
             except_seq_type_dist[i] inside{[0:100]};
         }

@@ -97,7 +97,6 @@
     inst_gen_cfg.support_inst_name.push_back(inst_``N.inst_name); \
     inst_``N.gen_file = gen_file;\
     inst_``N.reg_pool = reg_pool; \
-    inst_``N.addr_space_gen = addr_space_gen; \
     inst_``N.ls_addr_gen = ls_addr_gen;
 `define RV64ZIFENCEI_INST_CREATE\
     `INST_GEN_CREATE(fencei_gen     )

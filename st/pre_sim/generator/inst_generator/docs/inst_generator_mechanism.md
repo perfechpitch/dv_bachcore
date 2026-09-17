@@ -241,3 +241,31 @@ single case=dsa_dsaw_directed_test lst=directed.lst seed=1 uvm=UVM_LOW
 | 2026-09-07 | 增加全压缩指令随机 sequence、专用 vsequence 和 testcase；压缩控制流/异常仍由原语义路径负责 | `c_inst_seq.sv`、`c_inst_vsequence.sv`、`c_inst_test.sv`、相关 package include、`int.lst` | `single case=c_inst_test lst=int.lst seed=1 uvm=UVM_LOW`；199 个 payload block、1786 条 C 指令、20 种候选全部命中；UVM warning/error/fatal=0 | payload 前的 LS base 初始化包含普通 32-bit LI/SAFE；ITCM 末端追加 32-bit pass_quit |
 | 2026-09-08 | 第一阶段增加 DSAW/DSAWI 指定名称与操作数编码；增加 `+support_custom` 和 DSAW directed scenario | `dsa_custom_inst.sv`、指令枚举/queue/指定编码、`dsa_dsaw_directed_scenario_seq.sv`、`directed.lst` | `single case=dsa_dsaw_directed_test lst=directed.lst seed=1 uvm=UVM_LOW`；7 个 task 均生成 `0062900b`，UVM warning/error/fatal=0 | 尚未运行 DSA side-effect/core-ref 联合检查；DSAWI 尚无独立 scenario |
 | 2026-09-10 | Scenario 顶层 sequence 权重改为 `WEIGHT_DISABLE/LOW/MEDIUM/HIGH`；数值映射与 capability 校验统一由 `inst_gen_case_config`下发，AUTO/PLAN 均使用 `inst_seq_type_generator`；directed task 恢复平台默认权重 | `scenario_base_seq.sv`、`inst_gen_case_config.sv`、`inst_seq_type_config.sv`、`inst_seq_type_item.sv`、`scenario_base_vsequence.sv`、MU random scenarios | `mu_random_scenario_test` error/fatal=0；30 次选择结果 SAFE/LS/BRANCH=24/5/1；`multicore_directed_test` MU/VU/DTE 三个 task 均通过且 error/fatal=0 | 本步骤仅覆盖顶层 SAFE/LS/BRANCH/C 等 sequence 类别权重；类内 SAFE/LS/BRANCH 指令权重仍沿用现有配置 |
+| 2026-09-17 | 取指异常地址统一迁移到 per-core `fetch_addr_generator/fetch_context`，支持随机权重与 START/CONTROL/TASK_END 定向异常；正常 LS 移除旧地址句柄；删除 `addr_space_generator`、PMA/PMP/PTE/segment link table、旧 config/exception handler 及 `data_vmem_out()` | fetch context/config/generator、JALR/exception sequence、scenario API/registry/case list、environment/package/inst queue 透传、机制文档 | `mu_ls_random_scenario_test`、`fetch_exception_directed_test`、`multicore_directed_test` 均重新编译运行通过，UVM warning/error/fatal=0；`git diff --check` 通过 | 异常处理程序改由系统其他模块提供；旧 `seq_debug_test` case 名在当前 testcase package 中不存在，相关历史 debug 列表后续单独清理 |
+
+## 13. 地址空间生成器退役计划
+
+### 13.1 当前结论
+
+`addr_space_generator` 及其 PMA/PMP/PTE、segment/link table 和异常处理程序已从随机指令生成器删除。正常取指地址由 `fetch_addr_generator` 管理，正常 LS/AMO 地址由 `ls_addr_generator` 管理，指令在生成过程中直接写入统一 `test.vmem`，场景收尾不再补写旧地址空间数据。
+
+### 13.2 待办顺序
+
+- [x] 将非法 JALR 完全迁移到 `fetch_addr_generator`，统一受 task 异常模式和 control fault 权重控制。
+- [x] 移除 `jalr_sequence` 的 `addr_space_generator` 参数及 `FETCH_INVALID -> get_addr()` 路径。
+- [x] 将非法取指记录迁移到每 core 的 `fetch_context`。
+- [x] 删除随机指令生成器中的旧异常处理程序及非法取指地址 VMEM 表。
+- [x] 从 `ls_base_config_sequence`、`ls_inst_sequence` 和 debug 调用路径移除未使用的 `addr_space_generator` 参数和句柄；正常 LS 地址只由 `ls_addr_generator` 提供。
+- [x] 删除 scenario/debug 收尾对旧 `data_vmem_out()` 的调用以及该输出函数。
+- [ ] 为 MU/VU/DTE 私有 DTCM 增加 RV 地址到统一 VMEM 全局地址的转换；Share Memory 保持单一共享全局视图。
+- [ ] 为 `ls_addr_generator` 补充默认关闭的访存异常能力：未对齐、窗口越界、访问宽度跨界，以及需要时的 PMA/PMP/page fault。
+- [ ] 增加共享 memory 初始化状态、地址占用/冲突检查以及统一 `test.vmem` 数据输出。
+- [x] 删除随机指令生成器中的 PMA/PMP/PTE/SATP 配置、segment/link table 和异常入口生成路径。
+- [x] 删除 environment、vsequencer、sequence、instruction class 和创建宏中的 `addr_space_gen` 透传。
+- [x] 删除 `addr_space_generator` 聚合类及其 PMA/PMP/PTE/segment 子模块。
+
+### 13.3 非法 JALR 的统一路径
+
+JALR 仅保留统一路径：`BRANCH_INST_SEQ -> JALR_SEQ -> fetch_addr_generator::get_control_fault_target()`。随机 task 由 `control_exception_weight` 的 LOW/MEDIUM/HIGH 偏好决定是否使用 ITCM 外目标；定向 task 通过 scenario API 明确请求 CONTROL_TARGET 异常。JALR 发出后由 `commit_control_fault()`记录 source PC、fault PC、origin 和 fault type。
+
+旧 `JALR_EXCEPT_SEQ`、`FETCH_INVALID -> addr_space_generator::get_addr()`、RV64 `LD` link-table 目标和 `fetch_invalid_vaddrs` 写入均已从 JALR 流程删除。START、CONTROL_TARGET、TASK_END 三类定向异常由 `fetch_exception_directed` 场景回归。

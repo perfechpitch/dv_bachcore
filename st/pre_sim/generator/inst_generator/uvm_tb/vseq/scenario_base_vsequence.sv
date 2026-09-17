@@ -192,7 +192,9 @@ class scenario_base_vsequence extends uvm_sequence;
                           p_sequencer.inst_gen.get_inst_addr();
                 p_sequencer.inst_gen.switch_task(
                     task_info.task_id, 1'b1, task_pc,
-                    task_info.fetch_exception_enable);
+                    task_info.fetch_exception_mode,
+                    task_info.fetch_fault_origin,
+                    task_info.fetch_fault_type);
                 fetch_ctx = p_sequencer.core_ctx_pool.get_fetch_context();
 
                 if(!fetch_ctx.task_body_enable) begin
@@ -230,6 +232,19 @@ class scenario_base_vsequence extends uvm_sequence;
                                            p_sequencer.inst_seq_type_gen);
                 end
 
+                if(task_info.fetch_exception_mode == FETCH_EXCEPTION_DIRECTED &&
+                   (!fetch_ctx.exception_injected ||
+                    fetch_ctx.fault_origin != task_info.fetch_fault_origin ||
+                    fetch_ctx.fault_type != task_info.fetch_fault_type))
+                    `uvm_fatal("DIRECTED_FETCH_EXCEPTION",
+                               $sformatf("task_id=%0d expected origin=%s type=%s, actual injected=%0d origin=%s type=%s",
+                                         task_info.task_id,
+                                         task_info.fetch_fault_origin.name(),
+                                         task_info.fetch_fault_type.name(),
+                                         fetch_ctx.exception_injected,
+                                         fetch_ctx.fault_origin.name(),
+                                         fetch_ctx.fault_type.name()))
+
                 if(fetch_ctx.task_body_enable &&
                    !fetch_ctx.exception_injected &&
                    p_sequencer.inst_gen.fetch_space_avail())
@@ -245,8 +260,8 @@ class scenario_base_vsequence extends uvm_sequence;
                 $fwrite(task_log, "global_start_pc: 0x%08h\n",
                         core_global_pc(task_info.rv_core,
                                        fetch_ctx.task_start_pc));
-                $fwrite(task_log, "fetch_exception_enable: %0d\n",
-                        task_info.fetch_exception_enable);
+                $fwrite(task_log, "fetch_exception_mode: %s\n",
+                        task_info.fetch_exception_mode.name());
                 $fwrite(task_log, "fetch_exception_injected: %0d\n",
                         fetch_ctx.exception_injected);
                 if(fetch_ctx.exception_injected) begin
@@ -272,8 +287,6 @@ class scenario_base_vsequence extends uvm_sequence;
             end
         end
 
-        if(p_sequencer.inst_gen.inst_gen_cfg.vmem_file_gen)
-            p_sequencer.addr_space_gen.data_vmem_out(vmem_file);
         $fclose(asm_file);
         if(vmem_file)
             $fclose(vmem_file);

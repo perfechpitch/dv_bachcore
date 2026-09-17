@@ -2,8 +2,6 @@ class inst_seq_generator extends uvm_component;
 
     inst_generator      inst_gen;
     register_pool       reg_pool;
-    addr_space_generator    addr_space_gen;
-
     safe_inst_sequence      safe_inst_seq;
     flush_inst_sequence     flush_inst_seq;
     except_inst_sequence    except_inst_seq;
@@ -63,20 +61,12 @@ task pre_main_phase(uvm_phase phase);
         except_inst_seq.reg_pool   = reg_pool;
         branch_inst_seq.reg_pool   = reg_pool;
         ls_inst_seq.reg_pool       = reg_pool;
-        safe_inst_seq.addr_space_gen     = addr_space_gen;
-        flush_inst_seq.addr_space_gen    = addr_space_gen;
-        except_inst_seq.addr_space_gen   = addr_space_gen;
-        branch_inst_seq.addr_space_gen   = addr_space_gen;
-        ls_inst_seq.addr_space_gen       = addr_space_gen;
-
         branch_inst_seq.branch_seq_cfg  = this.branch_seq_cfg;
         ls_inst_seq.ls_seq_cfg          = this.ls_seq_cfg;
         c_inst_seq.c_seq_cfg            = this.safe_seq_cfg;
         safe_inst_seq.safe_seq_cfg      = this.safe_seq_cfg;
         flush_inst_seq.flush_seq_cfg    = this.flush_seq_cfg;
         except_inst_seq.except_seq_cfg  = this.except_seq_cfg;
-        except_inst_seq.branch_seq_cfg  = this.branch_seq_cfg;
-
     endtask
     function void do_pass_quit_seq(inst_generator  inst_gen);
         pass_quit_seq.seq_gen(inst_gen);

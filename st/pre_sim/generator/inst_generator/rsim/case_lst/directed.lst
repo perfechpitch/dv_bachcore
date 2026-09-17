@@ -43,3 +43,9 @@
   vcs_tb_args    = +directed_seq_name=reference_single_task
   batch_times    = 1
 # PRE_SIM_SCENE_END reference_single_task
+
+#---------------------directed fetch exceptions: start/control/end
+- case_name      = fetch_exception_directed_test
+  uvm_tc         = directed_inst_test
+  vcs_tb_args    = +directed_seq_name=fetch_exception_directed
+  batch_times    = 1

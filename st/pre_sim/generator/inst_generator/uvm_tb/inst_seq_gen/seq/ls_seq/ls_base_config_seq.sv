@@ -9,7 +9,7 @@ class ls_base_config_sequence extends uvm_object;
       li_seq = new();
     endfunction : new
 
-    virtual function void seq_gen(ls_seq_config ls_seq_cfg,inst_generator   inst_gen,addr_space_generator addr_space_gen);
+    virtual function void seq_gen(ls_seq_config ls_seq_cfg, inst_generator inst_gen);
         ls_base_info.inst_seq_cfg = ls_seq_cfg;
         inst_gen.ls_addr_gen.select_active_context();
         assert(ls_base_info.randomize());

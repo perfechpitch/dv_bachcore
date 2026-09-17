@@ -6,7 +6,6 @@ class branch_inst_sequence extends base_inst_sequence;
     jalr_sequence           jalr_seq;
 
     inst_generator          inst_gen;
-    addr_space_generator    addr_space_gen;
     `uvm_object_utils_begin(branch_inst_sequence)
     `uvm_object_utils_end
     // new - constructor
@@ -33,7 +32,7 @@ class branch_inst_sequence extends base_inst_sequence;
                 branch_seq_info = loop_seq.sub_seq_gen(branch_seq_cfg, inst_gen);
             end
             JALR_SEQ            :begin
-                branch_seq_info = jalr_seq.sub_seq_gen(branch_seq_cfg, inst_gen, addr_space_gen, FETCH_VALID);
+                branch_seq_info = jalr_seq.sub_seq_gen(branch_seq_cfg, inst_gen);
             end
         endcase
         //if($test$plusargs("debug_print"))begin

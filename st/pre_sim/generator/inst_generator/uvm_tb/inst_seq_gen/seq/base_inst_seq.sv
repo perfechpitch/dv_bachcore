@@ -1,6 +1,5 @@
 class base_inst_sequence extends uvm_object;
 //    inst_generator          inst_gen;
-    addr_space_generator    addr_space_gen;
     register_pool           reg_pool;
 
     `uvm_object_utils_begin(base_inst_sequence)

@@ -55,7 +55,9 @@ class scenario_task_info extends uvm_object;
     scenario_task_kind_e kind;
     bit                  use_start_pc;
     bit[63:0]            start_pc;
-    bit                  fetch_exception_enable;
+    fetch_exception_mode_e    fetch_exception_mode;
+    fetch_addr_fault_origin_e fetch_fault_origin;
+    fetch_addr_fault_e        fetch_fault_type;
     int unsigned         seq_num;
     scenario_seq_select_mode_e seq_select_mode;
     scenario_seq_plan_item     seq_plan[$];
@@ -68,7 +70,9 @@ class scenario_task_info extends uvm_object;
         kind         = SCENARIO_DIRECTED_TASK;
         use_start_pc = 1'b1;
         start_pc     = '0;
-        fetch_exception_enable = 1'b0;
+        fetch_exception_mode = FETCH_EXCEPTION_DISABLE;
+        fetch_fault_origin   = FETCH_ADDR_ORIGIN_NONE;
+        fetch_fault_type     = FETCH_ADDR_FAULT_NONE;
         seq_num      = SCENARIO_AUTO_SEQ_NUM;
         seq_select_mode = SCENARIO_SEQ_AUTO;
     endfunction
@@ -97,12 +101,30 @@ class scenario_base_seq extends uvm_object;
                                               bit enable = 1'b1);
         foreach(task_plan[i]) begin
             if(task_plan[i].task_id == task_id) begin
-                task_plan[i].fetch_exception_enable = enable;
+                task_plan[i].fetch_exception_mode = enable ?
+                    FETCH_EXCEPTION_RANDOM : FETCH_EXCEPTION_DISABLE;
                 return;
             end
         end
         `uvm_fatal("SCENARIO_FETCH_CFG",
                    $sformatf("cannot configure fetch exception: task_id=%0d is not defined",
+                             task_id))
+    endfunction
+
+    function void require_task_fetch_exception(
+                          int unsigned              task_id,
+                          fetch_addr_fault_origin_e origin,
+                          fetch_addr_fault_e        fault_type);
+        foreach(task_plan[i]) begin
+            if(task_plan[i].task_id == task_id) begin
+                task_plan[i].fetch_exception_mode = FETCH_EXCEPTION_DIRECTED;
+                task_plan[i].fetch_fault_origin   = origin;
+                task_plan[i].fetch_fault_type     = fault_type;
+                return;
+            end
+        end
+        `uvm_fatal("SCENARIO_FETCH_CFG",
+                   $sformatf("cannot require fetch exception: task_id=%0d is not defined",
                              task_id))
     endfunction
 
@@ -295,6 +317,18 @@ class scenario_base_seq extends uvm_object;
                 `uvm_fatal("SCENARIO_TASK_CFG",
                            $sformatf("task_id=%0d start_pc=0x%0h is not 2-byte aligned",
                                      task_plan[i].task_id, task_plan[i].start_pc))
+            if(task_plan[i].fetch_exception_mode == FETCH_EXCEPTION_DIRECTED) begin
+                if(task_plan[i].fetch_fault_origin == FETCH_ADDR_ORIGIN_NONE ||
+                   task_plan[i].fetch_fault_type == FETCH_ADDR_FAULT_NONE)
+                    `uvm_fatal("SCENARIO_FETCH_CFG",
+                               $sformatf("task_id=%0d has incomplete directed fetch fault",
+                                         task_plan[i].task_id))
+                if(task_plan[i].fetch_fault_origin != FETCH_ADDR_ORIGIN_TASK_START &&
+                   task_plan[i].fetch_fault_type != FETCH_ADDR_FAULT_OUT_OF_ITCM)
+                    `uvm_fatal("SCENARIO_FETCH_CFG",
+                               $sformatf("task_id=%0d only task-start supports misaligned fetch faults",
+                                         task_plan[i].task_id))
+            end
             foreach(task_plan[j]) begin
                 if((j < i) && (task_plan[j].task_id == task_plan[i].task_id))
                     `uvm_fatal("SCENARIO_TASK_CFG",

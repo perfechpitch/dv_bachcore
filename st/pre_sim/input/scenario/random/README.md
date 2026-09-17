@@ -195,7 +195,7 @@ Task 规则：
 - 显式 start PC 的地址空间是否重叠由 scenario 编写者保证；
 - 同一 core 的多个 task 共享该 core 的 register pool；
 - 不同 core 使用独立 register pool；
-- 普通 LS 地址由 `ls_addr_generator`按当前 hart 生成：三个 Core 的 DTCM 物理独立但可使用相同地址窗口，Share Memory 地址窗口共享；旧 `addr_space_generator`仍作为公共 PMA/PMP/PTE/异常地址服务保留；
+- 普通 LS 地址由 `ls_addr_generator` 按当前 hart 生成：三个 Core 的 DTCM 物理独立但可使用相同地址窗口，Share Memory 地址窗口共享；随机指令生成器不生成异常处理程序、PMA/PMP/PTE 或旧 segment link table；
 - 静态生成按 MU、VU、DTE 分组执行，因此跨 core 的执行顺序不是 task 添加顺序。
 
 ## 6. 当前已有 Random Scenario
