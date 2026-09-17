@@ -1,3 +1,9 @@
+# VMEM selection:
+#   vcs_tb_args = +MEM_INIT0=<vmem_name>
+# VMEM files are resolved under ref_sim/src_file/; the default is test.vmem.
+# Multiple VMEM files can be overlaid with:
+#   vcs_tb_args = +MEM_INIT0=<first.vmem>+MEM_INIT1=<second.vmem>
+
 - case_name      = single_vu
   uvm_tc         = test
   batch_times    = 1
