@@ -14,7 +14,10 @@ class ls_rand_seq extends base_inst_sequence;
 
 
         $fwrite(inst_gen.gen_file,("//--- ls rand seq start  : seq_length = %0d\n"),seq_length);
-        gen_rand_inst(inst_gen,seq_length,ls_seq_info.ls_inst_dist,ls_seq_info.safe_inst_dist,ls_seq_info.flush_inst_dist,ls_seq_info.except_inst_dist,'d0);
+        gen_rand_inst(inst_gen,seq_length,ls_seq_info.ls_inst_dist,
+                      ls_seq_info.safe_inst_dist,
+                      ls_seq_info.flush_inst_dist,
+                      ls_seq_info.except_inst_dist,'d0);
         $fwrite(inst_gen.gen_file,("//--- ls rand seq end   \n"));
 
 

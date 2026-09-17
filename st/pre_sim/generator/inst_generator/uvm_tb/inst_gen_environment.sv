@@ -10,6 +10,7 @@
       core_context_pool       core_ctx_pool;
       fetch_addr_generator    fetch_addr_gen;
       ls_addr_generator       ls_addr_gen;
+      data_init_generator     data_init_gen;
   
       inst_gen_vsequencer  inst_gen_vsqr;
   
@@ -36,6 +37,8 @@
           core_ctx_pool       = core_context_pool::type_id::create("core_ctx_pool");
           fetch_addr_gen      = fetch_addr_generator::type_id::create("fetch_addr_gen");
           ls_addr_gen         = ls_addr_generator::type_id::create("ls_addr_gen");
+          data_init_gen       = data_init_generator::type_id::create("data_init_gen");
+          data_init_gen.open_file("./data_init.vmem");
           reg_pool            = register_pool::type_id::create("reg_pool",this);
           inst_gen_vsqr       = inst_gen_vsequencer::type_id::create("inst_gen_vsqr",this);
   
@@ -58,6 +61,7 @@
           inst_seq_gen.flush_seq_cfg  = inst_gen_case_cfg.flush_seq_cfg;
           inst_seq_gen.branch_seq_cfg = inst_gen_case_cfg.branch_seq_cfg;
           inst_seq_gen.ls_seq_cfg     = inst_gen_case_cfg.ls_seq_cfg;
+          inst_seq_gen.data_init_gen  = data_init_gen;
   
           inst_seq_gen.gen_file = inst_gen_case_cfg.gen_file;
   
@@ -70,6 +74,8 @@
           ls_addr_gen.context_pool = core_ctx_pool;
           ls_addr_gen.cfg = inst_gen_case_cfg.ls_addr_cfg;
           inst_gen.ls_addr_gen = ls_addr_gen;
+          data_init_gen.context_pool = core_ctx_pool;
+          data_init_gen.cfg = inst_gen_case_cfg.ls_addr_cfg;
           reg_pool.context_pool = core_ctx_pool;
           reg_pool.csr_cfg = inst_gen_case_cfg.csr_cfg;
           reg_pool.cfg = inst_gen_case_cfg.register_pool_cfg;
@@ -107,5 +113,10 @@
         end
  
      endfunction : start_of_simulation_phase
+
+      function void final_phase(uvm_phase phase);
+          super.final_phase(phase);
+          data_init_gen.close_file();
+      endfunction : final_phase
  endclass : inst_gen_environment
                                                                               

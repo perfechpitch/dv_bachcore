@@ -73,7 +73,7 @@ class ls_seq_config extends inst_seq_config;
 
     constraint ls_seq_type_dist_c{
 //    TODO: add ls seq type num
-        ls_seq_type_dist.size() == 3;
+        ls_seq_type_dist.size() == 4;
         foreach(ls_seq_type_dist[i]){
             ls_seq_type_dist[i] inside{[0:100]};
         }

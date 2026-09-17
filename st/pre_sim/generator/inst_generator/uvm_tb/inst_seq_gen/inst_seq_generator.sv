@@ -2,6 +2,7 @@ class inst_seq_generator extends uvm_component;
 
     inst_generator      inst_gen;
     register_pool       reg_pool;
+    data_init_generator data_init_gen;
     safe_inst_sequence      safe_inst_seq;
     flush_inst_sequence     flush_inst_seq;
     except_inst_sequence    except_inst_seq;
@@ -61,6 +62,8 @@ task pre_main_phase(uvm_phase phase);
         except_inst_seq.reg_pool   = reg_pool;
         branch_inst_seq.reg_pool   = reg_pool;
         ls_inst_seq.reg_pool       = reg_pool;
+        ls_inst_seq.data_init_gen  = data_init_gen;
+        ls_inst_seq.safe_inst_seq  = safe_inst_seq;
         branch_inst_seq.branch_seq_cfg  = this.branch_seq_cfg;
         ls_inst_seq.ls_seq_cfg          = this.ls_seq_cfg;
         c_inst_seq.c_seq_cfg            = this.safe_seq_cfg;
@@ -70,6 +73,11 @@ task pre_main_phase(uvm_phase phase);
     endtask
     function void do_pass_quit_seq(inst_generator  inst_gen);
         pass_quit_seq.seq_gen(inst_gen);
+    endfunction
+    function void gen_load_to_use(load_to_use_request request);
+        if(!ls_inst_seq.base_initial)
+            ls_inst_seq.do_base_config();
+        ls_inst_seq.gen_load_to_use(request);
     endfunction
     function void rand_seq(inst_seq_type_e  inst_seq_type);
         inst_seq_info_item  inst_seq_info;

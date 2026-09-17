@@ -49,3 +49,9 @@
   uvm_tc         = directed_inst_test
   vcs_tb_args    = +directed_seq_name=fetch_exception_directed
   batch_times    = 1
+
+#---------------------directed Load-to-Use: LW -> ADD/ADDI
+- case_name      = load_to_use_directed_test
+  uvm_tc         = directed_inst_test
+  vcs_tb_args    = +directed_seq_name=load_to_use_directed+test_mode=INT_TEST
+  batch_times    = 1

@@ -6,6 +6,9 @@ class ls_inst_sequence extends base_inst_sequence;
     ls_rand_seq     rand_ls_seq;
     ls_linear_seq   linear_ls_seq;
     ls_memcpy_seq   memcpy_ls_seq;
+    load_to_use_sequence load_to_use_seq;
+    safe_inst_sequence    safe_inst_seq;
+    data_init_generator  data_init_gen;
 
     inst_generator  inst_gen;
     bit base_initial;
@@ -20,6 +23,7 @@ class ls_inst_sequence extends base_inst_sequence;
       rand_ls_seq = new();
       linear_ls_seq = new();
       memcpy_ls_seq = new();
+      load_to_use_seq = new();
 
 
       base_initial = 0;
@@ -56,12 +60,22 @@ class ls_inst_sequence extends base_inst_sequence;
             MEMCPY_LS     : begin
                 memcpy_ls_seq.sub_seq_gen(ls_seq_info,inst_gen);
             end
+            LOAD_TO_USE   : begin
+                load_to_use_seq.safe_inst_seq = safe_inst_seq;
+                load_to_use_seq.sub_seq_gen(ls_seq_info, inst_gen,
+                                             data_init_gen);
+            end
         endcase
         $fwrite(inst_gen.gen_file,("//--- ls seq end     \n"));
 
 
 //        ls_seq_info.print();
         return ls_seq_info;
+    endfunction
+
+    virtual function void gen_load_to_use(load_to_use_request request);
+        load_to_use_seq.safe_inst_seq = safe_inst_seq;
+        load_to_use_seq.gen_load_to_use(request, inst_gen, data_init_gen);
     endfunction
 endclass
                                             

@@ -1,7 +1,9 @@
 class ls_addr_config extends uvm_object;
     bit [63:0] dtcm_base[3];
+    bit [63:0] dtcm_global_base[3];
     bit [63:0] dtcm_size[3];
     bit [63:0] share_base;
+    bit [63:0] share_global_base;
     bit [63:0] share_size;
     share_layout_e share_layout;
 
@@ -13,7 +15,11 @@ class ls_addr_config extends uvm_object;
             dtcm_base[i] = `DTCM_BASE;
             dtcm_size[i] = `DTCM_SIZE;
         end
+        dtcm_global_base[HART_MU]  = `MU_DTCM_GLOBAL_BASE;
+        dtcm_global_base[HART_VU]  = `VU_DTCM_GLOBAL_BASE;
+        dtcm_global_base[HART_DTE] = `DTE_DTCM_GLOBAL_BASE;
         share_base   = `SHARE_BASE;
+        share_global_base = `SHARE_GLOBAL_BASE;
         share_size   = `SHARE_SIZE;
         share_layout = SHARE_RAND_3CORE;
     endfunction

@@ -76,7 +76,7 @@ class ls_addr_generator extends uvm_object;
     //     默认 dtcm_base='h0。取指走 ITCM 同 VA，访存走 DTCM。
     //
     //   SHARE_RAND_3CORE:
-    //     整段 Share [share_base, share_base+`SHARE_SIZE)，默认 ['h8000,'h10000)
+    //     整段 Smem [share_base, share_base+`SHARE_SIZE)，默认 [0x91080000,0x910a0000)
     //     生成器给绝对 PA，三核可争用。
     //
     //   SHARE_SW_PARTITION:
@@ -221,7 +221,11 @@ class ls_addr_generator extends uvm_object;
     //   ls_addr_misalign：在已裁 EA 上再加 1..align-1，可能轻轻越窗，
     //   只给 invalid_* 测非对齐；合法 load 约束 ls_addr_misalign_en==0。
     //------------------------------------------------------------------
-    function bit[11:0] get_ls_imm(addr_structure_s ls_s, ops_gen_config ops_gen_cfg);
+    // Return the complete resolved access so semantic sequences (for example
+    // Load-to-Use) can initialize the exact memory word consumed by a load.
+    // Legacy instruction classes continue to use get_ls_imm() below.
+    function ls_addr_s get_ls_access(addr_structure_s ls_s,
+                                     ops_gen_config   ops_gen_cfg);
         ls_addr_s     b;
         bit[63:0]     ea, ea_min, ea_max;
         int unsigned  align, size, span, idx;
@@ -251,7 +255,17 @@ class ls_addr_generator extends uvm_object;
         if(ops_gen_cfg.ls_addr_misalign && align > 1)
             ea = ea + ($urandom_range(align - 2) + 1);
         simm = ea - b.base_val;
-        return simm[11:0];
+        b.addr_type = ls_s.addr_type;
+        b.ea        = ea;
+        b.imm       = simm[11:0];
+        return b;
+    endfunction
+
+    function bit[11:0] get_ls_imm(addr_structure_s ls_s,
+                                  ops_gen_config   ops_gen_cfg);
+        ls_addr_s access;
+        access = get_ls_access(ls_s, ops_gen_cfg);
+        return access.imm;
     endfunction
 
     // C.LW/C.SW use the CL/CS unsigned word offset encoding:

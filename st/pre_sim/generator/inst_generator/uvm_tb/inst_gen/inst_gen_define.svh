@@ -1,24 +1,44 @@
 //learn from dv define
 // Shorthand for common foo.randomize() + fatal check
-`define BOOT_PC   32'h9104_0000
+`define BOOT_PC   32'h0x8000_0000
 `define ITCM_SIZE 32'h0000_1000 // 4KB instruction TCM per RV core
 `define CORE_GLOBAL_SIZE 32'h0000_8000 // 32KB global address slot per RV core
 
-// Each RV core fetches from a private ITCM whose local address starts at 0.
+// ITCM and DTCM are independent private address spaces in the RV-core view.
+// Their local addresses all start at 0.
 `define MU_ITCM_RV_BASE   32'h0000_0000
 `define VU_ITCM_RV_BASE   32'h0000_0000
 `define DTE_ITCM_RV_BASE  32'h0000_0000
+`define MU_DTCM_RV_BASE   32'h0000_0000
+`define VU_DTCM_RV_BASE   32'h0000_0000
+`define DTE_DTCM_RV_BASE  32'h0000_0000
 
-// Unified test.vmem layout: DTE slot 0, MU slot 1, VU slot 2.
+// Unified memory-image layout: DTE/MU/VU ITCM slots followed by DTCM slots.
 `define DTE_ITCM_GLOBAL_BASE (`BOOT_PC + (0 * `CORE_GLOBAL_SIZE))
 `define MU_ITCM_GLOBAL_BASE  (`BOOT_PC + (1 * `CORE_GLOBAL_SIZE))
 `define VU_ITCM_GLOBAL_BASE  (`BOOT_PC + (2 * `CORE_GLOBAL_SIZE))
+
+// The three DTCM windows use the next three 32KB global slots.
+`define DTE_DTCM_GLOBAL_BASE (`BOOT_PC + (3 * `CORE_GLOBAL_SIZE))
+`define MU_DTCM_GLOBAL_BASE  (`BOOT_PC + (4 * `CORE_GLOBAL_SIZE))
+`define VU_DTCM_GLOBAL_BASE  (`BOOT_PC + (5 * `CORE_GLOBAL_SIZE))
+
+// Smem occupies the 128KB shared segment at offset 0x40000 in the
+// per-core address map. All RV cores use the same system address.
+`define SMEM_GLOBAL_BASE  (`BOOT_PC + 32'h0004_0000)
+`define SMEM_SIZE         32'h0002_0000
+
+// Compatibility aliases used by the existing LS address generator.
+`define SHARE_RV_BASE     `SMEM_GLOBAL_BASE
+`define SHARE_GLOBAL_BASE `SMEM_GLOBAL_BASE
 `define DTCM_SIZE   'h1000    // 4KB per hart, same VA for MU/VU/DTE
-`define SHARE_SIZE  'h8000    // 32KB
+`define SHARE_SIZE  `SMEM_SIZE
 `define USER_STRIDE 'h800     // 2KB per user
 `define HART_SLOT   'h2A0     // 672B per hart inside a user
-`define DTCM_BASE   'h0
-`define SHARE_BASE  'h8000
+// Legacy common local DTCM base used by the LS address generator.
+`define DTCM_BASE   `MU_DTCM_RV_BASE
+// Legacy local Share Memory base used by the LS address generator.
+`define SHARE_BASE  `SHARE_RV_BASE
 `define gfn get_full_name()
 `define RANDOMIZE_CHECK(T_, MSG_="") \
     if (!(T_.randomize())) begin \
