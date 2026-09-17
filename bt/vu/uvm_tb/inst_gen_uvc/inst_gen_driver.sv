@@ -43,7 +43,7 @@ endclass : inst_gen_driver
 
 task inst_gen_driver::driver_reset();
     inst_gen_vif.drv_cb.vld        <= 0;
-    inst_gen_vif.drv_cb.inst_type  <= 0;
+    inst_gen_vif.drv_cb.inst       <= 0;
     inst_gen_vif.drv_cb.rs1_data   <= 0;
     inst_gen_vif.drv_cb.rs2_data   <= 0;
     inst_gen_vif.drv_cb.imm        <= 0;
@@ -114,7 +114,7 @@ endtask : get_and_drive
 
 task inst_gen_driver::send_inst(inst_gen_seq_item tr);
     inst_gen_vif.drv_cb.vld        <= 1;
-    inst_gen_vif.drv_cb.inst_type  <= tr.inst_type;
+    inst_gen_vif.drv_cb.inst       <= tr.inst;
     inst_gen_vif.drv_cb.rs1_data   <= tr.rs1_data;
     inst_gen_vif.drv_cb.rs2_data   <= tr.rs2_data;
     inst_gen_vif.drv_cb.imm        <= tr.imm;
