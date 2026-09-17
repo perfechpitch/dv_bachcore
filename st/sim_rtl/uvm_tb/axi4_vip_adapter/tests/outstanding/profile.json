@@ -1,0 +1,34 @@
+{
+  "axi": {
+    "protocol": "AXI4",
+    "addr_width": 32,
+    "data_width": 256,
+    "id_width": 8,
+    "len_width": 4,
+    "qos_width": 0,
+    "region_width": 0,
+    "max_burst_len": 16,
+    "default_burst_len": 1,
+    "max_outstanding_reads": 128,
+    "max_outstanding_writes": 128,
+    "read_timeout_cycles": 10000,
+    "write_timeout_cycles": 10000,
+    "ready_timeout_cycles": 10000,
+    "max_outstanding_total": 128
+  },
+  "support": {
+    "exclusive_access": false,
+    "locked_access": false,
+    "narrow_burst": false,
+    "unaligned_access": false,
+    "fixed_burst": false,
+    "incrementing_burst": true,
+    "wrapping_burst": false,
+    "byte_strobe": true
+  },
+  "checker": {
+    "enable_protocol_checks": true,
+    "enable_response_checks": true,
+    "enable_timeout_checks": true
+  }
+}

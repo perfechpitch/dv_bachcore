@@ -1,0 +1,46 @@
+{
+  "design_name": "scp_bach_ctrl_m0_controlled_test",
+  "description": "Independent controlled-slave target profile; not a replacement for production DUT configuration.",
+  "test_assumptions": {
+    "burst": "16 beats / 512 bytes exercises LEN4 encoding at full width; requirement maximum beats/bytes are blank.",
+    "outstanding": "Read cap 128, write cap 128, aggregate cap 128 are test policy; requirement does not specify per-direction versus aggregate.",
+    "clock_and_bandwidth": "Use +AXI_CLK_PERIOD_NS=1.0 for 1 GHz. Read/write/aggregate 24 GB/s requirement interpretation remains unspecified; controlled-slave measurements are reported separately.",
+    "address_map": "Not supplied; this profile does not define actual slave address ranges."
+  },
+  "axi": {
+    "protocol": "AXI4",
+    "addr_width": 32,
+    "data_width": 256,
+    "id_width": 8,
+    "len_width": 4,
+    "qos_width": 0,
+    "region_width": 0,
+    "awuser_width": 0,
+    "aruser_width": 0,
+    "wuser_width": 0,
+    "ruser_width": 0,
+    "buser_width": 0,
+    "default_burst_type": "INCR",
+    "default_burst_len": 1,
+    "max_burst_len": 16,
+    "max_outstanding_reads": 128,
+    "max_outstanding_writes": 128,
+    "max_outstanding_total": 128
+  },
+  "support": {
+    "exclusive_access": false,
+    "locked_access": false,
+    "narrow_burst": false,
+    "unaligned_access": false,
+    "fixed_burst": false,
+    "incrementing_burst": true,
+    "wrapping_burst": false,
+    "byte_strobe": true
+  },
+  "coverage": {
+    "enable_coverage": true,
+    "enable_transaction_coverage": true,
+    "enable_protocol_coverage": true,
+    "enable_error_coverage": true
+  }
+}

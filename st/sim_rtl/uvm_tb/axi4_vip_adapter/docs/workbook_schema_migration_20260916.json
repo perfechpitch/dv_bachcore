@@ -1,0 +1,498 @@
+{
+  "version": 1,
+  "authorization": "Add missing fields only. Preserve all existing values in BASE_VIP_CFG, DUT_BUFF_FEATURE and FINAL_FEATURE.",
+  "previous_sha256": "b7fd8821f7f3625a5c6b643344114733ada212626a18bf7a4b24c9d4e1eb8994",
+  "current_sha256": "77bae6bac46a09a385d0543d0e026eb6825527280e25212c002f518466d99700",
+  "backup": {
+    "git_revision": "1de3af5f4f0335e816f4ea95faf758b04fc784e8",
+    "git_path": "axi4_vip_adapter/docs/vip/vip_cfg.xlsx",
+    "git_blob": "569405bf6d0af221c40db437a50945d2722f67ee"
+  },
+  "source": {
+    "file": "bach_core_ctrl_noc_project_requirement.xlsx",
+    "sha256": "14cb665a71652b2ef908085d5065a338a31e644bc75eec43acbab8d836081935",
+    "sheet": "master",
+    "range": "A2:V2",
+    "header": [
+      "name",
+      "type",
+      "r|w",
+      "data width",
+      "address width",
+      "ID width",
+      "axlen width",
+      "qos width",
+      "user width",
+      "barrier",
+      "exclusive",
+      "burst type",
+      "max wrap size",
+      "narrow burst",
+      "align info",
+      "diff ID",
+      "max burst len (total beats)",
+      "max burst len (total bytes)",
+      "clk freq (MHZ)",
+      "BW required (GBps)",
+      "use rob",
+      "outstanding"
+    ],
+    "values": [
+      "scp_bach_ctrl_m0",
+      "axi4",
+      "rw",
+      256,
+      32,
+      8,
+      4,
+      0,
+      0,
+      "no",
+      "no",
+      "INCR",
+      "no",
+      "no",
+      "none",
+      "none",
+      null,
+      null,
+      1000,
+      "24G",
+      "no",
+      "128"
+    ],
+    "bandwidth_unit": "GB/s (bytes per second). Source T2=24G under header BW required (GBps) is normalized to 24."
+  },
+  "sheets": {
+    "BASE_VIP_CFG": {
+      "original_rows": 55,
+      "current_rows": 70,
+      "original_rows_sha256": "22aa840dbd1b48e71344701f97c448cb9e4de72216cb58a7a61ebbb80503b272",
+      "current_prefix_sha256": "22aa840dbd1b48e71344701f97c448cb9e4de72216cb58a7a61ebbb80503b272",
+      "old_cell_value_type_format_changes": [],
+      "added_rows": [
+        {
+          "section": "axi",
+          "key": "max_outstanding_total",
+          "value": "",
+          "type": "optional_int",
+          "description": "Runtime aggregate cap. Blank uses read + write limits. Requirement 128 has no confirmed scope.",
+          "excel_row": 57
+        },
+        {
+          "section": "requirements",
+          "key": "name",
+          "value": "scp_bach_ctrl_m0",
+          "type": "string",
+          "description": "Requirement metadata from bach_core_ctrl_noc_project_requirement.xlsx, master!A2. Does not select runtime config.",
+          "excel_row": 58
+        },
+        {
+          "section": "requirements",
+          "key": "access_mode",
+          "value": "rw",
+          "type": "string",
+          "description": "master!C2 r|w. Required access directions. Metadata only.",
+          "excel_row": 59
+        },
+        {
+          "section": "requirements",
+          "key": "barrier",
+          "value": "false",
+          "type": "bool",
+          "description": "master!J2 = no. Required barrier capability. Metadata only. AXI4 BFM has no barrier implementation.",
+          "excel_row": 60
+        },
+        {
+          "section": "requirements",
+          "key": "max_wrap_size",
+          "value": "no",
+          "type": "string",
+          "description": "master!M2 = no (WRAP not required). Preserve no as a value, not a blank. Metadata only.",
+          "excel_row": 61
+        },
+        {
+          "section": "requirements",
+          "key": "align_info",
+          "value": "none",
+          "type": "string",
+          "description": "master!O2 = none. Whole-transaction boundary guarantee, not unaligned_access. Metadata only.",
+          "excel_row": 62
+        },
+        {
+          "section": "requirements",
+          "key": "diff_id",
+          "value": "none",
+          "type": "string",
+          "description": "master!P2 = none. Preserve the source different-ID constraint. Metadata only.",
+          "excel_row": 63
+        },
+        {
+          "section": "requirements",
+          "key": "clock_freq_mhz",
+          "value": "1000",
+          "type": "int",
+          "description": "master!S2. Required frequency in MHz. Metadata only. Simulation clock uses explicit runtime controls.",
+          "excel_row": 64
+        },
+        {
+          "section": "requirements",
+          "key": "bandwidth_gbps",
+          "value": "24",
+          "type": "int",
+          "description": "master!T2 = 24G, header GBps. Required NoC bandwidth in GB/s. Metadata only, not a measured result.",
+          "excel_row": 65
+        },
+        {
+          "section": "requirements",
+          "key": "bandwidth_scope",
+          "value": "",
+          "type": "optional_string",
+          "description": "Source does not define read, write or aggregate bandwidth. Blank means unspecified. Metadata only.",
+          "excel_row": 66
+        },
+        {
+          "section": "requirements",
+          "key": "use_rob",
+          "value": "false",
+          "type": "bool",
+          "description": "master!U2 = no. NoC ROB requirement. Metadata only, does not configure or implement a ROB.",
+          "excel_row": 67
+        },
+        {
+          "section": "requirements",
+          "key": "max_burst_beats",
+          "value": "",
+          "type": "optional_int",
+          "description": "master!Q2 is blank. Required maximum burst beats are unspecified. Runtime axi.max_burst_len is retained.",
+          "excel_row": 68
+        },
+        {
+          "section": "requirements",
+          "key": "max_burst_bytes",
+          "value": "",
+          "type": "optional_int",
+          "description": "master!R2 is blank. Required maximum burst bytes are unspecified. Metadata only.",
+          "excel_row": 69
+        },
+        {
+          "section": "requirements",
+          "key": "outstanding",
+          "value": "128",
+          "type": "int",
+          "description": "master!V2 = 128. Raw outstanding requirement. Scope is unspecified. Does not set runtime limits.",
+          "excel_row": 70
+        },
+        {
+          "section": "requirements",
+          "key": "outstanding_scope",
+          "value": "",
+          "type": "optional_string",
+          "description": "Source does not define read, write or aggregate outstanding. Blank means unspecified. Metadata only.",
+          "excel_row": 71
+        }
+      ],
+      "native_tables": [
+        {
+          "name": "BaseVipCfgTable",
+          "before": "A1:E56",
+          "after": "A1:E71"
+        }
+      ]
+    },
+    "DUT_BUFF_FEATURE": {
+      "original_rows": 55,
+      "current_rows": 70,
+      "original_rows_sha256": "8669a0bba80430aefe398e0f5c285f2a96592280121aa93bdc41ee52019cdad2",
+      "current_prefix_sha256": "8669a0bba80430aefe398e0f5c285f2a96592280121aa93bdc41ee52019cdad2",
+      "old_cell_value_type_format_changes": [],
+      "added_rows": [
+        {
+          "section": "axi",
+          "key": "max_outstanding_total",
+          "value": "",
+          "type": "optional_int",
+          "description": "Runtime aggregate cap. Blank uses read + write limits. Requirement 128 has no confirmed scope.",
+          "excel_row": 57
+        },
+        {
+          "section": "requirements",
+          "key": "name",
+          "value": "",
+          "type": "string",
+          "description": "Requirement metadata from bach_core_ctrl_noc_project_requirement.xlsx, master!A2. Does not select runtime config.",
+          "excel_row": 58
+        },
+        {
+          "section": "requirements",
+          "key": "access_mode",
+          "value": "",
+          "type": "string",
+          "description": "master!C2 r|w. Required access directions. Metadata only.",
+          "excel_row": 59
+        },
+        {
+          "section": "requirements",
+          "key": "barrier",
+          "value": "",
+          "type": "bool",
+          "description": "master!J2 = no. Required barrier capability. Metadata only. AXI4 BFM has no barrier implementation.",
+          "excel_row": 60
+        },
+        {
+          "section": "requirements",
+          "key": "max_wrap_size",
+          "value": "",
+          "type": "string",
+          "description": "master!M2 = no (WRAP not required). Preserve no as a value, not a blank. Metadata only.",
+          "excel_row": 61
+        },
+        {
+          "section": "requirements",
+          "key": "align_info",
+          "value": "",
+          "type": "string",
+          "description": "master!O2 = none. Whole-transaction boundary guarantee, not unaligned_access. Metadata only.",
+          "excel_row": 62
+        },
+        {
+          "section": "requirements",
+          "key": "diff_id",
+          "value": "",
+          "type": "string",
+          "description": "master!P2 = none. Preserve the source different-ID constraint. Metadata only.",
+          "excel_row": 63
+        },
+        {
+          "section": "requirements",
+          "key": "clock_freq_mhz",
+          "value": "",
+          "type": "int",
+          "description": "master!S2. Required frequency in MHz. Metadata only. Simulation clock uses explicit runtime controls.",
+          "excel_row": 64
+        },
+        {
+          "section": "requirements",
+          "key": "bandwidth_gbps",
+          "value": "",
+          "type": "int",
+          "description": "master!T2 = 24G, header GBps. Required NoC bandwidth in GB/s. Metadata only, not a measured result.",
+          "excel_row": 65
+        },
+        {
+          "section": "requirements",
+          "key": "bandwidth_scope",
+          "value": "",
+          "type": "optional_string",
+          "description": "Source does not define read, write or aggregate bandwidth. Blank means unspecified. Metadata only.",
+          "excel_row": 66
+        },
+        {
+          "section": "requirements",
+          "key": "use_rob",
+          "value": "",
+          "type": "bool",
+          "description": "master!U2 = no. NoC ROB requirement. Metadata only, does not configure or implement a ROB.",
+          "excel_row": 67
+        },
+        {
+          "section": "requirements",
+          "key": "max_burst_beats",
+          "value": "",
+          "type": "optional_int",
+          "description": "master!Q2 is blank. Required maximum burst beats are unspecified. Runtime axi.max_burst_len is retained.",
+          "excel_row": 68
+        },
+        {
+          "section": "requirements",
+          "key": "max_burst_bytes",
+          "value": "",
+          "type": "optional_int",
+          "description": "master!R2 is blank. Required maximum burst bytes are unspecified. Metadata only.",
+          "excel_row": 69
+        },
+        {
+          "section": "requirements",
+          "key": "outstanding",
+          "value": "",
+          "type": "int",
+          "description": "master!V2 = 128. Raw outstanding requirement. Scope is unspecified. Does not set runtime limits.",
+          "excel_row": 70
+        },
+        {
+          "section": "requirements",
+          "key": "outstanding_scope",
+          "value": "",
+          "type": "optional_string",
+          "description": "Source does not define read, write or aggregate outstanding. Blank means unspecified. Metadata only.",
+          "excel_row": 71
+        }
+      ],
+      "native_tables": [
+        {
+          "name": "DutVipCfgTable",
+          "before": "A1:E56",
+          "after": "A1:E71"
+        }
+      ]
+    },
+    "FINAL_FEATURE": {
+      "original_rows": 55,
+      "current_rows": 70,
+      "original_rows_sha256": "2b13d39a339932b989b3850e654289b455ed2e0138c6d5099a35106b68d9823c",
+      "current_prefix_sha256": "2b13d39a339932b989b3850e654289b455ed2e0138c6d5099a35106b68d9823c",
+      "old_cell_value_type_format_changes": [],
+      "added_rows": [
+        {
+          "section": "axi",
+          "key": "max_outstanding_total",
+          "value": "",
+          "source": "default",
+          "type": "optional_int",
+          "description": "Runtime aggregate cap. Blank uses read + write limits. Requirement 128 has no confirmed scope.",
+          "excel_row": 57
+        },
+        {
+          "section": "requirements",
+          "key": "name",
+          "value": "scp_bach_ctrl_m0",
+          "source": "default",
+          "type": "string",
+          "description": "Requirement metadata from bach_core_ctrl_noc_project_requirement.xlsx, master!A2. Does not select runtime config.",
+          "excel_row": 58
+        },
+        {
+          "section": "requirements",
+          "key": "access_mode",
+          "value": "rw",
+          "source": "default",
+          "type": "string",
+          "description": "master!C2 r|w. Required access directions. Metadata only.",
+          "excel_row": 59
+        },
+        {
+          "section": "requirements",
+          "key": "barrier",
+          "value": "false",
+          "source": "default",
+          "type": "bool",
+          "description": "master!J2 = no. Required barrier capability. Metadata only. AXI4 BFM has no barrier implementation.",
+          "excel_row": 60
+        },
+        {
+          "section": "requirements",
+          "key": "max_wrap_size",
+          "value": "no",
+          "source": "default",
+          "type": "string",
+          "description": "master!M2 = no (WRAP not required). Preserve no as a value, not a blank. Metadata only.",
+          "excel_row": 61
+        },
+        {
+          "section": "requirements",
+          "key": "align_info",
+          "value": "none",
+          "source": "default",
+          "type": "string",
+          "description": "master!O2 = none. Whole-transaction boundary guarantee, not unaligned_access. Metadata only.",
+          "excel_row": 62
+        },
+        {
+          "section": "requirements",
+          "key": "diff_id",
+          "value": "none",
+          "source": "default",
+          "type": "string",
+          "description": "master!P2 = none. Preserve the source different-ID constraint. Metadata only.",
+          "excel_row": 63
+        },
+        {
+          "section": "requirements",
+          "key": "clock_freq_mhz",
+          "value": "1000",
+          "source": "default",
+          "type": "int",
+          "description": "master!S2. Required frequency in MHz. Metadata only. Simulation clock uses explicit runtime controls.",
+          "excel_row": 64
+        },
+        {
+          "section": "requirements",
+          "key": "bandwidth_gbps",
+          "value": "24",
+          "source": "default",
+          "type": "int",
+          "description": "master!T2 = 24G, header GBps. Required NoC bandwidth in GB/s. Metadata only, not a measured result.",
+          "excel_row": 65
+        },
+        {
+          "section": "requirements",
+          "key": "bandwidth_scope",
+          "value": "",
+          "source": "default",
+          "type": "optional_string",
+          "description": "Source does not define read, write or aggregate bandwidth. Blank means unspecified. Metadata only.",
+          "excel_row": 66
+        },
+        {
+          "section": "requirements",
+          "key": "use_rob",
+          "value": "false",
+          "source": "default",
+          "type": "bool",
+          "description": "master!U2 = no. NoC ROB requirement. Metadata only, does not configure or implement a ROB.",
+          "excel_row": 67
+        },
+        {
+          "section": "requirements",
+          "key": "max_burst_beats",
+          "value": "",
+          "source": "default",
+          "type": "optional_int",
+          "description": "master!Q2 is blank. Required maximum burst beats are unspecified. Runtime axi.max_burst_len is retained.",
+          "excel_row": 68
+        },
+        {
+          "section": "requirements",
+          "key": "max_burst_bytes",
+          "value": "",
+          "source": "default",
+          "type": "optional_int",
+          "description": "master!R2 is blank. Required maximum burst bytes are unspecified. Metadata only.",
+          "excel_row": 69
+        },
+        {
+          "section": "requirements",
+          "key": "outstanding",
+          "value": "128",
+          "source": "default",
+          "type": "int",
+          "description": "master!V2 = 128. Raw outstanding requirement. Scope is unspecified. Does not set runtime limits.",
+          "excel_row": 70
+        },
+        {
+          "section": "requirements",
+          "key": "outstanding_scope",
+          "value": "",
+          "source": "default",
+          "type": "optional_string",
+          "description": "Source does not define read, write or aggregate outstanding. Blank means unspecified. Metadata only.",
+          "excel_row": 71
+        }
+      ],
+      "native_tables": [
+        {
+          "name": "FinalVipCfgTable",
+          "before": "A1:F56",
+          "after": "A1:F71"
+        }
+      ]
+    }
+  },
+  "removed_fields": [],
+  "changed_existing_fields": [],
+  "format_changes": [
+    "Type column widened from 11.99 to 16 to show optional_string.",
+    "New rows 57:71 use 42-point height and wrapped text, extending original Calibri 11, borders and input/source fills.",
+    "Artifact export normalizes unused font charset/family, solid-fill background and empty diagonal border XML. Effective existing formatting is preserved."
+  ]
+}

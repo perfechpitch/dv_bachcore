@@ -1,0 +1,84 @@
+VCS S-2021.09-SP2, timeout eligibility correction, 2026-09-16
+Command: bash tests/checker/run_checker_vcs.sh
+No compile Warning-/Error-. Intentional fatal reports are negative smoke tests.
+
+Checker scratch: /tmp/axi4_checker.DKkfIIeG
+CHECKER_CASE_PASS idle_x_is_ignored errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0
+CHECKER_CASE_PASS read_128_cross_id_reverse_completion errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0
+CHECKER_CASE_PASS write_128_cross_id_reverse_completion errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0
+CHECKER_CASE_PASS mixed_128_outstanding errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0
+CHECKER_CASE_PASS same_id_fifo_and_read_interleave errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0
+CHECKER_CASE_PASS w_before_aw errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0
+CHECKER_CASE_PASS full_len16_and_all_channel_stalls errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0
+CHECKER_CASE_PASS legal_unused_data_lanes_and_absent_sidebands_x errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0
+CHECKER_CASE_PASS legal_unaligned_narrow_incr errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0
+CHECKER_CASE_PASS legal_narrow_single errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0
+CHECKER_CASE_PASS legal_4kb_exact_end_unaligned errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0
+CHECKER_CASE_PASS slave_error_responses errors p/x/a/s/r/t/policy=0/0/0/0/2/0/0
+CHECKER_CASE_PASS write_4kb_crossing errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS read_4kb_crossing errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS write_4kb_checked_before_ready errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS read_4kb_checked_before_ready errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS write_size_checked_before_ready errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS read_size_checked_before_ready errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS oversize_aw errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS oversize_ar errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS reserved_awburst errors p/x/a/s/r/t/policy=1/0/0/0/0/0/1
+CHECKER_CASE_PASS reserved_arburst errors p/x/a/s/r/t/policy=1/0/0/0/0/0/1
+CHECKER_CASE_PASS early_wlast errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS missing_wlast errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS early_rlast errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS missing_rlast errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS second_beat_wrong_strobe_lane errors p/x/a/s/r/t/policy=0/0/0/1/0/0/0
+CHECKER_CASE_PASS unaligned_first_strobe_before_address errors p/x/a/s/r/t/policy=0/0/0/1/0/0/0
+CHECKER_CASE_PASS strobe_checked_before_wready errors p/x/a/s/r/t/policy=0/0/0/3/0/0/0
+CHECKER_CASE_PASS wlast_checked_before_wready errors p/x/a/s/r/t/policy=3/0/0/0/0/0/0
+CHECKER_CASE_PASS bid_without_aw errors p/x/a/s/r/t/policy=0/0/0/0/1/0/0
+CHECKER_CASE_PASS rid_without_ar errors p/x/a/s/r/t/policy=0/0/0/0/1/0/0
+CHECKER_CASE_PASS b_before_write_data errors p/x/a/s/r/t/policy=0/0/0/0/1/0/0
+CHECKER_CASE_PASS b_before_final_write_beat errors p/x/a/s/r/t/policy=0/0/0/0/1/0/0
+CHECKER_CASE_PASS unknown_bid_with_write_pending errors p/x/a/s/r/t/policy=0/0/0/0/1/0/0
+CHECKER_CASE_PASS unknown_rid_with_read_pending errors p/x/a/s/r/t/policy=0/0/0/0/1/0/0
+CHECKER_CASE_PASS same_id_second_read_cannot_bypass_first errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS r_cannot_depend_on_same_edge_ar errors p/x/a/s/r/t/policy=0/0/0/0/1/0/0
+CHECKER_CASE_PASS b_cannot_depend_on_same_edge_wlast errors p/x/a/s/r/t/policy=0/0/0/0/1/0/0
+CHECKER_CASE_PASS payload_change_on_handshake_channel_0 errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS payload_change_on_handshake_channel_1 errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS payload_change_on_handshake_channel_2 errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS payload_change_on_handshake_channel_3 errors p/x/a/s/r/t/policy=1/0/0/0/1/0/0
+CHECKER_CASE_PASS payload_change_on_handshake_channel_4 errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS valid_withdrawn_under_backpressure errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0
+CHECKER_CASE_PASS x_aw_payload_while_valid errors p/x/a/s/r/t/policy=0/2/0/0/0/0/0
+CHECKER_CASE_PASS x_wstrb_while_valid errors p/x/a/s/r/t/policy=0/2/0/0/0/0/0
+CHECKER_CASE_PASS x_rid_while_valid errors p/x/a/s/r/t/policy=0/2/0/0/0/0/0
+CHECKER_CASE_PASS x_selected_wdata_lane errors p/x/a/s/r/t/policy=0/1/0/0/0/0/0
+CHECKER_CASE_PASS x_selected_rdata_lane errors p/x/a/s/r/t/policy=0/1/0/0/0/0/0
+CHECKER_CASE_PASS x_valid_control errors p/x/a/s/r/t/policy=0/3/0/0/0/0/0
+CHECKER_CASE_PASS read_outstanding_129 errors p/x/a/s/r/t/policy=0/0/0/0/0/0/4
+CHECKER_CASE_PASS write_outstanding_129 errors p/x/a/s/r/t/policy=0/0/0/0/0/0/4
+CHECKER_CASE_PASS total_outstanding_129 errors p/x/a/s/r/t/policy=0/0/0/0/0/0/2
+CHECKER_CASE_PASS read_inactivity_timeout errors p/x/a/s/r/t/policy=0/0/0/0/0/1/0
+CHECKER_CASE_PASS write_inactivity_timeout errors p/x/a/s/r/t/policy=0/0/0/0/0/1/0
+CHECKER_CASE_PASS ready_timeout errors p/x/a/s/r/t/policy=0/0/0/0/0/1/0
+CHECKER_CASE_PASS w_without_eventual_aw_timeout errors p/x/a/s/r/t/policy=0/0/0/0/0/1/0
+CHECKER_CASE_PASS unpaired_w_timeout_rearms_after_partial_pairing errors p/x/a/s/r/t/policy=0/0/0/0/0/2/0
+CHECKER_CASE_PASS read_progress_refreshes_timeout errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0
+CHECKER_CASE_PASS write_progress_refreshes_timeout errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0
+CHECKER_CASE_PASS reset_flush_and_id_reuse errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0
+CHECKER_REGRESSION_PASS scenarios=62 assertions=3341
+CHECKER_FINAL_FUNCTION_PASS
+CHECKER_PROGRESS_CASE_PASS same_id_16_plus_16_read_progress expected_timeouts=0
+CHECKER_PROGRESS_CASE_PASS later_aw_waits_for_predecessor_w_progress expected_timeouts=0
+CHECKER_PROGRESS_CASE_PASS read_head_stall_and_successor_promotion expected_timeouts=2
+CHECKER_PROGRESS_CASE_PASS b_head_stall_and_successor_promotion expected_timeouts=2
+CHECKER_PROGRESS_CASE_PASS w_before_aw_uses_ready_not_write_budget expected_timeouts=0
+CHECKER_PROGRESS_CASE_PASS orphan_w_exceeds_16_cycle_ready_budget expected_timeouts=1
+CHECKER_PROGRESS_PASS scenarios=6 assertions=27
+Fatal: "/tmp/axi05_checker_20260916_5hyv3z/tb/axi4/checker/axi4_protocol_monitor.sv", 125: tb_axi4_checker_report.dut.violation: at time 4500 ps
+AXI_CHECK[AXI_RESPONSE] cycle=2 BID has no outstanding write
+CHECKER_REPORT_SMOKE_PASS observed_status=0 expected_fatal=AXI_RESPONSE
+Fatal: "/tmp/axi05_checker_20260916_5hyv3z/tb/axi4/checker/axi4_protocol_monitor.sv", 252: tb_axi4_checker_capability.dut: at time 0 ps
+checker implements normal INCR only; unsupported capability requested
+CHECKER_CAPABILITY_SMOKE_PASS observed_status=0 expected_fatal=unsupported_capability
+CHECKER_SUITE_PASS logs=/tmp/axi4_checker.DKkfIIeG
+Protected workbook unchanged: b7fd8821f7f3625a5c6b643344114733ada212626a18bf7a4b24c9d4e1eb8994

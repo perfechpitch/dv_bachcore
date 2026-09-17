@@ -1,0 +1,5 @@
+Compiler version S-2021.09-SP2_Full64; Runtime version S-2021.09-SP2_Full64;  Sep 16 06:05 2026
+BUS_EVIDENCE SLAVE_MODEL_SMOKE AW=4 W=16 B=4 AR=4 R=16 RLAST=4 liveR=0 liveW=0 peakR=4 peakW=4 peakTotal=8 reorderedB=2 reorderedR=2 interleavedR=12 stallsAW=3 stallsW=8 stallsAR=1 earlyW=1 expectedReadCompletions=4
+SLAVE_MODEL_SMOKE PASS
+$finish at simulation time                69001
+Wed Sep 16 06:05:37 2026
