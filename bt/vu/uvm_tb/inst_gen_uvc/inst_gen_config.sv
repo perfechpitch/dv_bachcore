@@ -307,6 +307,10 @@ class inst_gen_config extends uvm_object;
     bit                 fix_src_bypass_en=0;
     rand bit            src_bypass;
     rand int unsigned   src_bypass_weight;
+    // ===================== NOP src_sel 控制 =====================
+    bit                 nop_rand=0;
+    // ===================== 其他 cfg group 随机写入 =====================
+    rand bit            rand_other_group=0;
     // ===================== TYPE_VL.DATA_TYPE 控制 =====================
     rand int unsigned   vl_data_type_weight;
     // ===================== static 合法场景控制 =====================
@@ -583,6 +587,8 @@ class inst_gen_config extends uvm_object;
         `uvm_field_int          (fix_src_bypass_en,                         UVM_DEFAULT)
         `uvm_field_int          (src_bypass,                                UVM_DEFAULT)
         `uvm_field_int          (src_bypass_weight,                         UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (nop_rand,                                  UVM_DEFAULT)
+        `uvm_field_int          (rand_other_group,                          UVM_DEFAULT)
         `uvm_field_int          (vl_data_type_weight,                       UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (static_must_legal,                         UVM_DEFAULT)
     `uvm_object_utils_end

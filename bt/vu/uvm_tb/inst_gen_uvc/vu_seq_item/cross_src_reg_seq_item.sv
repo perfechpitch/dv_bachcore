@@ -179,9 +179,15 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
     }
 
     //----- SRC*_SEL / MASK_SEL：按执行单元独立约束（'/' 分段联合 dist） -----
+    //----- CLASS_END：src_sel / mask_sel 由 inst_gen_cfg.nop_rand 决定固定 0 或随机 -----
 
     constraint su_src_sel_c {
-        if (su_class == VU_SU_1_VS_ADDR) {
+        if (su_class == VU_SU_CLASS_END) {
+            if (!inst_gen_cfg.nop_rand) {
+                su_op_src_sel == 8'h00;
+            }
+        }
+        else if (su_class == VU_SU_1_VS_ADDR) {
             su_op_src_sel dist {
                 8'h30 := inst_gen_cfg.su_vs_sel_pair_weight,
                 8'h31 := 100 - inst_gen_cfg.su_vs_sel_pair_weight
@@ -196,13 +202,18 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
         else if (su_class == VU_SU_3_FS_ADDR) {
             su_op_src_sel == 8'h50;
         }
-        else {
-            su_op_src_sel == 8'h00;
-        }
     }
 
     constraint valu0_src_mask_sel_c {
-        if (valu0_class inside {VU_VALU0_1_VD_VS2_VS1_VM, VU_VALU0_7_MD_VS2_VS1_VM}) {
+        if (valu0_class == VU_VALU0_CLASS_END) {
+            if (!inst_gen_cfg.nop_rand) {
+                valu0_op_src1_sel == 8'h00;
+                valu0_op_src2_sel == 8'h00;
+                valu0_op_src3_sel == 8'h00;
+                mask_op_valu0_mask_sel == 8'h00;
+            }
+        }
+        else if (valu0_class inside {VU_VALU0_1_VD_VS2_VS1_VM, VU_VALU0_7_MD_VS2_VS1_VM}) {
             valu0_op_src1_sel dist {
                 8'h30 := inst_gen_cfg.valu0_vs1_sel_pair_weight,
                 8'h31 := 100 - inst_gen_cfg.valu0_vs1_sel_pair_weight
@@ -285,16 +296,18 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
                 8'h41 := inst_gen_cfg.valu0_vm_sel_pair_dist[2]
             };
         }
-        else {
-            valu0_op_src1_sel == 8'h00;
-            valu0_op_src2_sel == 8'h00;
-            valu0_op_src3_sel == 8'h00;
-            mask_op_valu0_mask_sel == 8'h00;
-        }
     }
 
     constraint valu1_src_mask_sel_c {
-        if (valu1_class == VU_VALU1_1_VD_VS2_VS1_VM) {
+        if (valu1_class == VU_VALU1_CLASS_END) {
+            if (!inst_gen_cfg.nop_rand) {
+                valu1_op_src1_sel == 8'h00;
+                valu1_op_src2_sel == 8'h00;
+                valu1_op_src3_sel == 8'h00;
+                mask_op_valu1_mask_sel == 8'h00;
+            }
+        }
+        else if (valu1_class == VU_VALU1_1_VD_VS2_VS1_VM) {
             valu1_op_src1_sel dist {
                 8'h30 := inst_gen_cfg.valu1_vs1_sel_pair_weight,
                 8'h31 := 100 - inst_gen_cfg.valu1_vs1_sel_pair_weight
@@ -346,16 +359,18 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
                 8'h41 := inst_gen_cfg.valu1_vm_sel_pair_dist[2]
             };
         }
-        else {
-            valu1_op_src1_sel == 8'h00;
-            valu1_op_src2_sel == 8'h00;
-            valu1_op_src3_sel == 8'h00;
-            mask_op_valu1_mask_sel == 8'h00;
-        }
     }
 
     constraint valu2_src_mask_sel_c {
-        if (valu2_class == VU_VALU2_1_VD_VS2_VS1_VM) {
+        if (valu2_class == VU_VALU2_CLASS_END) {
+            if (!inst_gen_cfg.nop_rand) {
+                valu2_op_src1_sel == 8'h00;
+                valu2_op_src2_sel == 8'h00;
+                valu2_op_src3_sel == 8'h00;
+                mask_op_valu2_mask_sel == 8'h00;
+            }
+        }
+        else if (valu2_class == VU_VALU2_1_VD_VS2_VS1_VM) {
             valu2_op_src1_sel dist {
                 8'h30 := inst_gen_cfg.valu2_vs1_sel_pair_weight,
                 8'h31 := 100 - inst_gen_cfg.valu2_vs1_sel_pair_weight
@@ -403,40 +418,44 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
                 8'h31 := 100 - inst_gen_cfg.valu2_vs2_sel_pair_weight
             };
         }
-        else {
-            valu2_op_src1_sel == 8'h00;
-            valu2_op_src2_sel == 8'h00;
-            valu2_op_src3_sel == 8'h00;
-            mask_op_valu2_mask_sel == 8'h00;
-        }
     }
 
     constraint vsfu0_src_sel_c {
-        if (vsfu0_class == VU_VSFU0_1_VD_VS1) {
+        if (vsfu0_class == VU_VSFU0_CLASS_END) {
+            if (!inst_gen_cfg.nop_rand) {
+                vsfu_op_vsfu0_src1_sel == 8'h00;
+            }
+        }
+        else if (vsfu0_class == VU_VSFU0_1_VD_VS1) {
             vsfu_op_vsfu0_src1_sel dist {
                 8'h30 := inst_gen_cfg.vsfu0_vs_sel_pair_weight,
                 8'h31 := 100 - inst_gen_cfg.vsfu0_vs_sel_pair_weight
             };
         }
-        else {
-            vsfu_op_vsfu0_src1_sel == 8'h00;
-        }
     }
 
     constraint vsfu1_src_sel_c {
-        if (vsfu1_class == VU_VSFU1_1_VD_VS1) {
+        if (vsfu1_class == VU_VSFU1_CLASS_END) {
+            if (!inst_gen_cfg.nop_rand) {
+                vsfu_op_vsfu1_src1_sel == 8'h00;
+            }
+        }
+        else if (vsfu1_class == VU_VSFU1_1_VD_VS1) {
             vsfu_op_vsfu1_src1_sel dist {
                 8'h30 := inst_gen_cfg.vsfu1_vs_sel_pair_weight,
                 8'h31 := 100 - inst_gen_cfg.vsfu1_vs_sel_pair_weight
             };
         }
-        else {
-            vsfu_op_vsfu1_src1_sel == 8'h00;
-        }
     }
 
     constraint mexe_src_sel_c {
-        if (mexe_class == VU_MEXE_1_MD_MS2_MS1) {
+        if (mexe_class == VU_MEXE_CLASS_END) {
+            if (!inst_gen_cfg.nop_rand) {
+                mexe_op_src1_sel == 8'h00;
+                mexe_op_src2_sel == 8'h00;
+            }
+        }
+        else if (mexe_class == VU_MEXE_1_MD_MS2_MS1) {
             {mexe_op_src1_sel, mexe_op_src2_sel} dist {
                 {8'h40, 8'h41} := inst_gen_cfg.mexe_ms_sel_pair_weight,
                 {8'h41, 8'h40} := 100 - inst_gen_cfg.mexe_ms_sel_pair_weight
@@ -459,44 +478,46 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
                 8'h31 := 100 - inst_gen_cfg.mexe_vs_sel_pair_weight
             };
         }
-        else {
-            mexe_op_src1_sel == 8'h00;
-            mexe_op_src2_sel == 8'h00;
-        }
     }
 
     constraint sexe0_src_sel_c {
-        if (sexe0_class == VU_SEXE0_1_FD_FS1_FS2) {
+        if (sexe0_class == VU_SEXE0_CLASS_END) {
+            if (!inst_gen_cfg.nop_rand) {
+                sexe0_op_src1_sel == 8'h00;
+                sexe0_op_src2_sel == 8'h00;
+            }
+        }
+        else if (sexe0_class == VU_SEXE0_1_FD_FS1_FS2) {
             sexe0_op_src1_sel == 8'h54 && sexe0_op_src2_sel == 8'h55;
         }
         else if (sexe0_class == VU_SEXE0_2_FD_FS1) {
             sexe0_op_src1_sel == 8'h54;
             sexe0_op_src2_sel == 8'h00;
         }
-        else {
-            sexe0_op_src1_sel == 8'h00;
-            sexe0_op_src2_sel == 8'h00;
-        }
     }
 
     constraint sexe1_src_sel_c {
-        if (sexe1_class == VU_SEXE1_2_FD_FS1) {
-            sexe1_op_src1_sel == 8'h56;
-            sexe1_op_src2_sel == 8'h00;
+        if (sexe1_class == VU_SEXE1_CLASS_END) {
+            if (!inst_gen_cfg.nop_rand) {
+                sexe1_op_src1_sel == 8'h00;
+                sexe1_op_src2_sel == 8'h00;
+            }
         }
-        else {
-            sexe1_op_src1_sel == 8'h00;
+        else if (sexe1_class == VU_SEXE1_2_FD_FS1) {
+            sexe1_op_src1_sel == 8'h56;
             sexe1_op_src2_sel == 8'h00;
         }
     }
 
     constraint sexe2_src_sel_c {
-        if (sexe2_class == VU_SEXE2_2_FD_FS1) {
-            sexe2_op_src1_sel == 8'h57;
-            sexe2_op_src2_sel == 8'h00;
+        if (sexe2_class == VU_SEXE2_CLASS_END) {
+            if (!inst_gen_cfg.nop_rand) {
+                sexe2_op_src1_sel == 8'h00;
+                sexe2_op_src2_sel == 8'h00;
+            }
         }
-        else {
-            sexe2_op_src1_sel == 8'h00;
+        else if (sexe2_class == VU_SEXE2_2_FD_FS1) {
+            sexe2_op_src1_sel == 8'h57;
             sexe2_op_src2_sel == 8'h00;
         }
     }

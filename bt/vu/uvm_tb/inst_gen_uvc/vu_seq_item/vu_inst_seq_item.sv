@@ -297,7 +297,6 @@ class vu_inst_seq_item extends uvm_sequence_item;
         `uvm_field_int          (static_srf_wt_index_1_srf_wt_p5_idx, UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (inf_replace_value_inf_replace_value, UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (nan_replace_value_nan_replace_value, UVM_DEFAULT | UVM_DEC)
-        `uvm_field_object       (inst_gen_cfg,        UVM_DEFAULT)
     `uvm_object_utils_end
 
     function new (string name = "vu_inst_seq_item");
@@ -1820,7 +1819,6 @@ class vu_reg_read_seq_item extends uvm_sequence_item;
         `uvm_field_enum         (vu_reg_read_addr_cat_e, reg_read_addr_cat, UVM_DEFAULT)
         `uvm_field_int          (reg_read_static_idx, UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (reg_read_addr, UVM_DEFAULT | UVM_DEC)
-        `uvm_field_object       (inst_gen_cfg, UVM_DEFAULT)
     `uvm_object_utils_end
 
     function new (string name = "vu_reg_read_seq_item");

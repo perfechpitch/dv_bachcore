@@ -47,28 +47,32 @@ class cross_src_bypass_seq_item extends cross_src_reg_seq_item;
 
     //----- 覆盖 src_reg：双源 SRC1=本口 SRC2=前级 bypass -----
     constraint sexe1_src_sel_c {
-        if (sexe1_class == VU_SEXE1_1_FD_FS1_FS2) {
+        if (sexe1_class == VU_SEXE1_CLASS_END) {
+            if (!inst_gen_cfg.nop_rand) {
+                sexe1_op_src1_sel == 8'h00;
+                sexe1_op_src2_sel == 8'h00;
+            }
+        }
+        else if (sexe1_class == VU_SEXE1_1_FD_FS1_FS2) {
             sexe1_op_src1_sel == 8'h56 && sexe1_op_src2_sel inside {8'h01, 8'h20};
         }
         else if (sexe1_class == VU_SEXE1_2_FD_FS1) {
             sexe1_op_src1_sel == 8'h56 && sexe1_op_src2_sel == 8'h00;
         }
-        else {
-            sexe1_op_src1_sel == 8'h00;
-            sexe1_op_src2_sel == 8'h00;
-        }
     }
 
     constraint sexe2_src_sel_c {
-        if (sexe2_class == VU_SEXE2_1_FD_FS1_FS2) {
+        if (sexe2_class == VU_SEXE2_CLASS_END) {
+            if (!inst_gen_cfg.nop_rand) {
+                sexe2_op_src1_sel == 8'h00;
+                sexe2_op_src2_sel == 8'h00;
+            }
+        }
+        else if (sexe2_class == VU_SEXE2_1_FD_FS1_FS2) {
             sexe2_op_src1_sel == 8'h57 && sexe2_op_src2_sel inside {8'h01, 8'h21};
         }
         else if (sexe2_class == VU_SEXE2_2_FD_FS1) {
             sexe2_op_src1_sel == 8'h57 && sexe2_op_src2_sel == 8'h00;
-        }
-        else {
-            sexe2_op_src1_sel == 8'h00;
-            sexe2_op_src2_sel == 8'h00;
         }
     }
 

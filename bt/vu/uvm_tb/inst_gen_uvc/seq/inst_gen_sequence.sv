@@ -51,6 +51,159 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
         inst_q.push_back(inst_tr);
     endfunction
 
+    // 命中 config_idx 时 pack 对应寄存器，否则保持随机 rs1_data
+    protected function void pack_vu_cfg_idx_to_tr(
+        vu_inst_seq_item vu_inst,
+        int unsigned cfg_idx
+    );
+        inst_gen_base_seq_item inst_tr;
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1000, vu_inst.pack_lu_op_reg(inst_tr.rs1_data)); // LU_op 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1000, inst_tr.rs1_data); // LU_op 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1004, vu_inst.pack_su_op_reg(inst_tr.rs1_data)); // SU_op 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1004, inst_tr.rs1_data); // SU_op 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1008, vu_inst.pack_valu0_op_reg(inst_tr.rs1_data)); // VALU0_op 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1008, inst_tr.rs1_data); // VALU0_op 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h100C, vu_inst.pack_valu1_op_reg(inst_tr.rs1_data)); // VALU1_op 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h100C, inst_tr.rs1_data); // VALU1_op 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1010, vu_inst.pack_valu2_op_reg(inst_tr.rs1_data)); // VALU2_op 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1010, inst_tr.rs1_data); // VALU2_op 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1014, vu_inst.pack_vsfu_op_reg(inst_tr.rs1_data)); // VSFU_op 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1014, inst_tr.rs1_data); // VSFU_op 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1018, vu_inst.pack_mexe_op_reg(inst_tr.rs1_data)); // MEXE_op 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1018, inst_tr.rs1_data); // MEXE_op 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h101C, vu_inst.pack_sexe0_op_reg(inst_tr.rs1_data)); // SEXE0_op 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h101C, inst_tr.rs1_data); // SEXE0_op 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1020, vu_inst.pack_sexe1_op_reg(inst_tr.rs1_data)); // SEXE1_op 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1020, inst_tr.rs1_data); // SEXE1_op 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1024, vu_inst.pack_sexe2_op_reg(inst_tr.rs1_data)); // SEXE2_op 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1024, inst_tr.rs1_data); // SEXE2_op 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1028, vu_inst.pack_mask_op_reg(inst_tr.rs1_data)); // mask_op 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1028, inst_tr.rs1_data); // mask_op 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h102C, vu_inst.pack_prf_op_reg(inst_tr.rs1_data)); // PRF_op 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h102C, inst_tr.rs1_data); // PRF_op 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1030, vu_inst.pack_static_type_vl_reg(inst_tr.rs1_data)); // static_TYPE_VL 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1030, inst_tr.rs1_data); // static_TYPE_VL 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1034, vu_inst.pack_static_ld_addr_reg(inst_tr.rs1_data)); // static_LD_addr 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1034, inst_tr.rs1_data); // static_LD_addr 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1038, vu_inst.pack_static_st_addr_reg(inst_tr.rs1_data)); // static_ST_addr 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1038, inst_tr.rs1_data); // static_ST_addr 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h103C, vu_inst.pack_static_vrf_rd_index_reg(inst_tr.rs1_data)); // static_VRF_rd_index 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h103C, inst_tr.rs1_data); // static_VRF_rd_index 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1040, vu_inst.pack_static_vrf_wt_index_reg(inst_tr.rs1_data)); // static_VRF_wt_index 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1040, inst_tr.rs1_data); // static_VRF_wt_index 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1044, vu_inst.pack_static_mrf_rd_index_reg(inst_tr.rs1_data)); // static_MRF_rd_index 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1044, inst_tr.rs1_data); // static_MRF_rd_index 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1048, vu_inst.pack_static_mrf_wt_index_reg(inst_tr.rs1_data)); // static_MRF_wt_index 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1048, inst_tr.rs1_data); // static_MRF_wt_index 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h104C, vu_inst.pack_static_srf_rd_index_0_reg(inst_tr.rs1_data)); // static_SRF_rd_index_0 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h104C, inst_tr.rs1_data); // static_SRF_rd_index_0 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1050, vu_inst.pack_static_srf_rd_index_1_reg(inst_tr.rs1_data)); // static_SRF_rd_index_1 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1050, inst_tr.rs1_data); // static_SRF_rd_index_1 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1054, vu_inst.pack_static_srf_wt_index_0_reg(inst_tr.rs1_data)); // static_SRF_wt_index_0 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1054, inst_tr.rs1_data); // static_SRF_wt_index_0 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1058, vu_inst.pack_static_srf_wt_index_1_reg(inst_tr.rs1_data)); // static_SRF_wt_index_1 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1058, inst_tr.rs1_data); // static_SRF_wt_index_1 数据
+
+        inst_tr = new_inst_tr(vu_inst);
+        if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h105C, vu_inst.pack_inf_replace_value_reg(inst_tr.rs1_data)); // INF_REPLACE_VALUE 数据
+        else
+            push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h105C, inst_tr.rs1_data); // INF_REPLACE_VALUE 数据
+
+    endfunction
+
     // vu_inst 随机化完成后，每个偏移寄存器生成一个 inst_tr 入队
     protected function void pack_vu_inst_to_tr(vu_inst_seq_item vu_inst);
         inst_gen_base_seq_item inst_tr;
@@ -88,151 +241,12 @@ class inst_gen_case_base_sequence extends inst_gen_base_sequence;
         inst_tr = new_inst_tr(vu_inst);
         push_inst_tr(inst_tr, 32'h002C, vu_inst.pack_srf_wt_index_1_reg(inst_tr.rs1_data)); // SRF_wt_index_1 数据
 
-        for (int unsigned cfg_idx = 0; cfg_idx <= 7; cfg_idx++) begin
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1000, vu_inst.pack_lu_op_reg(inst_tr.rs1_data)); // LU_op 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1000, inst_tr.rs1_data); // LU_op 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1004, vu_inst.pack_su_op_reg(inst_tr.rs1_data)); // SU_op 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1004, inst_tr.rs1_data); // SU_op 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1008, vu_inst.pack_valu0_op_reg(inst_tr.rs1_data)); // VALU0_op 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1008, inst_tr.rs1_data); // VALU0_op 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h100C, vu_inst.pack_valu1_op_reg(inst_tr.rs1_data)); // VALU1_op 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h100C, inst_tr.rs1_data); // VALU1_op 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1010, vu_inst.pack_valu2_op_reg(inst_tr.rs1_data)); // VALU2_op 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1010, inst_tr.rs1_data); // VALU2_op 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1014, vu_inst.pack_vsfu_op_reg(inst_tr.rs1_data)); // VSFU_op 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1014, inst_tr.rs1_data); // VSFU_op 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1018, vu_inst.pack_mexe_op_reg(inst_tr.rs1_data)); // MEXE_op 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1018, inst_tr.rs1_data); // MEXE_op 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h101C, vu_inst.pack_sexe0_op_reg(inst_tr.rs1_data)); // SEXE0_op 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h101C, inst_tr.rs1_data); // SEXE0_op 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1020, vu_inst.pack_sexe1_op_reg(inst_tr.rs1_data)); // SEXE1_op 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1020, inst_tr.rs1_data); // SEXE1_op 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1024, vu_inst.pack_sexe2_op_reg(inst_tr.rs1_data)); // SEXE2_op 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1024, inst_tr.rs1_data); // SEXE2_op 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1028, vu_inst.pack_mask_op_reg(inst_tr.rs1_data)); // mask_op 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1028, inst_tr.rs1_data); // mask_op 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h102C, vu_inst.pack_prf_op_reg(inst_tr.rs1_data)); // PRF_op 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h102C, inst_tr.rs1_data); // PRF_op 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1030, vu_inst.pack_static_type_vl_reg(inst_tr.rs1_data)); // static_TYPE_VL 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1030, inst_tr.rs1_data); // static_TYPE_VL 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1034, vu_inst.pack_static_ld_addr_reg(inst_tr.rs1_data)); // static_LD_addr 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1034, inst_tr.rs1_data); // static_LD_addr 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1038, vu_inst.pack_static_st_addr_reg(inst_tr.rs1_data)); // static_ST_addr 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1038, inst_tr.rs1_data); // static_ST_addr 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h103C, vu_inst.pack_static_vrf_rd_index_reg(inst_tr.rs1_data)); // static_VRF_rd_index 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h103C, inst_tr.rs1_data); // static_VRF_rd_index 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1040, vu_inst.pack_static_vrf_wt_index_reg(inst_tr.rs1_data)); // static_VRF_wt_index 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1040, inst_tr.rs1_data); // static_VRF_wt_index 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1044, vu_inst.pack_static_mrf_rd_index_reg(inst_tr.rs1_data)); // static_MRF_rd_index 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1044, inst_tr.rs1_data); // static_MRF_rd_index 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1048, vu_inst.pack_static_mrf_wt_index_reg(inst_tr.rs1_data)); // static_MRF_wt_index 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1048, inst_tr.rs1_data); // static_MRF_wt_index 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h104C, vu_inst.pack_static_srf_rd_index_0_reg(inst_tr.rs1_data)); // static_SRF_rd_index_0 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h104C, inst_tr.rs1_data); // static_SRF_rd_index_0 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1050, vu_inst.pack_static_srf_rd_index_1_reg(inst_tr.rs1_data)); // static_SRF_rd_index_1 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1050, inst_tr.rs1_data); // static_SRF_rd_index_1 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1054, vu_inst.pack_static_srf_wt_index_0_reg(inst_tr.rs1_data)); // static_SRF_wt_index_0 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1054, inst_tr.rs1_data); // static_SRF_wt_index_0 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1058, vu_inst.pack_static_srf_wt_index_1_reg(inst_tr.rs1_data)); // static_SRF_wt_index_1 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h1058, inst_tr.rs1_data); // static_SRF_wt_index_1 数据
-
-            inst_tr = new_inst_tr(vu_inst);
-            if (cfg_idx == vu_inst.macro_inst_trigger_config_idx)
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h105C, vu_inst.pack_inf_replace_value_reg(inst_tr.rs1_data)); // INF_REPLACE_VALUE 数据
-            else
-                push_inst_tr(inst_tr, (cfg_idx * 32'h100) + 32'h105C, inst_tr.rs1_data); // INF_REPLACE_VALUE 数据
-
+        if (p_sequencer.inst_gen_cfg.rand_other_group) begin
+            for (int unsigned cfg_idx = 0; cfg_idx <= 7; cfg_idx++) begin
+                pack_vu_cfg_idx_to_tr(vu_inst, cfg_idx);
+            end
+        end else begin
+            pack_vu_cfg_idx_to_tr(vu_inst, vu_inst.macro_inst_trigger_config_idx);
         end
 
         inst_tr = new_inst_tr(vu_inst);
