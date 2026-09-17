@@ -1,0 +1,327 @@
+{
+  "feature": "04 sequence compatibility",
+  "dependency_commit": "0614fda5e8cba62a1f6c016aa05f1755c9547611",
+  "date_utc": "2026-09-16T06:28:24.425392Z",
+  "simulator": "VCS S-2021.09-SP2 / UVM-1.1d",
+  "scratch": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P",
+  "assumptions": [
+    "Test-only RAM, not a NoC address map",
+    "Maximum 16 beats is a LEN4 test assumption",
+    "Read/write/combined limits all 128 are a test assumption",
+    "1 ns test clock; no end-to-end bandwidth claim"
+  ],
+  "python_tests_passed": 22,
+  "compiles": [
+    {
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/mixed_v1/compile.log",
+      "sv_errors": 0,
+      "sv_warnings": 0,
+      "sha256": "8e103f9a781b6ab260436973ef3f84790830c97fae59feba42dfc7fbe2429a26"
+    },
+    {
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/lanes_v1/compile.log",
+      "sv_errors": 0,
+      "sv_warnings": 0,
+      "sha256": "93a87d642d94db12bba53a3f599ea73dca14fb87553c7657447ad55ad468d53d"
+    },
+    {
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/burst128_v1/compile.log",
+      "sv_errors": 0,
+      "sv_warnings": 0,
+      "sha256": "275df3f4b7dd376403991a410518a40ead43f0bba1f083b88c6d37cade361664"
+    },
+    {
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/legacy_v2/compile.log",
+      "sv_errors": 0,
+      "sv_warnings": 0,
+      "sha256": "94772576121a3436e081568c9b0a9b6d134ae60c215deed5cd2eab1cff4cf854"
+    }
+  ],
+  "simulations": [
+    {
+      "case": "mixed",
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/mixed_v1/mixed.log",
+      "sha256": "c49a894dc0c4f57ea06d5d3559f7ddc540dc647cdbe8b67f687d8252d6a16be9",
+      "expected_rejection": false,
+      "uvm_error_count": 0,
+      "uvm_fatal_count": 0,
+      "handshakes_and_peaks": {
+        "AW": 8,
+        "W": 27,
+        "B": 8,
+        "AR": 8,
+        "R": 27,
+        "PEAK_W": 3,
+        "PEAK_R": 3,
+        "PEAK_TOTAL": 6
+      },
+      "passed": true
+    },
+    {
+      "case": "lanes",
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/lanes_v1/lanes.log",
+      "sha256": "e1377684e9413f745079e84cb52ebb1020b439024f9f0b53f94ffd6c94b8790d",
+      "expected_rejection": false,
+      "uvm_error_count": 0,
+      "uvm_fatal_count": 0,
+      "handshakes_and_peaks": {
+        "AW": 67,
+        "W": 67,
+        "B": 67,
+        "AR": 37,
+        "R": 37,
+        "PEAK_W": 1,
+        "PEAK_R": 1,
+        "PEAK_TOTAL": 1
+      },
+      "passed": true
+    },
+    {
+      "case": "burst128",
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/burst128_v1/burst128.log",
+      "sha256": "da7d973e4bdec3099db1fd513da8ae2506e9c3c7cafe4a6ea52e06817a08d170",
+      "expected_rejection": false,
+      "uvm_error_count": 0,
+      "uvm_fatal_count": 0,
+      "handshakes_and_peaks": {
+        "AW": 192,
+        "W": 800,
+        "B": 192,
+        "AR": 320,
+        "R": 928,
+        "PEAK_W": 128,
+        "PEAK_R": 128,
+        "PEAK_TOTAL": 128
+      },
+      "passed": true
+    },
+    {
+      "case": "reset_abort",
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/burst128_v1/reset_abort.log",
+      "sha256": "016bdedeba38e78ad626a5a78ebbe362029750e9c17069069e3a0231c4bacb45",
+      "expected_rejection": true,
+      "uvm_error_count": 0,
+      "uvm_fatal_count": 1,
+      "passed": true,
+      "expected_text": "AXI_SEQ_ABORT"
+    },
+    {
+      "case": "users",
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/legacy_v2/users.log",
+      "sha256": "cddbdafed6fd166d2a42bcbbe34a15bc70ab2b19ea11207193c9e832111eb5bd",
+      "expected_rejection": false,
+      "uvm_error_count": 0,
+      "uvm_fatal_count": 0,
+      "handshakes_and_peaks": {
+        "AW": 5,
+        "W": 5,
+        "B": 5,
+        "AR": 5,
+        "R": 5,
+        "PEAK_W": 1,
+        "PEAK_R": 1,
+        "PEAK_TOTAL": 1
+      },
+      "passed": true
+    },
+    {
+      "case": "single",
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/legacy_v2/single.log",
+      "sha256": "3c2ca94935120c7dc537741c9ab382f1ac5156ab5fe775ffe6e77a6486623e88",
+      "expected_rejection": false,
+      "uvm_error_count": 0,
+      "uvm_fatal_count": 0,
+      "handshakes_and_peaks": {
+        "AW": 2,
+        "W": 2,
+        "B": 2,
+        "AR": 2,
+        "R": 2,
+        "PEAK_W": 1,
+        "PEAK_R": 1,
+        "PEAK_TOTAL": 1
+      },
+      "passed": true
+    },
+    {
+      "case": "range",
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/legacy_v2/range.log",
+      "sha256": "63fa5832fa886b640ce7e609ca386a82f1ef17fcb0b9815b806dd311146d0366",
+      "expected_rejection": false,
+      "uvm_error_count": 0,
+      "uvm_fatal_count": 0,
+      "handshakes_and_peaks": {
+        "AW": 5,
+        "W": 5,
+        "B": 5,
+        "AR": 5,
+        "R": 5,
+        "PEAK_W": 1,
+        "PEAK_R": 1,
+        "PEAK_TOTAL": 1
+      },
+      "passed": true
+    },
+    {
+      "case": "byte_single",
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/legacy_v2/byte_single.log",
+      "sha256": "54c32843a1fcd19843c743e11e935a222304b8e94d5510f4aadfb769fd888dac",
+      "expected_rejection": false,
+      "uvm_error_count": 0,
+      "uvm_fatal_count": 0,
+      "handshakes_and_peaks": {
+        "AW": 9,
+        "W": 9,
+        "B": 9,
+        "AR": 9,
+        "R": 9,
+        "PEAK_W": 1,
+        "PEAK_R": 1,
+        "PEAK_TOTAL": 1
+      },
+      "passed": true
+    },
+    {
+      "case": "byte_range",
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/legacy_v2/byte_range.log",
+      "sha256": "42189169e2ca5ef02fa94ab2c9586c39fe1ebb26e372dcf20afcafb2f888812a",
+      "expected_rejection": false,
+      "uvm_error_count": 0,
+      "uvm_fatal_count": 0,
+      "handshakes_and_peaks": {
+        "AW": 17,
+        "W": 17,
+        "B": 17,
+        "AR": 17,
+        "R": 17,
+        "PEAK_W": 1,
+        "PEAK_R": 1,
+        "PEAK_TOTAL": 1
+      },
+      "passed": true
+    },
+    {
+      "case": "lane_range",
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/legacy_v2/lane_range.log",
+      "sha256": "6d12b8f6bd12f312e38ee68c42b2cf4aa638faf94719dcc6b35b4d43aca3edb8",
+      "expected_rejection": false,
+      "uvm_error_count": 0,
+      "uvm_fatal_count": 0,
+      "handshakes_and_peaks": {
+        "AW": 17,
+        "W": 17,
+        "B": 17,
+        "AR": 5,
+        "R": 5,
+        "PEAK_W": 1,
+        "PEAK_R": 1,
+        "PEAK_TOTAL": 1
+      },
+      "passed": true
+    },
+    {
+      "case": "range_read",
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/legacy_v2/range_read.log",
+      "sha256": "9c044d955cf2fb434ca57ef37c0f07f618535c7bc3de558471ac3bc43c4676a2",
+      "expected_rejection": false,
+      "uvm_error_count": 0,
+      "uvm_fatal_count": 0,
+      "handshakes_and_peaks": {
+        "AW": 5,
+        "W": 5,
+        "B": 5,
+        "AR": 5,
+        "R": 5,
+        "PEAK_W": 1,
+        "PEAK_R": 1,
+        "PEAK_TOTAL": 1
+      },
+      "passed": true
+    },
+    {
+      "case": "byte_range_read",
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/legacy_v2/byte_range_read.log",
+      "sha256": "610df8f2cb2eeeca7203cc3f33ea631651e972b8326da29ca15ea6c51c74c378",
+      "expected_rejection": false,
+      "uvm_error_count": 0,
+      "uvm_fatal_count": 0,
+      "handshakes_and_peaks": {
+        "AW": 17,
+        "W": 17,
+        "B": 17,
+        "AR": 17,
+        "R": 17,
+        "PEAK_W": 1,
+        "PEAK_R": 1,
+        "PEAK_TOTAL": 1
+      },
+      "passed": true
+    },
+    {
+      "case": "addr_parse_overflow",
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/legacy_v2/addr_parse_overflow.log",
+      "sha256": "0696cb1b71debb80487b1884730dc0d7e936e5a828b37d562714b52239ad3b2a",
+      "expected_rejection": true,
+      "uvm_error_count": 0,
+      "uvm_fatal_count": 1,
+      "passed": true,
+      "expected_text": "range_base_addr overflows 32 bits"
+    },
+    {
+      "case": "count_parse_overflow",
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/legacy_v2/count_parse_overflow.log",
+      "sha256": "82e56832c2328e2adf055d702344b5f78d35d011f5ff8de45aa5e75862cc7b32",
+      "expected_rejection": true,
+      "uvm_error_count": 0,
+      "uvm_fatal_count": 1,
+      "passed": true,
+      "expected_text": "range_count overflows 32 bits"
+    },
+    {
+      "case": "window_overflow",
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/legacy_v2/window_overflow.log",
+      "sha256": "7cbcf2d3d7a5860774d9096e7bb29408f12c94b237474b0fab79d3154c013f86",
+      "expected_rejection": true,
+      "uvm_error_count": 0,
+      "uvm_fatal_count": 1,
+      "passed": true,
+      "expected_text": "Range address window overflows"
+    },
+    {
+      "case": "bad_stride",
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/legacy_v2/bad_stride.log",
+      "sha256": "e857a5c6e222c88848d83df10b062057b905d5dded52b017e7244712b28fb277",
+      "expected_rejection": true,
+      "uvm_error_count": 0,
+      "uvm_fatal_count": 1,
+      "passed": true,
+      "expected_text": "must be bus-byte aligned"
+    },
+    {
+      "case": "overlap_readback",
+      "log": "/fastone/users/shibin.lu/codex_scratch/axi04_sequence_20260916_jSpQ4P/legacy_v2/overlap_readback.log",
+      "sha256": "d3c10cc7881f6a7507c52b510f645c8564a5258df0053bf407b2f5e0c654d671",
+      "expected_rejection": true,
+      "uvm_error_count": 0,
+      "uvm_fatal_count": 1,
+      "passed": true,
+      "expected_text": "Range readback windows overlap"
+    }
+  ],
+  "source_sha256": {
+    "scripts/gen_axi4_seq.py": "8a084a20c07ee09d9c151d3d0e522062d74be56a12f1085850286f6169c59a21",
+    "scripts/table_to_seq_plan.py": "95ec72679ac2d888bf2219db408c043b924a04a8e2c0aeb3694e302d7e2c613d",
+    "scripts/sequence_plan.py": "0298f9e5cda1a1e7058d3c2d466bca139feb76fe7154c4d1fa6cb4e9c6a04ab0",
+    "tb/axi4/axi4_vip_adapter_pkg.sv": "6b9262bf10bb5dc374d3d2e397134fee1a256cd816916f8a64dee7f778a0177f",
+    "tb/axi4/axi4_sequence_payload.svh": "abc819ace7b052f3c16f718e980b2b755c1f01442ee7ab665e808fc3fbde9bad",
+    "tb/axi4/simple_axi4_bfm_adapter.sv": "97bbd09119d946be7afb87e334e61100b25a56f09f10b7805ad4b02b60d5f5c5",
+    "tb/axi4/axi4_if.sv": "5063b625edf1492a3f8057f972aa0ce596e5a5984619d69014a4358357221255",
+    "tests/sequence/cases.py": "216991497f950f9e486768ce33e70540a4fa9212a9e4edc91e0fe6915659f739",
+    "tests/sequence/run_vcs.py": "2a18666e2d28bea7fec861b2e2f08d3f25df850cce76969afef003beaefc2b94",
+    "tests/sequence/sequence_tb.sv": "52ba47447b56572817aac9df8e8eb3aea97bb0bf2c72f5b008c61bd485b83df5",
+    "tests/sequence/sequence_mem.sv": "1432ec89493266ff5932268931674661a503c3c1fcd1a9890fbb9a6d624e6d2e",
+    "docs/examples/sequence_256_lanes.json": "62bcef39fe2044f2e9c8db133d18c267e837d67faf52c6bfc474001b25c5ce02",
+    "docs/examples/sequence_256_mixed.json": "10f51b055d034d7682483b79134307a97edbd5d2d12792adff91dbb5ea593507"
+  },
+  "workbook_sha256": "b7fd8821f7f3625a5c6b643344114733ada212626a18bf7a4b24c9d4e1eb8994"
+}

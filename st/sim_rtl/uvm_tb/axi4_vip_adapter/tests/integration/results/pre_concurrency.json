@@ -1,0 +1,326 @@
+{
+  "started_utc": "2026-09-16T06:13:55.058365Z",
+  "work": "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p",
+  "source": "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/pre_concurrency/axi4_vip_adapter",
+  "status": "passed",
+  "suites": [
+    {
+      "name": "config_python",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_vip_cfg.py",
+        "-v"
+      ],
+      "status": "passed",
+      "log": "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/config_python/suite.log",
+      "result_lines": [
+        "Ran 17 tests in 0.223s",
+        "OK"
+      ],
+      "seconds": 0.319,
+      "log_sha256": "a96b1f0fec4cda72bdb3f7db383583bdc48ae0fc538b0d9056bb51f3845b0769"
+    },
+    {
+      "name": "isolation_python",
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/integration",
+        "-p",
+        "test_isolated.py",
+        "-v"
+      ],
+      "status": "passed",
+      "log": "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/isolation_python/suite.log",
+      "result_lines": [
+        "test_final_integrity_failure_cannot_leave_passed_report (test_isolated.IsolatedRunnerTests) ... ok",
+        "Ran 15 tests in 4.266s",
+        "OK"
+      ],
+      "seconds": 4.324,
+      "log_sha256": "0df32e52c9c6c1f651398e2ac2e205f3465e896bb6c84cc37d1adacb9e5e07fa"
+    },
+    {
+      "name": "deployment_python",
+      "command": [
+        "/usr/bin/python3",
+        "scripts/deploy_verified.py",
+        "self-test"
+      ],
+      "status": "passed",
+      "log": "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/deployment_python/suite.log",
+      "result_lines": [
+        "  \"status\": \"self_test_passed\""
+      ],
+      "seconds": 0.167,
+      "log_sha256": "806c6e2be2fce4290b892a06cdeb2314a91f3e14756aaeed57c64b21c0ef6217"
+    },
+    {
+      "name": "simple_memory",
+      "command": [
+        "/usr/bin/python3",
+        "tests/integration/run_simple_mem.py",
+        "--work-dir",
+        "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/simple_memory/results"
+      ],
+      "status": "passed",
+      "log": "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/simple_memory/suite.log",
+      "result_lines": [
+        "SIMPLE_MEM_PASS DATA=256 ID=8 LEN=4 max_beats=16",
+        "SIMPLE_MEM_PASS DATA=32 ID=4 LEN=8 max_beats=256"
+      ],
+      "seconds": 2.572,
+      "log_sha256": "3203cd9baa8ba573ef339611146a9e43afe2f69873f8b4229413e87bc1e33aab"
+    },
+    {
+      "name": "interface",
+      "command": [
+        "/usr/bin/python3",
+        "tests/run_interface_checks.py",
+        "--work-dir",
+        "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/interface/results"
+      ],
+      "status": "passed",
+      "log": "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/interface/suite.log",
+      "result_lines": [
+        "INTERFACE_CHECK_PASS DATA=32 ADDR=32 ID=4 LEN=8 QOS=4 AWUSER=0",
+        "INTERFACE_CHECK_PASS DATA=256 ADDR=32 ID=8 LEN=4 QOS=0 AWUSER=0",
+        "INTERFACE_CHECK_PASS DATA=256 ADDR=32 ID=8 LEN=4 QOS=4 AWUSER=65",
+        "DEFAULT_DEMO_PASS axi4_user_two_regs UVM_ERROR=0 UVM_FATAL=0"
+      ],
+      "seconds": 15.544,
+      "log_sha256": "22b33ff88946e8f33192b4b1ae39914705217b2c22be0029268c7305fa45e843"
+    },
+    {
+      "name": "checker",
+      "command": [
+        "bash",
+        "tests/checker/run_checker_vcs.sh"
+      ],
+      "status": "passed",
+      "log": "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/checker/suite.log",
+      "result_lines": [
+        "CHECKER_CASE_PASS idle_x_is_ignored errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS read_128_cross_id_reverse_completion errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS write_128_cross_id_reverse_completion errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS mixed_128_outstanding errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS same_id_fifo_and_read_interleave errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS w_before_aw errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS full_len16_and_all_channel_stalls errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS legal_unused_data_lanes_and_absent_sidebands_x errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS legal_unaligned_narrow_incr errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS legal_narrow_single errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS legal_4kb_exact_end_unaligned errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS slave_error_responses errors p/x/a/s/r/t/policy=0/0/0/0/2/0/0",
+        "CHECKER_CASE_PASS write_4kb_crossing errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS read_4kb_crossing errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS write_4kb_checked_before_ready errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS read_4kb_checked_before_ready errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS write_size_checked_before_ready errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS read_size_checked_before_ready errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS oversize_aw errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS oversize_ar errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS reserved_awburst errors p/x/a/s/r/t/policy=1/0/0/0/0/0/1",
+        "CHECKER_CASE_PASS reserved_arburst errors p/x/a/s/r/t/policy=1/0/0/0/0/0/1",
+        "CHECKER_CASE_PASS early_wlast errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS missing_wlast errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS early_rlast errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS missing_rlast errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS second_beat_wrong_strobe_lane errors p/x/a/s/r/t/policy=0/0/0/1/0/0/0",
+        "CHECKER_CASE_PASS unaligned_first_strobe_before_address errors p/x/a/s/r/t/policy=0/0/0/1/0/0/0",
+        "CHECKER_CASE_PASS strobe_checked_before_wready errors p/x/a/s/r/t/policy=0/0/0/3/0/0/0",
+        "CHECKER_CASE_PASS wlast_checked_before_wready errors p/x/a/s/r/t/policy=3/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS bid_without_aw errors p/x/a/s/r/t/policy=0/0/0/0/1/0/0",
+        "CHECKER_CASE_PASS rid_without_ar errors p/x/a/s/r/t/policy=0/0/0/0/1/0/0",
+        "CHECKER_CASE_PASS b_before_write_data errors p/x/a/s/r/t/policy=0/0/0/0/1/0/0",
+        "CHECKER_CASE_PASS b_before_final_write_beat errors p/x/a/s/r/t/policy=0/0/0/0/1/0/0",
+        "CHECKER_CASE_PASS unknown_bid_with_write_pending errors p/x/a/s/r/t/policy=0/0/0/0/1/0/0",
+        "CHECKER_CASE_PASS unknown_rid_with_read_pending errors p/x/a/s/r/t/policy=0/0/0/0/1/0/0",
+        "CHECKER_CASE_PASS same_id_second_read_cannot_bypass_first errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS r_cannot_depend_on_same_edge_ar errors p/x/a/s/r/t/policy=0/0/0/0/1/0/0",
+        "CHECKER_CASE_PASS b_cannot_depend_on_same_edge_wlast errors p/x/a/s/r/t/policy=0/0/0/0/1/0/0",
+        "CHECKER_CASE_PASS payload_change_on_handshake_channel_0 errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS payload_change_on_handshake_channel_1 errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS payload_change_on_handshake_channel_2 errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS payload_change_on_handshake_channel_3 errors p/x/a/s/r/t/policy=1/0/0/0/1/0/0",
+        "CHECKER_CASE_PASS payload_change_on_handshake_channel_4 errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS valid_withdrawn_under_backpressure errors p/x/a/s/r/t/policy=1/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS x_aw_payload_while_valid errors p/x/a/s/r/t/policy=0/2/0/0/0/0/0",
+        "CHECKER_CASE_PASS x_wstrb_while_valid errors p/x/a/s/r/t/policy=0/2/0/0/0/0/0",
+        "CHECKER_CASE_PASS x_rid_while_valid errors p/x/a/s/r/t/policy=0/2/0/0/0/0/0",
+        "CHECKER_CASE_PASS x_selected_wdata_lane errors p/x/a/s/r/t/policy=0/1/0/0/0/0/0",
+        "CHECKER_CASE_PASS x_selected_rdata_lane errors p/x/a/s/r/t/policy=0/1/0/0/0/0/0",
+        "CHECKER_CASE_PASS x_valid_control errors p/x/a/s/r/t/policy=0/3/0/0/0/0/0",
+        "CHECKER_CASE_PASS read_outstanding_129 errors p/x/a/s/r/t/policy=0/0/0/0/0/0/4",
+        "CHECKER_CASE_PASS write_outstanding_129 errors p/x/a/s/r/t/policy=0/0/0/0/0/0/4",
+        "CHECKER_CASE_PASS total_outstanding_129 errors p/x/a/s/r/t/policy=0/0/0/0/0/0/2",
+        "CHECKER_CASE_PASS read_inactivity_timeout errors p/x/a/s/r/t/policy=0/0/0/0/0/1/0",
+        "CHECKER_CASE_PASS write_inactivity_timeout errors p/x/a/s/r/t/policy=0/0/0/0/0/1/0",
+        "CHECKER_CASE_PASS ready_timeout errors p/x/a/s/r/t/policy=0/0/0/0/0/1/0",
+        "CHECKER_CASE_PASS w_without_eventual_aw_timeout errors p/x/a/s/r/t/policy=0/0/0/0/0/1/0",
+        "CHECKER_CASE_PASS unpaired_w_timeout_rearms_after_partial_pairing errors p/x/a/s/r/t/policy=0/0/0/0/0/2/0",
+        "CHECKER_CASE_PASS read_progress_refreshes_timeout errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS write_progress_refreshes_timeout errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0",
+        "CHECKER_CASE_PASS reset_flush_and_id_reuse errors p/x/a/s/r/t/policy=0/0/0/0/0/0/0",
+        "CHECKER_REGRESSION_PASS scenarios=62 assertions=3341",
+        "CHECKER_FINAL_FUNCTION_PASS",
+        "CHECKER_REPORT_SMOKE_PASS observed_status=0 expected_fatal=AXI_RESPONSE",
+        "CHECKER_CAPABILITY_SMOKE_PASS observed_status=0 expected_fatal=unsupported_capability",
+        "CHECKER_SUITE_PASS logs=/tmp/axi4_checker.RYL57lRs"
+      ],
+      "seconds": 3.124,
+      "log_sha256": "4918d5607865e077870b5c73ba8a70785a0b6517e194e62794bc826d5a0e95c3"
+    },
+    {
+      "name": "burst_checked",
+      "command": [
+        "/usr/bin/python3",
+        "tests/burst/run_vcs.py",
+        "--mode",
+        "checked",
+        "--work-dir",
+        "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_checked/results"
+      ],
+      "status": "passed",
+      "log": "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_checked/suite.log",
+      "result_lines": [
+        "PASS checked/positive /fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_checked/results/positive.log",
+        "PASS checked/responses /fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_checked/results/responses.log",
+        "PASS checked/protocol /fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_checked/results/protocol.log",
+        "PASS checked/illegal /fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_checked/results/illegal.log",
+        "PASS checked/timeout_aw /fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_checked/results/timeout_aw.log",
+        "PASS checked/timeout_w /fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_checked/results/timeout_w.log",
+        "PASS checked/timeout_ar /fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_checked/results/timeout_ar.log",
+        "PASS checked/timeout_b /fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_checked/results/timeout_b.log",
+        "PASS checked/timeout_r /fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_checked/results/timeout_r.log",
+        "PASS checked/reset /fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_checked/results/reset.log",
+        "PASS checked/illegal_api /fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_checked/results/illegal_api.log"
+      ],
+      "seconds": 6.078,
+      "log_sha256": "d4e5b87c58e31708a13fa963e7420a1cd05b51a37659577a7eb30b4e80367f79"
+    },
+    {
+      "name": "burst_response_off",
+      "command": [
+        "/usr/bin/python3",
+        "tests/burst/run_vcs.py",
+        "--mode",
+        "response_off",
+        "--work-dir",
+        "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_response_off/results"
+      ],
+      "status": "passed",
+      "log": "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_response_off/suite.log",
+      "result_lines": [
+        "PASS response_off/responses /fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_response_off/results/responses.log"
+      ],
+      "seconds": 3.823,
+      "log_sha256": "b0527e04b5f2ad45ff5d8c930fb5ce73ffd636c1c9df0562daf61123cd4169ea"
+    },
+    {
+      "name": "burst_protocol_off",
+      "command": [
+        "/usr/bin/python3",
+        "tests/burst/run_vcs.py",
+        "--mode",
+        "protocol_off",
+        "--work-dir",
+        "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_protocol_off/results"
+      ],
+      "status": "passed",
+      "log": "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_protocol_off/suite.log",
+      "result_lines": [
+        "PASS protocol_off/protocol /fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_protocol_off/results/protocol.log"
+      ],
+      "seconds": 3.875,
+      "log_sha256": "0069d2f0ca1d34d191c20ff7c0346b9dff70fc3bf8b725656fac9ad341d586f5"
+    },
+    {
+      "name": "burst_timeout_off",
+      "command": [
+        "/usr/bin/python3",
+        "tests/burst/run_vcs.py",
+        "--mode",
+        "timeout_off",
+        "--work-dir",
+        "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_timeout_off/results"
+      ],
+      "status": "passed",
+      "log": "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_timeout_off/suite.log",
+      "result_lines": [
+        "PASS timeout_off/delayed /fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_timeout_off/results/delayed.log"
+      ],
+      "seconds": 3.874,
+      "log_sha256": "4e5ba5f0a99bbcb697a35892053fbe4b4a419cc374c75b6843bf9372a735f936"
+    },
+    {
+      "name": "burst_zero_timeout",
+      "command": [
+        "/usr/bin/python3",
+        "tests/burst/run_vcs.py",
+        "--mode",
+        "zero_timeout",
+        "--work-dir",
+        "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_zero_timeout/results"
+      ],
+      "status": "passed",
+      "log": "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_zero_timeout/suite.log",
+      "result_lines": [
+        "PASS zero_timeout/delayed /fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_zero_timeout/results/delayed.log"
+      ],
+      "seconds": 3.823,
+      "log_sha256": "dadc0e0a56612c4efc476180416613a87fb54d561f6ab3418dae3d915c06652d"
+    },
+    {
+      "name": "burst_narrow_enabled",
+      "command": [
+        "/usr/bin/python3",
+        "tests/burst/run_vcs.py",
+        "--mode",
+        "narrow_enabled",
+        "--work-dir",
+        "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_narrow_enabled/results"
+      ],
+      "status": "passed",
+      "log": "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_narrow_enabled/suite.log",
+      "result_lines": [
+        "PASS narrow_enabled/narrow_enabled /fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_narrow_enabled/results/narrow_enabled.log"
+      ],
+      "seconds": 3.824,
+      "log_sha256": "e80b63f5238055cf8600c7bb729116173b2fad45430a7ad301f9fb77a21757e1"
+    },
+    {
+      "name": "burst_strobe_disabled",
+      "command": [
+        "/usr/bin/python3",
+        "tests/burst/run_vcs.py",
+        "--mode",
+        "strobe_disabled",
+        "--work-dir",
+        "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_strobe_disabled/results"
+      ],
+      "status": "passed",
+      "log": "/fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_strobe_disabled/suite.log",
+      "result_lines": [
+        "PASS strobe_disabled/strobe_disabled /fastone/users/shibin.lu/axi_vip_integration_20260916_aGXmhG/axi4_regression_u_y8v19p/burst_strobe_disabled/results/strobe_disabled.log"
+      ],
+      "seconds": 4.226,
+      "log_sha256": "e9ee789f27560886d82799d35e11f8a5485fd17285502acb8a37006366fab3df"
+    }
+  ],
+  "source_workbook_sha256": "b7fd8821f7f3625a5c6b643344114733ada212626a18bf7a4b24c9d4e1eb8994",
+  "staged_workbook_sha256": "b7fd8821f7f3625a5c6b643344114733ada212626a18bf7a4b24c9d4e1eb8994",
+  "finished_utc": "2026-09-16T06:14:51.098028Z",
+  "tested_revision": "752944c"
+}

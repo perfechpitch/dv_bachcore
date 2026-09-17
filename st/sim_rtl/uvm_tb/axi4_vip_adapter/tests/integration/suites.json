@@ -1,0 +1,463 @@
+{
+  "suites": [
+    {
+      "name": "config_python",
+      "command": [
+        "{python}",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_vip_cfg.py",
+        "-v"
+      ],
+      "required_patterns": [
+        "^OK$"
+      ],
+      "timeout_seconds": 60
+    },
+    {
+      "name": "workbook_python",
+      "command": [
+        "{python}",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_workbook*.py",
+        "-v"
+      ],
+      "required_patterns": [
+        "^OK$"
+      ],
+      "timeout_seconds": 120
+    },
+    {
+      "name": "isolation_python",
+      "command": [
+        "{python}",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/integration",
+        "-p",
+        "test_isolated.py",
+        "-v"
+      ],
+      "required_patterns": [
+        "^OK$"
+      ],
+      "timeout_seconds": 60
+    },
+    {
+      "name": "migration_python",
+      "command": [
+        "{python}",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/integration",
+        "-p",
+        "test_workbook_migration.py",
+        "-v"
+      ],
+      "required_patterns": [
+        "^OK$"
+      ],
+      "timeout_seconds": 120
+    },
+    {
+      "name": "deployment_python",
+      "command": [
+        "{python}",
+        "scripts/deploy_verified.py",
+        "self-test"
+      ],
+      "required_patterns": [
+        "self_test_passed"
+      ],
+      "timeout_seconds": 60
+    },
+    {
+      "name": "simple_memory",
+      "command": [
+        "{python}",
+        "tests/integration/run_simple_mem.py",
+        "--work-dir",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "SIMPLE_MEM_PASS DATA=256",
+        "SIMPLE_MEM_PASS DATA=32"
+      ],
+      "timeout_seconds": 400
+    },
+    {
+      "name": "interface",
+      "command": [
+        "{python}",
+        "tests/run_interface_checks.py",
+        "--work-dir",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "INTERFACE_CHECK_PASS",
+        "DEFAULT_DEMO_PASS"
+      ],
+      "timeout_seconds": 900
+    },
+    {
+      "name": "checker",
+      "command": [
+        "bash",
+        "tests/checker/run_checker_vcs.sh"
+      ],
+      "required_patterns": [
+        "CHECKER_REGRESSION_PASS",
+        "CHECKER_REPORT_SMOKE_PASS",
+        "CHECKER_CAPABILITY_SMOKE_PASS",
+        "CHECKER_SUITE_PASS"
+      ],
+      "timeout_seconds": 900
+    },
+    {
+      "name": "burst_checked",
+      "command": [
+        "{python}",
+        "tests/burst/run_vcs.py",
+        "--mode",
+        "checked",
+        "--work-dir",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "PASS"
+      ],
+      "timeout_seconds": 600
+    },
+    {
+      "name": "burst_response_off",
+      "command": [
+        "{python}",
+        "tests/burst/run_vcs.py",
+        "--mode",
+        "response_off",
+        "--work-dir",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "PASS"
+      ],
+      "timeout_seconds": 600
+    },
+    {
+      "name": "burst_protocol_off",
+      "command": [
+        "{python}",
+        "tests/burst/run_vcs.py",
+        "--mode",
+        "protocol_off",
+        "--work-dir",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "PASS"
+      ],
+      "timeout_seconds": 600
+    },
+    {
+      "name": "burst_timeout_off",
+      "command": [
+        "{python}",
+        "tests/burst/run_vcs.py",
+        "--mode",
+        "timeout_off",
+        "--work-dir",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "PASS"
+      ],
+      "timeout_seconds": 600
+    },
+    {
+      "name": "burst_zero_timeout",
+      "command": [
+        "{python}",
+        "tests/burst/run_vcs.py",
+        "--mode",
+        "zero_timeout",
+        "--work-dir",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "PASS"
+      ],
+      "timeout_seconds": 600
+    },
+    {
+      "name": "burst_narrow_enabled",
+      "command": [
+        "{python}",
+        "tests/burst/run_vcs.py",
+        "--mode",
+        "narrow_enabled",
+        "--work-dir",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "PASS"
+      ],
+      "timeout_seconds": 600
+    },
+    {
+      "name": "burst_strobe_disabled",
+      "command": [
+        "{python}",
+        "tests/burst/run_vcs.py",
+        "--mode",
+        "strobe_disabled",
+        "--work-dir",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "PASS"
+      ],
+      "timeout_seconds": 600
+    },
+    {
+      "name": "burst_checker",
+      "command": [
+        "{python}",
+        "tests/checker/run_burst_integration.py",
+        "--mode",
+        "positive",
+        "--mode",
+        "narrow_enabled",
+        "--mode",
+        "strobe_disabled",
+        "--mode",
+        "response_off",
+        "--mode",
+        "timeout_off",
+        "--mode",
+        "zero_timeout",
+        "--work-dir",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "MONITOR_DRIVER_SUITE_PASS"
+      ],
+      "timeout_seconds": 1500
+    },
+    {
+      "name": "outstanding",
+      "command": [
+        "env",
+        "OUT_DIR={case}/results",
+        "bash",
+        "tests/outstanding/run_vcs.sh"
+      ],
+      "required_patterns": [
+        "OUTSTANDING_REGRESSION_PASS",
+        "LIFECYCLE_REGRESSION_PASS",
+        "CLOCK_RESET_REGRESSION_PASS"
+      ],
+      "timeout_seconds": 1200
+    },
+    {
+      "name": "outstanding_checker",
+      "command": [
+        "{python}",
+        "tests/checker/run_outstanding_integration.py",
+        "--work-dir",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "MONITOR_OUTSTANDING_SUITE_PASS"
+      ],
+      "timeout_seconds": 1200
+    },
+    {
+      "name": "clock",
+      "command": [
+        "{python}",
+        "tests/perf/run_clock_checks.py",
+        "--out",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "\"case\": \"1GHz\"",
+        "\"invalid_period\": \"nan\""
+      ],
+      "timeout_seconds": 300
+    },
+    {
+      "name": "full_top",
+      "command": [
+        "{python}",
+        "tests/integration/run_top_smokes.py",
+        "--work-dir",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "TOP_SMOKE_SUITE_PASS cases=4"
+      ],
+      "timeout_seconds": 1200
+    },
+    {
+      "name": "workbook_chain",
+      "command": [
+        "{python}",
+        "tests/integration/run_workbook_smoke.py",
+        "--work-dir",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "WORKBOOK_CHAIN_SMOKE_PASS"
+      ],
+      "timeout_seconds": 600
+    },
+    {
+      "name": "sequence_python",
+      "command": [
+        "{python}",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests/sequence",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "required_patterns": [
+        "^OK$"
+      ],
+      "timeout_seconds": 120
+    },
+    {
+      "name": "sequence_burst128",
+      "command": [
+        "{python}",
+        "tests/sequence/run_vcs.py",
+        "--case",
+        "burst128",
+        "--work-dir",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "^PASS "
+      ],
+      "timeout_seconds": 600
+    },
+    {
+      "name": "sequence_lanes",
+      "command": [
+        "{python}",
+        "tests/sequence/run_vcs.py",
+        "--case",
+        "lanes",
+        "--work-dir",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "^PASS "
+      ],
+      "timeout_seconds": 600
+    },
+    {
+      "name": "sequence_mixed",
+      "command": [
+        "{python}",
+        "tests/sequence/run_vcs.py",
+        "--case",
+        "mixed",
+        "--work-dir",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "^PASS "
+      ],
+      "timeout_seconds": 600
+    },
+    {
+      "name": "sequence_legacy",
+      "command": [
+        "{python}",
+        "tests/sequence/run_vcs.py",
+        "--case",
+        "legacy",
+        "--work-dir",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "^PASS "
+      ],
+      "timeout_seconds": 600
+    },
+    {
+      "name": "perf_wave_python",
+      "command": [
+        "{python}",
+        "tests/perf/check_perf_vcd.py",
+        "--self-test"
+      ],
+      "required_patterns": [
+        "\"self_test\": \"PASS\""
+      ],
+      "timeout_seconds": 300
+    },
+    {
+      "name": "perf_slave",
+      "command": [
+        "{python}",
+        "tests/perf/run_slave_checks.py",
+        "--out",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "\"case\": \"stress\""
+      ],
+      "timeout_seconds": 300
+    },
+    {
+      "name": "perf_monitor",
+      "command": [
+        "{python}",
+        "tests/perf/run_monitor_checks.py",
+        "--out",
+        "{case}/results"
+      ],
+      "required_patterns": [
+        "MONITOR_REGRESSION_PASS"
+      ],
+      "timeout_seconds": 300
+    },
+    {
+      "name": "performance",
+      "command": [
+        "{python}",
+        "tests/perf/run_perf.py",
+        "--out",
+        "{case}/results",
+        "--checker"
+      ],
+      "required_patterns": [
+        "PERF_REGRESSION_PASS"
+      ],
+      "timeout_seconds": 600
+    }
+  ]
+}

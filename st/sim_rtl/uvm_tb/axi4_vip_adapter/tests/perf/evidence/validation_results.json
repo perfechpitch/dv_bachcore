@@ -1,0 +1,487 @@
+{
+  "assumptions": [
+    "16 beats/512 bytes tests LEN4 encoding, not a confirmed business maximum",
+    "128/128/128 caps are test policy; requirement read/write/total definition absent",
+    "Read/write/total GB/s reported separately; requirement bandwidth direction definition absent",
+    "Synthetic 4KB test page; no real NoC RTL or address map"
+  ],
+  "clock_self_check": {
+    "results": [
+      {
+        "case": "default",
+        "measured_period_ns": 10.0
+      },
+      {
+        "case": "1GHz",
+        "measured_period_ns": 1.0
+      },
+      {
+        "case": "500MHz",
+        "measured_period_ns": 2.0
+      },
+      {
+        "invalid_period": "0",
+        "rejected": true
+      },
+      {
+        "invalid_period": "-1",
+        "rejected": true
+      },
+      {
+        "invalid_period": "0.001",
+        "rejected": true
+      },
+      {
+        "invalid_period": "0.0001",
+        "rejected": true
+      },
+      {
+        "invalid_period": "1junk",
+        "rejected": true
+      },
+      {
+        "invalid_period": "nan",
+        "rejected": true
+      },
+      {
+        "invalid_period": "",
+        "rejected": true
+      }
+    ],
+    "scratch": "/fastone/users/shibin.lu/axi06_clock_final_20260916_ocl5u2/results"
+  },
+  "command": "python3 tests/perf/run_perf.py --checker --out /fastone/users/shibin.lu/axi06_final_20260916_LZnyJF/results",
+  "compile_diagnostics": [
+    "Warning-[INTFDV] VCD dumping of interface/program/package"
+  ],
+  "compile_log": "/fastone/users/shibin.lu/axi06_final_20260916_LZnyJF/results/compile.log",
+  "compile_warning_note": "VCS reports INTFDV for interface VCD capture. Full top capture is used; every required signal and all 6 measurement windows were independently parsed and matched. Warning is retained, not suppressed.",
+  "date": "2026-09-16",
+  "feature": "06 clock and payload bandwidth",
+  "measurement_self_check": {
+    "monitor": {
+      "ar_count": 1,
+      "aw_count": 1,
+      "b_count": 1,
+      "cycles": 10,
+      "elapsed_ns": 10.0,
+      "period_ns": 1.0,
+      "r_beats": 2,
+      "r_stalls": 0,
+      "read_bytes": 64,
+      "read_gbps": 6.4,
+      "rlast_count": 1,
+      "total_gbps": 11.2,
+      "w_beats": 2,
+      "w_stalls": 2,
+      "write_bytes": 48,
+      "write_gbps": 4.8
+    },
+    "scratch": "/fastone/users/shibin.lu/axi06_units_20260916_S19KV9",
+    "slave": {
+      "purpose": "controlled-slave self-check; not VIP bandwidth validation",
+      "results": [
+        {
+          "case": "open",
+          "measurements": {
+            "R": "256",
+            "W": "256",
+            "ar": "64",
+            "aw": "64",
+            "b": "64",
+            "b_stalls": "0",
+            "period_ns": "1.000",
+            "r": "1024",
+            "r_stalls": "0",
+            "stress": "0",
+            "vip_api_used": "0",
+            "w": "1024",
+            "window_cycles": "256"
+          }
+        },
+        {
+          "case": "stress",
+          "measurements": {
+            "R": "119",
+            "W": "128",
+            "ar": "64",
+            "aw": "64",
+            "b": "64",
+            "b_stalls": "66",
+            "period_ns": "1.000",
+            "r": "1024",
+            "r_stalls": "158",
+            "stress": "1",
+            "vip_api_used": "0",
+            "w": "1024",
+            "window_cycles": "256"
+          }
+        }
+      ],
+      "vip_api_used": false
+    },
+    "slave_scratch": "/fastone/users/shibin.lu/axi06_final_20260916_2Z9bpG/slave_results"
+  },
+  "profile": {
+    "address_bits": 32,
+    "beats": 16,
+    "burst": "INCR",
+    "data_bits": 256,
+    "id_bits": 8,
+    "len_bits": 4,
+    "measurement_cycles": 4096,
+    "read_cap": 128,
+    "size": 5,
+    "total_cap": 128,
+    "warmup_cycles": 1024,
+    "write_cap": 128
+  },
+  "results": {
+    "mixed_500MHz": {
+      "ar_count": 256,
+      "aw_count": 256,
+      "b_count": 256,
+      "cycles": 4096,
+      "elapsed_ns": 8192.0,
+      "peak_read": 64,
+      "peak_total": 128,
+      "peak_write": 64,
+      "period_ns": 2.0,
+      "r_beats": 4096,
+      "r_stalls": 0,
+      "read_bytes": 131072,
+      "read_gbps": 16.0,
+      "rlast_count": 256,
+      "total_gbps": 32.0,
+      "w_beats": 4096,
+      "w_stalls": 0,
+      "write_bytes": 131072,
+      "write_gbps": 16.0
+    },
+    "mixed_half": {
+      "ar_count": 128,
+      "aw_count": 128,
+      "b_count": 128,
+      "cycles": 4096,
+      "elapsed_ns": 4096.0,
+      "peak_read": 64,
+      "peak_total": 128,
+      "peak_write": 64,
+      "period_ns": 1.0,
+      "r_beats": 2048,
+      "r_stalls": 0,
+      "read_bytes": 65536,
+      "read_gbps": 16.0,
+      "rlast_count": 128,
+      "total_gbps": 32.0,
+      "w_beats": 2048,
+      "w_stalls": 2048,
+      "write_bytes": 65536,
+      "write_gbps": 16.0
+    },
+    "mixed_open": {
+      "ar_count": 256,
+      "aw_count": 256,
+      "b_count": 256,
+      "cycles": 4096,
+      "elapsed_ns": 4096.0,
+      "peak_read": 64,
+      "peak_total": 128,
+      "peak_write": 64,
+      "period_ns": 1.0,
+      "r_beats": 4096,
+      "r_stalls": 0,
+      "read_bytes": 131072,
+      "read_gbps": 32.0,
+      "rlast_count": 256,
+      "total_gbps": 64.0,
+      "w_beats": 4096,
+      "w_stalls": 0,
+      "write_bytes": 131072,
+      "write_gbps": 32.0
+    },
+    "read_open": {
+      "ar_count": 256,
+      "aw_count": 0,
+      "b_count": 0,
+      "cycles": 4096,
+      "elapsed_ns": 4096.0,
+      "peak_read": 128,
+      "peak_total": 128,
+      "peak_write": 0,
+      "period_ns": 1.0,
+      "r_beats": 4096,
+      "r_stalls": 0,
+      "read_bytes": 131072,
+      "read_gbps": 32.0,
+      "rlast_count": 256,
+      "total_gbps": 32.0,
+      "w_beats": 0,
+      "w_stalls": 0,
+      "write_bytes": 0,
+      "write_gbps": 0.0
+    },
+    "write_half_strobe": {
+      "ar_count": 0,
+      "aw_count": 256,
+      "b_count": 256,
+      "cycles": 4096,
+      "elapsed_ns": 4096.0,
+      "peak_read": 0,
+      "peak_total": 128,
+      "peak_write": 128,
+      "period_ns": 1.0,
+      "r_beats": 0,
+      "r_stalls": 0,
+      "read_bytes": 0,
+      "read_gbps": 0.0,
+      "rlast_count": 0,
+      "total_gbps": 16.0,
+      "w_beats": 4096,
+      "w_stalls": 0,
+      "write_bytes": 65536,
+      "write_gbps": 16.0
+    },
+    "write_open": {
+      "ar_count": 0,
+      "aw_count": 256,
+      "b_count": 256,
+      "cycles": 4096,
+      "elapsed_ns": 4096.0,
+      "peak_read": 0,
+      "peak_total": 128,
+      "peak_write": 128,
+      "period_ns": 1.0,
+      "r_beats": 0,
+      "r_stalls": 0,
+      "read_bytes": 0,
+      "read_gbps": 0.0,
+      "rlast_count": 0,
+      "total_gbps": 32.0,
+      "w_beats": 4096,
+      "w_stalls": 0,
+      "write_bytes": 131072,
+      "write_gbps": 32.0
+    }
+  },
+  "runs": {
+    "mixed_500MHz": {
+      "diagnostics": [],
+      "markers": [
+        "PERF_PROFILE DATA=256 ADDR=32 ID=8 LEN=4 INCR beats=16 size=5 max_total=128 mode=mixed half_strb=0 throttle=0/0 warmup=1024",
+        "PERF_RESULT {\"period_ns\":2.000000,\"elapsed_ns\":8192.000000,\"cycles\":4096,\"write_bytes\":131072,\"read_bytes\":131072,\"aw_count\":256,\"ar_count\":256,\"b_count\":256,\"rlast_count\":256,\"w_beats\":4096,\"r_beats\":4096,\"w_stalls\":0,\"r_stalls\":0,\"write_gbps\":16.000000,\"read_gbps\":16.000000,\"total_gbps\":32.000000,\"peak_total\":128,\"peak_read\":64,\"peak_write\":64}",
+        "PERF_DRAIN writes=383 reads=383 write_bytes=196096 read_bytes=196096",
+        "PERF_PASS controlled VIP endpoint only; actual NoC not tested"
+      ],
+      "sim_log": "/fastone/users/shibin.lu/axi06_final_20260916_LZnyJF/results/mixed_500MHz/sim.log",
+      "vcd": "/fastone/users/shibin.lu/axi06_final_20260916_LZnyJF/results/mixed_500MHz/perf.vcd",
+      "vcd_bytes": 18288490,
+      "vcd_sha256": "e2124766b43104262585088cdcb65b3a158586d43f8dbfa9e6df92d08884eb74",
+      "wave_result": {
+        "ar_count": 256,
+        "aw_count": 256,
+        "b_count": 256,
+        "cycles": 4096,
+        "elapsed_ns": 8192.0,
+        "period_ns": 2.0,
+        "r_beats": 4096,
+        "r_stalls": 0,
+        "read_bytes": 131072,
+        "read_gbps": 16.0,
+        "rlast_count": 256,
+        "total_gbps": 32.0,
+        "w_beats": 4096,
+        "w_stalls": 0,
+        "write_bytes": 131072,
+        "write_gbps": 16.0
+      }
+    },
+    "mixed_half": {
+      "diagnostics": [],
+      "markers": [
+        "PERF_PROFILE DATA=256 ADDR=32 ID=8 LEN=4 INCR beats=16 size=5 max_total=128 mode=mixed half_strb=0 throttle=1/2 warmup=1024",
+        "PERF_RESULT {\"period_ns\":1.000000,\"elapsed_ns\":4096.000000,\"cycles\":4096,\"write_bytes\":65536,\"read_bytes\":65536,\"aw_count\":128,\"ar_count\":128,\"b_count\":128,\"rlast_count\":128,\"w_beats\":2048,\"r_beats\":2048,\"w_stalls\":2048,\"r_stalls\":0,\"write_gbps\":16.000000,\"read_gbps\":16.000000,\"total_gbps\":32.000000,\"peak_total\":128,\"peak_read\":64,\"peak_write\":64}",
+        "PERF_DRAIN writes=223 reads=223 write_bytes=114176 read_bytes=114176",
+        "PERF_PASS controlled VIP endpoint only; actual NoC not tested"
+      ],
+      "sim_log": "/fastone/users/shibin.lu/axi06_final_20260916_LZnyJF/results/mixed_half/sim.log",
+      "vcd": "/fastone/users/shibin.lu/axi06_final_20260916_LZnyJF/results/mixed_half/perf.vcd",
+      "vcd_bytes": 13158154,
+      "vcd_sha256": "0e097d89ea21c219cd385d0c100f8945c71f9c4d98b9f2790a266f9cd74ffc00",
+      "wave_result": {
+        "ar_count": 128,
+        "aw_count": 128,
+        "b_count": 128,
+        "cycles": 4096,
+        "elapsed_ns": 4096.0,
+        "period_ns": 1.0,
+        "r_beats": 2048,
+        "r_stalls": 0,
+        "read_bytes": 65536,
+        "read_gbps": 16.0,
+        "rlast_count": 128,
+        "total_gbps": 32.0,
+        "w_beats": 2048,
+        "w_stalls": 2048,
+        "write_bytes": 65536,
+        "write_gbps": 16.0
+      }
+    },
+    "mixed_open": {
+      "diagnostics": [],
+      "markers": [
+        "PERF_PROFILE DATA=256 ADDR=32 ID=8 LEN=4 INCR beats=16 size=5 max_total=128 mode=mixed half_strb=0 throttle=0/0 warmup=1024",
+        "PERF_RESULT {\"period_ns\":1.000000,\"elapsed_ns\":4096.000000,\"cycles\":4096,\"write_bytes\":131072,\"read_bytes\":131072,\"aw_count\":256,\"ar_count\":256,\"b_count\":256,\"rlast_count\":256,\"w_beats\":4096,\"r_beats\":4096,\"w_stalls\":0,\"r_stalls\":0,\"write_gbps\":32.000000,\"read_gbps\":32.000000,\"total_gbps\":64.000000,\"peak_total\":128,\"peak_read\":64,\"peak_write\":64}",
+        "PERF_DRAIN writes=383 reads=383 write_bytes=196096 read_bytes=196096",
+        "PERF_PASS controlled VIP endpoint only; actual NoC not tested"
+      ],
+      "sim_log": "/fastone/users/shibin.lu/axi06_final_20260916_LZnyJF/results/mixed_open/sim.log",
+      "vcd": "/fastone/users/shibin.lu/axi06_final_20260916_LZnyJF/results/mixed_open/perf.vcd",
+      "vcd_bytes": 18285098,
+      "vcd_sha256": "61b97a7295d9b8a141a776cb1f3370ef220ac5606539cb1a762d83788e7147b7",
+      "wave_result": {
+        "ar_count": 256,
+        "aw_count": 256,
+        "b_count": 256,
+        "cycles": 4096,
+        "elapsed_ns": 4096.0,
+        "period_ns": 1.0,
+        "r_beats": 4096,
+        "r_stalls": 0,
+        "read_bytes": 131072,
+        "read_gbps": 32.0,
+        "rlast_count": 256,
+        "total_gbps": 64.0,
+        "w_beats": 4096,
+        "w_stalls": 0,
+        "write_bytes": 131072,
+        "write_gbps": 32.0
+      }
+    },
+    "read_open": {
+      "diagnostics": [],
+      "markers": [
+        "PERF_PROFILE DATA=256 ADDR=32 ID=8 LEN=4 INCR beats=16 size=5 max_total=128 mode=read half_strb=0 throttle=0/0 warmup=1024",
+        "PERF_RESULT {\"period_ns\":1.000000,\"elapsed_ns\":4096.000000,\"cycles\":4096,\"write_bytes\":0,\"read_bytes\":131072,\"aw_count\":0,\"ar_count\":256,\"b_count\":0,\"rlast_count\":256,\"w_beats\":0,\"r_beats\":4096,\"w_stalls\":0,\"r_stalls\":0,\"write_gbps\":0.000000,\"read_gbps\":32.000000,\"total_gbps\":32.000000,\"peak_total\":128,\"peak_read\":128,\"peak_write\":0}",
+        "PERF_DRAIN writes=0 reads=447 write_bytes=0 read_bytes=228864",
+        "PERF_PASS controlled VIP endpoint only; actual NoC not tested"
+      ],
+      "sim_log": "/fastone/users/shibin.lu/axi06_final_20260916_LZnyJF/results/read_open/sim.log",
+      "vcd": "/fastone/users/shibin.lu/axi06_final_20260916_LZnyJF/results/read_open/perf.vcd",
+      "vcd_bytes": 11645645,
+      "vcd_sha256": "4617722d7e76e173540891674c739810f44c32ecdf194fe7a4e2fce704e76eec",
+      "wave_result": {
+        "ar_count": 256,
+        "aw_count": 0,
+        "b_count": 0,
+        "cycles": 4096,
+        "elapsed_ns": 4096.0,
+        "period_ns": 1.0,
+        "r_beats": 4096,
+        "r_stalls": 0,
+        "read_bytes": 131072,
+        "read_gbps": 32.0,
+        "rlast_count": 256,
+        "total_gbps": 32.0,
+        "w_beats": 0,
+        "w_stalls": 0,
+        "write_bytes": 0,
+        "write_gbps": 0.0
+      }
+    },
+    "write_half_strobe": {
+      "diagnostics": [],
+      "markers": [
+        "PERF_PROFILE DATA=256 ADDR=32 ID=8 LEN=4 INCR beats=16 size=5 max_total=128 mode=write half_strb=1 throttle=0/0 warmup=1024",
+        "PERF_RESULT {\"period_ns\":1.000000,\"elapsed_ns\":4096.000000,\"cycles\":4096,\"write_bytes\":65536,\"read_bytes\":0,\"aw_count\":256,\"ar_count\":0,\"b_count\":256,\"rlast_count\":0,\"w_beats\":4096,\"r_beats\":0,\"w_stalls\":0,\"r_stalls\":0,\"write_gbps\":16.000000,\"read_gbps\":0.000000,\"total_gbps\":16.000000,\"peak_total\":128,\"peak_read\":0,\"peak_write\":128}",
+        "PERF_DRAIN writes=447 reads=0 write_bytes=114432 read_bytes=0",
+        "PERF_PASS controlled VIP endpoint only; actual NoC not tested"
+      ],
+      "sim_log": "/fastone/users/shibin.lu/axi06_final_20260916_LZnyJF/results/write_half_strobe/sim.log",
+      "vcd": "/fastone/users/shibin.lu/axi06_final_20260916_LZnyJF/results/write_half_strobe/perf.vcd",
+      "vcd_bytes": 13584154,
+      "vcd_sha256": "10de856020008080e1a703c090095a7d8d34c0a2966f2108e8639a58bc8f6357",
+      "wave_result": {
+        "ar_count": 0,
+        "aw_count": 256,
+        "b_count": 256,
+        "cycles": 4096,
+        "elapsed_ns": 4096.0,
+        "period_ns": 1.0,
+        "r_beats": 0,
+        "r_stalls": 0,
+        "read_bytes": 0,
+        "read_gbps": 0.0,
+        "rlast_count": 0,
+        "total_gbps": 16.0,
+        "w_beats": 4096,
+        "w_stalls": 0,
+        "write_bytes": 65536,
+        "write_gbps": 16.0
+      }
+    },
+    "write_open": {
+      "diagnostics": [],
+      "markers": [
+        "PERF_PROFILE DATA=256 ADDR=32 ID=8 LEN=4 INCR beats=16 size=5 max_total=128 mode=write half_strb=0 throttle=0/0 warmup=1024",
+        "PERF_RESULT {\"period_ns\":1.000000,\"elapsed_ns\":4096.000000,\"cycles\":4096,\"write_bytes\":131072,\"read_bytes\":0,\"aw_count\":256,\"ar_count\":0,\"b_count\":256,\"rlast_count\":0,\"w_beats\":4096,\"r_beats\":0,\"w_stalls\":0,\"r_stalls\":0,\"write_gbps\":32.000000,\"read_gbps\":0.000000,\"total_gbps\":32.000000,\"peak_total\":128,\"peak_read\":0,\"peak_write\":128}",
+        "PERF_DRAIN writes=447 reads=0 write_bytes=228864 read_bytes=0",
+        "PERF_PASS controlled VIP endpoint only; actual NoC not tested"
+      ],
+      "sim_log": "/fastone/users/shibin.lu/axi06_final_20260916_LZnyJF/results/write_open/sim.log",
+      "vcd": "/fastone/users/shibin.lu/axi06_final_20260916_LZnyJF/results/write_open/perf.vcd",
+      "vcd_bytes": 13584154,
+      "vcd_sha256": "d5fb8f3e10d86c29224979d682b00807e8fb74cd870afe97479d919b4675b62d",
+      "wave_result": {
+        "ar_count": 0,
+        "aw_count": 256,
+        "b_count": 256,
+        "cycles": 4096,
+        "elapsed_ns": 4096.0,
+        "period_ns": 1.0,
+        "r_beats": 0,
+        "r_stalls": 0,
+        "read_bytes": 0,
+        "read_gbps": 0.0,
+        "rlast_count": 0,
+        "total_gbps": 32.0,
+        "w_beats": 4096,
+        "w_stalls": 0,
+        "write_bytes": 131072,
+        "write_gbps": 32.0
+      }
+    }
+  },
+  "scratch": "/fastone/users/shibin.lu/axi06_final_20260916_LZnyJF",
+  "server": "xingan-login",
+  "simulator": "VCS S-2021.09-SP2_Full64",
+  "source_sha256": {
+    "generated_config.sv": "69cc0db582c285eb82eef1dfc55587056413fe01973086a4820b70039ca32229",
+    "tb/axi4/axi4_if.sv": "5063b625edf1492a3f8057f972aa0ce596e5a5984619d69014a4358357221255",
+    "tb/axi4/axi4_sequence_payload.svh": "abc819ace7b052f3c16f718e980b2b755c1f01442ee7ab665e808fc3fbde9bad",
+    "tb/axi4/axi4_vip_adapter_pkg.sv": "6b9262bf10bb5dc374d3d2e397134fee1a256cd816916f8a64dee7f778a0177f",
+    "tb/axi4/checker/axi4_checker_pkg.sv": "f0154be0ca450c60ad4ac27ec83842e7bcbb384a0ddee306915b7d93d8df71b4",
+    "tb/axi4/checker/axi4_protocol_monitor.sv": "31581c4c900068ef65695fb8a1cb40c274d0f191282a17caf3ad483fa5bad8bd",
+    "tb/axi4/simple_axi4_bfm_adapter.sv": "97bbd09119d946be7afb87e334e61100b25a56f09f10b7805ad4b02b60d5f5c5",
+    "tb/generated/axi4_seq_cfg_pkg.sv": "1fce3c0c6df074c2b04b80f2d2243b203efef1c8bea42b7c290c34d6c2e46e98",
+    "tests/perf/axi4_perf_monitor.sv": "f2b3161217a82d9a8e53ae6a18728f552475c506dd77ad3532be3a3b7f19f25f",
+    "tests/perf/axi4_perf_sequence.svh": "335226201e131f2c6b87533829852183d81a53fb0312327f613525174a2b20f9",
+    "tests/perf/axi4_perf_slave.sv": "26d400ac2059048f8b9d8ca8242bfabeaa292b71c9a6da65d17588876dfaea58",
+    "tests/perf/axi4_perf_top.sv": "cec2562851003f42d28daf5ec24952343daed7c19b34ecbe6e1f0d0ecff46f0f",
+    "tests/perf/check_perf_vcd.py": "0aaa6de51ae9c0c9cc99b016d8edc0915da2a9e5c9794bd0e1dbdf31acacb5df",
+    "tests/perf/perf_profile.json": "e57d5ab2ebf2f6746ed9e9f20a861b1b77da7ae011bc82898c85aaf96a15d706",
+    "tests/perf/run_perf.py": "5dae7cb9938b6dc278d162c9b762b085b77aa9da6c1edea1fbd5d990cc9a4cf8"
+  },
+  "upstream": {
+    "01": "a79654a79e81db1c6f2aa43afe537fde2cd6b12a",
+    "02": "76bec13d18e5bceafe6f2d5a9353dd1a18a1b657",
+    "03": "0614fda5e8cba62a1f6c016aa05f1755c9547611",
+    "04": "1eac55b273a23f742583fd838395ab03d3cfd10b",
+    "05": [
+      "e7d3d0c87d1d50835d1df02f46c333ff8013b3f1",
+      "cf829661203a0b2da52b9d38bf21ea4564705841",
+      "9e5bfdfbaee0a4471c545d679eb72d6fc03e74b2"
+    ]
+  },
+  "workbook_sha256": "before=b7fd8821f7f3625a5c6b643344114733ada212626a18bf7a4b24c9d4e1eb8994\nafter=b7fd8821f7f3625a5c6b643344114733ada212626a18bf7a4b24c9d4e1eb8994\n"
+}

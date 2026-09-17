@@ -1,0 +1,25 @@
+# Generated simulation output stays outside version control.
+/work/
+/csrc/
+/simv
+/simv.daidir/
+/DVEfiles/
+/verdiLog/
+/ucli.key
+/vc_hdrs.h
+/inter.vpd
+/novas.conf
+/novas.rc
+/novas_dump.log
+/*.log
+/*.fsdb
+/*.vcd
+/*.vpd
+/*.vdb
+
+# macOS metadata and accidental command-output capture.
+._*
+/1
+
+# Retain historical local backups without publishing them.
+/backup/

@@ -1,0 +1,148 @@
+{
+  "driver_commit": "0614fda5e8cba62a1f6c016aa05f1755c9547611",
+  "scratch": "/tmp/axi05_outstanding_joint_20260916_2XUbbr/after_fix",
+  "results": {
+    "progress": {
+      "markers": [
+        "MONITOR_DRAIN PROGRESS_RESETS_TIMEOUT epochAW=12 epochW=192 epochB=12 epochAR=12 epochR=192 errors=0",
+        "OUTSTANDING_REGRESSION_PASS CASE=positive",
+        "MONITOR_DRAIN FINAL epochAW=12 epochW=192 epochB=12 epochAR=12 epochR=192 errors=0",
+        "MONITOR_OUTSTANDING_PASS CASE=progress errors=0 AW=12 W=192 B=12 AR=12 R=192 drains=2 plateaus=0"
+      ],
+      "compile_diagnostics": []
+    },
+    "w_before_aw": {
+      "markers": [
+        "MONITOR_DRAIN AW_W_INDEPENDENT epochAW=8 epochW=32 epochB=8 epochAR=0 epochR=0 errors=0",
+        "OUTSTANDING_REGRESSION_PASS CASE=positive",
+        "MONITOR_DRAIN FINAL epochAW=8 epochW=32 epochB=8 epochAR=0 epochR=0 errors=0",
+        "MONITOR_OUTSTANDING_PASS CASE=w_before_aw errors=0 AW=8 W=32 B=8 AR=0 R=0 drains=2 plateaus=0"
+      ],
+      "compile_diagnostics": []
+    },
+    "positive": {
+      "markers": [
+        "MONITOR_PLATEAU READ128 R=128 W=0 total=128 caps=128/128/128",
+        "MONITOR_DRAIN READ128 epochAW=0 epochW=0 epochB=0 epochAR=160 epochR=1114 errors=0",
+        "MONITOR_PLATEAU WRITE128 R=0 W=128 total=128 caps=128/128/128",
+        "MONITOR_DRAIN WRITE128 epochAW=160 epochW=1114 epochB=160 epochAR=0 epochR=0 errors=0",
+        "MONITOR_PLATEAU MIXED128 R=66 W=62 total=128 caps=128/128/128",
+        "MONITOR_DRAIN MIXED128 epochAW=96 epochW=672 epochB=96 epochAR=96 epochR=672 errors=0",
+        "MONITOR_PLATEAU ASYMMETRIC_READ3 R=3 W=0 total=3 caps=3/5/7",
+        "MONITOR_DRAIN ASYMMETRIC_READ3 epochAW=0 epochW=0 epochB=0 epochAR=12 epochR=84 errors=0",
+        "MONITOR_PLATEAU ASYMMETRIC_WRITE5 R=0 W=5 total=5 caps=3/5/7",
+        "MONITOR_DRAIN ASYMMETRIC_WRITE5 epochAW=12 epochW=84 epochB=12 epochAR=0 epochR=0 errors=0",
+        "MONITOR_PLATEAU ASYMMETRIC_TOTAL7 R=3 W=4 total=7 caps=3/5/7",
+        "MONITOR_DRAIN ASYMMETRIC_TOTAL7 epochAW=20 epochW=131 epochB=20 epochAR=20 epochR=131 errors=0",
+        "MONITOR_DRAIN AW_W_INDEPENDENT epochAW=8 epochW=32 epochB=8 epochAR=0 epochR=0 errors=0",
+        "MONITOR_DRAIN CONCURRENT_CALLERS epochAW=40 epochW=160 epochB=40 epochAR=40 epochR=160 errors=0",
+        "MONITOR_DRAIN ERROR_RESPONSE_COLLECTION epochAW=8 epochW=32 epochB=8 epochAR=8 epochR=32 errors=0",
+        "MONITOR_PLATEAU SAME_ID_FIFO R=6 W=6 total=12 caps=8/8/12",
+        "MONITOR_DRAIN SAME_ID_FIFO epochAW=24 epochW=96 epochB=24 epochAR=24 epochR=96 errors=0",
+        "MONITOR_DRAIN PROGRESS_RESETS_TIMEOUT epochAW=12 epochW=192 epochB=12 epochAR=12 epochR=192 errors=0",
+        "MONITOR_DRAIN SUBMIT_DEEP_COPY epochAW=4 epochW=16 epochB=4 epochAR=4 epochR=16 errors=0",
+        "MONITOR_PLATEAU RESET_PENDING R=2 W=1 total=3 caps=2/2/3",
+        "MONITOR_DRAIN RESET_RECOVERY epochAW=1 epochW=4 epochB=1 epochAR=1 epochR=4 errors=0",
+        "MONITOR_DRAIN RESET_MIDBURST_RECOVERY epochAW=1 epochW=4 epochB=1 epochAR=1 epochR=4 errors=0",
+        "MONITOR_DRAIN TOTAL_ONE_FAIRNESS epochAW=16 epochW=16 epochB=16 epochAR=16 epochR=16 errors=0",
+        "OUTSTANDING_REGRESSION_PASS CASE=positive",
+        "MONITOR_DRAIN FINAL epochAW=16 epochW=16 epochB=16 epochAR=16 epochR=16 errors=0",
+        "MONITOR_RESPONSE_SWITCH_PASS response_off_errors=0 response_on_errors=32 SLVERR=16 DECERR=16",
+        "MONITOR_DEPTH_PASS maxR=128 maxW=128 maxTotal=128 depth128=2348",
+        "MONITOR_OUTSTANDING_PASS CASE=positive errors=0 AW=405 W=2562 B=403 AR=398 R=2525 drains=16 plateaus=8"
+      ],
+      "compile_diagnostics": []
+    },
+    "lifecycle": {
+      "markers": [
+        "LIFECYCLE_REGRESSION_PASS killed_waiters=3 completed_handles=6 AW=3 W=12 B=3 AR=3 R=12",
+        "MONITOR_DRAIN FINAL epochAW=3 epochW=12 epochB=3 epochAR=3 epochR=12 errors=0",
+        "MONITOR_OUTSTANDING_PASS CASE=lifecycle errors=0 AW=3 W=12 B=3 AR=3 R=12 drains=1 plateaus=0"
+      ],
+      "compile_diagnostics": []
+    },
+    "clock_reset": {
+      "markers": [
+        "CLOCK_RESET_REGRESSION_PASS epochs=8 reset_waiter_returns=32 recoveryAW=1 recoveryW=4 recoveryB=1 recoveryAR=1 recoveryR=4",
+        "MONITOR_DRAIN FINAL epochAW=1 epochW=4 epochB=1 epochAR=1 epochR=4 errors=0",
+        "MONITOR_OUTSTANDING_PASS CASE=clock_reset errors=0 AW=9 W=26 B=1 AR=9 R=4 drains=1 plateaus=0"
+      ],
+      "compile_diagnostics": []
+    }
+  },
+  "checker_fix_commit": "9e5bfdfbaee0a4471c545d679eb72d6fc03e74b2",
+  "reproductions_before_fix": {
+    "progress": {
+      "budgets_read_write_ready": [
+        4,
+        4,
+        16
+      ],
+      "failure": "cycle=12 read response inactivity timeout",
+      "path": "/tmp/axi05_outstanding_joint_20260916_2XUbbr/progress_before_fix"
+    },
+    "w_before_aw": {
+      "budgets_read_write_ready": [
+        4,
+        4,
+        40
+      ],
+      "failure": "cycle=11 accepted W waiting for AW timeout",
+      "path": "/tmp/axi05_outstanding_joint_20260916_2XUbbr/w_before_fix"
+    }
+  },
+  "final_burst_results": {
+    "positive": {
+      "markers": [
+        "HANDSHAKES aw=33 w=169 b=33 ar=20 r=99",
+        "MONITOR_DRIVER_PASS positive error_count=0 aw=33 w=169 b=33 ar=20 r=99",
+        "BURST_TEST_PASS positive"
+      ],
+      "compile_diagnostics": []
+    },
+    "narrow_enabled": {
+      "markers": [
+        "HANDSHAKES aw=1 w=4 b=1 ar=1 r=4",
+        "MONITOR_DRIVER_PASS narrow_enabled error_count=0 aw=1 w=4 b=1 ar=1 r=4",
+        "BURST_TEST_PASS narrow_enabled"
+      ],
+      "compile_diagnostics": []
+    },
+    "strobe_disabled": {
+      "markers": [
+        "HANDSHAKES aw=2 w=2 b=2 ar=2 r=2",
+        "MONITOR_DRIVER_PASS strobe_disabled error_count=0 aw=2 w=2 b=2 ar=2 r=2",
+        "BURST_TEST_PASS strobe_disabled"
+      ],
+      "compile_diagnostics": []
+    },
+    "response_off": {
+      "markers": [
+        "HANDSHAKES aw=6 w=10 b=6 ar=5 r=9",
+        "MONITOR_RESPONSE_SWITCH_PASS known_responses_only=1 response_off_errors=0 response_on_errors=15",
+        "MONITOR_DRIVER_PASS responses error_count=0 aw=6 w=10 b=6 ar=5 r=9",
+        "BURST_TEST_PASS responses"
+      ],
+      "compile_diagnostics": []
+    },
+    "timeout_off": {
+      "markers": [
+        "HANDSHAKES aw=1 w=4 b=1 ar=1 r=4",
+        "MONITOR_TIMEOUT_SWITCH_PASS mode=timeout_off disabled_errors=0 enabled_errors=11",
+        "MONITOR_DRIVER_PASS delayed error_count=0 aw=1 w=4 b=1 ar=1 r=4",
+        "BURST_TEST_PASS delayed"
+      ],
+      "compile_diagnostics": []
+    },
+    "zero_timeout": {
+      "markers": [
+        "HANDSHAKES aw=1 w=4 b=1 ar=1 r=4",
+        "MONITOR_TIMEOUT_SWITCH_PASS mode=zero_timeout disabled_errors=0 enabled_errors=11",
+        "MONITOR_DRIVER_PASS delayed error_count=0 aw=1 w=4 b=1 ar=1 r=4",
+        "BURST_TEST_PASS delayed"
+      ],
+      "compile_diagnostics": []
+    }
+  },
+  "final_burst_scratch": "/tmp/axi05_outstanding_joint_20260916_2XUbbr/final_burst_results"
+}

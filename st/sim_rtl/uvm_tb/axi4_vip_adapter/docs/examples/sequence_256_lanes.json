@@ -1,0 +1,128 @@
+{
+  "description": "TEST ONLY: RAM 0x5000..0x50bf; DATA256 narrow single beats and byte lanes, not an actual NoC address map.",
+  "axi_data_width": 256,
+  "axi_addr_width": 32,
+  "axi_id_width": 8,
+  "axi_len_width": 4,
+  "max_burst_len": 16,
+  "sequences": [
+    {
+      "name": "axi4_lane_seq",
+      "steps": [
+        {
+          "op": "submit_write",
+          "addr": "0x5000",
+          "id": 201,
+          "size": 5,
+          "beats": 1,
+          "data": [
+            "0xa0958a7f74695e53483d32271c1106faefe4d9cec3b8ada2978c81766b60554a"
+          ]
+        },
+        {
+          "op": "await_all"
+        },
+        {
+          "op": "submit_write",
+          "addr": "0x501c",
+          "id": 202,
+          "size": 2,
+          "beats": 1,
+          "data": [
+            "0x89abcdef"
+          ],
+          "strb": [
+            "0xa"
+          ]
+        },
+        {
+          "op": "await_all"
+        },
+        {
+          "op": "submit_write",
+          "addr": "0x5000",
+          "id": 202,
+          "size": 5,
+          "beats": 1,
+          "data": [
+            "0xa1968b80756a5f54493e33281d1207fbf0e5dacfc4b9aea3988d82776c61564b"
+          ],
+          "strb": [
+            0
+          ]
+        },
+        {
+          "op": "await_all"
+        },
+        {
+          "op": "submit_read",
+          "addr": "0x5000",
+          "id": 203,
+          "size": 5,
+          "beats": 1,
+          "expect": [
+            "0x8995cd7f74695e53483d32271c1106faefe4d9cec3b8ada2978c81766b60554a"
+          ]
+        },
+        {
+          "op": "submit_read",
+          "addr": "0x501c",
+          "id": 204,
+          "size": 2,
+          "beats": 1,
+          "expect": [
+            "0x8995cd7f"
+          ]
+        },
+        {
+          "op": "submit_read",
+          "addr": "0x501f",
+          "id": 205,
+          "size": 0,
+          "beats": 1,
+          "expect": [
+            "0x89"
+          ]
+        },
+        {
+          "op": "submit_read",
+          "addr": "0x501c",
+          "id": 206,
+          "size": 2,
+          "beats": 1,
+          "expect": [
+            "0x1234cd7f"
+          ],
+          "expect_mask": [
+            "0xffff"
+          ]
+        },
+        {
+          "op": "await_all"
+        },
+        {
+          "op": "write_by_mode",
+          "addr": "0x505f",
+          "data": "0xd02f6ebe0d5cabfb4a99e93887d72675c51463b30251a0f04f8ede2d7ccc1b6",
+          "write_mode": "SINGLE_ADDR_SINGLE_BYTE"
+        },
+        {
+          "op": "read",
+          "addr": "0x505f",
+          "expect": "0xd02f6ebe0d5cabfb4a99e93887d72675c51463b30251a0f04f8ede2d7ccc1b6"
+        },
+        {
+          "op": "write_by_mode",
+          "addr": "0x50a0",
+          "data": "0xe03f7ece1d6cbc0b5aa9f94897e73685d52473c31261b1005f9eee3d8cdc2b7",
+          "write_mode": "FULL_ADDR_SINGLE_BYTE"
+        },
+        {
+          "op": "read",
+          "addr": "0x50a0",
+          "expect": "0xe03f7ece1d6cbc0b5aa9f94897e73685d52473c31261b1005f9eee3d8cdc2b7"
+        }
+      ]
+    }
+  ]
+}

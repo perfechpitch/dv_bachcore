@@ -1,0 +1,242 @@
+{
+  "version": 1,
+  "previous_sha256": "77bae6bac46a09a385d0543d0e026eb6825527280e25212c002f518466d99700",
+  "current_sha256": "2fc6354c5b2b98fbcd362c545c63c83dfc75c5b4ac1035de4554ccc1f1e3811c",
+  "authorization": "Task 09, 2026-09-17: user requested matching DUT_BUFF_FEATURE to master and generating FINAL_FEATURE, then confirmed read/write/aggregate outstanding caps 128/128/128.",
+  "requirements_source": {
+    "path": "/Users/biaobiao/Downloads/bach_core_ctrl_noc_project_requirement.xlsx",
+    "range": "master!A2:V2",
+    "sha256": "14cb665a71652b2ef908085d5065a338a31e644bc75eec43acbab8d836081935"
+  },
+  "backup_git_revision": "215757ba20fe6e25a64d791413dceffd446ca331",
+  "backup_git_path": "axi4_vip_adapter/docs/vip/vip_cfg.xlsx",
+  "expected_dut_values": {
+    "axi.protocol": "AXI4",
+    "axi.addr_width": 32,
+    "axi.data_width": 256,
+    "axi.id_width": 8,
+    "axi.len_width": 4,
+    "axi.qos_width": 0,
+    "axi.awuser_width": 0,
+    "axi.aruser_width": 0,
+    "axi.default_burst_type": "INCR",
+    "axi.max_outstanding_reads": 128,
+    "axi.max_outstanding_writes": 128,
+    "axi.max_outstanding_total": 128,
+    "support.exclusive_access": false,
+    "support.narrow_burst": false,
+    "support.fixed_burst": false,
+    "support.incrementing_burst": true,
+    "support.wrapping_burst": false,
+    "requirements.name": "scp_bach_ctrl_m0",
+    "requirements.access_mode": "rw",
+    "requirements.barrier": false,
+    "requirements.max_wrap_size": "no",
+    "requirements.align_info": "none",
+    "requirements.diff_id": "none",
+    "requirements.clock_freq_mhz": 1000,
+    "requirements.bandwidth_gbps": 24,
+    "requirements.use_rob": false,
+    "requirements.outstanding": 128,
+    "requirements.outstanding_scope": "read+write"
+  },
+  "dut_changes": [
+    {
+      "row": 2,
+      "parameter": "axi.protocol",
+      "old": "",
+      "new": "AXI4"
+    },
+    {
+      "row": 4,
+      "parameter": "axi.addr_width",
+      "old": "",
+      "new": 32
+    },
+    {
+      "row": 5,
+      "parameter": "axi.data_width",
+      "old": "",
+      "new": 256
+    },
+    {
+      "row": 6,
+      "parameter": "axi.id_width",
+      "old": "",
+      "new": 8
+    },
+    {
+      "row": 7,
+      "parameter": "axi.len_width",
+      "old": "",
+      "new": 4
+    },
+    {
+      "row": 13,
+      "parameter": "axi.qos_width",
+      "old": "",
+      "new": 0
+    },
+    {
+      "row": 16,
+      "parameter": "axi.awuser_width",
+      "old": "",
+      "new": 0
+    },
+    {
+      "row": 17,
+      "parameter": "axi.aruser_width",
+      "old": "",
+      "new": 0
+    },
+    {
+      "row": 23,
+      "parameter": "axi.default_burst_type",
+      "old": "",
+      "new": "INCR"
+    },
+    {
+      "row": 34,
+      "parameter": "axi.max_outstanding_reads",
+      "old": "",
+      "new": 128
+    },
+    {
+      "row": 35,
+      "parameter": "axi.max_outstanding_writes",
+      "old": "",
+      "new": 128
+    },
+    {
+      "row": 39,
+      "parameter": "support.exclusive_access",
+      "old": "",
+      "new": false
+    },
+    {
+      "row": 41,
+      "parameter": "support.narrow_burst",
+      "old": "",
+      "new": false
+    },
+    {
+      "row": 43,
+      "parameter": "support.fixed_burst",
+      "old": "",
+      "new": false
+    },
+    {
+      "row": 44,
+      "parameter": "support.incrementing_burst",
+      "old": "",
+      "new": true
+    },
+    {
+      "row": 45,
+      "parameter": "support.wrapping_burst",
+      "old": "",
+      "new": false
+    },
+    {
+      "row": 57,
+      "parameter": "axi.max_outstanding_total",
+      "old": "",
+      "new": 128
+    },
+    {
+      "row": 58,
+      "parameter": "requirements.name",
+      "old": "",
+      "new": "scp_bach_ctrl_m0"
+    },
+    {
+      "row": 59,
+      "parameter": "requirements.access_mode",
+      "old": "",
+      "new": "rw"
+    },
+    {
+      "row": 60,
+      "parameter": "requirements.barrier",
+      "old": "",
+      "new": false
+    },
+    {
+      "row": 61,
+      "parameter": "requirements.max_wrap_size",
+      "old": "",
+      "new": "no"
+    },
+    {
+      "row": 62,
+      "parameter": "requirements.align_info",
+      "old": "",
+      "new": "none"
+    },
+    {
+      "row": 63,
+      "parameter": "requirements.diff_id",
+      "old": "",
+      "new": "none"
+    },
+    {
+      "row": 64,
+      "parameter": "requirements.clock_freq_mhz",
+      "old": "",
+      "new": 1000
+    },
+    {
+      "row": 65,
+      "parameter": "requirements.bandwidth_gbps",
+      "old": "",
+      "new": 24
+    },
+    {
+      "row": 67,
+      "parameter": "requirements.use_rob",
+      "old": "",
+      "new": false
+    },
+    {
+      "row": 70,
+      "parameter": "requirements.outstanding",
+      "old": "",
+      "new": 128
+    },
+    {
+      "row": 71,
+      "parameter": "requirements.outstanding_scope",
+      "old": "",
+      "new": "read+write"
+    }
+  ],
+  "base_semantics_unchanged": true,
+  "base_lock_sha256": "2dbd10dee82458b869e231342f2b788be6ed9616c817a35a916a30063bbf08e1",
+  "schemas": {
+    "BASE_VIP_CFG": 70,
+    "DUT_BUFF_FEATURE": 70,
+    "FINAL_FEATURE": 70
+  },
+  "final_source_counts": {
+    "dut_override": 28,
+    "default": 42
+  },
+  "unknown_physical_blanks": [
+    "requirements.max_burst_beats",
+    "requirements.max_burst_bytes",
+    "requirements.bandwidth_scope"
+  ],
+  "max_burst_len": {
+    "dut": null,
+    "final": 1,
+    "source": "default",
+    "reason": "Requirement max burst beats/bytes are blank; LEN4 is not a confirmed business maximum."
+  },
+  "outstanding_scope_source": "User confirmation on 2026-09-17; source Excel does not distinguish read, write or total.",
+  "formatting": {
+    "cell_styles_unchanged": true,
+    "number_formats_unchanged": true,
+    "row_heights_column_widths_unchanged": true,
+    "tables_validations_freeze_panes_unchanged": true
+  }
+}

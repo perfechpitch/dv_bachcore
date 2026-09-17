@@ -1,0 +1,12 @@
+# One SRAM with four equal-depth interleaved banks.
+# capacity is the total size of one SRAM; each bank receives capacity / 4.
+# Consecutive bytes in one interleave block are placed in the same bank.
+data_width: 32bit
+capacity: 8KB
+address_interleave: 1
+interleave_granularity: 4B
+memories:
+  - hdl_path: tb_top.dut.gen_sram[0].u_interleaved_sram.gen_bank[0].u_sram.sram
+  - hdl_path: tb_top.dut.gen_sram[0].u_interleaved_sram.gen_bank[1].u_sram.sram
+  - hdl_path: tb_top.dut.gen_sram[0].u_interleaved_sram.gen_bank[2].u_sram.sram
+  - hdl_path: tb_top.dut.gen_sram[0].u_interleaved_sram.gen_bank[3].u_sram.sram

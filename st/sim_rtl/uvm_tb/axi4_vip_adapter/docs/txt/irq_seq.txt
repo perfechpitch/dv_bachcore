@@ -1,0 +1,9 @@
+# Interrupt handler sequence.
+# One non-comment line is one AXI operation. Supported operations:
+#   write addr=<addr> data=<data> [strb=<strb>] [gap=FIXED|RANDOM] [comment="text"]
+#   read  addr=<addr> expect=<data> [gap=FIXED|RANDOM] [comment="text"]
+#
+# Write operations use axi_write_checked(), so BRESP must be OKAY.
+# Read operations compare the returned data with expect.
+
+write addr=0x0000_0200 data=0x0000_0069 strb=0xF gap=RANDOM comment="ack interrupt"
