@@ -184,7 +184,6 @@ class cross_2_bypass_gen_seq_item extends cross_src_bypass_seq_item;
                 ((VU_UNIT_END'(1) << VU_VALU0) | (VU_UNIT_END'(1) << VU_VSFU0)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_VALU0_VSFU0],
                 ((VU_UNIT_END'(1) << VU_VALU0) | (VU_UNIT_END'(1) << VU_VSFU1)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_VALU0_VSFU1],
                 ((VU_UNIT_END'(1) << VU_VALU0) | (VU_UNIT_END'(1) << VU_MEXE)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_VALU0_MEXE],
-                ((VU_UNIT_END'(1) << VU_VALU0) | (VU_UNIT_END'(1) << VU_SEXE0)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_VALU0_SEXE0],
                 ((VU_UNIT_END'(1) << VU_VALU1) | (VU_UNIT_END'(1) << VU_VALU2)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_VALU1_VALU2],
                 ((VU_UNIT_END'(1) << VU_VALU1) | (VU_UNIT_END'(1) << VU_VSFU0)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_VALU1_VSFU0],
                 ((VU_UNIT_END'(1) << VU_VALU1) | (VU_UNIT_END'(1) << VU_VSFU1)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_VALU1_VSFU1],
@@ -192,14 +191,7 @@ class cross_2_bypass_gen_seq_item extends cross_src_bypass_seq_item;
                 ((VU_UNIT_END'(1) << VU_VALU1) | (VU_UNIT_END'(1) << VU_SEXE0)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_VALU1_SEXE0],
                 ((VU_UNIT_END'(1) << VU_VALU2) | (VU_UNIT_END'(1) << VU_VSFU0)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_VALU2_VSFU0],
                 ((VU_UNIT_END'(1) << VU_VALU2) | (VU_UNIT_END'(1) << VU_VSFU1)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_VALU2_VSFU1],
-                ((VU_UNIT_END'(1) << VU_VALU2) | (VU_UNIT_END'(1) << VU_MEXE)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_VALU2_MEXE],
-                ((VU_UNIT_END'(1) << VU_VALU2) | (VU_UNIT_END'(1) << VU_SEXE0)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_VALU2_SEXE0],
                 ((VU_UNIT_END'(1) << VU_VSFU0) | (VU_UNIT_END'(1) << VU_VSFU1)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_VSFU0_VSFU1],
-                ((VU_UNIT_END'(1) << VU_VSFU0) | (VU_UNIT_END'(1) << VU_MEXE)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_VSFU0_MEXE],
-                ((VU_UNIT_END'(1) << VU_VSFU0) | (VU_UNIT_END'(1) << VU_SEXE0)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_VSFU0_SEXE0],
-                ((VU_UNIT_END'(1) << VU_VSFU1) | (VU_UNIT_END'(1) << VU_MEXE)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_VSFU1_MEXE],
-                ((VU_UNIT_END'(1) << VU_VSFU1) | (VU_UNIT_END'(1) << VU_SEXE0)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_VSFU1_SEXE0],
-                ((VU_UNIT_END'(1) << VU_MEXE) | (VU_UNIT_END'(1) << VU_SEXE0)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_MEXE_SEXE0],
                 ((VU_UNIT_END'(1) << VU_SEXE0) | (VU_UNIT_END'(1) << VU_SEXE1)) := inst_gen_cfg.cross_2_cfg.cross_2_bypass_type_dist[VU_CROSS_2_BYPASS_SEXE0_SEXE1]
         };
     }

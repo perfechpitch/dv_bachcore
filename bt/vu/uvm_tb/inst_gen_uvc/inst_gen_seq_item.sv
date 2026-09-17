@@ -12,7 +12,7 @@ class inst_gen_base_seq_item extends uvm_sequence_item;
     rand logic [`REG_WIDTH-1:0]  rs1_data;
     rand logic [`REG_WIDTH-1:0]  rs2_data;
     rand logic [`IMM_WIDTH-1:0]  imm;
-    rand inst_e                  inst;
+    rand inst_e                   inst;
 
     inst_gen_config     inst_gen_cfg;
 

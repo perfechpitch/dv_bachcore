@@ -223,13 +223,10 @@ class cross_3_bypass_gen_seq_item extends cross_src_bypass_seq_item;
                 ((VU_UNIT_END'(1) << VU_VALU2) | (VU_UNIT_END'(1) << VU_VSFU0) | (VU_UNIT_END'(1) << VU_SEXE0)) := inst_gen_cfg.cross_3_cfg.cross_3_bypass_type_dist[VU_CROSS_3_BYPASS_VALU2_VSFU0_SEXE0],
                 ((VU_UNIT_END'(1) << VU_VALU2) | (VU_UNIT_END'(1) << VU_VSFU1) | (VU_UNIT_END'(1) << VU_MEXE)) := inst_gen_cfg.cross_3_cfg.cross_3_bypass_type_dist[VU_CROSS_3_BYPASS_VALU2_VSFU1_MEXE],
                 ((VU_UNIT_END'(1) << VU_VALU2) | (VU_UNIT_END'(1) << VU_VSFU1) | (VU_UNIT_END'(1) << VU_SEXE0)) := inst_gen_cfg.cross_3_cfg.cross_3_bypass_type_dist[VU_CROSS_3_BYPASS_VALU2_VSFU1_SEXE0],
-                ((VU_UNIT_END'(1) << VU_VALU2) | (VU_UNIT_END'(1) << VU_MEXE) | (VU_UNIT_END'(1) << VU_SEXE0)) := inst_gen_cfg.cross_3_cfg.cross_3_bypass_type_dist[VU_CROSS_3_BYPASS_VALU2_MEXE_SEXE0],
                 ((VU_UNIT_END'(1) << VU_VALU2) | (VU_UNIT_END'(1) << VU_SEXE0) | (VU_UNIT_END'(1) << VU_SEXE1)) := inst_gen_cfg.cross_3_cfg.cross_3_bypass_type_dist[VU_CROSS_3_BYPASS_VALU2_SEXE0_SEXE1],
                 ((VU_UNIT_END'(1) << VU_VSFU0) | (VU_UNIT_END'(1) << VU_VSFU1) | (VU_UNIT_END'(1) << VU_MEXE)) := inst_gen_cfg.cross_3_cfg.cross_3_bypass_type_dist[VU_CROSS_3_BYPASS_VSFU0_VSFU1_MEXE],
                 ((VU_UNIT_END'(1) << VU_VSFU0) | (VU_UNIT_END'(1) << VU_VSFU1) | (VU_UNIT_END'(1) << VU_SEXE0)) := inst_gen_cfg.cross_3_cfg.cross_3_bypass_type_dist[VU_CROSS_3_BYPASS_VSFU0_VSFU1_SEXE0],
-                ((VU_UNIT_END'(1) << VU_VSFU0) | (VU_UNIT_END'(1) << VU_MEXE) | (VU_UNIT_END'(1) << VU_SEXE0)) := inst_gen_cfg.cross_3_cfg.cross_3_bypass_type_dist[VU_CROSS_3_BYPASS_VSFU0_MEXE_SEXE0],
                 ((VU_UNIT_END'(1) << VU_VSFU0) | (VU_UNIT_END'(1) << VU_SEXE0) | (VU_UNIT_END'(1) << VU_SEXE1)) := inst_gen_cfg.cross_3_cfg.cross_3_bypass_type_dist[VU_CROSS_3_BYPASS_VSFU0_SEXE0_SEXE1],
-                ((VU_UNIT_END'(1) << VU_VSFU1) | (VU_UNIT_END'(1) << VU_MEXE) | (VU_UNIT_END'(1) << VU_SEXE0)) := inst_gen_cfg.cross_3_cfg.cross_3_bypass_type_dist[VU_CROSS_3_BYPASS_VSFU1_MEXE_SEXE0],
                 ((VU_UNIT_END'(1) << VU_VSFU1) | (VU_UNIT_END'(1) << VU_SEXE0) | (VU_UNIT_END'(1) << VU_SEXE1)) := inst_gen_cfg.cross_3_cfg.cross_3_bypass_type_dist[VU_CROSS_3_BYPASS_VSFU1_SEXE0_SEXE1],
                 ((VU_UNIT_END'(1) << VU_MEXE) | (VU_UNIT_END'(1) << VU_SEXE0) | (VU_UNIT_END'(1) << VU_SEXE1)) := inst_gen_cfg.cross_3_cfg.cross_3_bypass_type_dist[VU_CROSS_3_BYPASS_MEXE_SEXE0_SEXE1],
                 ((VU_UNIT_END'(1) << VU_SEXE0) | (VU_UNIT_END'(1) << VU_SEXE1) | (VU_UNIT_END'(1) << VU_SEXE2)) := inst_gen_cfg.cross_3_cfg.cross_3_bypass_type_dist[VU_CROSS_3_BYPASS_SEXE0_SEXE1_SEXE2]

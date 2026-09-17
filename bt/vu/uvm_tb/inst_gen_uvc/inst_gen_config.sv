@@ -563,10 +563,7 @@ class inst_gen_config extends uvm_object;
 
     // cross_idx: 1~VU_INST_END，锁定单一 vu_inst_type；bypass: 0/1 控制 src_bypass_weight(0/100)
     function void set_vu_scene(int cross_idx, bit bypass);
-        foreach (vu_inst_type_dist[i])
-            vu_inst_type_dist[i] = (cross_idx == i + 1) ? 100 : 0;
-        if (cross_idx < 1 || cross_idx > VU_INST_END)
-            `uvm_fatal("inst_gen_config", $sformatf("set_vu_scene: invalid cross_idx=%0d (valid: 1~%0d)", cross_idx, VU_INST_END))
+        only_one_cross(cross_idx);
         // CROSS_INST_1 无 bypass；CROSS_INST_11 必须 bypass
         if (cross_idx == 1 && bypass)
             `uvm_fatal("inst_gen_config", "set_vu_scene: CROSS_INST_1 does not support bypass")
@@ -577,7 +574,8 @@ class inst_gen_config extends uvm_object;
 
     // ===================== OPCODE plusarg → type_dist =====================
     // 用法：+lu_op_opcode=0x01 或 +lu_op_opcode=VU_LU_C1_LD_FP8E4M3_V
-    // cfg.randomize() 后的 post_randomize 会调用 get_opcode()
+    // cfg.randomize() 后的 post_randomize 会调用 get_opcode()，
+    // 若有 +set_vu_scene=<cross_idx>,<bypass> 再调用 set_vu_scene
     protected function string toupper_str(string s);
         string r;
         r = s;
@@ -1538,8 +1536,18 @@ class inst_gen_config extends uvm_object;
             pin_vsfu_op_vsfu1_opcode(s);
     endfunction : get_opcode
 
+    // 用法：+set_vu_scene=1,0  （cross_idx,bypass；bypass 为 0/1）
     function void post_randomize();
+        string s;
+        int unsigned cross_idx;
+        int unsigned bypass_i;
         get_opcode();
+        if ($value$plusargs("set_vu_scene=%s", s)) begin
+            if ($sscanf(s, "%d,%d", cross_idx, bypass_i) != 2)
+                `uvm_fatal("inst_gen_config", 
+                    $sformatf("set_vu_scene plusarg '%s' 须为 <cross_idx>,<bypass>，例如 1,0", s))
+            set_vu_scene(cross_idx, bypass_i != 0);
+        end
     endfunction : post_randomize
 
     constraint first_delay_c  {
