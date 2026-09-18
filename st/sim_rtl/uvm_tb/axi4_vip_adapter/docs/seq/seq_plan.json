@@ -1,0 +1,120 @@
+{
+  "description": "AXI4 sequence plan. Generated from base and user sequence Excel tables. Base sequences are templates; SEQ_ALL runs user sequences only. Edit Excel tables, then run `make seq_gen`.", 
+  "top_sequence": "axi4_doc_plan_seq", 
+  "generated_package": "axi4_generated_seq_pkg", 
+  "axi_data_width": 32, 
+  "run_all_sequences": [
+    "axi4_user_reg2", 
+    "axi4_user_two_regs"
+  ], 
+  "sequences": [
+    {
+      "name": "axi4_single_addr_cfg_seq", 
+      "source": "base", 
+      "steps": [
+        {
+          "tr_gap": "FIXED", 
+          "write_mode": "FULL_ADDR_FULL_BYTE", 
+          "data": "0x00001234", 
+          "addr": "0x00000100", 
+          "op": "write_by_mode"
+        }, 
+        {
+          "expect": "0x00001234", 
+          "tr_gap": "RANDOM", 
+          "addr": "0x0000_0100", 
+          "op": "read"
+        }
+      ], 
+      "seq_gap": "FIXED", 
+      "description": "Single address read/write sequence. Default write mode is FULL_ADDR_FULL_BYTE."
+    }, 
+    {
+      "name": "axi4_range_window_seq", 
+      "source": "base", 
+      "steps": [
+        {
+          "count": 4, 
+          "addr": "0x0000_0400", 
+          "data_file": "docs/txt/mem20_data.txt", 
+          "readback": true, 
+          "data_start": 0, 
+          "addr_stride": "0x4", 
+          "write_mode": "FULL_ADDR_FULL_BYTE", 
+          "tr_gap": "RANDOM", 
+          "op": "range_write"
+        }
+      ], 
+      "seq_gap": "RANDOM", 
+      "description": "Editable range window write/read sequence. Default write mode is FULL_ADDR_FULL_BYTE."
+    }, 
+    {
+      "name": "axi4_user_reg2", 
+      "source": "user", 
+      "steps": [
+        {
+          "tr_gap": "FIXED", 
+          "write_mode": "FULL_ADDR_FULL_BYTE", 
+          "data": "0x00000055", 
+          "addr": "0x00000120", 
+          "op": "write_by_mode"
+        }, 
+        {
+          "expect": "0x00000055", 
+          "tr_gap": "RANDOM", 
+          "addr": "0x120", 
+          "op": "read"
+        }, 
+        {
+          "tr_gap": "FIXED", 
+          "write_mode": "FULL_ADDR_FULL_BYTE", 
+          "data": "0x00000066", 
+          "addr": "0x00000124", 
+          "op": "write_by_mode"
+        }, 
+        {
+          "expect": "0x00000066", 
+          "tr_gap": "RANDOM", 
+          "addr": "0x124", 
+          "op": "read"
+        }
+      ], 
+      "seq_gap": "FIXED", 
+      "description": "Single address read/write sequence. Default write mode is FULL_ADDR_FULL_BYTE."
+    }, 
+    {
+      "name": "axi4_user_two_regs", 
+      "source": "user", 
+      "steps": [
+        {
+          "tr_gap": "FIXED", 
+          "write_mode": "FULL_ADDR_FULL_BYTE", 
+          "data": "0x00000055", 
+          "addr": "0x00000120", 
+          "op": "write_by_mode"
+        }, 
+        {
+          "expect": "0x00000055", 
+          "tr_gap": "RANDOM", 
+          "addr": "0x120", 
+          "op": "read"
+        }, 
+        {
+          "tr_gap": "FIXED", 
+          "write_mode": "FULL_ADDR_FULL_BYTE", 
+          "data": "0x000000AA", 
+          "addr": "0x00000124", 
+          "op": "write_by_mode"
+        }, 
+        {
+          "expect": "0x000000AA", 
+          "tr_gap": "RANDOM", 
+          "addr": "0x124", 
+          "op": "read"
+        }
+      ], 
+      "seq_gap": "FIXED", 
+      "description": "Single address read/write sequence. Default write mode is FULL_ADDR_FULL_BYTE."
+    }
+  ]
+}

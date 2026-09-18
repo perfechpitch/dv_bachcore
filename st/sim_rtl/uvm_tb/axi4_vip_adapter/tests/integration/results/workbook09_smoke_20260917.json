@@ -1,0 +1,56 @@
+{
+  "date": "2026-09-17",
+  "status": "passed",
+  "source_workbook_sha256": "2fc6354c5b2b98fbcd362c545c63c83dfc75c5b4ac1035de4554ccc1f1e3811c",
+  "local_tests": [
+    {
+      "command": "python3 -B -m unittest discover -s tests -p 'test_vip_cfg.py' -v",
+      "passed": 17
+    },
+    {
+      "command": "python3 -B -m unittest discover -s tests -p 'test_workbook*.py' -v",
+      "passed": 12
+    },
+    {
+      "command": "python3 -B -m unittest discover -s tests/integration -p 'test_*.py' -v",
+      "passed": 32
+    },
+    {
+      "command": "python3 -B scripts/deploy_verified.py self-test",
+      "passed": 12
+    }
+  ],
+  "workbook_audit": "docs/workbook_master_activation_20260917.json",
+  "visual_review": "Artifact Tool renders of changed DUT/FINAL top, runtime and requirement ranges inspected. Existing styles preserved.",
+  "remote_smoke": {
+    "status": "passed",
+    "source": "/fastone/users/shibin.lu/axi09_master_20260917_Cg8gGj/axi4_vip_adapter",
+    "work": "/fastone/users/shibin.lu/axi09_master_20260917_Cg8gGj/smoke",
+    "generated_profile": "/fastone/users/shibin.lu/axi09_master_20260917_Cg8gGj/smoke/configuration_chain/tb/generated/axi4_vip_cfg.json",
+    "generated_profile_sha256": "00bf578b1b1de7ac3915dacec749a7422aa376dd779f9459446d4ee5c45cefec",
+    "chain_workbook_sha256": "c6c36b4ce79eb7640b81a6d928b73dd3225c4a1c19d4863aa4a2689c51b9996b",
+    "chain_semantics_unchanged": true,
+    "plan": "/fastone/users/shibin.lu/axi09_master_20260917_Cg8gGj/smoke/workbook_single_beat_plan.json",
+    "plan_sha256": "da42f2db9ea1e3fee4cefe7a3ecf33ab7e272577dee02b7b06efe5132ec9317f",
+    "data_width": 256,
+    "max_burst_len": 1,
+    "traffic_beats_per_transaction": 1,
+    "smoke_report": "/fastone/users/shibin.lu/axi09_master_20260917_Cg8gGj/smoke/simulation/axi4_isolated_ap_d641n/isolated_result.json",
+    "clock_ns": 10.0,
+    "aw_w_b_ar_r": [
+      3,
+      3,
+      3,
+      2,
+      2
+    ],
+    "source_workbook_sha256": "2fc6354c5b2b98fbcd362c545c63c83dfc75c5b4ac1035de4554ccc1f1e3811c"
+  },
+  "remote_command": "python3 -B tests/integration/run_workbook_smoke.py --work-dir /fastone/users/shibin.lu/axi09_master_20260917_Cg8gGj/smoke",
+  "limits": [
+    "Controlled testbench RAM only; no target NoC RTL/address map.",
+    "One-beat transactions exercise the actual inherited max_burst_len=1, not the prior independent 16-beat profile.",
+    "This is a configuration-chain smoke, not a 128-in-flight stress or 24GB/s throughput acceptance.",
+    "Clock remains the default 10 ns; requirement metadata 1000 MHz does not change the testbench clock."
+  ]
+}

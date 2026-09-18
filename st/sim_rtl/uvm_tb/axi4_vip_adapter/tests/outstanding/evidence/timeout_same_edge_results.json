@@ -1,0 +1,46 @@
+{
+  "date": "2026-09-16",
+  "baseline_commit": "0614fda5e8cba62a1f6c016aa05f1755c9547611",
+  "scope": "Tests only; driver and API package unchanged",
+  "remote_scratch": "/tmp/axi03_outstanding_20260916.IZPP60/timeout_same_edge",
+  "cases": [
+    {
+      "case": "timeout_edge_r",
+      "result": "PASS",
+      "log": "/tmp/axi03_outstanding_20260916.IZPP60/timeout_same_edge/timeout_edge_r.log",
+      "evidence": [
+        "EXPECTED_DIAGNOSTIC id=AXI_BFM_TIMEOUT message=R response timeout RID=1 serial=1; scheduler quarantined until reset",
+        "BUS_EVIDENCE R_TIMEOUT_SAME_EDGE_FAULT_EDGE AW=1 W=1 B=0 AR=2 R=0 RLAST=0 liveR=2 liveW=1 peakR=2 peakW=1 peakTotal=3 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=6 stallsW=6 stallsAR=6 earlyW=0 expectedReadCompletions=0",
+        "TIMEOUT_EDGE_EVIDENCE R_TIMEOUT_SAME_EDGE budget=8 elapsed_edges=8 same_edge_AW=1 same_edge_W=1 same_edge_AR=1 live=3 failed_handles=7 late_response_accepted=0 no_new_W_beats=1",
+        "OUTSTANDING_REGRESSION_PASS CASE=timeout_edge_r"
+      ]
+    },
+    {
+      "case": "timeout_edge_b",
+      "result": "PASS",
+      "log": "/tmp/axi03_outstanding_20260916.IZPP60/timeout_same_edge/timeout_edge_b.log",
+      "evidence": [
+        "EXPECTED_DIAGNOSTIC id=AXI_BFM_TIMEOUT message=B response timeout BID=1 serial=1; scheduler quarantined until reset",
+        "BUS_EVIDENCE B_TIMEOUT_SAME_EDGE_FAULT_EDGE AW=2 W=2 B=0 AR=1 R=0 RLAST=0 liveR=1 liveW=2 peakR=1 peakW=2 peakTotal=3 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=6 stallsW=6 stallsAR=6 earlyW=0 expectedReadCompletions=0",
+        "TIMEOUT_EDGE_EVIDENCE B_TIMEOUT_SAME_EDGE budget=8 elapsed_edges=8 same_edge_AW=1 same_edge_W=1 same_edge_AR=1 live=3 failed_handles=7 late_response_accepted=0 no_new_W_beats=1",
+        "OUTSTANDING_REGRESSION_PASS CASE=timeout_edge_b"
+      ]
+    },
+    {
+      "case": "positive",
+      "result": "PASS",
+      "log": "/tmp/axi03_outstanding_20260916.IZPP60/timeout_same_edge/positive.log",
+      "evidence": [
+        "OUTSTANDING_REGRESSION_PASS CASE=positive"
+      ]
+    }
+  ],
+  "source_sha256": {
+    "tb/axi4/axi4_vip_adapter_pkg.sv": "ee75343df64103a4098792725f2b358b1456c1d34ee470042c3aacf8e717c764",
+    "tb/axi4/simple_axi4_bfm_adapter.sv": "97bbd09119d946be7afb87e334e61100b25a56f09f10b7805ad4b02b60d5f5c5",
+    "tests/outstanding/outstanding_tb.sv": "f025837bbe1dcd184b02ec19a70c4fcdeefc97afbbcc95aa260e6b3437ddb9f6",
+    "tests/outstanding/controlled_slave.sv": "f458ccc666d572296ff556642b753e08ee321aeb82a03dd4327456168f7bcb49",
+    "tests/outstanding/run_vcs.sh": "6b38902a2bbeabf05bee704b5b01af5df25496f548625ca9c1ff621499992360"
+  },
+  "compile_diagnostics": []
+}

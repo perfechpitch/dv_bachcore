@@ -20,7 +20,7 @@
 interface inst_gen_if(input bit clk,input bit reset);
     logic                       vld;
     logic                       rdy;
-    logic [`INST_TYPE_WIDTH-1:0]inst_type;
+    logic [`INST_TYPE_WIDTH-1:0]inst;
     logic [`REG_WIDTH-1:0]      rs1_data;
     logic [`REG_WIDTH-1:0]      rs2_data;
     logic [`IMM_WIDTH-1:0]      imm;
@@ -29,7 +29,7 @@ interface inst_gen_if(input bit clk,input bit reset);
         input                  reset;
         input                  rdy;
         inout                  vld;
-        inout                  inst_type;
+        inout                  inst;
         inout                  rs1_data;
         inout                  rs2_data;
         inout                  imm;
@@ -39,7 +39,7 @@ interface inst_gen_if(input bit clk,input bit reset);
         input                   reset;
         input                   rdy;
         input                   vld;
-        input                   inst_type;
+        input                   inst;
         input                   rs1_data;
         input                   rs2_data;
         input                   imm;
@@ -49,7 +49,7 @@ interface inst_gen_if(input bit clk,input bit reset);
     modport DRV(
         output  rdy,
         output  vld,
-        output  inst_type,
+        output  inst,
         output  rs1_data,
         output  rs2_data,
         output  imm
@@ -58,7 +58,7 @@ interface inst_gen_if(input bit clk,input bit reset);
     modport MON(
         output  rdy,
         output  vld,
-        output  inst_type,
+        output  inst,
         output  rs1_data,
         output  rs2_data,
         output  imm

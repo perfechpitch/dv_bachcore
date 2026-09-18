@@ -66,12 +66,12 @@ task inst_gen_monitor::collect_transactions();
         else begin
             if(inst_gen_vif.mon_cb.vld && inst_gen_vif.mon_cb.rdy) begin
                 inst_gen_tr             = new();
-                inst_gen_tr.inst_type   = inst_e'(inst_gen_vif.mon_cb.inst_type);
+                inst_gen_tr.inst        = inst_e'(inst_gen_vif.mon_cb.inst);
                 inst_gen_tr.rs1_data    = inst_gen_vif.mon_cb.rs1_data;
                 inst_gen_tr.rs2_data    = inst_gen_vif.mon_cb.rs2_data;
                 inst_gen_tr.imm         = inst_gen_vif.mon_cb.imm;
                 inst_gen_cfg.exe_num++;
-                `uvm_info(get_type_name(), $sformatf("exe_num=%0d", inst_gen_cfg.exe_num), UVM_LOW)
+                $display("exe_num=%0d", inst_gen_cfg.exe_num);
                 `uvm_info("INST_GEN_MON", {"\n", inst_gen_tr.sprint()}, UVM_LOW)
                 inst_gen_ap.write(inst_gen_tr);
             end

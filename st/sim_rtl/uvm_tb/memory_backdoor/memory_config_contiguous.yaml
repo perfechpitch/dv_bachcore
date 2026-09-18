@@ -1,0 +1,13 @@
+# One SRAM with four equal-depth contiguous banks.
+# capacity is the total size of one SRAM; each bank receives capacity / 4.
+# Bank 0 owns the first complete address range, followed by banks 1, 2, and 3.
+data_width: 32bit
+capacity: 8KB
+address_interleave: 0
+# This value remains syntactically validated but is ignored for address mapping.
+interleave_granularity: 4B
+memories:
+  - hdl_path: tb_top.dut.gen_sram[0].u_interleaved_sram.gen_bank[0].u_sram.sram
+  - hdl_path: tb_top.dut.gen_sram[0].u_interleaved_sram.gen_bank[1].u_sram.sram
+  - hdl_path: tb_top.dut.gen_sram[0].u_interleaved_sram.gen_bank[2].u_sram.sram
+  - hdl_path: tb_top.dut.gen_sram[0].u_interleaved_sram.gen_bank[3].u_sram.sram

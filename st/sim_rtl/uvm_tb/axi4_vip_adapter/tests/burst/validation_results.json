@@ -1,0 +1,254 @@
+{
+  "feature": "02 INCR burst and handshake",
+  "date": "2026-09-16",
+  "simulator": "VCS S-2021.09-SP2_Full64",
+  "server": "xingan-login",
+  "scratch": "/tmp/axi02_burst_20260916_eWZBds",
+  "upstream_original": "a79654a79e81db1c6f2aa43afe537fde2cd6b12a",
+  "upstream_cherry_pick": "5cd3ac6",
+  "workbook_sha256": "b7fd8821f7f3625a5c6b643344114733ada212626a18bf7a4b24c9d4e1eb8994",
+  "runs": [
+    {
+      "group": "checked_final",
+      "compile_log": "/tmp/axi02_burst_20260916_eWZBds/checked_final/compile.log",
+      "compile_diagnostics": [],
+      "tests": [
+        {
+          "log": "/tmp/axi02_burst_20260916_eWZBds/checked_final/illegal.log",
+          "markers": [
+            "ILLEGAL_VALIDATION_CHECKS 15",
+            "HANDSHAKES aw=0 w=0 b=0 ar=0 r=0",
+            "BURST_TEST_PASS illegal"
+          ],
+          "expected_response_errors": 0,
+          "expected_protocol_errors": 0
+        },
+        {
+          "log": "/tmp/axi02_burst_20260916_eWZBds/checked_final/illegal_api.log",
+          "markers": [
+            "EXPECTED_FATAL illegal_api id=AXI_ILLEGAL message=beat_count exceeds configured/AXI LEN limits or is zero"
+          ],
+          "expected_response_errors": 0,
+          "expected_protocol_errors": 0
+        },
+        {
+          "log": "/tmp/axi02_burst_20260916_eWZBds/checked_final/positive.log",
+          "markers": [
+            "HANDSHAKES aw=33 w=169 b=33 ar=20 r=99",
+            "BURST_TEST_PASS positive"
+          ],
+          "expected_response_errors": 0,
+          "expected_protocol_errors": 0
+        },
+        {
+          "log": "/tmp/axi02_burst_20260916_eWZBds/checked_final/protocol.log",
+          "markers": [
+            "HANDSHAKES aw=1 w=4 b=1 ar=2 r=8",
+            "BURST_TEST_PASS protocol"
+          ],
+          "expected_response_errors": 0,
+          "expected_protocol_errors": 9
+        },
+        {
+          "log": "/tmp/axi02_burst_20260916_eWZBds/checked_final/reset.log",
+          "markers": [
+            "EXPECTED_FATAL reset id=AXI_RESET message=Reset asserted while waiting for AWREADY"
+          ],
+          "expected_response_errors": 0,
+          "expected_protocol_errors": 0
+        },
+        {
+          "log": "/tmp/axi02_burst_20260916_eWZBds/checked_final/responses.log",
+          "markers": [
+            "HANDSHAKES aw=6 w=10 b=6 ar=5 r=9",
+            "BURST_TEST_PASS responses"
+          ],
+          "expected_response_errors": 11,
+          "expected_protocol_errors": 0
+        },
+        {
+          "log": "/tmp/axi02_burst_20260916_eWZBds/checked_final/timeout_ar.log",
+          "markers": [
+            "EXPECTED_FATAL timeout_ar id=AXI_TIMEOUT message=Timed out waiting for ARREADY"
+          ],
+          "expected_response_errors": 0,
+          "expected_protocol_errors": 0
+        },
+        {
+          "log": "/tmp/axi02_burst_20260916_eWZBds/checked_final/timeout_aw.log",
+          "markers": [
+            "EXPECTED_FATAL timeout_aw id=AXI_TIMEOUT message=Timed out waiting for AWREADY"
+          ],
+          "expected_response_errors": 0,
+          "expected_protocol_errors": 0
+        },
+        {
+          "log": "/tmp/axi02_burst_20260916_eWZBds/checked_final/timeout_b.log",
+          "markers": [
+            "EXPECTED_FATAL timeout_b id=AXI_TIMEOUT message=Timed out waiting for BVALID"
+          ],
+          "expected_response_errors": 0,
+          "expected_protocol_errors": 0
+        },
+        {
+          "log": "/tmp/axi02_burst_20260916_eWZBds/checked_final/timeout_r.log",
+          "markers": [
+            "EXPECTED_FATAL timeout_r id=AXI_TIMEOUT message=Timed out waiting for RVALID"
+          ],
+          "expected_response_errors": 0,
+          "expected_protocol_errors": 0
+        },
+        {
+          "log": "/tmp/axi02_burst_20260916_eWZBds/checked_final/timeout_w.log",
+          "markers": [
+            "EXPECTED_FATAL timeout_w id=AXI_TIMEOUT message=Timed out waiting for WREADY"
+          ],
+          "expected_response_errors": 0,
+          "expected_protocol_errors": 0
+        }
+      ]
+    },
+    {
+      "group": "response_off",
+      "compile_log": "/tmp/axi02_burst_20260916_eWZBds/response_off/compile.log",
+      "compile_diagnostics": [],
+      "tests": [
+        {
+          "log": "/tmp/axi02_burst_20260916_eWZBds/response_off/responses.log",
+          "markers": [
+            "HANDSHAKES aw=6 w=10 b=6 ar=5 r=9",
+            "BURST_TEST_PASS responses"
+          ],
+          "expected_response_errors": 0,
+          "expected_protocol_errors": 0
+        }
+      ]
+    },
+    {
+      "group": "protocol_off",
+      "compile_log": "/tmp/axi02_burst_20260916_eWZBds/protocol_off/compile.log",
+      "compile_diagnostics": [],
+      "tests": [
+        {
+          "log": "/tmp/axi02_burst_20260916_eWZBds/protocol_off/protocol.log",
+          "markers": [
+            "HANDSHAKES aw=1 w=4 b=1 ar=2 r=8",
+            "BURST_TEST_PASS protocol"
+          ],
+          "expected_response_errors": 0,
+          "expected_protocol_errors": 0
+        }
+      ]
+    },
+    {
+      "group": "timeout_off",
+      "compile_log": "/tmp/axi02_burst_20260916_eWZBds/timeout_off/compile.log",
+      "compile_diagnostics": [],
+      "tests": [
+        {
+          "log": "/tmp/axi02_burst_20260916_eWZBds/timeout_off/delayed.log",
+          "markers": [
+            "HANDSHAKES aw=1 w=4 b=1 ar=1 r=4",
+            "BURST_TEST_PASS delayed"
+          ],
+          "expected_response_errors": 0,
+          "expected_protocol_errors": 0
+        }
+      ]
+    },
+    {
+      "group": "zero_timeout",
+      "compile_log": "/tmp/axi02_burst_20260916_eWZBds/zero_timeout/compile.log",
+      "compile_diagnostics": [],
+      "tests": [
+        {
+          "log": "/tmp/axi02_burst_20260916_eWZBds/zero_timeout/delayed.log",
+          "markers": [
+            "HANDSHAKES aw=1 w=4 b=1 ar=1 r=4",
+            "BURST_TEST_PASS delayed"
+          ],
+          "expected_response_errors": 0,
+          "expected_protocol_errors": 0
+        }
+      ]
+    },
+    {
+      "group": "narrow_enabled",
+      "compile_log": "/tmp/axi02_burst_20260916_eWZBds/narrow_enabled/compile.log",
+      "compile_diagnostics": [],
+      "tests": [
+        {
+          "log": "/tmp/axi02_burst_20260916_eWZBds/narrow_enabled/narrow_enabled.log",
+          "markers": [
+            "HANDSHAKES aw=1 w=4 b=1 ar=1 r=4",
+            "BURST_TEST_PASS narrow_enabled"
+          ],
+          "expected_response_errors": 0,
+          "expected_protocol_errors": 0
+        }
+      ]
+    },
+    {
+      "group": "strobe_disabled",
+      "compile_log": "/tmp/axi02_burst_20260916_eWZBds/strobe_disabled/compile.log",
+      "compile_diagnostics": [],
+      "tests": [
+        {
+          "log": "/tmp/axi02_burst_20260916_eWZBds/strobe_disabled/strobe_disabled.log",
+          "markers": [
+            "HANDSHAKES aw=2 w=2 b=2 ar=2 r=2",
+            "BURST_TEST_PASS strobe_disabled"
+          ],
+          "expected_response_errors": 0,
+          "expected_protocol_errors": 0
+        }
+      ]
+    },
+    {
+      "group": "interface_legacy/default",
+      "compile_log": "/tmp/axi02_burst_20260916_eWZBds/interface_legacy/default/compile.log",
+      "sim_log": "/tmp/axi02_burst_20260916_eWZBds/interface_legacy/default/sim.log",
+      "compile_diagnostics": [],
+      "markers": [
+        "INTERFACE_CHECK_PASS DATA=32 ADDR=32 ID=4 LEN=8 QOS=4 AWUSER=0"
+      ]
+    },
+    {
+      "group": "interface_legacy/target",
+      "compile_log": "/tmp/axi02_burst_20260916_eWZBds/interface_legacy/target/compile.log",
+      "sim_log": "/tmp/axi02_burst_20260916_eWZBds/interface_legacy/target/sim.log",
+      "compile_diagnostics": [],
+      "markers": [
+        "INTERFACE_CHECK_PASS DATA=256 ADDR=32 ID=8 LEN=4 QOS=0 AWUSER=0"
+      ]
+    },
+    {
+      "group": "interface_legacy/sideband",
+      "compile_log": "/tmp/axi02_burst_20260916_eWZBds/interface_legacy/sideband/compile.log",
+      "sim_log": "/tmp/axi02_burst_20260916_eWZBds/interface_legacy/sideband/sim.log",
+      "compile_diagnostics": [],
+      "markers": [
+        "INTERFACE_CHECK_PASS DATA=256 ADDR=32 ID=8 LEN=4 QOS=4 AWUSER=65"
+      ]
+    },
+    {
+      "group": "interface_legacy/default_demo",
+      "compile_log": "/tmp/axi02_burst_20260916_eWZBds/interface_legacy/default_demo/compile.log",
+      "sim_log": "/tmp/axi02_burst_20260916_eWZBds/interface_legacy/default_demo/sim.log",
+      "compile_diagnostics": [],
+      "markers": [
+        "UVM_ERROR :    0",
+        "UVM_FATAL :    0"
+      ]
+    }
+  ],
+  "source_sha256": {
+    "scripts/gen_vip_cfg.py": "537c29c961c7687b79faa8312e7791226622cefc88a6725320933aca29edb2bd",
+    "tb/axi4/axi4_if.sv": "5063b625edf1492a3f8057f972aa0ce596e5a5984619d69014a4358357221255",
+    "tb/axi4/axi4_vip_adapter_pkg.sv": "74e47bcf209a0335d71aacd1f404e84fb1017c1bb4f0f81a0a7e414f90336675",
+    "tb/axi4/simple_axi4_bfm_adapter.sv": "eb32ebd0dfd2ed8738442ffa6678927e68599fe79a42ab68b288567f851d8c7a",
+    "tests/burst/burst_tb.sv": "d05409c55dfc7dfdbb33f8fb261f43a2c437fdf551bd4a75c342beb953fd11cf",
+    "tests/burst/burst_test_slave.sv": "9a989f6d4c2c744d4d8ff4eeb2486425c355a6361e64cd2e958dd8cfdb7ad85b",
+    "tests/burst/run_vcs.py": "07e9f57280a82dbf6b7a6d9c6ae16fde0f98aad61b178bb1b9ddefa50b4657cf"
+  }
+}

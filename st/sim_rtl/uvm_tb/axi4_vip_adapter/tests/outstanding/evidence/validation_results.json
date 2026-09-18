@@ -1,0 +1,290 @@
+{
+  "date": "2026-09-16",
+  "simulator": "Synopsys VCS S-2021.09-SP2 Full64",
+  "remote_scratch": "/tmp/axi03_outstanding_20260916.IZPP60",
+  "production_modified": false,
+  "workbook_sha256": "b7fd8821f7f3625a5c6b643344114733ada212626a18bf7a4b24c9d4e1eb8994",
+  "outstanding_cases": [
+    {
+      "case": "positive",
+      "result": "PASS",
+      "log": "/tmp/axi03_outstanding_20260916.IZPP60/final_outstanding/positive.log",
+      "evidence": [
+        "BUS_EVIDENCE READ128_HELD AW=0 W=0 B=0 AR=128 R=0 RLAST=0 liveR=128 liveW=0 peakR=128 peakW=0 peakTotal=128 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=0 stallsAR=12 earlyW=0 expectedReadCompletions=0",
+        "BUS_EVIDENCE READ128 AW=0 W=0 B=0 AR=160 R=1114 RLAST=160 liveR=0 liveW=0 peakR=128 peakW=0 peakTotal=128 reorderedB=0 reorderedR=147 interleavedR=900 stallsAW=0 stallsW=0 stallsAR=17 earlyW=0 expectedReadCompletions=160",
+        "COMPLETION_EVIDENCE READ128 submitted=160 unique_completed=160",
+        "BUS_EVIDENCE WRITE128_HELD AW=128 W=143 B=0 AR=0 R=0 RLAST=0 liveR=0 liveW=128 peakR=0 peakW=128 peakTotal=128 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=21 stallsW=36 stallsAR=0 earlyW=0 expectedReadCompletions=0",
+        "BUS_EVIDENCE WRITE128 AW=160 W=1114 B=160 AR=0 R=0 RLAST=0 liveR=0 liveW=0 peakR=0 peakW=128 peakTotal=128 reorderedB=140 reorderedR=0 interleavedR=0 stallsAW=25 stallsW=279 stallsAR=0 earlyW=0 expectedReadCompletions=0",
+        "COMPLETION_EVIDENCE WRITE128 submitted=160 unique_completed=160",
+        "BUS_EVIDENCE MIXED128_HELD AW=62 W=81 B=0 AR=66 R=0 RLAST=0 liveR=66 liveW=62 peakR=66 peakW=62 peakTotal=128 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=10 stallsW=21 stallsAR=6 earlyW=0 expectedReadCompletions=0",
+        "BUS_EVIDENCE MIXED128 AW=96 W=672 B=96 AR=96 R=672 RLAST=96 liveR=0 liveW=0 peakR=74 peakW=62 peakTotal=128 reorderedB=19 reorderedR=88 interleavedR=539 stallsAW=17 stallsW=168 stallsAR=8 earlyW=0 expectedReadCompletions=96",
+        "COMPLETION_EVIDENCE MIXED128 submitted=192 unique_completed=192",
+        "BUS_EVIDENCE ASYMMETRIC_READ3_HELD AW=0 W=0 B=0 AR=3 R=0 RLAST=0 liveR=3 liveW=0 peakR=3 peakW=0 peakTotal=3 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=0 stallsAR=0 earlyW=0 expectedReadCompletions=0",
+        "BUS_EVIDENCE ASYMMETRIC_READ3 AW=0 W=0 B=0 AR=12 R=84 RLAST=12 liveR=0 liveW=0 peakR=3 peakW=0 peakTotal=3 reorderedB=0 reorderedR=10 interleavedR=65 stallsAW=0 stallsW=0 stallsAR=0 earlyW=0 expectedReadCompletions=12",
+        "COMPLETION_EVIDENCE ASYMMETRIC_READ3 submitted=12 unique_completed=12",
+        "BUS_EVIDENCE ASYMMETRIC_WRITE5_HELD AW=5 W=26 B=0 AR=0 R=0 RLAST=0 liveR=0 liveW=5 peakR=0 peakW=5 peakTotal=5 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=1 stallsW=7 stallsAR=0 earlyW=0 expectedReadCompletions=0",
+        "BUS_EVIDENCE ASYMMETRIC_WRITE5 AW=12 W=84 B=12 AR=0 R=0 RLAST=0 liveR=0 liveW=0 peakR=0 peakW=5 peakTotal=5 reorderedB=5 reorderedR=0 interleavedR=0 stallsAW=3 stallsW=21 stallsAR=0 earlyW=1 expectedReadCompletions=0",
+        "COMPLETION_EVIDENCE ASYMMETRIC_WRITE5 submitted=12 unique_completed=12",
+        "BUS_EVIDENCE ASYMMETRIC_TOTAL7_HELD AW=4 W=22 B=0 AR=3 R=0 RLAST=0 liveR=3 liveW=4 peakR=3 peakW=4 peakTotal=7 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=6 stallsAR=0 earlyW=0 expectedReadCompletions=0",
+        "BUS_EVIDENCE ASYMMETRIC_TOTAL7 AW=20 W=131 B=20 AR=20 R=131 RLAST=20 liveR=0 liveW=0 peakR=3 peakW=5 peakTotal=7 reorderedB=4 reorderedR=16 interleavedR=107 stallsAW=3 stallsW=34 stallsAR=1 earlyW=0 expectedReadCompletions=20",
+        "COMPLETION_EVIDENCE ASYMMETRIC_TOTAL7 submitted=40 unique_completed=40",
+        "BUS_EVIDENCE AW_W_INDEPENDENT AW=8 W=32 B=8 AR=0 R=0 RLAST=0 liveR=0 liveW=0 peakR=0 peakW=5 peakTotal=5 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=21 stallsW=8 stallsAR=0 earlyW=4 expectedReadCompletions=0",
+        "COMPLETION_EVIDENCE AW_W_INDEPENDENT submitted=8 unique_completed=8",
+        "BUS_EVIDENCE CONCURRENT_CALLERS AW=40 W=160 B=40 AR=40 R=160 RLAST=40 liveR=0 liveW=0 peakR=8 peakW=5 peakTotal=12 reorderedB=0 reorderedR=36 interleavedR=114 stallsAW=6 stallsW=40 stallsAR=2 earlyW=0 expectedReadCompletions=40",
+        "COMPLETION_EVIDENCE CONCURRENT_CALLERS submitted=80 unique_completed=80",
+        "BUS_EVIDENCE LEGACY_API AW=1 W=1 B=1 AR=1 R=1 RLAST=1 liveR=0 liveW=0 peakR=1 peakW=1 peakTotal=1 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=0 stallsAR=0 earlyW=0 expectedReadCompletions=1",
+        "BUS_EVIDENCE ERROR_RESPONSE_COLLECTION AW=8 W=32 B=8 AR=8 R=32 RLAST=8 liveR=0 liveW=0 peakR=7 peakW=5 peakTotal=12 reorderedB=0 reorderedR=7 interleavedR=23 stallsAW=1 stallsW=8 stallsAR=0 earlyW=0 expectedReadCompletions=8",
+        "COMPLETION_EVIDENCE ERROR_RESPONSE_COLLECTION submitted=16 unique_completed=16",
+        "BUS_EVIDENCE SAME_ID_FIFO_HELD AW=6 W=24 B=0 AR=6 R=0 RLAST=0 liveR=6 liveW=6 peakR=6 peakW=6 peakTotal=12 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=1 stallsW=6 stallsAR=0 earlyW=0 expectedReadCompletions=0",
+        "BUS_EVIDENCE SAME_ID_FIFO AW=24 W=96 B=24 AR=24 R=96 RLAST=24 liveR=0 liveW=0 peakR=8 peakW=6 peakTotal=12 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=4 stallsW=24 stallsAR=4 earlyW=0 expectedReadCompletions=24",
+        "COMPLETION_EVIDENCE SAME_ID_FIFO submitted=48 unique_completed=48",
+        "BUS_EVIDENCE PROGRESS_RESETS_TIMEOUT AW=12 W=192 B=12 AR=12 R=192 RLAST=12 liveR=0 liveW=0 peakR=12 peakW=12 peakTotal=24 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=0 stallsAR=0 earlyW=0 expectedReadCompletions=12",
+        "COMPLETION_EVIDENCE PROGRESS_RESETS_TIMEOUT submitted=24 unique_completed=24",
+        "BUS_EVIDENCE SUBMIT_DEEP_COPY AW=4 W=16 B=4 AR=4 R=16 RLAST=4 liveR=0 liveW=0 peakR=3 peakW=2 peakTotal=4 reorderedB=0 reorderedR=2 interleavedR=11 stallsAW=0 stallsW=2 stallsAR=0 earlyW=0 expectedReadCompletions=4",
+        "COMPLETION_EVIDENCE SUBMIT_DEEP_COPY submitted=8 unique_completed=8",
+        "BUS_EVIDENCE RESET_PENDING_HELD AW=1 W=4 B=0 AR=2 R=0 RLAST=0 liveR=2 liveW=1 peakR=2 peakW=1 peakTotal=3 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=1 stallsAR=0 earlyW=0 expectedReadCompletions=0",
+        "RESET_EVIDENCE interrupted_handles=16 resolved_reset=16",
+        "BUS_EVIDENCE RESET_RECOVERY AW=1 W=4 B=1 AR=1 R=4 RLAST=1 liveR=0 liveW=0 peakR=1 peakW=1 peakTotal=2 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=1 stallsAR=0 earlyW=0 expectedReadCompletions=1",
+        "COMPLETION_EVIDENCE RESET_RECOVERY submitted=2 unique_completed=2",
+        "BUS_EVIDENCE RESET_MIDBURST_BEFORE AW=1 W=4 B=0 AR=1 R=3 RLAST=0 liveR=1 liveW=1 peakR=1 peakW=1 peakTotal=2 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=4 stallsW=4 stallsAR=4 earlyW=0 expectedReadCompletions=0",
+        "RESET_EVIDENCE partial_read_write_and_stalled_addresses=4 resolved_reset=4",
+        "BUS_EVIDENCE RESET_MIDBURST_RECOVERY AW=1 W=4 B=1 AR=1 R=4 RLAST=1 liveR=0 liveW=0 peakR=1 peakW=1 peakTotal=2 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=1 stallsAR=0 earlyW=0 expectedReadCompletions=1",
+        "COMPLETION_EVIDENCE RESET_MIDBURST_RECOVERY submitted=2 unique_completed=2",
+        "BUS_EVIDENCE TOTAL_ONE_FAIRNESS AW=16 W=16 B=16 AR=16 R=16 RLAST=16 liveR=0 liveW=0 peakR=1 peakW=1 peakTotal=1 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=0 stallsAR=0 earlyW=0 expectedReadCompletions=16",
+        "COMPLETION_EVIDENCE TOTAL_ONE_FAIRNESS submitted=32 unique_completed=32",
+        "FAIRNESS_EVIDENCE accepted=32 strict_read_write_alternation=1 peakTotal=1",
+        "OUTSTANDING_REGRESSION_PASS CASE=positive"
+      ]
+    },
+    {
+      "case": "timeout_aw",
+      "result": "PASS",
+      "log": "/tmp/axi03_outstanding_20260916.IZPP60/final_outstanding/timeout_aw.log",
+      "evidence": [
+        "EXPECTED_DIAGNOSTIC id=AXI_BFM_TIMEOUT message=AWREADY timeout; scheduler quarantined until reset",
+        "BUS_EVIDENCE timeout_aw_LATE_READY AW=1 W=4 B=0 AR=0 R=0 RLAST=0 liveR=0 liveW=1 peakR=0 peakW=1 peakTotal=1 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=26 stallsW=1 stallsAR=0 earlyW=4 expectedReadCompletions=0",
+        "POISON_EVIDENCE timeout_aw declaredAW=1 declaredW=0 declaredAR=0 late_transfers=1 actual_after=1",
+        "BUS_EVIDENCE timeout_aw_RECOVERY AW=1 W=4 B=1 AR=1 R=4 RLAST=1 liveR=0 liveW=0 peakR=1 peakW=1 peakTotal=2 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=1 stallsAR=0 earlyW=0 expectedReadCompletions=1",
+        "COMPLETION_EVIDENCE timeout_aw_RECOVERY submitted=2 unique_completed=2",
+        "OUTSTANDING_REGRESSION_PASS CASE=timeout_aw"
+      ]
+    },
+    {
+      "case": "timeout_w",
+      "result": "PASS",
+      "log": "/tmp/axi03_outstanding_20260916.IZPP60/final_outstanding/timeout_w.log",
+      "evidence": [
+        "EXPECTED_DIAGNOSTIC id=AXI_BFM_TIMEOUT message=WREADY timeout; scheduler quarantined until reset",
+        "BUS_EVIDENCE timeout_w_LATE_READY AW=1 W=1 B=0 AR=0 R=0 RLAST=0 liveR=0 liveW=1 peakR=0 peakW=1 peakTotal=1 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=26 stallsAR=0 earlyW=0 expectedReadCompletions=0",
+        "POISON_EVIDENCE timeout_w declaredAW=0 declaredW=1 declaredAR=0 late_transfers=1 actual_after=1",
+        "BUS_EVIDENCE timeout_w_RECOVERY AW=1 W=4 B=1 AR=1 R=4 RLAST=1 liveR=0 liveW=0 peakR=1 peakW=1 peakTotal=2 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=1 stallsAR=0 earlyW=0 expectedReadCompletions=1",
+        "COMPLETION_EVIDENCE timeout_w_RECOVERY submitted=2 unique_completed=2",
+        "OUTSTANDING_REGRESSION_PASS CASE=timeout_w"
+      ]
+    },
+    {
+      "case": "timeout_b",
+      "result": "PASS",
+      "log": "/tmp/axi03_outstanding_20260916.IZPP60/final_outstanding/timeout_b.log",
+      "evidence": [
+        "EXPECTED_DIAGNOSTIC id=AXI_BFM_TIMEOUT message=B response timeout BID=1 serial=1; scheduler quarantined until reset",
+        "BUS_EVIDENCE timeout_b_RECOVERY AW=1 W=4 B=1 AR=1 R=4 RLAST=1 liveR=0 liveW=0 peakR=1 peakW=1 peakTotal=2 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=1 stallsAR=0 earlyW=0 expectedReadCompletions=1",
+        "COMPLETION_EVIDENCE timeout_b_RECOVERY submitted=2 unique_completed=2",
+        "OUTSTANDING_REGRESSION_PASS CASE=timeout_b"
+      ]
+    },
+    {
+      "case": "timeout_ar",
+      "result": "PASS",
+      "log": "/tmp/axi03_outstanding_20260916.IZPP60/final_outstanding/timeout_ar.log",
+      "evidence": [
+        "EXPECTED_DIAGNOSTIC id=AXI_BFM_TIMEOUT message=ARREADY timeout; scheduler quarantined until reset",
+        "BUS_EVIDENCE timeout_ar_LATE_READY AW=0 W=0 B=0 AR=1 R=0 RLAST=0 liveR=1 liveW=0 peakR=1 peakW=0 peakTotal=1 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=0 stallsAR=26 earlyW=0 expectedReadCompletions=0",
+        "POISON_EVIDENCE timeout_ar declaredAW=0 declaredW=0 declaredAR=1 late_transfers=1 actual_after=1",
+        "BUS_EVIDENCE timeout_ar_RECOVERY AW=1 W=4 B=1 AR=1 R=4 RLAST=1 liveR=0 liveW=0 peakR=1 peakW=1 peakTotal=2 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=1 stallsAR=0 earlyW=0 expectedReadCompletions=1",
+        "COMPLETION_EVIDENCE timeout_ar_RECOVERY submitted=2 unique_completed=2",
+        "OUTSTANDING_REGRESSION_PASS CASE=timeout_ar"
+      ]
+    },
+    {
+      "case": "timeout_r",
+      "result": "PASS",
+      "log": "/tmp/axi03_outstanding_20260916.IZPP60/final_outstanding/timeout_r.log",
+      "evidence": [
+        "EXPECTED_DIAGNOSTIC id=AXI_BFM_TIMEOUT message=R response timeout RID=1 serial=1; scheduler quarantined until reset",
+        "BUS_EVIDENCE timeout_r_RECOVERY AW=1 W=4 B=1 AR=1 R=4 RLAST=1 liveR=0 liveW=0 peakR=1 peakW=1 peakTotal=2 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=1 stallsAR=0 earlyW=0 expectedReadCompletions=1",
+        "COMPLETION_EVIDENCE timeout_r_RECOVERY submitted=2 unique_completed=2",
+        "OUTSTANDING_REGRESSION_PASS CASE=timeout_r"
+      ]
+    },
+    {
+      "case": "bad_bid",
+      "result": "PASS",
+      "log": "/tmp/axi03_outstanding_20260916.IZPP60/final_outstanding/bad_bid.log",
+      "evidence": [
+        "EXPECTED_DIAGNOSTIC id=AXI_BFM_PROTOCOL message=Unexpected/unknown BID=ff; scheduler quarantined until reset",
+        "BUS_EVIDENCE bad_bid_RECOVERY AW=1 W=4 B=1 AR=1 R=4 RLAST=1 liveR=0 liveW=0 peakR=1 peakW=1 peakTotal=2 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=1 stallsAR=0 earlyW=0 expectedReadCompletions=1",
+        "COMPLETION_EVIDENCE bad_bid_RECOVERY submitted=2 unique_completed=2",
+        "OUTSTANDING_REGRESSION_PASS CASE=bad_bid"
+      ]
+    },
+    {
+      "case": "bad_rid",
+      "result": "PASS",
+      "log": "/tmp/axi03_outstanding_20260916.IZPP60/final_outstanding/bad_rid.log",
+      "evidence": [
+        "EXPECTED_DIAGNOSTIC id=AXI_BFM_PROTOCOL message=Unexpected/unknown RID=ff; scheduler quarantined until reset",
+        "BUS_EVIDENCE bad_rid_RECOVERY AW=1 W=4 B=1 AR=1 R=4 RLAST=1 liveR=0 liveW=0 peakR=1 peakW=1 peakTotal=2 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=1 stallsAR=0 earlyW=0 expectedReadCompletions=1",
+        "COMPLETION_EVIDENCE bad_rid_RECOVERY submitted=2 unique_completed=2",
+        "OUTSTANDING_REGRESSION_PASS CASE=bad_rid"
+      ]
+    },
+    {
+      "case": "early_rlast",
+      "result": "PASS",
+      "log": "/tmp/axi03_outstanding_20260916.IZPP60/final_outstanding/early_rlast.log",
+      "evidence": [
+        "EXPECTED_DIAGNOSTIC id=AXI_BFM_PROTOCOL message=RLAST mismatch RID=1 beat=0 of 4; scheduler quarantined until reset",
+        "BUS_EVIDENCE early_rlast_RECOVERY AW=1 W=4 B=1 AR=1 R=4 RLAST=1 liveR=0 liveW=0 peakR=1 peakW=1 peakTotal=2 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=1 stallsAR=0 earlyW=0 expectedReadCompletions=1",
+        "COMPLETION_EVIDENCE early_rlast_RECOVERY submitted=2 unique_completed=2",
+        "OUTSTANDING_REGRESSION_PASS CASE=early_rlast"
+      ]
+    },
+    {
+      "case": "missing_rlast",
+      "result": "PASS",
+      "log": "/tmp/axi03_outstanding_20260916.IZPP60/final_outstanding/missing_rlast.log",
+      "evidence": [
+        "EXPECTED_DIAGNOSTIC id=AXI_BFM_PROTOCOL message=RLAST mismatch RID=1 beat=3 of 4; scheduler quarantined until reset",
+        "BUS_EVIDENCE missing_rlast_RECOVERY AW=1 W=4 B=1 AR=1 R=4 RLAST=1 liveR=0 liveW=0 peakR=1 peakW=1 peakTotal=2 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=1 stallsAR=0 earlyW=0 expectedReadCompletions=1",
+        "COMPLETION_EVIDENCE missing_rlast_RECOVERY submitted=2 unique_completed=2",
+        "OUTSTANDING_REGRESSION_PASS CASE=missing_rlast"
+      ]
+    },
+    {
+      "case": "early_b",
+      "result": "PASS",
+      "log": "/tmp/axi03_outstanding_20260916.IZPP60/final_outstanding/early_b.log",
+      "evidence": [
+        "EXPECTED_DIAGNOSTIC id=AXI_BFM_PROTOCOL message=B early: BID=1 before final W handshake; scheduler quarantined until reset",
+        "BUS_EVIDENCE early_b_RECOVERY AW=1 W=4 B=1 AR=1 R=4 RLAST=1 liveR=0 liveW=0 peakR=1 peakW=1 peakTotal=2 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=1 stallsAR=0 earlyW=0 expectedReadCompletions=1",
+        "COMPLETION_EVIDENCE early_b_RECOVERY submitted=2 unique_completed=2",
+        "OUTSTANDING_REGRESSION_PASS CASE=early_b"
+      ]
+    },
+    {
+      "case": "poison_cleanup",
+      "result": "PASS",
+      "log": "/tmp/axi03_outstanding_20260916.IZPP60/final_outstanding/poison_cleanup.log",
+      "evidence": [
+        "EXPECTED_DIAGNOSTIC id=AXI_BFM_TIMEOUT message=AWREADY timeout; scheduler quarantined until reset",
+        "BUS_EVIDENCE POISON_CLEANUP_LATE_READY AW=1 W=1 B=0 AR=1 R=0 RLAST=0 liveR=1 liveW=1 peakR=1 peakW=1 peakTotal=2 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=26 stallsW=26 stallsAR=26 earlyW=0 expectedReadCompletions=0",
+        "POISON_EVIDENCE POISON_CLEANUP declaredAW=1 declaredW=1 declaredAR=1 late_transfers=3 actual_after=2",
+        "POISON_COMPLETION_EVIDENCE queued_and_declared=16 resolved_timeout=16",
+        "BUS_EVIDENCE POISON_CLEANUP_RECOVERY AW=1 W=4 B=1 AR=1 R=4 RLAST=1 liveR=0 liveW=0 peakR=1 peakW=1 peakTotal=2 reorderedB=0 reorderedR=0 interleavedR=0 stallsAW=0 stallsW=1 stallsAR=0 earlyW=0 expectedReadCompletions=1",
+        "COMPLETION_EVIDENCE POISON_CLEANUP_RECOVERY submitted=2 unique_completed=2",
+        "OUTSTANDING_REGRESSION_PASS CASE=poison_cleanup"
+      ]
+    },
+    {
+      "case": "lifecycle",
+      "result": "PASS",
+      "log": "/tmp/axi03_outstanding_20260916.IZPP60/final_outstanding/lifecycle.log",
+      "evidence": [
+        "LIFECYCLE_BUS_EVIDENCE SEQUENCE_KILL AW=1 W=4 B=1 AR=1 R=4 completedR=1 liveR=0 liveW=0",
+        "LIFECYCLE_BUS_EVIDENCE STOP_SEQUENCES AW=2 W=8 B=2 AR=2 R=8 completedR=2 liveR=0 liveW=0",
+        "LIFECYCLE_BUS_EVIDENCE POST_STOP_FOLLOWUP AW=3 W=12 B=3 AR=3 R=12 completedR=3 liveR=0 liveW=0",
+        "LIFECYCLE_REGRESSION_PASS killed_waiters=3 completed_handles=6 AW=3 W=12 B=3 AR=3 R=12"
+      ]
+    },
+    {
+      "case": "clock_reset",
+      "result": "PASS",
+      "log": "/tmp/axi03_outstanding_20260916.IZPP60/final_outstanding/clock_reset.log",
+      "evidence": [
+        "CLOCK_RESET_EVIDENCE epoch=0 acceptedAW=1 acceptedAR=1 reset_waiters=4 returned=4 paused_clock_edges=0",
+        "CLOCK_RESET_EVIDENCE epoch=1 acceptedAW=1 acceptedAR=1 reset_waiters=4 returned=4 paused_clock_edges=0",
+        "CLOCK_RESET_EVIDENCE epoch=2 acceptedAW=1 acceptedAR=1 reset_waiters=4 returned=4 paused_clock_edges=0",
+        "CLOCK_RESET_EVIDENCE epoch=3 acceptedAW=1 acceptedAR=1 reset_waiters=4 returned=4 paused_clock_edges=0",
+        "CLOCK_RESET_EVIDENCE epoch=4 acceptedAW=1 acceptedAR=1 reset_waiters=4 returned=4 paused_clock_edges=0",
+        "CLOCK_RESET_EVIDENCE epoch=5 acceptedAW=1 acceptedAR=1 reset_waiters=4 returned=4 paused_clock_edges=0",
+        "CLOCK_RESET_EVIDENCE epoch=6 acceptedAW=1 acceptedAR=1 reset_waiters=4 returned=4 paused_clock_edges=0",
+        "CLOCK_RESET_EVIDENCE epoch=7 acceptedAW=1 acceptedAR=1 reset_waiters=4 returned=4 paused_clock_edges=0",
+        "CLOCK_RESET_REGRESSION_PASS epochs=8 reset_waiter_returns=32 recoveryAW=1 recoveryW=4 recoveryB=1 recoveryAR=1 recoveryR=4"
+      ]
+    }
+  ],
+  "burst_modes": {
+    "checked": [
+      "PASS checked/positive /tmp/axi03_outstanding_20260916.IZPP60/burst03_checked/positive.log",
+      "PASS checked/responses /tmp/axi03_outstanding_20260916.IZPP60/burst03_checked/responses.log",
+      "PASS checked/protocol /tmp/axi03_outstanding_20260916.IZPP60/burst03_checked/protocol.log",
+      "PASS checked/illegal /tmp/axi03_outstanding_20260916.IZPP60/burst03_checked/illegal.log",
+      "PASS checked/timeout_aw /tmp/axi03_outstanding_20260916.IZPP60/burst03_checked/timeout_aw.log",
+      "PASS checked/timeout_w /tmp/axi03_outstanding_20260916.IZPP60/burst03_checked/timeout_w.log",
+      "PASS checked/timeout_ar /tmp/axi03_outstanding_20260916.IZPP60/burst03_checked/timeout_ar.log",
+      "PASS checked/timeout_b /tmp/axi03_outstanding_20260916.IZPP60/burst03_checked/timeout_b.log",
+      "PASS checked/timeout_r /tmp/axi03_outstanding_20260916.IZPP60/burst03_checked/timeout_r.log",
+      "PASS checked/reset /tmp/axi03_outstanding_20260916.IZPP60/burst03_checked/reset.log",
+      "PASS checked/illegal_api /tmp/axi03_outstanding_20260916.IZPP60/burst03_checked/illegal_api.log"
+    ],
+    "response_off": [
+      "PASS response_off/responses /tmp/axi03_outstanding_20260916.IZPP60/burst03_response_off/responses.log"
+    ],
+    "protocol_off": [
+      "PASS protocol_off/protocol /tmp/axi03_outstanding_20260916.IZPP60/burst03_protocol_off/protocol.log"
+    ],
+    "timeout_off": [
+      "PASS timeout_off/delayed /tmp/axi03_outstanding_20260916.IZPP60/burst03_timeout_off/delayed.log"
+    ],
+    "zero_timeout": [
+      "PASS zero_timeout/delayed /tmp/axi03_outstanding_20260916.IZPP60/burst03_zero_timeout/delayed.log"
+    ],
+    "narrow_enabled": [
+      "PASS narrow_enabled/narrow_enabled /tmp/axi03_outstanding_20260916.IZPP60/burst03_narrow_enabled/narrow_enabled.log"
+    ],
+    "strobe_disabled": [
+      "PASS strobe_disabled/strobe_disabled /tmp/axi03_outstanding_20260916.IZPP60/burst03_strobe_disabled/strobe_disabled.log"
+    ]
+  },
+  "interface_and_demo": [
+    "INTERFACE_CHECK_PASS DATA=32 ADDR=32 ID=4 LEN=8 QOS=4 AWUSER=0",
+    "INTERFACE_CHECK_PASS DATA=256 ADDR=32 ID=8 LEN=4 QOS=0 AWUSER=0",
+    "INTERFACE_CHECK_PASS DATA=256 ADDR=32 ID=8 LEN=4 QOS=4 AWUSER=65",
+    "DEFAULT_DEMO_PASS axi4_user_two_regs UVM_ERROR=0 UVM_FATAL=0"
+  ],
+  "compile_diagnostics": {
+    "/tmp/axi03_outstanding_20260916.IZPP60/final_outstanding/compile.log": [],
+    "/tmp/axi03_outstanding_20260916.IZPP60/final_outstanding/compile_lifecycle.log": [],
+    "/tmp/axi03_outstanding_20260916.IZPP60/final_outstanding/compile_clock_reset.log": [],
+    "/tmp/axi03_outstanding_20260916.IZPP60/burst03_checked/compile.log": [],
+    "/tmp/axi03_outstanding_20260916.IZPP60/burst03_response_off/compile.log": [],
+    "/tmp/axi03_outstanding_20260916.IZPP60/burst03_protocol_off/compile.log": [],
+    "/tmp/axi03_outstanding_20260916.IZPP60/burst03_timeout_off/compile.log": [],
+    "/tmp/axi03_outstanding_20260916.IZPP60/burst03_zero_timeout/compile.log": [],
+    "/tmp/axi03_outstanding_20260916.IZPP60/burst03_narrow_enabled/compile.log": [],
+    "/tmp/axi03_outstanding_20260916.IZPP60/burst03_strobe_disabled/compile.log": [],
+    "/tmp/axi03_outstanding_20260916.IZPP60/interface03_clean/default/compile.log": [],
+    "/tmp/axi03_outstanding_20260916.IZPP60/interface03_clean/target/compile.log": [],
+    "/tmp/axi03_outstanding_20260916.IZPP60/interface03_clean/sideband/compile.log": [],
+    "/tmp/axi03_outstanding_20260916.IZPP60/interface03_clean/default_demo/compile.log": []
+  },
+  "source_sha256": {
+    "tb/axi4/axi4_if.sv": "5063b625edf1492a3f8057f972aa0ce596e5a5984619d69014a4358357221255",
+    "tb/axi4/axi4_vip_adapter_pkg.sv": "ee75343df64103a4098792725f2b358b1456c1d34ee470042c3aacf8e717c764",
+    "tb/axi4/simple_axi4_bfm_adapter.sv": "97bbd09119d946be7afb87e334e61100b25a56f09f10b7805ad4b02b60d5f5c5",
+    "scripts/gen_vip_cfg.py": "6b2383e593dc0aba479b27210501f56796bedc76da8386970eea9b8d84e64138",
+    "tests/outstanding/outstanding_tb.sv": "4e80e7daf2c3fb8b974d7aaee50be36f5c350a411c558429abb4e3c16c9c3248",
+    "tests/outstanding/controlled_slave.sv": "f458ccc666d572296ff556642b753e08ee321aeb82a03dd4327456168f7bcb49",
+    "tests/outstanding/lifecycle_tb.sv": "5c140480b1a8574938cffaa9db127af28aefbd9974aac2e5d5e88cfdb8b6970c",
+    "tests/outstanding/clock_reset_tb.sv": "b41643938ed53b9515adf03138b5d3ad05e37678f27e9ff8066d10e784d62714",
+    "tests/outstanding/run_vcs.sh": "93b4664769a45c2d7d4eb9541f23770a238454f91f7c049b2c5b17cf25267026",
+    "tests/outstanding/profile.json": "dcd1fc44e690d32507aae06df12a5a4f891cbc4029d98d23abcdb6c1b23199e3",
+    "tests/burst/burst_tb.sv": "d6cbb685598a7f13015e90f8924a613d536d1b81462fce4e7557a151d81dd7b5",
+    "tests/burst/run_vcs.py": "fa5d14274f881cfc842350cabf987d9315e38b760cd3036dcea3a570d7ac20e7"
+  },
+  "python_config_tests": {
+    "passed": 17,
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s axi4_vip_adapter/tests -p 'test_vip_cfg.py' -v"
+  }
+}

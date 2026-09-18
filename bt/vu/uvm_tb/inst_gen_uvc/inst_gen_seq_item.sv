@@ -131,9 +131,11 @@ class inst_gen_seq_item extends inst_gen_base_seq_item;
         }
     }
     constraint src_bypass_c {
-        // cross_1 无 bypass；仅 cross_2~11 可选 cross_N_gen / cross_N_bypass_gen
+        // CROSS_INST_1 强制 src_bypass=0；CROSS_INST_11 强制 src_bypass=1
         if (vu_inst_type == CROSS_INST_1) {
             src_bypass == 1'b0;
+        } else if (vu_inst_type == CROSS_INST_11) {
+            src_bypass == 1'b1;
         } else if(inst_gen_cfg.fix_src_bypass_en) {
             src_bypass == inst_gen_cfg.src_bypass;
         } else {
