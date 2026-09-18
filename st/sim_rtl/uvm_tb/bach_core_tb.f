@@ -1,4 +1,5 @@
 +incdir+router_uvc
+$PWD/../../core_ref/uvm_tb/vu_inst_lib/dpi/vu_math.c
 router_uvc/router_if.sv
 router_uvc/router_pkg.sv
 +incdir+rvcore2dsa_agent

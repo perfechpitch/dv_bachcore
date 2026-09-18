@@ -1,2 +1,0 @@
--f tb.f
--f rvcore_tb.f
