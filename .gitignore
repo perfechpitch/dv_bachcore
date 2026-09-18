@@ -14,6 +14,10 @@
 **/rsim/sim_batch/
 **/rsim/sim_recheck/
 
+# Non-standard simulation directory names use the same generated layout.
+/st/sim_rtl/rsim_rvcore/sim_single/
+/st/sim_rtl/rsim_rvcore/verdiLog/
+
 
 # ==============================================================================
 # Python generated files
@@ -34,6 +38,7 @@ __pycache__/
 *.swp
 *.swo
 *~
+.nfs*
 
 
 # ==============================================================================
@@ -64,10 +69,14 @@ verify_tools/vip/formal/softvector/softfloat/install/
 # ==============================================================================
 
 /st/pre_sim/output/
-/st/sim_rtl/agent_sim/ts2rvcore/rsim/case_lst/case.lst
 **/rsim/case_lst/_pre_sim_*.lst
 **/rsim/flist_*.f
+/st/sim_rtl/rsim_rvcore/flist_*.f
 **/rsim/uvm_home/
+
+# Local rollback snapshots and per-user Bug Tool data.
+/st/sim_rtl/bench/dut_dummy/*.before_*
+/st/pre_sim/generator/inst_generator/bug_db/
 
 # Core Reference generated runtime
 /st/core_ref/ref_sim/sim_single/

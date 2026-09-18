@@ -1,0 +1,12 @@
+{
+  "environments": [
+    {
+      "path": "st/core_ref/ref_sim",
+      "bug_repo": "~/tools/core_ref_bug_db"
+    },
+    {
+      "path": "st/sim_rtl/rsim",
+      "bug_repo": "~/tools/sim_rtl_bug_db"
+    }
+  ]
+}

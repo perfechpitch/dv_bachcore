@@ -1,0 +1,13 @@
+- case_name = ts_scene
+  uvm_tc = ts_scene_test
+  vcs_tb_args = +TS_SEQ_FILE=../../data/ts_scene.log
+
+- case_name = ts_stimulus_replay
+  uvm_tc = ts_stimulus_replay_test
+  vcs_tb_args = +TS_SEQ_FILE=../../../../../pre_sim/output/scene_101/stimulus/ts_task.log
+
+- case_name = same_task_multi_dispatch
+  uvm_tc = ts_same_task_multi_dispatch_test
+
+- case_name = random_dispatch_context
+  uvm_tc = ts_random_dispatch_context_test

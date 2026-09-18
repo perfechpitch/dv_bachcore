@@ -17,7 +17,8 @@ class ts_stimulus_replay_test extends uvm_test;
     string line,u,m;
     ts_item t;
     bit [15:0] uid;
-    bit [5:0] tid,pid;
+    bit [5:0] tid;
+    bit [7:0] pid;
     bit [3:0] sid;
     bit [31:0] pc;
     bit [1:0] vcid;
@@ -67,7 +68,7 @@ class ts_stimulus_replay_test extends uvm_test;
     e=expected[observed];
     if(t.execute_unit!=e.execute_unit || t.uid!=e.uid || t.tid!=e.tid ||
        t.stream_id!=e.stream_id || t.pc!=e.pc ||
-       (e.execute_unit==TS_DTE && (t.pid!=e.pid || t.vcid!=e.vcid)))
+       t.pid!=e.pid || t.vcid!=e.vcid)
       `uvm_error("TS_REPLAY",$sformatf("task[%0d] mismatch\nexpected=%s\nactual=%s",
         observed,e.sprint(),t.sprint()))
     observed++;
