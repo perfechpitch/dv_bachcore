@@ -1,8 +1,8 @@
 // ============================================================================
 // Created by           :  
-// Filename             : $(FILENAME)
-// Author               : $(USER)
-// Created On           : $(Date)
+// Filename             : MU
+// Author               : kippy
+// Created On           : 2026-9-18 10:21
 // Last Modified        :
 // Update Count         :
 // Description          :
@@ -17,17 +17,17 @@
 /** Include the top level packages and all interfaces */
 //`include    "XXXX_if.sv"
 `include    "reset_if.sv"
-`include    "$(CLASSNAME)_tc_pkg.sv"
+`include    "mu_tc_pkg.sv"
 
-module $(CLASSNAME)_tb_top;
+module mu_tb_top;
 
     /** Import the top level packages */
     import uvm_pkg::*;
-    import $(CLASSNAME)_tc_pkg::*;
+    import mu_tc_pkg::*;
    
     /** Parameter defines the clock frequency */
     /** Timescale = 1ps/1ps **/
-    parameter clk_period = XXXX; 
+    parameter clk_period = 100; 
    
     /** Signals declarations */
     bit clk;
@@ -37,9 +37,9 @@ module $(CLASSNAME)_tb_top;
     //XXXX_if     XXXX_if(clk,reset_if.reset);
 
     /** Top level module instance*/
-    $(CLASSNAME) u_DUT();
+    //mu u_DUT();
 
-    $(CLASSNAME)_wrapper u_$(CLASSNAME)_wrapper(
+    mu_wrapper u_mu_wrapper(
          reset_if
         //,XXXX_if  
     );

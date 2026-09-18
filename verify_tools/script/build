@@ -315,7 +315,7 @@ def build_verify_env(env_type):
         os.path.join(bench_dir, proj_name + "_wrapper.sv"),
         "module {0}_wrapper(\n"
         "    reset_if    reset_if\n"
-        "   ,XXXX_if.DRV XXXX_if\n"
+        "   //,XXXX_if.DRV XXXX_if\n"
         ");\n"
         "    //assign u_DUT.xxx = XXXX_if.xxx;\n"
         "endmodule".format(proj_name),

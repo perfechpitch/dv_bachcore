@@ -1,0 +1,1 @@
+verdi -sverilog -f flist_mu.f -preTitle "$1" -top mu_tb_top -ssf tb.fsdb -sswr & #rc/rename_debug.rc &
