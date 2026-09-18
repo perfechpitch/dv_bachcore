@@ -9,6 +9,8 @@ class data_init_generator extends uvm_object;
     core_context_pool context_pool;
     protected int     data_init_file;
     protected bit[31:0] init_words[bit[31:0]];
+    protected bit       next_word_valid;
+    protected bit[31:0] next_word_index;
 
     `uvm_object_utils(data_init_generator)
 
@@ -24,6 +26,9 @@ class data_init_generator extends uvm_object;
             `uvm_fatal("DATA_INIT",
                        $sformatf("cannot open data init output file: %s",
                                  file_name))
+        init_words.delete();
+        next_word_valid = 1'b0;
+        next_word_index = '0;
     endfunction
 
     function void close_file();
@@ -95,7 +100,13 @@ class data_init_generator extends uvm_object;
             init_words[word_index] = resolved_data;
             if(!data_init_file)
                 `uvm_fatal("DATA_INIT", "data_init.vmem is not open")
-            $fwrite(data_init_file, "@%0h\n%08h\n", word_index, resolved_data);
+            // Consecutive data words inherit the previous VMEM address.
+            // Random/discontinuous allocation starts a new address run.
+            if(!next_word_valid || word_index != next_word_index)
+                $fwrite(data_init_file, "@%0h\n", word_index);
+            $fwrite(data_init_file, "%08h\n", resolved_data);
+            next_word_index = word_index + 1;
+            next_word_valid = 1'b1;
         end
         `uvm_info("DATA_INIT",
                   $sformatf("core=%0d mem=%s ea=0x%08h global=0x%08h data=0x%08h",

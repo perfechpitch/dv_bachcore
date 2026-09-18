@@ -5,8 +5,8 @@ localparam int SM_SIZE_KB   = 128;
 
 // Memory address map.
 localparam bit [31:0] ITCM_BASE_ADDR = 32'h0000_0000;
-localparam bit [31:0] DTCM_BASE_ADDR = 32'h0000_1000;
-localparam bit [31:0] SM_BASE_ADDR   = 32'h0000_3000;
+localparam bit [31:0] DTCM_BASE_ADDR = 32'h0010_0000;
+localparam bit [31:0] SM_BASE_ADDR   = 32'h0020_0000;
 
 localparam bit [31:0] ITCM_END_ADDR = ITCM_BASE_ADDR + ITCM_SIZE_KB * 1024 - 1;
 localparam bit [31:0] DTCM_END_ADDR = DTCM_BASE_ADDR + DTCM_SIZE_KB * 1024 - 1;

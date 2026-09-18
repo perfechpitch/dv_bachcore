@@ -1,34 +1,6 @@
 {
   "scenes": [
     {
-      "scene_id": 101,
-      "scene_name": "reference_single_task",
-      "scenario": {
-        "category": "workload",
-        "seq_file": "workload/reference_single_task_scenario_seq.sv",
-        "seq_name": "reference_single_task",
-        "args": {}
-      },
-      "task_chain": {
-        "self_start": false,
-        "task_num": 1,
-        "tasks": [
-          {
-            "task_id": 1,
-            "task_name": "reference_vu_task_1",
-            "task_type": "normal",
-            "execute_unit": "vu",
-            "execution_mode": "rvcore_dsa",
-            "start_pc": "0x00000000",
-            "stream_id": 1,
-            "uid": 1,
-            "pid": 1,
-            "vcid": 1
-          }
-        ]
-      }
-    },
-    {
       "scene_id": 104,
       "scene_name": "dsa_custom_directed_test",
       "scenario": {

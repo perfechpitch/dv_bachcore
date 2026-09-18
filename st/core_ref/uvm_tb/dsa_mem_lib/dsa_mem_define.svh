@@ -3,13 +3,13 @@ typedef struct {
     logic [31:0] size;
 } dsa_mem_region_s;
 
-localparam logic [31:0] CORE_MEM_BASE     = 32'hxxxx_xxxx; // TODO: confirm global address.
+localparam logic [31:0] CORE_MEM_BASE     = 32'h0840_0000;
 localparam logic [31:0] CORE_MEM_SIZE     = 32'h0010_0000;
-localparam logic [31:0] MATRIX_MEM_BASE   = 32'h0400_0000;
+localparam logic [31:0] MATRIX_MEM_BASE   = 32'h0c00_0000;
 localparam logic [31:0] MATRIX_MEM_SIZE   = 32'h0200_0000;
-localparam logic [31:0] CORE_SCALE_MEM_BASE = 32'hxxxx_xxxx; // TODO: confirm global address.
+localparam logic [31:0] CORE_SCALE_MEM_BASE = 32'h0850_0000;
 localparam logic [31:0] CORE_SCALE_MEM_SIZE = 32'h0000_8000;
-localparam logic [31:0] MATRIX_SCALE_MEM_BASE = 32'hxxxx_xxxx; // TODO: confirm global address.
+localparam logic [31:0] MATRIX_SCALE_MEM_BASE = 32'h0e00_0000;
 localparam logic [31:0] MATRIX_SCALE_MEM_SIZE = 32'h0040_0000;
 
 localparam int CORE_MEM_SIZE_KB   = CORE_MEM_SIZE / 1024;

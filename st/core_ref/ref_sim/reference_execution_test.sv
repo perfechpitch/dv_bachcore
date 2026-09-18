@@ -109,6 +109,13 @@ class reference_execution_test extends test;
         if(tasks.size() == 0)
             `uvm_fatal("REF_EXEC", "Task[] must contain at least one task")
 
+        // Scene JSON describes the RV-core-local start PC. Reference memory
+        // images use global system addresses, so translate the entry point to
+        // the selected core's global ITCM window before execution.
+        foreach(tasks[i])
+            tasks[i].start_pc = core_itcm_base(tasks[i].dsa_type) +
+                                tasks[i].start_pc;
+
         // Reject duplicate upstream identity before ordering the execution.
         for(int i=0; i<tasks.size(); i++)
             for(int j=i+1; j<tasks.size(); j++) begin

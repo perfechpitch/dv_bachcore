@@ -7,6 +7,8 @@ class inst_generator extends uvm_component;
     bit[31:0]           mem_file[bit[31:0]];
     bit[31:0]           active_itcm_rv_base;
     bit[31:0]           active_itcm_global_base;
+    bit                 vmem_next_word_valid;
+    bit[31:0]           vmem_next_word_idx;
 
 
     inst_gen_config inst_gen_cfg;
@@ -328,6 +330,8 @@ class inst_generator extends uvm_component;
 
     function void reset_output_stream();
         mem_file.delete();
+        vmem_next_word_valid = 1'b0;
+        vmem_next_word_idx   = '0;
     endfunction
 
     function void vmem_write_word(bit [31:0] byte_addr);
@@ -335,8 +339,15 @@ class inst_generator extends uvm_component;
         word_idx = byte_addr >> 2;
         if(!mem_file.exists(word_idx))
             mem_file[word_idx] = '0;
-        if(inst_gen_cfg.vmem_file_gen)
-            $fwrite(vmem_file, "@%0h\n%8h\n", word_idx, mem_file[word_idx]);
+        if(inst_gen_cfg.vmem_file_gen) begin
+            // VMEM data advances by one word automatically. Emit a new
+            // address only for a discontinuity or a rewrite of an old word.
+            if(!vmem_next_word_valid || word_idx != vmem_next_word_idx)
+                $fwrite(vmem_file, "@%0h\n", word_idx);
+            $fwrite(vmem_file, "%08h\n", mem_file[word_idx]);
+            vmem_next_word_idx   = word_idx + 1;
+            vmem_next_word_valid = 1'b1;
+        end
     endfunction
 
     function void vmem_write_halfword(bit [31:0] byte_addr,
@@ -389,6 +400,8 @@ class inst_generator extends uvm_component;
         ri_inst_gen.gen_file    = new_gen_file;
         active_itcm_rv_base     = itcm_rv_base;
         active_itcm_global_base = itcm_global_base;
+        vmem_next_word_valid    = 1'b0;
+        vmem_next_word_idx      = '0;
         inst_cnt                = `ITCM_SIZE / 'h4;
         fetch_addr_gen.begin_core_stream();
     endfunction
@@ -415,8 +428,6 @@ class inst_generator extends uvm_component;
                                    selected_start_pc);
         if(!ctx.task_body_enable)
             return;
-        $fwrite(vmem_file, "@%0h\n",
-                rv_to_global_paddr(fetch_addr_gen.current_paddr()) >> 2);
         $fwrite(gen_file,
                 "//========== TASK[%0d] start PC=%08h itcm_left=%0hB ==========\n",
                 task_id, ctx.task_start_pc[31:0],
