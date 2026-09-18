@@ -67,14 +67,13 @@ class cross_2_gen_seq_item extends cross_src_reg_seq_item;
         };
     }
 
-    //----- 求解顺序：VALU0 → MEXE → LU；SU → MEXE -----
+    //----- 求解顺序：VALU0 → MEXE → LU -----
     constraint gen_sel_solve_order_c {
         solve valu0_class before mexe_class;
         solve mexe_class before lu_class;
-        solve su_class before mexe_class;
     }
 
-    //----- LU/VALU0/VALU1/MEXE class：MD 写口互斥；SU_MS 时 MEXE 不得双 MRF 源 -----
+    //----- LU/VALU0/VALU1/MEXE class：MD 写口互斥 -----
     constraint lu_class_c {
         if (!active_exe[VU_LU]) {
             lu_class == VU_LU_CLASS_END;
@@ -130,12 +129,6 @@ class cross_2_gen_seq_item extends cross_src_reg_seq_item;
             mexe_class == VU_MEXE_CLASS_END;
         } else if (valu0_class inside {VU_VALU0_7_MD_VS2_VS1_VM, VU_VALU0_8_MD_VS2_FS1_VM, VU_VALU0_9_MD_VS1_VM_IMM}) {
             mexe_class == VU_MEXE_2_FD_MS1;
-        } else if (su_class == VU_SU_2_MS_ADDR) {
-            mexe_class dist {
-                VU_MEXE_2_FD_MS1         := inst_gen_cfg.mexe_class_dist[VU_MEXE_2_FD_MS1],
-                VU_MEXE_3_MD_MS1         := inst_gen_cfg.mexe_class_dist[VU_MEXE_3_MD_MS1],
-                VU_MEXE_4_MD_MS1_VS2     := inst_gen_cfg.mexe_class_dist[VU_MEXE_4_MD_MS1_VS2]
-            };
         } else {
             mexe_class dist {
                 VU_MEXE_1_MD_MS2_MS1     := inst_gen_cfg.mexe_class_dist[VU_MEXE_1_MD_MS2_MS1],

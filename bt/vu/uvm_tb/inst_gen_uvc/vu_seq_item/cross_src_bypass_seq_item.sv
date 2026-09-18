@@ -18,10 +18,6 @@ class cross_src_bypass_seq_item extends cross_src_reg_seq_item;
         super.new(name);
     endfunction : new
 
-    //----- 覆盖 src_reg：bypass 不约束 MRF 读口独占 -----
-    constraint ms_rd_port_unique_c {
-    }
-
     //----- 覆盖 src_reg：SEXE1/SEXE2 激活可双读口 -----
     constraint sexe1_class_c {
         if (!active_exe[VU_SEXE1]) {

@@ -18,7 +18,7 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
         super.new(name);
     endfunction : new
 
-    //----- 求解顺序：class → wt_src / SRC_SEL；MRF src_sel → mask_sel；VRF P0 → P1 -----
+    //----- 求解顺序：class → wt_src / SRC_SEL；su_class → mexe src_sel → valu0~2 mask_sel；VRF P0 → P1 -----
     constraint src_reg_solve_order_c {
         solve lu_class before prf_op_mrf_wt_src;
         solve valu0_class before prf_op_mrf_wt_src;
@@ -53,6 +53,10 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
         solve vsfu1_class before vsfu_op_vsfu1_src1_sel;
         solve mexe_class before mexe_op_src1_sel;
         solve mexe_class before mexe_op_src2_sel;
+        solve su_class before mexe_op_src1_sel;
+        solve su_class before mexe_op_src2_sel;
+        solve su_op_src_sel before mexe_op_src1_sel;
+        solve su_op_src_sel before mexe_op_src2_sel;
         solve sexe0_class before sexe0_op_src1_sel;
         solve sexe0_class before sexe0_op_src2_sel;
         solve sexe1_class before sexe1_op_src1_sel;
@@ -180,6 +184,7 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
 
     //----- SRC*_SEL / MASK_SEL：按执行单元独立约束（'/' 分段联合 dist） -----
     //----- CLASS_END：src_sel / mask_sel 由 inst_gen_cfg.nop_rand 决定固定 0 或随机 -----
+    //----- VALU0/1/2：MASK_SEL 合约束 valu_mask_sel_c（SU/MEXE MS 占用） -----
 
     constraint su_src_sel_c {
         if (su_class == VU_SU_CLASS_END) {
@@ -204,13 +209,12 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
         }
     }
 
-    constraint valu0_src_mask_sel_c {
+    constraint valu0_src_sel_c {
         if (valu0_class == VU_VALU0_CLASS_END) {
             if (!inst_gen_cfg.nop_rand) {
                 valu0_op_src1_sel == 8'h00;
                 valu0_op_src2_sel == 8'h00;
                 valu0_op_src3_sel == 8'h00;
-                mask_op_valu0_mask_sel == 8'h00;
             }
         }
         else if (valu0_class inside {VU_VALU0_1_VD_VS2_VS1_VM, VU_VALU0_7_MD_VS2_VS1_VM}) {
@@ -223,11 +227,6 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
                 8'h31 := 100 - inst_gen_cfg.valu0_vs2_sel_pair_weight
             };
             valu0_op_src3_sel == 8'h00;
-            mask_op_valu0_mask_sel dist {
-                8'h00 := inst_gen_cfg.valu0_vm_sel_pair_dist[0],
-                8'h40 := inst_gen_cfg.valu0_vm_sel_pair_dist[1],
-                8'h41 := inst_gen_cfg.valu0_vm_sel_pair_dist[2]
-            };
         }
         else if (valu0_class inside {VU_VALU0_2_VD_VS2_FS1_VM, VU_VALU0_8_MD_VS2_FS1_VM}) {
             valu0_op_src1_sel == 8'h51;
@@ -236,19 +235,14 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
                 8'h30 := inst_gen_cfg.valu0_vs2_sel_pair_weight,
                 8'h31 := 100 - inst_gen_cfg.valu0_vs2_sel_pair_weight
             };
-            mask_op_valu0_mask_sel dist {
-                8'h00 := inst_gen_cfg.valu0_vm_sel_pair_dist[0],
-                8'h40 := inst_gen_cfg.valu0_vm_sel_pair_dist[1],
-                8'h41 := inst_gen_cfg.valu0_vm_sel_pair_dist[2]
-            };
         }
         else if (valu0_class == VU_VALU0_3_VD_FS1) {
             valu0_op_src1_sel == 8'h51;
-            valu0_op_src2_sel == 8'h00 && valu0_op_src3_sel == 8'h00 && mask_op_valu0_mask_sel == 8'h00;
+            valu0_op_src2_sel == 8'h00 && valu0_op_src3_sel == 8'h00;
         }
         else if (valu0_class == VU_VALU0_4_VD_FS1_IMM) {
             valu0_op_src1_sel == 8'h51;
-            valu0_op_src3_sel == 8'h00 && mask_op_valu0_mask_sel == 8'h00;
+            valu0_op_src3_sel == 8'h00;
         }
         else if (valu0_class == VU_VALU0_5_VD_VS3_VS1_VS2_VM) {
             valu0_op_src1_sel dist {
@@ -263,11 +257,6 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
                 8'h30 := inst_gen_cfg.valu0_vs3_sel_pair_weight,
                 8'h31 := 100 - inst_gen_cfg.valu0_vs3_sel_pair_weight
             };
-            mask_op_valu0_mask_sel dist {
-                8'h00 := inst_gen_cfg.valu0_vm_sel_pair_dist[0],
-                8'h40 := inst_gen_cfg.valu0_vm_sel_pair_dist[1],
-                8'h41 := inst_gen_cfg.valu0_vm_sel_pair_dist[2]
-            };
         }
         else if (valu0_class == VU_VALU0_6_VD_VS3_FS1_VS2_VM) {
             valu0_op_src1_sel == 8'h51;
@@ -279,32 +268,21 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
                 8'h30 := inst_gen_cfg.valu0_vs3_sel_pair_weight,
                 8'h31 := 100 - inst_gen_cfg.valu0_vs3_sel_pair_weight
             };
-            mask_op_valu0_mask_sel dist {
-                8'h00 := inst_gen_cfg.valu0_vm_sel_pair_dist[0],
-                8'h40 := inst_gen_cfg.valu0_vm_sel_pair_dist[1],
-                8'h41 := inst_gen_cfg.valu0_vm_sel_pair_dist[2]
-            };
         }
         else if (valu0_class == VU_VALU0_9_MD_VS1_VM_IMM) {
             valu0_op_src1_sel dist {
                 8'h30 := inst_gen_cfg.valu0_vs1_sel_pair_weight,
                 8'h31 := 100 - inst_gen_cfg.valu0_vs1_sel_pair_weight
             };
-            mask_op_valu0_mask_sel dist {
-                8'h00 := inst_gen_cfg.valu0_vm_sel_pair_dist[0],
-                8'h40 := inst_gen_cfg.valu0_vm_sel_pair_dist[1],
-                8'h41 := inst_gen_cfg.valu0_vm_sel_pair_dist[2]
-            };
         }
     }
 
-    constraint valu1_src_mask_sel_c {
+    constraint valu1_src_sel_c {
         if (valu1_class == VU_VALU1_CLASS_END) {
             if (!inst_gen_cfg.nop_rand) {
                 valu1_op_src1_sel == 8'h00;
                 valu1_op_src2_sel == 8'h00;
                 valu1_op_src3_sel == 8'h00;
-                mask_op_valu1_mask_sel == 8'h00;
             }
         }
         else if (valu1_class == VU_VALU1_1_VD_VS2_VS1_VM) {
@@ -317,11 +295,6 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
                 8'h31 := 100 - inst_gen_cfg.valu1_vs2_sel_pair_weight
             };
             valu1_op_src3_sel == 8'h00;
-            mask_op_valu1_mask_sel dist {
-                8'h00 := inst_gen_cfg.valu1_vm_sel_pair_dist[0],
-                8'h40 := inst_gen_cfg.valu1_vm_sel_pair_dist[1],
-                8'h41 := inst_gen_cfg.valu1_vm_sel_pair_dist[2]
-            };
         }
         else if (valu1_class inside {VU_VALU1_2_VD_VS2_FS1_VM, VU_VALU1_5_FD_VS2_FS1_VM}) {
             valu1_op_src1_sel == 8'h52;
@@ -330,22 +303,17 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
                 8'h30 := inst_gen_cfg.valu1_vs2_sel_pair_weight,
                 8'h31 := 100 - inst_gen_cfg.valu1_vs2_sel_pair_weight
             };
-            mask_op_valu1_mask_sel dist {
-                8'h00 := inst_gen_cfg.valu1_vm_sel_pair_dist[0],
-                8'h40 := inst_gen_cfg.valu1_vm_sel_pair_dist[1],
-                8'h41 := inst_gen_cfg.valu1_vm_sel_pair_dist[2]
-            };
         }
         else if (valu1_class == VU_VALU1_3_VD_FS1) {
             valu1_op_src1_sel == 8'h52;
-            valu1_op_src2_sel == 8'h00 && valu1_op_src3_sel == 8'h00 && mask_op_valu1_mask_sel == 8'h00;
+            valu1_op_src2_sel == 8'h00 && valu1_op_src3_sel == 8'h00;
         }
         else if (valu1_class == VU_VALU1_4_FD_VS1_IMM) {
             valu1_op_src1_sel dist {
                 8'h30 := inst_gen_cfg.valu1_vs1_sel_pair_weight,
                 8'h31 := 100 - inst_gen_cfg.valu1_vs1_sel_pair_weight
             };
-            valu1_op_src3_sel == 8'h00 && mask_op_valu1_mask_sel == 8'h00;
+            valu1_op_src3_sel == 8'h00;
         }
         else if (valu1_class == VU_VALU1_6_VD_VS1_VM) {
             valu1_op_src1_sel dist {
@@ -353,21 +321,15 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
                 8'h31 := 100 - inst_gen_cfg.valu1_vs1_sel_pair_weight
             };
             valu1_op_src2_sel == 8'h00 && valu1_op_src3_sel == 8'h00;
-            mask_op_valu1_mask_sel dist {
-                8'h00 := inst_gen_cfg.valu1_vm_sel_pair_dist[0],
-                8'h40 := inst_gen_cfg.valu1_vm_sel_pair_dist[1],
-                8'h41 := inst_gen_cfg.valu1_vm_sel_pair_dist[2]
-            };
         }
     }
 
-    constraint valu2_src_mask_sel_c {
+    constraint valu2_src_sel_c {
         if (valu2_class == VU_VALU2_CLASS_END) {
             if (!inst_gen_cfg.nop_rand) {
                 valu2_op_src1_sel == 8'h00;
                 valu2_op_src2_sel == 8'h00;
                 valu2_op_src3_sel == 8'h00;
-                mask_op_valu2_mask_sel == 8'h00;
             }
         }
         else if (valu2_class == VU_VALU2_1_VD_VS2_VS1_VM) {
@@ -380,44 +342,123 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
                 8'h31 := 100 - inst_gen_cfg.valu2_vs2_sel_pair_weight
             };
             valu2_op_src3_sel == 8'h00;
-            mask_op_valu2_mask_sel dist {
-                8'h00 := inst_gen_cfg.valu2_vm_sel_pair_dist[0],
-                8'h40 := inst_gen_cfg.valu2_vm_sel_pair_dist[1],
-                8'h41 := inst_gen_cfg.valu2_vm_sel_pair_dist[2]
-            };
         }
-        else if (valu2_class == VU_VALU2_2_VD_VS2_FS1_VM) {
+        else if (valu2_class inside {VU_VALU2_2_VD_VS2_FS1_VM, VU_VALU2_5_VD_VS2_FS1}) {
             valu2_op_src1_sel == 8'h53;
             valu2_op_src3_sel == 8'h00;
             valu2_op_src2_sel dist {
                 8'h30 := inst_gen_cfg.valu2_vs2_sel_pair_weight,
                 8'h31 := 100 - inst_gen_cfg.valu2_vs2_sel_pair_weight
             };
-            mask_op_valu2_mask_sel dist {
-                8'h00 := inst_gen_cfg.valu2_vm_sel_pair_dist[0],
-                8'h40 := inst_gen_cfg.valu2_vm_sel_pair_dist[1],
-                8'h41 := inst_gen_cfg.valu2_vm_sel_pair_dist[2]
-            };
         }
         else if (valu2_class == VU_VALU2_3_VD_FS1) {
             valu2_op_src1_sel == 8'h53;
-            valu2_op_src2_sel == 8'h00 && valu2_op_src3_sel == 8'h00 && mask_op_valu2_mask_sel == 8'h00;
+            valu2_op_src2_sel == 8'h00 && valu2_op_src3_sel == 8'h00;
         }
         else if (valu2_class == VU_VALU2_4_VD_VS1) {
             valu2_op_src1_sel dist {
                 8'h30 := inst_gen_cfg.valu2_vs1_sel_pair_weight,
                 8'h31 := 100 - inst_gen_cfg.valu2_vs1_sel_pair_weight
             };
-            valu2_op_src2_sel == 8'h00 && valu2_op_src3_sel == 8'h00 && mask_op_valu2_mask_sel == 8'h00;
+            valu2_op_src2_sel == 8'h00 && valu2_op_src3_sel == 8'h00;
         }
-        else if (valu2_class == VU_VALU2_5_VD_VS2_FS1) {
-            valu2_op_src1_sel == 8'h53;
-            valu2_op_src3_sel == 8'h00 && mask_op_valu2_mask_sel == 8'h00;
-            valu2_op_src2_sel dist {
-                8'h30 := inst_gen_cfg.valu2_vs2_sel_pair_weight,
-                8'h31 := 100 - inst_gen_cfg.valu2_vs2_sel_pair_weight
+    }
+
+    constraint valu_mask_sel_c {
+        if (valu0_class == VU_VALU0_CLASS_END) {
+            if (!inst_gen_cfg.nop_rand) {
+                mask_op_valu0_mask_sel == 8'h00;
+            }
+        }
+        else if (valu0_class inside {VU_VALU0_1_VD_VS2_VS1_VM, VU_VALU0_2_VD_VS2_FS1_VM, VU_VALU0_5_VD_VS3_VS1_VS2_VM, VU_VALU0_6_VD_VS3_FS1_VS2_VM, VU_VALU0_7_MD_VS2_VS1_VM, VU_VALU0_8_MD_VS2_FS1_VM, VU_VALU0_9_MD_VS1_VM_IMM}) {
+            mask_op_valu0_mask_sel dist {
+                8'h00 := inst_gen_cfg.valu0_vm_sel_pair_dist[0],
+                8'h40 := inst_gen_cfg.valu0_vm_sel_pair_dist[1],
+                8'h41 := inst_gen_cfg.valu0_vm_sel_pair_dist[2]
             };
         }
+        else if (valu0_class inside {VU_VALU0_3_VD_FS1, VU_VALU0_4_VD_FS1_IMM}) {
+            mask_op_valu0_mask_sel == 8'h00;
+        }
+
+        if (valu1_class == VU_VALU1_CLASS_END) {
+            if (!inst_gen_cfg.nop_rand) {
+                mask_op_valu1_mask_sel == 8'h00;
+            }
+        }
+        else if (valu1_class inside {VU_VALU1_1_VD_VS2_VS1_VM, VU_VALU1_2_VD_VS2_FS1_VM, VU_VALU1_5_FD_VS2_FS1_VM, VU_VALU1_6_VD_VS1_VM}) {
+            mask_op_valu1_mask_sel dist {
+                8'h00 := inst_gen_cfg.valu1_vm_sel_pair_dist[0],
+                8'h40 := inst_gen_cfg.valu1_vm_sel_pair_dist[1],
+                8'h41 := inst_gen_cfg.valu1_vm_sel_pair_dist[2]
+            };
+        }
+        else if (valu1_class inside {VU_VALU1_3_VD_FS1, VU_VALU1_4_FD_VS1_IMM}) {
+            mask_op_valu1_mask_sel == 8'h00;
+        }
+
+        if (valu2_class == VU_VALU2_CLASS_END) {
+            if (!inst_gen_cfg.nop_rand) {
+                mask_op_valu2_mask_sel == 8'h00;
+            }
+        }
+        else if (valu2_class inside {VU_VALU2_1_VD_VS2_VS1_VM, VU_VALU2_2_VD_VS2_FS1_VM}) {
+            mask_op_valu2_mask_sel dist {
+                8'h00 := inst_gen_cfg.valu2_vm_sel_pair_dist[0],
+                8'h40 := inst_gen_cfg.valu2_vm_sel_pair_dist[1],
+                8'h41 := inst_gen_cfg.valu2_vm_sel_pair_dist[2]
+            };
+        }
+        else if (valu2_class inside {VU_VALU2_3_VD_FS1, VU_VALU2_4_VD_VS1, VU_VALU2_5_VD_VS2_FS1}) {
+            mask_op_valu2_mask_sel == 8'h00;
+        }
+
+        // 求解顺序：su_class → mexe src_sel → valu0~2 mask_sel
+        // SU 用 MS 时 MEXE src_sel 只能用另一口（mexe_src_sel_c）
+        // 有 vm：SU/MEXE 已占用的 0x40/0x41 不得再选；未占用口至多各用 1 次
+        if (su_class == VU_SU_2_MS_ADDR) {
+            if (valu0_class inside {VU_VALU0_1_VD_VS2_VS1_VM, VU_VALU0_2_VD_VS2_FS1_VM, VU_VALU0_5_VD_VS3_VS1_VS2_VM, VU_VALU0_6_VD_VS3_FS1_VS2_VM, VU_VALU0_7_MD_VS2_VS1_VM, VU_VALU0_8_MD_VS2_FS1_VM, VU_VALU0_9_MD_VS1_VM_IMM}) {
+                mask_op_valu0_mask_sel != su_op_src_sel;
+            }
+            if (valu1_class inside {VU_VALU1_1_VD_VS2_VS1_VM, VU_VALU1_2_VD_VS2_FS1_VM, VU_VALU1_5_FD_VS2_FS1_VM, VU_VALU1_6_VD_VS1_VM}) {
+                mask_op_valu1_mask_sel != su_op_src_sel;
+            }
+            if (valu2_class inside {VU_VALU2_1_VD_VS2_VS1_VM, VU_VALU2_2_VD_VS2_FS1_VM}) {
+                mask_op_valu2_mask_sel != su_op_src_sel;
+            }
+        }
+        if (mexe_class != VU_MEXE_CLASS_END) {
+            if (valu0_class inside {VU_VALU0_1_VD_VS2_VS1_VM, VU_VALU0_2_VD_VS2_FS1_VM, VU_VALU0_5_VD_VS3_VS1_VS2_VM, VU_VALU0_6_VD_VS3_FS1_VS2_VM, VU_VALU0_7_MD_VS2_VS1_VM, VU_VALU0_8_MD_VS2_FS1_VM, VU_VALU0_9_MD_VS1_VM_IMM}) {
+                mask_op_valu0_mask_sel != mexe_op_src1_sel;
+            }
+            if (valu1_class inside {VU_VALU1_1_VD_VS2_VS1_VM, VU_VALU1_2_VD_VS2_FS1_VM, VU_VALU1_5_FD_VS2_FS1_VM, VU_VALU1_6_VD_VS1_VM}) {
+                mask_op_valu1_mask_sel != mexe_op_src1_sel;
+            }
+            if (valu2_class inside {VU_VALU2_1_VD_VS2_VS1_VM, VU_VALU2_2_VD_VS2_FS1_VM}) {
+                mask_op_valu2_mask_sel != mexe_op_src1_sel;
+            }
+            if ((mexe_class == VU_MEXE_1_MD_MS2_MS1) && (mexe_op_src1_sel != mexe_op_src2_sel)) {
+                if (valu0_class inside {VU_VALU0_1_VD_VS2_VS1_VM, VU_VALU0_2_VD_VS2_FS1_VM, VU_VALU0_5_VD_VS3_VS1_VS2_VM, VU_VALU0_6_VD_VS3_FS1_VS2_VM, VU_VALU0_7_MD_VS2_VS1_VM, VU_VALU0_8_MD_VS2_FS1_VM, VU_VALU0_9_MD_VS1_VM_IMM}) {
+                    mask_op_valu0_mask_sel != mexe_op_src2_sel;
+                }
+                if (valu1_class inside {VU_VALU1_1_VD_VS2_VS1_VM, VU_VALU1_2_VD_VS2_FS1_VM, VU_VALU1_5_FD_VS2_FS1_VM, VU_VALU1_6_VD_VS1_VM}) {
+                    mask_op_valu1_mask_sel != mexe_op_src2_sel;
+                }
+                if (valu2_class inside {VU_VALU2_1_VD_VS2_VS1_VM, VU_VALU2_2_VD_VS2_FS1_VM}) {
+                    mask_op_valu2_mask_sel != mexe_op_src2_sel;
+                }
+            }
+        }
+        (
+              ((valu0_class inside {VU_VALU0_1_VD_VS2_VS1_VM, VU_VALU0_2_VD_VS2_FS1_VM, VU_VALU0_5_VD_VS3_VS1_VS2_VM, VU_VALU0_6_VD_VS3_FS1_VS2_VM, VU_VALU0_7_MD_VS2_VS1_VM, VU_VALU0_8_MD_VS2_FS1_VM, VU_VALU0_9_MD_VS1_VM_IMM}) && (mask_op_valu0_mask_sel == 8'h40))
+            + ((valu1_class inside {VU_VALU1_1_VD_VS2_VS1_VM, VU_VALU1_2_VD_VS2_FS1_VM, VU_VALU1_5_FD_VS2_FS1_VM, VU_VALU1_6_VD_VS1_VM}) && (mask_op_valu1_mask_sel == 8'h40))
+            + ((valu2_class inside {VU_VALU2_1_VD_VS2_VS1_VM, VU_VALU2_2_VD_VS2_FS1_VM}) && (mask_op_valu2_mask_sel == 8'h40))
+        ) <= 1;
+        (
+              ((valu0_class inside {VU_VALU0_1_VD_VS2_VS1_VM, VU_VALU0_2_VD_VS2_FS1_VM, VU_VALU0_5_VD_VS3_VS1_VS2_VM, VU_VALU0_6_VD_VS3_FS1_VS2_VM, VU_VALU0_7_MD_VS2_VS1_VM, VU_VALU0_8_MD_VS2_FS1_VM, VU_VALU0_9_MD_VS1_VM_IMM}) && (mask_op_valu0_mask_sel == 8'h41))
+            + ((valu1_class inside {VU_VALU1_1_VD_VS2_VS1_VM, VU_VALU1_2_VD_VS2_FS1_VM, VU_VALU1_5_FD_VS2_FS1_VM, VU_VALU1_6_VD_VS1_VM}) && (mask_op_valu1_mask_sel == 8'h41))
+            + ((valu2_class inside {VU_VALU2_1_VD_VS2_VS1_VM, VU_VALU2_2_VD_VS2_FS1_VM}) && (mask_op_valu2_mask_sel == 8'h41))
+        ) <= 1;
     }
 
     constraint vsfu0_src_sel_c {
@@ -456,23 +497,47 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
             }
         }
         else if (mexe_class == VU_MEXE_1_MD_MS2_MS1) {
-            {mexe_op_src1_sel, mexe_op_src2_sel} dist {
-                {8'h40, 8'h41} := inst_gen_cfg.mexe_ms_sel_pair_weight,
-                {8'h41, 8'h40} := 100 - inst_gen_cfg.mexe_ms_sel_pair_weight
-            };
+            if (su_class == VU_SU_2_MS_ADDR && su_op_src_sel == 8'h40) {
+                mexe_op_src1_sel == 8'h41;
+                mexe_op_src2_sel == 8'h41;
+            } else if (su_class == VU_SU_2_MS_ADDR && su_op_src_sel == 8'h41) {
+                mexe_op_src1_sel == 8'h40;
+                mexe_op_src2_sel == 8'h40;
+            } else {
+                mexe_op_src1_sel dist {
+                    8'h40 := inst_gen_cfg.mexe_ms1_sel_pair_weight,
+                    8'h41 := 100 - inst_gen_cfg.mexe_ms1_sel_pair_weight
+                };
+                mexe_op_src2_sel dist {
+                    8'h40 := inst_gen_cfg.mexe_ms2_sel_pair_weight,
+                    8'h41 := 100 - inst_gen_cfg.mexe_ms2_sel_pair_weight
+                };
+            }
         }
         else if (mexe_class inside {VU_MEXE_2_FD_MS1, VU_MEXE_3_MD_MS1}) {
-            mexe_op_src1_sel dist {
-                8'h40 := inst_gen_cfg.mexe_ms_sel_pair_weight,
-                8'h41 := 100 - inst_gen_cfg.mexe_ms_sel_pair_weight
-            };
+            if (su_class == VU_SU_2_MS_ADDR && su_op_src_sel == 8'h40) {
+                mexe_op_src1_sel == 8'h41;
+            } else if (su_class == VU_SU_2_MS_ADDR && su_op_src_sel == 8'h41) {
+                mexe_op_src1_sel == 8'h40;
+            } else {
+                mexe_op_src1_sel dist {
+                    8'h40 := inst_gen_cfg.mexe_ms1_sel_pair_weight,
+                    8'h41 := 100 - inst_gen_cfg.mexe_ms1_sel_pair_weight
+                };
+            }
             mexe_op_src2_sel == 8'h00;
         }
         else if (mexe_class == VU_MEXE_4_MD_MS1_VS2) {
-            mexe_op_src1_sel dist {
-                8'h40 := inst_gen_cfg.mexe_ms_sel_pair_weight,
-                8'h41 := 100 - inst_gen_cfg.mexe_ms_sel_pair_weight
-            };
+            if (su_class == VU_SU_2_MS_ADDR && su_op_src_sel == 8'h40) {
+                mexe_op_src1_sel == 8'h41;
+            } else if (su_class == VU_SU_2_MS_ADDR && su_op_src_sel == 8'h41) {
+                mexe_op_src1_sel == 8'h40;
+            } else {
+                mexe_op_src1_sel dist {
+                    8'h40 := inst_gen_cfg.mexe_ms1_sel_pair_weight,
+                    8'h41 := 100 - inst_gen_cfg.mexe_ms1_sel_pair_weight
+                };
+            }
             mexe_op_src2_sel dist {
                 8'h30 := inst_gen_cfg.mexe_vs_sel_pair_weight,
                 8'h31 := 100 - inst_gen_cfg.mexe_vs_sel_pair_weight
@@ -522,22 +587,6 @@ class cross_src_reg_seq_item extends vu_drv_seq_item;
         }
     }
 
-    //----- MRF 读口不可共享：src_sel / mask_sel 的 0x40、0x41 各自最多 1 个 -----
-    constraint ms_rd_port_unique_c {
-        ((mexe_op_src1_sel == 8'h40) +
-            (mexe_op_src2_sel == 8'h40) +
-            (su_op_src_sel == 8'h40) +
-            (mask_op_valu0_mask_sel == 8'h40) +
-            (mask_op_valu1_mask_sel == 8'h40) +
-            (mask_op_valu2_mask_sel == 8'h40)) <= 1;
-        ((mexe_op_src1_sel == 8'h41) +
-            (mexe_op_src2_sel == 8'h41) +
-            (su_op_src_sel == 8'h41) +
-            (mask_op_valu0_mask_sel == 8'h41) +
-            (mask_op_valu1_mask_sel == 8'h41) +
-            (mask_op_valu2_mask_sel == 8'h41)) <= 1;
-    }
-
 endclass : cross_src_reg_seq_item
 
 class cross_3_src_reg_seq_item extends cross_src_reg_seq_item;
@@ -547,16 +596,15 @@ class cross_3_src_reg_seq_item extends cross_src_reg_seq_item;
         super.new(name);
     endfunction : new
 
-    //----- 求解顺序：VALU0 → VALU1 → LU；VALU0 → MEXE → LU；SU → MEXE -----
+    //----- 求解顺序：VALU0 → VALU1 → LU；VALU0 → MEXE → LU -----
     constraint gen_sel_solve_order_c {
         solve valu0_class before mexe_class;
         solve mexe_class before lu_class;
-        solve su_class before mexe_class;
         solve valu0_class before valu1_class;
         solve valu1_class before lu_class;
     }
 
-    //----- LU/VALU0/VALU1/MEXE class：MD 写口互斥；VD 仅 2 写口（VALU2/VSFU 占 2 口时 LU/VALU0/VALU1 不得写 VD；占 1 口时 VALU0→VALU1→LU 抢剩余 1 口；占 0 口时 VALU0+VALU1 占满则 LU 不得写 VD）；SU_MS 时 MEXE 不得双 MRF 源 -----
+    //----- LU/VALU0/VALU1/MEXE class：MD 写口互斥；VD 仅 2 写口（VALU2/VSFU 占 2 口时 LU/VALU0/VALU1 不得写 VD；占 1 口时 VALU0→VALU1→LU 抢剩余 1 口；占 0 口时 VALU0+VALU1 占满则 LU 不得写 VD） -----
     constraint lu_class_c {
         if (!active_exe[VU_LU]) {
             lu_class == VU_LU_CLASS_END;
@@ -649,12 +697,6 @@ class cross_3_src_reg_seq_item extends cross_src_reg_seq_item;
             mexe_class == VU_MEXE_CLASS_END;
         } else if (valu0_class inside {VU_VALU0_7_MD_VS2_VS1_VM, VU_VALU0_8_MD_VS2_FS1_VM, VU_VALU0_9_MD_VS1_VM_IMM}) {
             mexe_class == VU_MEXE_2_FD_MS1;
-        } else if (su_class == VU_SU_2_MS_ADDR) {
-            mexe_class dist {
-                VU_MEXE_2_FD_MS1         := inst_gen_cfg.mexe_class_dist[VU_MEXE_2_FD_MS1],
-                VU_MEXE_3_MD_MS1         := inst_gen_cfg.mexe_class_dist[VU_MEXE_3_MD_MS1],
-                VU_MEXE_4_MD_MS1_VS2     := inst_gen_cfg.mexe_class_dist[VU_MEXE_4_MD_MS1_VS2]
-            };
         } else {
             mexe_class dist {
                 VU_MEXE_1_MD_MS2_MS1     := inst_gen_cfg.mexe_class_dist[VU_MEXE_1_MD_MS2_MS1],
