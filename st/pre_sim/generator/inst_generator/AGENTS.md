@@ -40,8 +40,10 @@ Do **not** read all context documents for every task. Read multiple documents on
 4. Inspect only directly related source files.
 5. Preserve the dirty worktree; check status/diff before editing.
 6. Modify only necessary files.
-7. Run a targeted compile/test, not a full regression by default.
-8. Update context only when stable architecture, interfaces, dependencies, support status, or limitations changed.
+7. Before adding a file, class, config, item, sequence, or generator, identify the existing owner of that responsibility and its current call chain.
+8. Prefer extending existing objects. Do not create a parallel file or object when the same responsibility already exists.
+9. Run a targeted compile/test, not a full regression by default.
+10. Update context only when stable architecture, interfaces, dependencies, support status, or limitations changed.
 
 ## Read and Search Rules
 

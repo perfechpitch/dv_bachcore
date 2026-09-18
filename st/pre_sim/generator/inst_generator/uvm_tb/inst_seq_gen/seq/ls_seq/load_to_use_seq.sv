@@ -3,11 +3,10 @@
 //
 // 生成最小的 Load-to-Use 数据依赖指令流：
 //
-//     LW producer -> gap[0..N] -> ADD/ADDI consumer
+//     LW producer -> gap[0..N] -> random RV32I ALU consumer
 //
 // producer 的 rd 是依赖寄存器。consumer 必须读取这个寄存器，gap 内的
-// 指令不能提前读取或覆盖它。当前第一阶段只支持 LW producer，以及
-// ADD/ADDI consumer。
+// 指令不能提前读取或覆盖它。当前支持 RV32I R/I 型整数 ALU consumer。
 //
 // 本类有两个入口：
 //   1. sub_seq_gen()：随机 LS 流入口。LOAD_TO_USE 与 RAND_LS、
@@ -19,6 +18,7 @@ class load_to_use_sequence extends base_inst_sequence;
     `uvm_object_utils(load_to_use_sequence)
     safe_inst_sequence safe_inst_seq;
 
+    load_to_use_config load_to_use_cfg;
     function new(string name = "load_to_use_sequence");
         super.new(name);
     endfunction
@@ -34,7 +34,6 @@ class load_to_use_sequence extends base_inst_sequence;
                                       data_init_generator data_init_gen);
         int unsigned remaining_inst_num;
         int unsigned block_inst_num;
-        int unsigned gap_choice;
         load_to_use_request request;
 
         // 剩余预算始终以“指令条数”计数，与指令编码是 16/32 bit 无关。
@@ -43,27 +42,13 @@ class load_to_use_sequence extends base_inst_sequence;
                 "//--- load-to-use seq start : seq_length = %0d\n",
                 remaining_inst_num);
         while(remaining_inst_num >= 2) begin
-            // 随机路径不指定 consumer/data，只根据剩余空间限制 gap。
-            // 最大 gap 默认是5；预算不足时自动缩小，确保 block 放得下。
+            // cfg defines the random policy; the per-block request stores the
+            // resolved consumer, operand dependency, gap, data and immediate.
             request = new($sformatf("random_l2u_%0d", remaining_inst_num));
-            request.gap_max = (remaining_inst_num > 7) ? 5 :
-                              (remaining_inst_num - 2);
-            gap_choice = $urandom_range(request.gap_max);
-
-            // 如果本 block 执行后只剩1条预算，该1条无法组成新的
-            // LW+consumer，因此调整当前 gap，把尾部并入当前 block。
-            block_inst_num = gap_choice + 2;
-            if((remaining_inst_num - block_inst_num) == 1) begin
-                if(gap_choice < request.gap_max)
-                    gap_choice++;
-                else
-                    gap_choice--;
-                block_inst_num = gap_choice + 2;
-            end
-            // set_gap() 将 gap 标记为 directed field。随后 request 再次
-            // randomize 时只随机 consumer/data/addi_imm，不会改变 gap。
-            request.set_gap(gap_choice);
+            request.cfg = load_to_use_cfg;
+            request.gap_budget_max = remaining_inst_num - 2;
             gen_load_to_use(request, inst_gen, data_init_gen);
+            block_inst_num = request.gap + 2;
             remaining_inst_num -= block_inst_num;
         end
         $fwrite(inst_gen.gen_file, "//--- load-to-use seq end\n");
@@ -91,11 +76,15 @@ class load_to_use_sequence extends base_inst_sequence;
         bit[4:0]         producer_rd;
         bit[4:0]         producer_base;
         bit[4:0]         consumer_rd;
-        bit[4:0]         consumer_rs2;
+        bit[4:0]         consumer_other_rs;
         bit[31:0]        resolved_data;
 
         if(request == null || data_init_gen == null)
             `uvm_fatal("LOAD_TO_USE", "request/data_init_generator is null")
+        if(load_to_use_cfg == null)
+            `uvm_fatal("LOAD_TO_USE", "load_to_use_config is null")
+        if(request.cfg == null)
+            request.cfg = load_to_use_cfg;
         // valid 标志对应的 request 字段保持调用者指定值；其他字段随机。
         if(!request.randomize())
             `uvm_fatal("LOAD_TO_USE", "load_to_use_request randomize failed")
@@ -124,9 +113,9 @@ class load_to_use_sequence extends base_inst_sequence;
 
         $fwrite(inst_gen.gen_file,
                 "//--- load_to_use start producer=LW consumer=%s gap=%0d rd=x%0d ea=0x%08h data=0x%08h\n",
-                request.consumer.name(), request.gap, producer_rd,
+                request.consumer_inst.name(), request.gap, producer_rd,
                 access.ea[31:0], resolved_data);
-        inst_gen.get_specified_inst(LW, producer_base, '0, producer_rd,
+        inst_gen.get_specified_inst(request.producer_inst, producer_base, '0, producer_rd,
                                     access.imm);
 
         // gap 表示 producer 与 consumer 之间的“指令条数”。复用现有
@@ -139,18 +128,25 @@ class load_to_use_sequence extends base_inst_sequence;
             safe_inst_seq.gen_int_cal_seq(request.gap);
         end
 
-        // consumer 的第一个源操作数固定为 producer_rd，从编码层形成
-        // RAW dependency：LW.rd -> ADD.rs1 或 LW.rd -> ADDI.rs1。
+        // Encode the resolved request. I-type consumers always use rs1;
+        // R-type consumers use the operand selected by dependency_operand.
         consumer_rd = inst_gen.reg_pool.get_nonezero_gpr(1'b1);
-        case(request.consumer)
-            L2U_CONSUMER_ADD: begin
-                consumer_rs2 = inst_gen.reg_pool.get_nonezero_gpr(1'b0);
-                inst_gen.get_specified_inst(ADD, producer_rd, consumer_rs2,
-                                            consumer_rd, '0);
+        case(request.consumer_type)
+            L2U_CONSUMER_ALU_R: begin
+                consumer_other_rs = inst_gen.reg_pool.get_nonezero_gpr(1'b0);
+                if(request.dependency_operand == L2U_USE_RS1)
+                    inst_gen.get_specified_inst(request.consumer_inst,
+                                                producer_rd, consumer_other_rs,
+                                                consumer_rd, '0);
+                else
+                    inst_gen.get_specified_inst(request.consumer_inst,
+                                                consumer_other_rs, producer_rd,
+                                                consumer_rd, '0);
             end
-            L2U_CONSUMER_ADDI: begin
-                inst_gen.get_specified_inst(ADDI, producer_rd, '0,
-                                            consumer_rd, request.addi_imm);
+            L2U_CONSUMER_ALU_I: begin
+                inst_gen.get_specified_inst(request.consumer_inst,
+                                            producer_rd, '0, consumer_rd,
+                                            request.consumer_imm);
             end
         endcase
         // consumer 已经输出，依赖区间结束，将 producer rd 放回随机池。
@@ -159,6 +155,6 @@ class load_to_use_sequence extends base_inst_sequence;
         `uvm_info("LOAD_TO_USE",
                   $sformatf("LW x%0d,0x%0h(x%0d) -> gap=%0d -> %s data=0x%08h",
                             producer_rd, access.imm, producer_base, request.gap,
-                            request.consumer.name(), resolved_data), UVM_LOW)
+                            request.consumer_inst.name(), resolved_data), UVM_LOW)
     endfunction
 endclass

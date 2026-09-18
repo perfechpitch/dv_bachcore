@@ -47,8 +47,12 @@ class ls_seq_info_item extends inst_seq_info_item;
         RAND_LS     := inst_seq_cfg.ls_seq_type_dist[0],
         LINEAR_LS   := inst_seq_cfg.ls_seq_type_dist[1],
         MEMCPY_LS   := inst_seq_cfg.ls_seq_type_dist[2],
-        LOAD_TO_USE := inst_seq_cfg.ls_seq_type_dist[3]
+        LOAD_TO_USE := inst_seq_cfg.load_to_use_weight
         };
+    }
+
+    constraint load_to_use_enable_c{
+        (!inst_seq_cfg.load_to_use_enable) -> (ls_seq_type != LOAD_TO_USE);
     }
 
     constraint other_inst_dist_c{

@@ -62,6 +62,7 @@ class ls_inst_sequence extends base_inst_sequence;
             end
             LOAD_TO_USE   : begin
                 load_to_use_seq.safe_inst_seq = safe_inst_seq;
+                load_to_use_seq.load_to_use_cfg = ls_seq_cfg.load_to_use_cfg;
                 load_to_use_seq.sub_seq_gen(ls_seq_info, inst_gen,
                                              data_init_gen);
             end
@@ -75,6 +76,7 @@ class ls_inst_sequence extends base_inst_sequence;
 
     virtual function void gen_load_to_use(load_to_use_request request);
         load_to_use_seq.safe_inst_seq = safe_inst_seq;
+        load_to_use_seq.load_to_use_cfg = ls_seq_cfg.load_to_use_cfg;
         load_to_use_seq.gen_load_to_use(request, inst_gen, data_init_gen);
     endfunction
 endclass

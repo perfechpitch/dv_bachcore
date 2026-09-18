@@ -18,6 +18,7 @@ package inst_seq_pkg;
 `define asm_log_para(A,B,C) $fwrite(``A,``B,``C);
 `include "inst_seq_config.sv"
 `include "safe_seq_config.sv"
+`include "load_to_use_config.sv"
 `include "branch_seq_config.sv"
 `include "ls_seq_config.sv"
 `include "except_seq_config.sv"

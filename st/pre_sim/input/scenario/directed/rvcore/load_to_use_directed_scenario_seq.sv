@@ -19,13 +19,13 @@ class load_to_use_directed_scenario_seq extends scenario_base_seq;
                        $sformatf("unexpected task_id=%0d", task_info.task_id))
 
         request = new("lw_add_request");
-        request.set_consumer(L2U_CONSUMER_ADD);
+        request.set_consumer(ADD);
         request.set_gap(0);
         request.set_load_data(32'h1234_5678);
         inst_seq_gen.gen_load_to_use(request);
 
         request = new("lw_addi_request");
-        request.set_consumer(L2U_CONSUMER_ADDI);
+        request.set_consumer(ADDI);
         request.set_gap(3);
         request.set_load_data(32'h89ab_cdef);
         inst_seq_gen.gen_load_to_use(request);
