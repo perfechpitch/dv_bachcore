@@ -1,0 +1,13 @@
+- case_name       = bach_core_inactive_smoke
+  uvm_tc          = bach_core_base_test
+  vcs_tb_args     = +BACH_CORE_MODE=INACTIVE
+
+- case_name       = bach_core_ts_dummy
+  uvm_tc          = bach_core_base_test
+  vcs_tb_args     = +BACH_CORE_MODE=TS_DUMMY
+
+- case_name       = bach_core_rvcore_dummy
+  uvm_tc          = bach_core_base_test
+  vcs_tb_args     = +BACH_CORE_MODE=RVCORE_DUMMY
+
+# bach_core_full is added when the original internal RTL filelist is available.

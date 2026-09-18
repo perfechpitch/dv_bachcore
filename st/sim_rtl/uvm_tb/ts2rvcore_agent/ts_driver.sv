@@ -23,10 +23,12 @@ class ts_driver extends uvm_driver #(ts_item);
       end
       TS_MU: begin
         vif.drv_cb.ts2mucore_task_uid<=t.uid; vif.drv_cb.ts2mucore_task_tid<=t.tid; vif.drv_cb.ts2mucore_task_streamid<=t.stream_id;
+        vif.drv_cb.ts2mucore_task_pid<=t.pid; vif.drv_cb.ts2mucore_task_vcid<=t.vcid;
         vif.drv_cb.ts2mucore_task_pc<=t.pc; vif.drv_cb.ts2mucore_task_valid<=1; do @(vif.drv_cb); while(!vif.drv_cb.mucore2ts_task_ready);
       end
       TS_VU: begin
         vif.drv_cb.ts2vucore_task_uid<=t.uid; vif.drv_cb.ts2vucore_task_tid<=t.tid; vif.drv_cb.ts2vucore_task_streamid<=t.stream_id;
+        vif.drv_cb.ts2vucore_task_pid<=t.pid; vif.drv_cb.ts2vucore_task_vcid<=t.vcid;
         vif.drv_cb.ts2vucore_task_pc<=t.pc; vif.drv_cb.ts2vucore_task_valid<=1; do @(vif.drv_cb); while(!vif.drv_cb.vucore2ts_task_ready);
       end
     endcase

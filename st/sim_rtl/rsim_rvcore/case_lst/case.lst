@@ -1,0 +1,2 @@
+- case_name = rvcore_smoke
+  uvm_tc = rvcore_base_test

@@ -1,0 +1,6 @@
+#!/bin/sh
+set -e
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+verify_root=$(CDPATH= cd -- "$script_dir/.." && pwd)
+bug_tool_home=${BUG_TOOL_HOME:-"$HOME/tools/bug_tools"}
+exec "$bug_tool_home/bsetup" --verify-root "$verify_root" --config "$script_dir/bug_setup.json" "$@"
