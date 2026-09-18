@@ -13,6 +13,7 @@ class inst_gen_base_seq_item extends uvm_sequence_item;
     rand logic [`REG_WIDTH-1:0]  rs2_data;
     rand logic [`IMM_WIDTH-1:0]  imm;
     rand inst_e                   inst;
+    rand inst_type_e             inst_type;
 
     inst_gen_config     inst_gen_cfg;
 
@@ -21,6 +22,7 @@ class inst_gen_base_seq_item extends uvm_sequence_item;
         `uvm_field_int          (rs2_data,                                  UVM_DEFAULT | UVM_DEC)
         `uvm_field_int          (imm,                                       UVM_DEFAULT | UVM_DEC)  
         `uvm_field_enum         (inst_e,                inst,               UVM_DEFAULT)
+        `uvm_field_enum         (inst_type_e,           inst_type,          UVM_DEFAULT)
     `uvm_object_utils_end
     
     function new (string name = "inst_gen_base_seq_item");
@@ -54,27 +56,6 @@ class inst_gen_base_seq_item extends uvm_sequence_item;
             };
         }
     }
-endclass : inst_gen_base_seq_item
-
-class inst_gen_seq_item extends inst_gen_base_seq_item;                                  
-    rand inst_type_e             inst_type;
-    rand mu_inst_type_e          mu_inst_type;
-    rand vu_inst_type_e          vu_inst_type;
-    rand int                    vld_delay;
-    rand bit                    src_bypass;
-
-    `uvm_object_utils_begin(inst_gen_seq_item)
-        `uvm_field_enum         (inst_type_e,           inst_type,          UVM_DEFAULT)
-        `uvm_field_enum         (mu_inst_type_e,        mu_inst_type,       UVM_DEFAULT)
-        `uvm_field_enum         (vu_inst_type_e,        vu_inst_type,       UVM_DEFAULT)
-        `uvm_field_int          (vld_delay,                                 UVM_DEFAULT | UVM_DEC)
-        `uvm_field_int          (src_bypass,                                UVM_DEFAULT)
-    `uvm_object_utils_end
-    
-    function new (string name = "inst_gen_seq_item");
-        super.new(name);
-    endfunction : new
-
     constraint inst_type_c {
         if(inst_gen_cfg.fix_inst_type_en) {
             inst_type == inst_gen_cfg.inst_type;
@@ -85,6 +66,25 @@ class inst_gen_seq_item extends inst_gen_base_seq_item;
             };
         }
     }
+endclass : inst_gen_base_seq_item
+
+class inst_gen_seq_item extends inst_gen_base_seq_item;                                  
+    rand mu_inst_type_e          mu_inst_type;
+    rand vu_inst_type_e          vu_inst_type;
+    rand int                    vld_delay;
+    rand bit                    src_bypass;
+
+    `uvm_object_utils_begin(inst_gen_seq_item)
+        `uvm_field_enum         (mu_inst_type_e,        mu_inst_type,       UVM_DEFAULT)
+        `uvm_field_enum         (vu_inst_type_e,        vu_inst_type,       UVM_DEFAULT)
+        `uvm_field_int          (vld_delay,                                 UVM_DEFAULT | UVM_DEC)
+        `uvm_field_int          (src_bypass,                                UVM_DEFAULT)
+    `uvm_object_utils_end
+    
+    function new (string name = "inst_gen_seq_item");
+        super.new(name);
+    endfunction : new
+
     constraint mu_inst_type_c {
         if(inst_gen_cfg.fix_mu_inst_type_en) {
             mu_inst_type == inst_gen_cfg.mu_inst_type;
