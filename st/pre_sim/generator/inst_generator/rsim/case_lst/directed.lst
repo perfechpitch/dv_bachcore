@@ -49,3 +49,19 @@
   uvm_tc         = directed_inst_test
   vcs_tb_args    = +directed_seq_name=fetch_exception_directed
   batch_times    = 1
+
+#---------------------directed Load-to-Use: LW -> ADD/ADDI
+- case_name      = load_to_use_directed_test
+  uvm_tc         = directed_inst_test
+  vcs_tb_args    = +directed_seq_name=load_to_use_directed+test_mode=INT_TEST
+  batch_times    = 1
+
+# PRE_SIM_SCENE_BEGIN dsa_custom_directed_test
+# scene_id: 104
+# seq_file: directed/rvcore/dsa_custom_directed_scenario_seq.sv
+# supported_plusargs: <none>
+- case_name      = dsa_custom_directed_test
+  uvm_tc         = directed_inst_test
+  vcs_tb_args    = +directed_seq_name=dsa_custom_directed
+  batch_times    = 1
+# PRE_SIM_SCENE_END dsa_custom_directed_test

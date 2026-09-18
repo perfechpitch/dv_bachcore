@@ -627,6 +627,33 @@ function vector_imm_reg_free();
         regs = gpr_gen.regs;
         return val;
     endfunction
+
+    // Keep a dependency register out of all ordinary random GPR selection
+    // until the matching consumer has been emitted.  This differs from the
+    // per-instruction disable list, which free_reg() clears after every inst.
+    function bit[4:0] pin_gpr();
+        return get_reserved_gpr();
+    endfunction
+
+    function void unpin_gpr(bit[4:0] reg_num);
+        bit found;
+        found = 1'b0;
+        foreach(reserved_regs[i]) begin
+            if(reserved_regs[i] == reg_num) begin
+                reserved_regs.delete(i);
+                found = 1'b1;
+                break;
+            end
+        end
+        if(!found)
+            `uvm_fatal("REGISTER_PIN",
+                       $sformatf("cannot unpin x%0d: register is not pinned", reg_num))
+        if(!(reg_num inside {gpr_gen.regs}))
+            gpr_gen.regs.push_back(reg_num);
+        if(!(reg_num inside {regs}))
+            regs.push_back(reg_num);
+        sync_active_context();
+    endfunction
     //special seq may dont want zero rd
     function bit[4:0] get_nonezero_gpr(bit get_rd);
         bit[4:0] val;

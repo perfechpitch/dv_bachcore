@@ -77,6 +77,41 @@ Each creation macro invokes `INST_GEN_CREATE`, which creates an object, appends 
 ## LS Generation
 
 `ls_inst_sequence` initializes or changes bases through `ls_base_config_sequence`, then dispatches LS sub-sequences. `ls_addr_generator` selects a DTCM/share window, produces legal effective addresses, splits base+imm, binds base metadata, and later constrains immediates to window/alignment intersections. AMO uses a zero immediate/effective-address base. Compressed word and SP-relative forms have dedicated immediate helpers.
+Load-to-Use follows four explicit responsibilities:
+
+- `ls_seq_config` owns only selection policy: `load_to_use_enable` and `load_to_use_weight`.
+- `load_to_use_config` owns request-randomization policy: gap range, consumer-type weights, dependency-operand preference and later Data Init policy.
+- `load_to_use_request` is the per-block item containing the resolved producer, consumer instruction, gap, dependency operand, load data and consumer immediate.
+- `load_to_use_sequence` executes that request by allocating/protecting registers, generating the final EA and Data Init, and emitting producer/gap/consumer instructions.
+
+### Current Load-to-Use implementation status
+
+The current implementation is intentionally limited to the first reusable stage:
+
+- Producer: `LW` only. `load_to_use_request::producer_inst` is retained so additional load producers can be added without changing the execution interface.
+- Consumer families:
+  - ALU-R: `ADD`, `SUB`, `SLL`, `SLT`, `SLTU`, `XOR`, `SRL`, `SRA`, `OR`, `AND`.
+  - ALU-I: `ADDI`, `SLTI`, `SLTIU`, `XORI`, `ORI`, `ANDI`, `SLLI`, `SRLI`, `SRAI`.
+- Dependency: ALU-R consumes `LW.rd` through randomized `rs1` or `rs2`; ALU-I always consumes it through `rs1`.
+- Gap: the resolved request carries `gap`; its upper bound comes from `load_to_use_config::gap_max`. Gap instructions reuse the existing safe-instruction sequence and therefore exclude control-flow instructions.
+- Address/data: the sequence obtains the final effective address from the existing LS address path, pins the producer register until the consumer is emitted, and writes the selected word to `data_init.vmem` through `data_init_generator`.
+- Selection: `ls_seq_info_item` selects `LOAD_TO_USE` alongside the existing LS sub-sequences using `ls_seq_config::load_to_use_enable` and `load_to_use_weight`.
+- Directed use: a directed request may explicitly set consumer, gap and load data; unspecified fields are constrained-randomized by the same request object. No parallel directed implementation exists.
+
+Validation completed on the current implementation:
+
+- Random scenario `mu_ls_random_scenario_test`, seed 2: pass; 115 Load-to-Use blocks and 115 Data Init records; zero UVM warning/error/fatal.
+- Directed scenario `load_to_use_directed_test`, seed 1: pass; verified `LW -> ADD` with gap 0 and `LW -> ADDI` with gap 3; zero UVM warning/error/fatal.
+- Static `git diff --check -- st/pre_sim`: pass.
+
+Deferred work:
+
+- Additional load producers and compressed-load producers.
+- Branch, store-data, LS-address and JALR consumers.
+- Consumer-driven semantic Data Init, such as taken/not-taken branch values and legal address values.
+- Scenario-level convenience APIs and functional coverage. The current lower-level configuration/request interfaces should be extended rather than replaced when this work resumes.
+
+
 
 ## Branch Generation
 

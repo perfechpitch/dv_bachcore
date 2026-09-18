@@ -4,4 +4,5 @@ package ts_tc_pkg;
   `uvm_analysis_imp_decl(_ts_mon)
   `include "ts_scene_test.sv"
   `include "ts_stimulus_replay_test.sv"
+  `include "ts_dispatch_context_test.sv"
 endpackage

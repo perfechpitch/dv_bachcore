@@ -1,24 +1,45 @@
 //learn from dv define
 // Shorthand for common foo.randomize() + fatal check
-`define BOOT_PC   32'h9104_0000
+`define BOOT_PC   32'h8000_0000
 `define ITCM_SIZE 32'h0000_1000 // 4KB instruction TCM per RV core
 `define CORE_GLOBAL_SIZE 32'h0000_8000 // 32KB global address slot per RV core
 
-// Each RV core fetches from a private ITCM whose local address starts at 0.
+// All RV cores share the same local address map: ITCM occupies the first 1MB
+// window, DTCM the second 1MB window, and Share Memory starts at 2MB.
 `define MU_ITCM_RV_BASE   32'h0000_0000
 `define VU_ITCM_RV_BASE   32'h0000_0000
 `define DTE_ITCM_RV_BASE  32'h0000_0000
+`define MU_DTCM_RV_BASE   32'h0010_0000
+`define VU_DTCM_RV_BASE   32'h0010_0000
+`define DTE_DTCM_RV_BASE  32'h0010_0000
+`define SHARE_RV_BASE     32'h0020_0000
 
-// Unified test.vmem layout: DTE slot 0, MU slot 1, VU slot 2.
-`define DTE_ITCM_GLOBAL_BASE (`BOOT_PC + (0 * `CORE_GLOBAL_SIZE))
-`define MU_ITCM_GLOBAL_BASE  (`BOOT_PC + (1 * `CORE_GLOBAL_SIZE))
-`define VU_ITCM_GLOBAL_BASE  (`BOOT_PC + (2 * `CORE_GLOBAL_SIZE))
-`define DTCM_SIZE   'h1000    // 4KB per hart, same VA for MU/VU/DTE
-`define SHARE_SIZE  'h8000    // 32KB
+// The first 128MB global window is IO space. Core memories start in the
+// second 128MB window at 0x0800_0000. ITCM and DTCM use independent 1MB
+// regions; each core owns one 32KB slot in DTE/MU/VU order.
+`define DTE_ITCM_GLOBAL_BASE 32'h0800_0000
+`define MU_ITCM_GLOBAL_BASE  32'h0800_8000
+`define VU_ITCM_GLOBAL_BASE  32'h0801_0000
+
+`define DTE_DTCM_GLOBAL_BASE 32'h0810_0000
+`define MU_DTCM_GLOBAL_BASE  32'h0810_8000
+`define VU_DTCM_GLOBAL_BASE  32'h0811_0000
+
+// Smem is the 128KB shared segment at the bottom of the 2MB share-memory
+// region. All RV cores use the same global system address.
+`define SMEM_GLOBAL_BASE 32'h0820_0000
+`define SMEM_SIZE        32'h0002_0000
+
+// Compatibility aliases used by the existing LS address generator.
+`define SHARE_GLOBAL_BASE `SMEM_GLOBAL_BASE
+`define DTCM_SIZE   'h2000    // 8KB per hart, same VA for MU/VU/DTE
+`define SHARE_SIZE  `SMEM_SIZE
 `define USER_STRIDE 'h800     // 2KB per user
 `define HART_SLOT   'h2A0     // 672B per hart inside a user
-`define DTCM_BASE   'h0
-`define SHARE_BASE  'h8000
+// Legacy common local DTCM base used by the LS address generator.
+`define DTCM_BASE   `MU_DTCM_RV_BASE
+// Legacy local Share Memory base used by the LS address generator.
+`define SHARE_BASE  `SHARE_RV_BASE
 `define gfn get_full_name()
 `define RANDOMIZE_CHECK(T_, MSG_="") \
     if (!(T_.randomize())) begin \

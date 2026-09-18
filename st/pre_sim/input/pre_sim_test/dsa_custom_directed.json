@@ -1,0 +1,32 @@
+{
+  "scenes": [
+    {
+      "scene_id": 104,
+      "scene_name": "dsa_custom_directed_test",
+      "scenario": {
+        "category": "rvcore",
+        "seq_file": "rvcore/dsa_custom_directed_scenario_seq.sv",
+        "seq_name": "dsa_custom_directed",
+        "args": {}
+      },
+      "task_chain": {
+        "self_start": false,
+        "task_num": 1,
+        "tasks": [
+          {
+            "task_id": 50,
+            "task_name": "dsa_custom_vu_task",
+            "task_type": "normal",
+            "execute_unit": "vu",
+            "execution_mode": "rvcore_dsa",
+            "start_pc": "0x00000000",
+            "stream_id": 0,
+            "uid": 0,
+            "pid": 0,
+            "vcid": 0
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -18,6 +18,7 @@ package inst_seq_pkg;
 `define asm_log_para(A,B,C) $fwrite(``A,``B,``C);
 `include "inst_seq_config.sv"
 `include "safe_seq_config.sv"
+`include "load_to_use_config.sv"
 `include "branch_seq_config.sv"
 `include "ls_seq_config.sv"
 `include "except_seq_config.sv"
@@ -28,6 +29,7 @@ package inst_seq_pkg;
 
 `include "item/ls_base_info_item.sv"
 `include "item/ls_seq_info_item.sv"
+`include "item/load_to_use_request.sv"
 
 `include "item/except_seq_info_item.sv"
 
@@ -35,6 +37,7 @@ package inst_seq_pkg;
 `include "./seq/special_seq/pass_quit_seq.sv"
 `include "./seq/special_seq/fail_quit_seq.sv"
 `include "./seq/base_inst_seq.sv"
+`include "./seq/safe_inst_seq.sv"
 
 `include "./seq/branch_seq/single_branch_seq.sv"
 `include "./seq/branch_seq/loop_seq.sv"
@@ -42,6 +45,7 @@ package inst_seq_pkg;
 `include "./seq/branch_seq/branch_inst_seq.sv"
 
 `include "./seq/ls_seq/ls_base_config_seq.sv"
+`include "./seq/ls_seq/load_to_use_seq.sv"
 `include "./seq/ls_seq/ls_rand_seq.sv"
 `include "./seq/ls_seq/ls_linear_seq.sv"
 `include "./seq/ls_seq/ls_memcpy_seq.sv"
@@ -50,7 +54,6 @@ package inst_seq_pkg;
 
 `include "./seq/except_inst_seq.sv"
 `include "./seq/flush_inst_seq.sv"
-`include "./seq/safe_inst_seq.sv"
 `include "./seq/c_inst_seq.sv"
 
 `include "./seq/asm_seq/base_asm_seq.sv"

@@ -27,6 +27,11 @@ class ls_seq_config extends inst_seq_config;
     rand int unsigned ls_seq_type_dist[$];
     rand int unsigned ls_base_addr_type_dist[$];
 
+    // Load-to-Use controls belong to the existing LS sequence config.
+    rand bit          load_to_use_enable;
+    rand int unsigned load_to_use_weight;
+    rand load_to_use_config load_to_use_cfg;
+
     rand int unsigned base_change_dist;
  `uvm_object_utils_begin(ls_seq_config)
         `uvm_field_sarray_int(ls_base_addr_type_dist, UVM_DEFAULT | UVM_DEC)
@@ -46,11 +51,15 @@ class ls_seq_config extends inst_seq_config;
         `uvm_field_int(other_dist, UVM_DEFAULT|UVM_DEC)
 
         `uvm_field_int(base_change_dist, UVM_DEFAULT|UVM_DEC)
+        `uvm_field_int(load_to_use_enable, UVM_DEFAULT|UVM_DEC)
+        `uvm_field_int(load_to_use_weight, UVM_DEFAULT|UVM_DEC)
+        `uvm_field_object(load_to_use_cfg, UVM_DEFAULT)
 
     `uvm_object_utils_end
     // new - constructor
     function new (string name = "ls_seq_config");
       super.new(name);
+      load_to_use_cfg = new("load_to_use_cfg");
     endfunction : new
 
 
@@ -73,12 +82,25 @@ class ls_seq_config extends inst_seq_config;
 
     constraint ls_seq_type_dist_c{
 //    TODO: add ls seq type num
-        ls_seq_type_dist.size() == 3;
+        ls_seq_type_dist.size() == 4;
         foreach(ls_seq_type_dist[i]){
             ls_seq_type_dist[i] inside{[0:100]};
         }
         ls_seq_type_dist.sum() == 100;
     }
+    constraint load_to_use_c{
+        // Default random profiles allow Load-to-Use. Callers may explicitly
+        // disable it after the case config has been randomized.
+        soft load_to_use_enable == 1'b1;
+        if(load_to_use_enable) {
+            load_to_use_weight inside {[1:100]};
+        }
+        else {
+            load_to_use_weight == 0;
+        }
+        ls_seq_type_dist[3] == load_to_use_weight;
+    }
+
     constraint ls_base_addr_type_dist_c{
         ls_base_addr_type_dist.size() == 6;
         foreach(ls_base_addr_type_dist[i]){

@@ -26,6 +26,7 @@ package inst_gen_pkg;
 
 `include "resource/ls_addr_generator.sv"
 `include "resource/fetch_addr_generator.sv"
+`include "resource/data_init_generator.sv"
 
 `include "resource/register_pool.sv"
 

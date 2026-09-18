@@ -1,4 +1,4 @@
-typedef enum{RAND_LS,LINEAR_LS,MEMCPY_LS}ls_seq_type_e;
+typedef enum{RAND_LS,LINEAR_LS,MEMCPY_LS,LOAD_TO_USE}ls_seq_type_e;
 class ls_seq_info_item extends inst_seq_info_item;
     //override inst_seq_cfg
     ls_seq_config inst_seq_cfg;
@@ -46,8 +46,13 @@ class ls_seq_info_item extends inst_seq_info_item;
         ls_seq_type dist{
         RAND_LS     := inst_seq_cfg.ls_seq_type_dist[0],
         LINEAR_LS   := inst_seq_cfg.ls_seq_type_dist[1],
-        MEMCPY_LS   := inst_seq_cfg.ls_seq_type_dist[2]
+        MEMCPY_LS   := inst_seq_cfg.ls_seq_type_dist[2],
+        LOAD_TO_USE := inst_seq_cfg.load_to_use_weight
         };
+    }
+
+    constraint load_to_use_enable_c{
+        (!inst_seq_cfg.load_to_use_enable) -> (ls_seq_type != LOAD_TO_USE);
     }
 
     constraint other_inst_dist_c{
@@ -99,6 +104,7 @@ class ls_seq_info_item extends inst_seq_info_item;
         (seq_length_type == LOW)    -> seq_length inside{[1:20]};
         (seq_length_type == HIGH)   -> seq_length inside{[20:50]};
         (seq_length_type == MAX)    -> seq_length inside{[50:100]};
+        (ls_seq_type == LOAD_TO_USE) -> seq_length >= 2;
     }
 
     constraint base_change_c{

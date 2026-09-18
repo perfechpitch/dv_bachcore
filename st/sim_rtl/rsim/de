@@ -1,0 +1,25 @@
+#!/bin/sh
+
+rsim_dir=$(dirname "$(readlink -f "$0")")
+sim_dir="$rsim_dir/sim_single"
+
+if [ -z "${DISPLAY:-}" ]; then
+    echo "de: DISPLAY is not set; Verdi requires an X11/desktop session." >&2
+    echo "de: reconnect with X11 forwarding (for example ssh -Y) or run from a remote desktop terminal." >&2
+    exit 1
+fi
+
+if [ ! -f "$sim_dir/tb.fsdb" ]; then
+    echo "de: missing waveform: $sim_dir/tb.fsdb" >&2
+    echo "de: run the Bach Core smoke test with WAVE=1 first." >&2
+    exit 1
+fi
+
+cd "$sim_dir" || exit 1
+exec verdi \
+    -sverilog \
+    -f "$rsim_dir/flist_bach_core.f" \
+    -preTitle "${1:-bach_core}" \
+    -top tb_top \
+    -ssf tb.fsdb \
+    -sswr

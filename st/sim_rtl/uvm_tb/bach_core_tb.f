@@ -1,0 +1,17 @@
++incdir+router_uvc
+$PWD/../../core_ref/uvm_tb/vu_inst_lib/dpi/vu_math.c
+router_uvc/router_if.sv
+router_uvc/router_pkg.sv
++incdir+rvcore2dsa_agent
+rvcore2dsa_agent/rv_dsa_if.sv
+rvcore2dsa_agent/rv_dsa_pkg.sv
++incdir+ts2rvcore_agent
+ts2rvcore_agent/ts_if.sv
+ts2rvcore_agent/ts_pkg.sv
++incdir+dummy_bind
+dummy_bind/bach_core_behavior_bind.sv
++incdir+rvcore_env
+rvcore_env/rvcore_checker_if.sv
+rvcore_env/rvcore_env_pkg.sv
++incdir+bach_core_env
+bach_core_env/bach_core_env_pkg.sv

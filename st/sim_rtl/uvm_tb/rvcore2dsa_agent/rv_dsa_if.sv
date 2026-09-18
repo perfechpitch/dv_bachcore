@@ -1,6 +1,7 @@
 `ifndef RV_DSA_IF_SV
 `define RV_DSA_IF_SV
 interface rv_dsa_if(input bit clk, input bit reset_n);
+  bit behavior_enable = 0;
   logic req, rw;
   logic [31:0] addr0, wdata0;
   logic [3:0] stream_id;
